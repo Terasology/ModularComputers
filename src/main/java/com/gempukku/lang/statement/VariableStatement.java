@@ -1,6 +1,12 @@
 package com.gempukku.lang.statement;
 
-import com.gempukku.lang.*;
+import com.gempukku.lang.ExecutableStatement;
+import com.gempukku.lang.Execution;
+import com.gempukku.lang.ExecutionContext;
+import com.gempukku.lang.ExecutionCostConfiguration;
+import com.gempukku.lang.ExecutionException;
+import com.gempukku.lang.ExecutionProgress;
+import com.gempukku.lang.IllegalSyntaxException;
 import com.gempukku.lang.execution.SimpleExecution;
 
 public class VariableStatement implements ExecutableStatement {

@@ -1,13 +1,48 @@
 package com.gempukku.lang.parser;
 
-import com.gempukku.lang.*;
-import com.gempukku.lang.statement.*;
+import com.gempukku.lang.DefiningExecutableStatement;
+import com.gempukku.lang.ExecutableStatement;
+import com.gempukku.lang.IllegalSyntaxException;
+import com.gempukku.lang.LangDefinition;
+import com.gempukku.lang.Operator;
+import com.gempukku.lang.ScriptExecutable;
+import com.gempukku.lang.Variable;
+import com.gempukku.lang.statement.AddStatement;
+import com.gempukku.lang.statement.AssignStatement;
+import com.gempukku.lang.statement.BlockStatement;
+import com.gempukku.lang.statement.BreakStatement;
+import com.gempukku.lang.statement.ComparisonStatement;
+import com.gempukku.lang.statement.ConstantStatement;
+import com.gempukku.lang.statement.DefineAndAssignStatement;
+import com.gempukku.lang.statement.DefineFunctionStatement;
+import com.gempukku.lang.statement.DefineStatement;
+import com.gempukku.lang.statement.ForStatement;
+import com.gempukku.lang.statement.FunctionCallStatement;
+import com.gempukku.lang.statement.FunctionStatement;
+import com.gempukku.lang.statement.IfStatement;
+import com.gempukku.lang.statement.IncrementDecrementStatement;
+import com.gempukku.lang.statement.ListDefineStatement;
+import com.gempukku.lang.statement.LogicalOperatorStatement;
+import com.gempukku.lang.statement.MapAccessStatement;
+import com.gempukku.lang.statement.MapDefineStatement;
+import com.gempukku.lang.statement.MathStatement;
+import com.gempukku.lang.statement.MemberAccessStatement;
+import com.gempukku.lang.statement.NamedStatement;
+import com.gempukku.lang.statement.NegateStatement;
+import com.gempukku.lang.statement.NegativeStatement;
+import com.gempukku.lang.statement.ReturnStatement;
+import com.gempukku.lang.statement.VariableStatement;
+import com.gempukku.lang.statement.WhileStatement;
 import com.google.common.collect.Iterators;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 public class ScriptParser {
     public ScriptExecutable parseScript(Reader reader, Set<String> preDefinedVariables) throws IllegalSyntaxException, IOException {

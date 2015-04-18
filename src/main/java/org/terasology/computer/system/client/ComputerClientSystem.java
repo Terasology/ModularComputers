@@ -23,8 +23,6 @@ import org.terasology.computer.event.client.console.AppendConsoleLinesEvent;
 import org.terasology.computer.event.client.console.ClearConsoleScreenEvent;
 import org.terasology.computer.event.client.console.SetConsoleCharactersAtEvent;
 import org.terasology.computer.event.client.console.SetConsoleScreenEvent;
-import org.terasology.computer.system.server.lang.console.AppendToConsoleFunction;
-import org.terasology.computer.system.server.lang.console.ClearConsoleFunction;
 import org.terasology.computer.ui.ComputerTerminalWidget;
 import org.terasology.computer.ui.ComputerTerminalWindow;
 import org.terasology.entitySystem.entity.EntityRef;
@@ -35,8 +33,6 @@ import org.terasology.entitySystem.systems.RegisterSystem;
 import org.terasology.logic.common.ActivateEvent;
 import org.terasology.registry.In;
 import org.terasology.rendering.nui.NUIManager;
-
-import java.lang.String;
 
 @RegisterSystem(RegisterMode.CLIENT)
 public class ComputerClientSystem extends BaseComponentSystem {

@@ -18,7 +18,6 @@ package org.terasology.computer.system.server;
 import com.gempukku.lang.ExecutionCostConfiguration;
 import com.gempukku.lang.IllegalSyntaxException;
 import com.gempukku.lang.ObjectDefinition;
-import com.gempukku.lang.parser.DefinedVariables;
 import org.terasology.computer.component.ComputerComponent;
 import org.terasology.computer.component.ComputerModuleComponent;
 import org.terasology.computer.component.ComputerSystemComponent;
@@ -30,7 +29,6 @@ import org.terasology.computer.event.server.ConsoleListeningRegistrationEvent;
 import org.terasology.computer.event.server.ExecuteProgramEvent;
 import org.terasology.computer.event.server.GetProgramTextEvent;
 import org.terasology.computer.event.server.SaveProgramEvent;
-import org.terasology.computer.module.inventory.InventoryComputerModule;
 import org.terasology.computer.system.server.lang.ComputerModule;
 import org.terasology.computer.system.server.lang.computer.ComputerObjectDefinition;
 import org.terasology.computer.system.server.lang.console.ConsoleObjectDefinition;
@@ -38,7 +36,6 @@ import org.terasology.computer.system.server.lang.os.OSObjectDefinition;
 import org.terasology.entitySystem.entity.EntityManager;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.entitySystem.entity.lifecycleEvents.BeforeDeactivateComponent;
-import org.terasology.entitySystem.entity.lifecycleEvents.BeforeRemoveComponent;
 import org.terasology.entitySystem.entity.lifecycleEvents.OnActivatedComponent;
 import org.terasology.entitySystem.entity.lifecycleEvents.OnAddedComponent;
 import org.terasology.entitySystem.event.ReceiveEvent;
@@ -52,7 +49,9 @@ import org.terasology.registry.In;
 import org.terasology.registry.Share;
 import org.terasology.world.block.BlockComponent;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 @RegisterSystem(RegisterMode.AUTHORITY)
 @Share(value = ComputerModuleRegistry.class)

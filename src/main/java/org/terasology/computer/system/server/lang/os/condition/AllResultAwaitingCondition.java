@@ -18,7 +18,11 @@ package org.terasology.computer.system.server.lang.os.condition;
 import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.Variable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 public class AllResultAwaitingCondition implements ResultAwaitingCondition {
 	private List<ResultAwaitingCondition> _awaitingConditions;

@@ -15,7 +15,19 @@
  */
 package org.terasology.computer.context;
 
-import com.gempukku.lang.*;
+import com.gempukku.lang.CallContext;
+import com.gempukku.lang.ExecutionContext;
+import com.gempukku.lang.ExecutionCostConfiguration;
+import com.gempukku.lang.ExecutionException;
+import com.gempukku.lang.ExecutionProgress;
+import com.gempukku.lang.IllegalSyntaxException;
+import com.gempukku.lang.ListPropertyProducer;
+import com.gempukku.lang.MapPropertyProducer;
+import com.gempukku.lang.ObjectDefinition;
+import com.gempukku.lang.ObjectPropertyProducer;
+import com.gempukku.lang.ScriptExecutable;
+import com.gempukku.lang.StringPropertyProducer;
+import com.gempukku.lang.Variable;
 import com.gempukku.lang.parser.ScriptParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +37,6 @@ import org.terasology.computer.system.server.ComputerModuleRegistry;
 import org.terasology.computer.system.server.lang.ComputerModule;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.logic.inventory.InventoryComponent;
-import org.terasology.logic.location.LocationComponent;
 import org.terasology.math.geom.Vector3i;
 import org.terasology.world.block.BlockComponent;
 

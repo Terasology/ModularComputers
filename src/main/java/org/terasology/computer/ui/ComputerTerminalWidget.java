@@ -27,7 +27,13 @@ import org.terasology.input.events.KeyEvent;
 import org.terasology.math.Rect2i;
 import org.terasology.math.Vector2i;
 import org.terasology.rendering.assets.font.Font;
-import org.terasology.rendering.nui.*;
+import org.terasology.rendering.nui.Canvas;
+import org.terasology.rendering.nui.Color;
+import org.terasology.rendering.nui.CoreWidget;
+import org.terasology.rendering.nui.FocusManager;
+import org.terasology.rendering.nui.HorizontalAlign;
+import org.terasology.rendering.nui.InteractionListener;
+import org.terasology.rendering.nui.VerticalAlign;
 
 public class ComputerTerminalWidget extends CoreWidget {
     public static final Color BACKGROUND_COLOR = new Color(0x111111ff);

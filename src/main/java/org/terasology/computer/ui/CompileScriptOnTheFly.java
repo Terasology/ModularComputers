@@ -17,8 +17,6 @@ package org.terasology.computer.ui;
 
 import com.gempukku.lang.IllegalSyntaxException;
 import com.gempukku.lang.parser.ScriptParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.StringReader;
