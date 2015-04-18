@@ -19,12 +19,10 @@ import com.gempukku.lang.CustomObject;
 import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.Variable;
 import org.terasology.computer.context.ComputerCallback;
-import org.terasology.computer.system.server.lang.ModuleComputerCallback;
 import org.terasology.computer.system.server.lang.ModuleFunctionExecutable;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.logic.inventory.InventoryComponent;
 import org.terasology.logic.inventory.InventoryManager;
-import org.terasology.logic.inventory.ItemComponent;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -53,7 +51,7 @@ public class ItemMoveFunction implements ModuleFunctionExecutable {
     }
 
     @Override
-    public Object executeFunction(int line, ComputerCallback callback, ModuleComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
+    public Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
         Variable inventoryBindingFrom = parameters.get("inventoryBindingFrom");
         if (inventoryBindingFrom.getType() != Variable.Type.CUSTOM_OBJECT
                 || !((CustomObject) inventoryBindingFrom.getValue()).getType().equals("INVENTORY_BINDING"))
@@ -71,10 +69,10 @@ public class ItemMoveFunction implements ModuleFunctionExecutable {
         int slotNo = ((Number) slot.getValue()).intValue();
 
         InventoryBinding bindingFrom = (InventoryBinding) inventoryBindingFrom.getValue();
-        EntityRef inventoryFromEntity = bindingFrom.getInventoryEntity(line, callback);
+        EntityRef inventoryFromEntity = bindingFrom.getInventoryEntity(line, computer);
 
         InventoryBinding bindingTo = (InventoryBinding) inventoryBindingTo.getValue();
-        EntityRef inventoryToEntity = bindingTo.getInventoryEntity(line, callback);
+        EntityRef inventoryToEntity = bindingTo.getInventoryEntity(line, computer);
 
         InventoryComponent inventoryFrom = inventoryFromEntity.getComponent(InventoryComponent.class);
         int slotFromCount = inventoryFrom.itemSlots.size();

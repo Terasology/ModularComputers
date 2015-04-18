@@ -53,8 +53,8 @@ public class WaitForFunction implements FunctionExecutable {
 
                     final AbstractConditionCustomObject condition = (AbstractConditionCustomObject) conditionVar.getValue();
 
-                    final TerasologyComputerExecutionContext minecraftExecutionContext = (TerasologyComputerExecutionContext) executionContext;
-                    final ComputerCallback computerData = minecraftExecutionContext.getComputerCallback();
+                    final TerasologyComputerExecutionContext terasologyExecutionContext = (TerasologyComputerExecutionContext) executionContext;
+                    final ComputerCallback computerData = terasologyExecutionContext.getComputerCallback();
 
                     _condition = condition.createAwaitingCondition();
 

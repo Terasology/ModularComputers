@@ -49,8 +49,8 @@ public class ModuleFunctionAdapter implements FunctionExecutable {
                 new SimpleExecution() {
                     @Override
                     protected ExecutionProgress execute(ExecutionContext context, ExecutionCostConfiguration configuration) throws ExecutionException {
-                        final TerasologyComputerExecutionContext minecraftExecutionContext = (TerasologyComputerExecutionContext) context;
-                        ComputerCallback computerCallback = minecraftExecutionContext.getComputerCallback();
+                        final TerasologyComputerExecutionContext terasologyExecutionContext = (TerasologyComputerExecutionContext) context;
+                        ComputerCallback computerCallback = terasologyExecutionContext.getComputerCallback();
 
                         final String[] parameterNames = getParameterNames();
                         Map<String, Variable> parameters = new HashMap<String, Variable>();
@@ -58,7 +58,7 @@ public class ModuleFunctionAdapter implements FunctionExecutable {
                         for (String parameterName : parameterNames)
                             parameters.put(parameterName, callContext.getVariableValue(parameterName));
 
-                        context.setReturnValue(new Variable(_moduleFunction.executeFunction(line, computerCallback, minecraftExecutionContext.getModuleComputerCallback(_slotNo), parameters)));
+                        context.setReturnValue(new Variable(_moduleFunction.executeFunction(line, computerCallback, parameters)));
                         return new ExecutionProgress(configuration.getSetReturnValue());
                     }
                 });

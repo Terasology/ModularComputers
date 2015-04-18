@@ -25,8 +25,6 @@ import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -101,7 +99,7 @@ public class ProgramEditingConsoleGui {
     }
 
     private void drawStatusLine(Canvas canvas, int x, int y) {
-        final int lastLineY = y+ComputerTerminalWidget.FONT_HEIGHT * (getCharactersInColumn() - 1);
+        final int lastLineY = y + ComputerTerminalWidget.FONT_HEIGHT * (getCharactersInColumn() - 1);
         final CompileScriptOnTheFly.CompileStatus compileStatusObj = onTheFlyCompiler.getCompileStatus();
         if (waitingForExitConfirmation) {
             computerTerminalWidget.drawMonospacedText(canvas, "File was not saved, exit? [Y]es/[N]o", 0, lastLineY, PROGRAM_LAST_LINE_COLOR);
@@ -118,7 +116,7 @@ public class ProgramEditingConsoleGui {
         computerTerminalWidget.drawMonospacedText(canvas, "[S]ave E[x]it", x, lastLineY, PROGRAM_LAST_LINE_COLOR);
 
         if (programSaveDirty)
-            computerTerminalWidget.drawMonospacedText(canvas, "*", x+15 * ComputerTerminalWidget.CHARACTER_WIDTH, lastLineY, PROGRAM_LAST_LINE_COLOR);
+            computerTerminalWidget.drawMonospacedText(canvas, "*", x + 15 * ComputerTerminalWidget.CHARACTER_WIDTH, lastLineY, PROGRAM_LAST_LINE_COLOR);
 
         String compileStatus = "...";
         Color compileColor = COMPILE_PENDING_COLOR;
@@ -145,7 +143,7 @@ public class ProgramEditingConsoleGui {
 
             if (errorLine >= 0 && errorLine < getCharactersInColumn() - 1
                     && errorColumn >= 0 && errorColumn < getCharactersInRow())
-                computerTerminalWidget.drawHorizontalLine(canvas, x+errorColumn * ComputerTerminalWidget.CHARACTER_WIDTH, y+(errorLine + 1) * ComputerTerminalWidget.FONT_HEIGHT, x+(errorColumn + 1) * ComputerTerminalWidget.CHARACTER_WIDTH, PROGRAM_ERROR_UNDERLINE_COLOR);
+                computerTerminalWidget.drawHorizontalLine(canvas, x + errorColumn * ComputerTerminalWidget.CHARACTER_WIDTH, y + (errorLine + 1) * ComputerTerminalWidget.FONT_HEIGHT, x + (errorColumn + 1) * ComputerTerminalWidget.CHARACTER_WIDTH, PROGRAM_ERROR_UNDERLINE_COLOR);
         }
     }
 
@@ -157,7 +155,7 @@ public class ProgramEditingConsoleGui {
 
         if (errorLine >= 0 && errorLine < getCharactersInColumn() - 1
                 && errorColumn >= 0 && errorColumn < getCharactersInRow())
-            computerTerminalWidget.drawHorizontalLine(canvas, x+errorColumn * ComputerTerminalWidget.CHARACTER_WIDTH, y+(errorLine + 1) * ComputerTerminalWidget.FONT_HEIGHT, x+(errorColumn + 1) * ComputerTerminalWidget.CHARACTER_WIDTH, PROGRAM_ERROR_UNDERLINE_COLOR);
+            computerTerminalWidget.drawHorizontalLine(canvas, x + errorColumn * ComputerTerminalWidget.CHARACTER_WIDTH, y + (errorLine + 1) * ComputerTerminalWidget.FONT_HEIGHT, x + (errorColumn + 1) * ComputerTerminalWidget.CHARACTER_WIDTH, PROGRAM_ERROR_UNDERLINE_COLOR);
     }
 
     public void keyTypedInEditingProgram(char character, int keyboardCharId, boolean controlDown) {
@@ -322,16 +320,8 @@ public class ProgramEditingConsoleGui {
 
     private void handleSave() {
         String program = getProgramText();
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            DataOutputStream os = new DataOutputStream(baos);
-            os.writeUTF(editedProgramName);
-            os.writeUTF(program);
-            computerTerminalWidget.requestSave(editedProgramName, program);
-            programSaveDirty = false;
-        } catch (IOException exp) {
-            // TODO
-        }
+        computerTerminalWidget.requestSave(editedProgramName, program);
+        programSaveDirty = false;
     }
 
     private void handleGotoLine() {

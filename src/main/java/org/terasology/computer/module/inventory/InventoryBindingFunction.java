@@ -19,7 +19,6 @@ import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.Variable;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.module.ComputerDirection;
-import org.terasology.computer.system.server.lang.ModuleComputerCallback;
 import org.terasology.computer.system.server.lang.ModuleFunctionExecutable;
 import org.terasology.math.Direction;
 import org.terasology.world.BlockEntityRegistry;
@@ -49,7 +48,7 @@ public class InventoryBindingFunction implements ModuleFunctionExecutable {
     }
 
     @Override
-    public Object executeFunction(int line, ComputerCallback callback, ModuleComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
+    public Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
         Variable directionVar = parameters.get("direction");
         if (directionVar.getType() != Variable.Type.STRING)
             throw new ExecutionException(line, "Invalid direction in getInventoryBinding()");

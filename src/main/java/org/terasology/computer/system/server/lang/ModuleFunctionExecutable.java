@@ -28,6 +28,5 @@ public interface ModuleFunctionExecutable {
 
     public String[] getParameterNames();
 
-    public Object executeFunction(int line, ComputerCallback callback, ModuleComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException;
-
+    public Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException;
 }

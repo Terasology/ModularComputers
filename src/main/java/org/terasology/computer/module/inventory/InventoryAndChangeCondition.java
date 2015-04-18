@@ -19,11 +19,9 @@ import com.gempukku.lang.CustomObject;
 import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.Variable;
 import org.terasology.computer.context.ComputerCallback;
-import org.terasology.computer.system.server.lang.ModuleComputerCallback;
 import org.terasology.computer.system.server.lang.ModuleFunctionExecutable;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.logic.inventory.InventoryComponent;
-import org.terasology.logic.inventory.ItemComponent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,14 +51,14 @@ public class InventoryAndChangeCondition implements ModuleFunctionExecutable {
     }
 
     @Override
-    public Object executeFunction(int line, ComputerCallback callback, ModuleComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
+    public Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
         Variable inventoryBinding = parameters.get("inventoryBinding");
         if (inventoryBinding.getType() != Variable.Type.CUSTOM_OBJECT
                 || !((CustomObject) inventoryBinding.getValue()).getType().equals("INVENTORY_BINDING"))
             throw new ExecutionException(line, "Invalid inventoryBinding in getInventoryAndChangeCondition()");
 
         InventoryBinding binding = (InventoryBinding) inventoryBinding.getValue();
-        EntityRef inventoryEntity = binding.getInventoryEntity(line, callback);
+        EntityRef inventoryEntity = binding.getInventoryEntity(line, computer);
         InventoryComponent inventory = inventoryEntity.getComponent(InventoryComponent.class);
 
         Map<String, Object> result = new HashMap<>();

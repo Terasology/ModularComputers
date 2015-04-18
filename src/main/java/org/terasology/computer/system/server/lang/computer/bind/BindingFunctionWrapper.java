@@ -44,8 +44,8 @@ public class BindingFunctionWrapper implements FunctionExecutable {
 
 	@Override
 	public Execution createExecution(int line, ExecutionContext executionContext, final CallContext callContext) {
-		final TerasologyComputerExecutionContext minecraftExecutionContext = (TerasologyComputerExecutionContext) executionContext;
-		final ComputerCallback computerCallback = minecraftExecutionContext.getComputerCallback();
+		final TerasologyComputerExecutionContext terasologyExecutionContext = (TerasologyComputerExecutionContext) executionContext;
+		final ComputerCallback computerCallback = terasologyExecutionContext.getComputerCallback();
 
 		final ComputerModule module = computerCallback.getModule(_slotNo);
 		if (module == _module) {

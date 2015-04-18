@@ -103,7 +103,7 @@ public class ComputerContext {
             }
 
             ExecutionContext executionContext = new TerasologyComputerExecutionContext(configuration,
-                    getComputerCallback(), entity);
+                    getComputerCallback());
             executionContext.addPropertyProducer(Variable.Type.MAP, new MapPropertyProducer());
             executionContext.addPropertyProducer(Variable.Type.OBJECT, new ObjectPropertyProducer());
             executionContext.addPropertyProducer(Variable.Type.LIST, new ListPropertyProducer());
@@ -157,6 +157,11 @@ public class ComputerContext {
             @Override
             public Vector3i getComputerLocation() {
                 return entity.getComponent(BlockComponent.class).getPosition();
+            }
+
+            @Override
+            public EntityRef getComputerEntity() {
+                return entity;
             }
         };
     }

@@ -30,8 +30,8 @@ public abstract class TerasologyFunctionExecutable implements FunctionExecutable
                 new SimpleExecution() {
                     @Override
                     protected ExecutionProgress execute(ExecutionContext context, ExecutionCostConfiguration configuration) throws ExecutionException {
-                        final TerasologyComputerExecutionContext minecraftExecutionContext = (TerasologyComputerExecutionContext) context;
-                        ComputerCallback computer = minecraftExecutionContext.getComputerCallback();
+                        final TerasologyComputerExecutionContext terasologyExecutionContext = (TerasologyComputerExecutionContext) context;
+                        ComputerCallback computer = terasologyExecutionContext.getComputerCallback();
 
                         final String[] parameterNames = getParameterNames();
                         Map<String, Variable> parameters = new HashMap<String, Variable>();

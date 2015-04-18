@@ -17,50 +17,16 @@ package org.terasology.computer.context;
 
 import com.gempukku.lang.ExecutionContext;
 import com.gempukku.lang.ExecutionCostConfiguration;
-import org.terasology.computer.component.ComputerComponent;
-import org.terasology.computer.system.server.lang.ModuleComputerCallback;
-import org.terasology.entitySystem.entity.EntityRef;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 public class TerasologyComputerExecutionContext extends ExecutionContext {
     private ComputerCallback computerCallback;
-    private EntityRef computerEntity;
 
-    public TerasologyComputerExecutionContext(ExecutionCostConfiguration configuration, ComputerCallback computerCallback,
-                                              EntityRef computerEntity) {
+    public TerasologyComputerExecutionContext(ExecutionCostConfiguration configuration, ComputerCallback computerCallback) {
         super(configuration);
         this.computerCallback = computerCallback;
-        this.computerEntity = computerEntity;
     }
 
     public ComputerCallback getComputerCallback() {
         return computerCallback;
-    }
-
-    public ModuleComputerCallback getModuleComputerCallback(int slot) {
-        return new ModuleComputerCallback() {
-            @Override
-            public Map<String, String> getModuleData() {
-                ComputerComponent computerComponent = computerEntity.getComponent(ComputerComponent.class);
-                List<Map<String, String>> moduleData = computerComponent.moduleData;
-                if (moduleData.size()<=slot) {
-                    return Collections.emptyMap();
-                }
-
-                return Collections.unmodifiableMap(moduleData.get(slot));
-            }
-
-            @Override
-            public void setModuleData(Map<String, String> moduleData) {
-                ComputerComponent computerComponent = computerEntity.getComponent(ComputerComponent.class);
-                List<Map<String, String>> modulesData = computerComponent.moduleData;
-                modulesData.set(slot, moduleData);
-
-                computerEntity.saveComponent(computerComponent);
-            }
-        };
     }
 }

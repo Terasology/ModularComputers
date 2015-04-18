@@ -33,8 +33,8 @@ public class SlotBindingObjectDefinition implements ObjectDefinition {
 
 	@Override
 	public Variable getMember(ExecutionContext context, String name) {
-		final TerasologyComputerExecutionContext minecraftExecutionContext = (TerasologyComputerExecutionContext) context;
-		final ComputerCallback computerCallback = minecraftExecutionContext.getComputerCallback();
+		final TerasologyComputerExecutionContext terasologyExecutionContext = (TerasologyComputerExecutionContext) context;
+		final ComputerCallback computerCallback = terasologyExecutionContext.getComputerCallback();
 
 		final ComputerModule module = computerCallback.getModule(_slotNo);
 		if (module == null)
