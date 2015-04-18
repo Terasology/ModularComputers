@@ -1,0 +1,9 @@
+{
+    "id" : "ModularComputers",
+     "version" : "0.1.0",
+     "author" : "Marcin Sciesinski <marcins78@gmail.com>",
+     "displayName" : "Modular Computers",
+     "description" : "Computers in Terasology! Automate all the things with just a bit of programming.",
+     "dependencies" : [],
+     "isServerSideOnly" : false
+ }

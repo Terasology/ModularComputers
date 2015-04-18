@@ -1,0 +1,33 @@
+{
+    "type": "ComputerTerminalWindow",
+    "contents": {
+        "type": "relativeLayout",
+        "contents": [
+            {
+                "type": "relativeLayout",
+                "contents": [
+                    {
+                        "type": "ModularComputers:ComputerTerminalWidget",
+                        "id": "computerTerminal",
+                        "layoutInfo": {
+                            "width": 710,
+                            "height": 597,
+                            "position-left": {
+                                "offset": 5
+                            },
+                            "position-top": {
+                                "offset": 5
+                            }
+                        }
+                    }
+                ],
+                "layoutInfo": {
+                    "width": 710,
+                    "height": 597,
+                    "position-horizontal-center": {},
+                    "position-vertical-center": {}
+                }
+            }
+        ]
+    }
+}

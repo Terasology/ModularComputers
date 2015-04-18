@@ -1,0 +1,66 @@
+/*
+ * Copyright 2015 MovingBlocks
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.terasology.computer.system.server.lang.computer.bind;
+
+import com.gempukku.lang.*;
+import com.gempukku.lang.execution.SimpleExecution;
+import org.terasology.computer.context.ComputerCallback;
+import org.terasology.computer.context.TerasologyComputerExecutionContext;
+import org.terasology.computer.system.server.lang.ComputerModule;
+
+public class BindingFunctionWrapper implements FunctionExecutable {
+	private int _slotNo;
+	private ComputerModule _module;
+	private FunctionExecutable _function;
+
+	public BindingFunctionWrapper(ComputerModule module, int slotNo, FunctionExecutable function) {
+		_module = module;
+		_slotNo = slotNo;
+		_function = function;
+	}
+
+	@Override
+	public CallContext getCallContext() {
+		return new CallContext(null, false, false);
+	}
+
+	@Override
+	public String[] getParameterNames() {
+		return _function.getParameterNames();
+	}
+
+	@Override
+	public Execution createExecution(int line, ExecutionContext executionContext, final CallContext callContext) {
+		final TerasologyComputerExecutionContext minecraftExecutionContext = (TerasologyComputerExecutionContext) executionContext;
+		final ComputerCallback computerCallback = minecraftExecutionContext.getComputerCallback();
+
+		final ComputerModule module = computerCallback.getModule(_slotNo);
+		if (module == _module) {
+			return _function.createExecution(line, executionContext, callContext);
+		} else {
+			return getThrowingExceptionExecution(line);
+		}
+	}
+
+	private Execution getThrowingExceptionExecution(final int line) {
+		return new SimpleExecution() {
+			@Override
+			protected ExecutionProgress execute(ExecutionContext context, ExecutionCostConfiguration configuration) throws ExecutionException {
+				throw new ExecutionException(line, "Bound module has been removed or replaced");
+			}
+		};
+	}
+}

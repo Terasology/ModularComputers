@@ -1,0 +1,8 @@
+{
+    "hardness" : 18,
+    "mass" : 100,
+    "sounds": "Core:stone",
+    "entity": {
+            "prefab": "ModularComputers:SlowComputer"
+        }
+}

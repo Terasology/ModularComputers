@@ -1,0 +1,12 @@
+{
+    "DisplayName" : {
+        "name" : "Computer Terminal"
+    },
+    "Item" : {
+        "icon" : "engine:items.coal",
+        "renderWithIcon" : true,
+        "stackId" : "coal",
+        "maxStackSize": 1
+    },
+    "ComputerTerminal" : {}
+}
