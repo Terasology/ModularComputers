@@ -90,7 +90,7 @@ public class ItemMoveFunction implements ModuleFunctionExecutable {
             slots.add(i);
         }
 
-        inventoryManager.moveItemToSlots(null, inventoryFromEntity, slotNo, inventoryToEntity, slots);
+        inventoryManager.moveItemToSlots(computer.getComputerEntity(), inventoryFromEntity, slotNo, inventoryToEntity, slots);
 
         int itemCountAfter = InventoryModuleUtils.getItemCount(inventoryFrom.itemSlots.get(slotNo));
 
