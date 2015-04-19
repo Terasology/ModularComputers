@@ -72,6 +72,8 @@ public class InventoryComputerModule implements ComputerModule {
             return new InventoryAndChangeCondition(inventoryModuleConditionsRegister);
         if (name.equals("itemMove"))
             return new ItemMoveFunction(inventoryManager);
+        if (name.equals("dump"))
+            return new DumpFunction(inventoryManager);
         return null;
     }
 }
