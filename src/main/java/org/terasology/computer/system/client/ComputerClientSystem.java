@@ -15,9 +15,11 @@
  */
 package org.terasology.computer.system.client;
 
+import org.codehaus.plexus.util.StringUtils;
 import org.terasology.computer.component.ComputerComponent;
 import org.terasology.computer.component.ComputerTerminalComponent;
 import org.terasology.computer.event.client.ProgramExecutionResultEvent;
+import org.terasology.computer.event.client.ProgramListReceivedEvent;
 import org.terasology.computer.event.client.ProgramTextReceivedEvent;
 import org.terasology.computer.event.client.console.AppendConsoleLinesEvent;
 import org.terasology.computer.event.client.console.ClearConsoleScreenEvent;
@@ -107,6 +109,15 @@ public class ComputerClientSystem extends BaseComponentSystem {
         if (window != null) {
             ComputerTerminalWidget computerTerminalWidget = window.getComputerTerminalWidget();
             computerTerminalWidget.setProgramText(event.getProgramName(), event.getProgramText());
+        }
+    }
+
+    @ReceiveEvent
+    public void programsListReceived(ProgramListReceivedEvent event, EntityRef client) {
+        ComputerTerminalWindow window = (ComputerTerminalWindow) nuiManager.getScreen(COMPUTER_TERMINAL_UI);
+        if (window != null) {
+            ComputerTerminalWidget computerTerminalWidget = window.getComputerTerminalWidget();
+            computerTerminalWidget.displayProgramList(event.getPrograms());
         }
     }
 }

@@ -15,10 +15,13 @@
  */
 package org.terasology.computer.ui;
 
+import org.codehaus.plexus.util.StringUtils;
 import org.terasology.computer.context.ComputerConsole;
 import org.terasology.computer.event.server.ConsoleListeningRegistrationEvent;
+import org.terasology.computer.event.server.DeleteProgramEvent;
 import org.terasology.computer.event.server.ExecuteProgramEvent;
 import org.terasology.computer.event.server.GetProgramTextEvent;
+import org.terasology.computer.event.server.ListProgramsEvent;
 import org.terasology.computer.event.server.SaveProgramEvent;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.input.Keyboard;
@@ -34,6 +37,8 @@ import org.terasology.rendering.nui.FocusManager;
 import org.terasology.rendering.nui.HorizontalAlign;
 import org.terasology.rendering.nui.InteractionListener;
 import org.terasology.rendering.nui.VerticalAlign;
+
+import java.util.Collection;
 
 public class ComputerTerminalWidget extends CoreWidget {
     public static final Color BACKGROUND_COLOR = new Color(0x111111ff);
@@ -97,6 +102,14 @@ public class ComputerTerminalWidget extends CoreWidget {
 
     public void appendToPlayerConsole(String text) {
         playerCommandConsoleGui.appendToConsole(text);
+    }
+
+    public void displayProgramList(Collection<String> programs) {
+        if (!programs.isEmpty()) {
+            String programList = StringUtils.join(programs.iterator(), " ");
+            playerCommandConsoleGui.appendToConsole(programList);
+        }
+        playerCommandConsoleGui.setReadOnly(false);
     }
 
     @Override
@@ -292,7 +305,7 @@ public class ComputerTerminalWidget extends CoreWidget {
                     playerCommandConsoleGui.appendToConsole("Usage:");
                     playerCommandConsoleGui.appendToConsole("edit [programName] - edits or creates a new program with the specified name");
                 } else if (!isValidProgramName(commandParts[1])) {
-                    playerCommandConsoleGui.appendToConsole("Invalid program name - only letters and digits allowed");
+                    playerCommandConsoleGui.appendToConsole("Invalid program name - only letters and digits allowed and a maximum length of 10");
                 } else {
                     String programName = commandParts[1];
 
@@ -306,7 +319,7 @@ public class ComputerTerminalWidget extends CoreWidget {
                     playerCommandConsoleGui.appendToConsole("Usage:");
                     playerCommandConsoleGui.appendToConsole("execute [programName] - executes specified program");
                 } else if (!isValidProgramName(commandParts[1]))
-                    playerCommandConsoleGui.appendToConsole("Invalid program name - only letters and digits allowed");
+                    playerCommandConsoleGui.appendToConsole("Invalid program name - only letters and digits allowed and a maximum length of 10");
                 else {
                     clientEntity.send(new ExecuteProgramEvent(computerEntity, commandParts[1]));
                 }
@@ -315,7 +328,19 @@ public class ComputerTerminalWidget extends CoreWidget {
                     playerCommandConsoleGui.appendToConsole("Usage:");
                     playerCommandConsoleGui.appendToConsole("list - lists all programs on that computer");
                 } else {
-                    // TODO request list of programs
+                    playerCommandConsoleGui.appendToConsole("Retrieving list of programs...");
+
+                    playerCommandConsoleGui.setReadOnly(true);
+                    clientEntity.send(new ListProgramsEvent(computerEntity));
+                }
+            } else if (commandParts[0].equals("delete")) {
+                if (commandParts.length != 2) {
+                    playerCommandConsoleGui.appendToConsole("Usage:");
+                    playerCommandConsoleGui.appendToConsole("delete [programName] - deletes specified program");
+                } else if (!isValidProgramName(commandParts[1]))
+                    playerCommandConsoleGui.appendToConsole("Invalid program name - only letters and digits allowed and a maximum length of 10");
+                else {
+                    clientEntity.send(new DeleteProgramEvent(computerEntity, commandParts[1]));
                 }
             } else {
                 if (commandParts[0].length() > 0)
@@ -339,6 +364,7 @@ public class ComputerTerminalWidget extends CoreWidget {
         playerCommandConsoleGui.appendToConsole("edit [programName] - edits a program in an editor");
         playerCommandConsoleGui.appendToConsole("execute [programName] - executes a program");
         playerCommandConsoleGui.appendToConsole("list - lists all programs on that computer");
+        playerCommandConsoleGui.appendToConsole("delete [programName] - deletes a program");
         playerCommandConsoleGui.appendToConsole("exit - exits this console");
     }
 

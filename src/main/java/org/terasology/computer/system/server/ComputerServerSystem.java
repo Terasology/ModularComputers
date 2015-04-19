@@ -24,10 +24,13 @@ import org.terasology.computer.component.ComputerSystemComponent;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.context.ComputerContext;
 import org.terasology.computer.event.client.ProgramExecutionResultEvent;
+import org.terasology.computer.event.client.ProgramListReceivedEvent;
 import org.terasology.computer.event.client.ProgramTextReceivedEvent;
 import org.terasology.computer.event.server.ConsoleListeningRegistrationEvent;
+import org.terasology.computer.event.server.DeleteProgramEvent;
 import org.terasology.computer.event.server.ExecuteProgramEvent;
 import org.terasology.computer.event.server.GetProgramTextEvent;
+import org.terasology.computer.event.server.ListProgramsEvent;
 import org.terasology.computer.event.server.SaveProgramEvent;
 import org.terasology.computer.system.server.lang.ComputerModule;
 import org.terasology.computer.system.server.lang.computer.ComputerObjectDefinition;
@@ -52,6 +55,7 @@ import org.terasology.world.block.BlockComponent;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeSet;
 
 @RegisterSystem(RegisterMode.AUTHORITY)
 @Share(value = ComputerModuleRegistry.class)
@@ -157,6 +161,16 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
     }
 
     @ReceiveEvent
+    public void deleteProgramRequested(DeleteProgramEvent event, EntityRef client) {
+        EntityRef computerEntity = event.getComputerEntity();
+        ComputerComponent computer = computerEntity.getComponent(ComputerComponent.class);
+        if (computer != null) {
+            computer.programs.remove(event.getProgramName());
+            computerEntity.saveComponent(computer);
+        }
+    }
+
+    @ReceiveEvent
     public void programTextRequested(GetProgramTextEvent event, EntityRef client) {
         EntityRef computerEntity = event.getComputerEntity();
         ComputerComponent computer = computerEntity.getComponent(ComputerComponent.class);
@@ -165,6 +179,16 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
             if (programText == null)
                 programText = "";
             client.send(new ProgramTextReceivedEvent(event.getProgramName(), programText));
+        }
+    }
+
+    @ReceiveEvent
+    public void listOfProgramsRequested(ListProgramsEvent event, EntityRef client) {
+        EntityRef computerEntity = event.getComputerEntity();
+        ComputerComponent computer = computerEntity.getComponent(ComputerComponent.class);
+        if (computer != null) {
+            TreeSet<String> programNames = new TreeSet<>(computer.programs.keySet());
+            client.send(new ProgramListReceivedEvent(programNames));
         }
     }
 
