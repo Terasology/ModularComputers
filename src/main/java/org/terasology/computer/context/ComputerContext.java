@@ -230,7 +230,7 @@ public class ComputerContext {
     }
 
     public void deregisterConsoleListener(EntityRef client) {
-        ComputerConsoleListener listener = consoleListenerMap.get(client);
+        ComputerConsoleListener listener = consoleListenerMap.remove(client);
         if (listener != null) {
             console.removeConsoleListener(listener);
         }
