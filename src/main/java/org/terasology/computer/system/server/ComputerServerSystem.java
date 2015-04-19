@@ -18,6 +18,8 @@ package org.terasology.computer.system.server;
 import com.gempukku.lang.ExecutionCostConfiguration;
 import com.gempukku.lang.IllegalSyntaxException;
 import com.gempukku.lang.ObjectDefinition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.terasology.computer.component.ComputerComponent;
 import org.terasology.computer.component.ComputerModuleComponent;
 import org.terasology.computer.component.ComputerSystemComponent;
@@ -46,20 +48,27 @@ import org.terasology.entitySystem.systems.BaseComponentSystem;
 import org.terasology.entitySystem.systems.RegisterMode;
 import org.terasology.entitySystem.systems.RegisterSystem;
 import org.terasology.entitySystem.systems.UpdateSubscriberSystem;
+import org.terasology.logic.inventory.InventoryComponent;
 import org.terasology.logic.inventory.events.BeforeItemPutInInventory;
 import org.terasology.network.events.DisconnectedEvent;
 import org.terasology.registry.In;
 import org.terasology.registry.Share;
 import org.terasology.world.block.BlockComponent;
+import org.terasology.world.block.items.OnBlockItemPlaced;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 
 @RegisterSystem(RegisterMode.AUTHORITY)
 @Share(value = ComputerModuleRegistry.class)
 public class ComputerServerSystem extends BaseComponentSystem implements UpdateSubscriberSystem, ComputerModuleRegistry {
+    private static final Logger logger = LoggerFactory.getLogger(ComputerServerSystem.class);
+
     @In
     private EntityManager entityManager;
 
@@ -109,20 +118,48 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
 
     @ReceiveEvent
     public void computerAppearsInWorld(OnAddedComponent event, EntityRef computerEntity, BlockComponent block, ComputerComponent computer) {
+        logger.debug("Computer added to world as block");
         if (computer.computerId == -1) {
             computer.computerId = assignNextId();
+            logger.debug("Assigning a new ID to computer: "+computer.computerId);
             computerEntity.saveComponent(computer);
+        } else {
+            logger.debug("Computer has an ID already: "+computer.computerId);
         }
     }
 
     @ReceiveEvent
     public void computerLoadedInWorld(OnActivatedComponent event, EntityRef computerEntity, BlockComponent block, ComputerComponent computer) {
+        logger.debug("Creating computer context for computer: "+computer.computerId);
         computerContextMap.put(computer.computerId, new ComputerContext(this, computerEntity, computer.cpuSpeed, computer.stackSize, computer.memorySize));
     }
 
     @ReceiveEvent
     public void computerUnloadedFromWorld(BeforeDeactivateComponent event, EntityRef computerEntity, BlockComponent block, ComputerComponent computer) {
+        logger.debug("Destroying computer context for computer: "+computer.computerId);
         computerContextMap.remove(computer.computerId);
+    }
+
+    @ReceiveEvent
+    public void computerPlacedInWorld(OnBlockItemPlaced event, EntityRef itemEntity, ComputerComponent component) {
+        ComputerComponent itemComponent = itemEntity.getComponent(ComputerComponent.class);
+        logger.debug("Computer placed from item, computer id: " + itemComponent.computerId);
+        if (itemComponent.computerId != -1) {
+            ComputerComponent blockComponent = event.getPlacedBlock().getComponent(ComputerComponent.class);
+            copyValues(itemComponent, blockComponent);
+            event.getPlacedBlock().saveComponent(blockComponent);
+        }
+    }
+
+    private void copyValues(ComputerComponent fromComponent, ComputerComponent toComponent) {
+        // Do not copy computerId, it should be new on each placement
+//        toComponent.computerId = fromComponent.computerId;
+        toComponent.moduleSlotStart = fromComponent.moduleSlotStart;
+        toComponent.moduleSlotCount = fromComponent.moduleSlotCount;
+        toComponent.cpuSpeed = fromComponent.cpuSpeed;
+        toComponent.stackSize = fromComponent.stackSize;
+        toComponent.memorySize = fromComponent.memorySize;
+        toComponent.programs = fromComponent.programs;
     }
 
     @ReceiveEvent
@@ -226,23 +263,27 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
             if (module == null) {
                 event.consume();
             } else {
-                ComputerContext computerContext = computerContextMap.get(computer.computerId);
+                int moduleSlotEntered = slot-slotStart;
+
+                InventoryComponent inventory = computerEntity.getComponent(InventoryComponent.class);
+                Collection<ComputerModule> existingModules = new HashSet<>();
+                for (int i=0; i<slotCount; i++) {
+                    if (i != moduleSlotEntered) {
+                        ComputerModuleComponent existingModule = inventory.itemSlots.get(i).getComponent(ComputerModuleComponent.class);
+                        if (existingModule != null) {
+                            existingModules.add(getComputerModuleByType(existingModule.moduleType));
+                        }
+                    }
+                }
+
                 ComputerModule computerModule = getComputerModuleByType(module.moduleType);
-                ComputerCallback computerCallback = computerContext.getComputerCallback();
-                if (!computerModule.canBePlacedInComputer(computerCallback)) {
+                if (!computerModule.canBePlacedInComputer(existingModules)) {
                     event.consume();
                 }
 
-                int moduleSlotEntered = slot-slotStart;
-                for (int i=0; i<slotCount; i++) {
-                    // Don't ask the module this one is replacing
-                    if (i != moduleSlotEntered) {
-                        ComputerModule existingComputerModule = computerCallback.getModule(i);
-                        if (existingComputerModule != null) {
-                            if (!existingComputerModule.acceptsNewModule(computerCallback, computerModule)) {
-                                event.consume();
-                            }
-                        }
+                for (ComputerModule existingModule : existingModules) {
+                    if (!existingModule.acceptsNewModule(computerModule)) {
+                        event.consume();
                     }
                 }
             }

@@ -1,14 +1,14 @@
 {
     "DisplayName" : {
-        "name" : "Inventory Manipulator Module"
+        "name" : "Internal Storage Module"
     },
     "Item" : {
         "icon" : "engine:items.coal",
         "renderWithIcon" : true,
-        "stackId" : "inventoryManipulatorModule",
+        "stackId" : "internalStorageModule",
         "maxStackSize": 1
     },
     "ComputerModule" : {
-        "moduleType": "Inventory"
+        "moduleType": "Storage"
     }
 }

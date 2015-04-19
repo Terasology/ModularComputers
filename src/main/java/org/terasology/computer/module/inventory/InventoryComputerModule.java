@@ -15,11 +15,12 @@
  */
 package org.terasology.computer.module.inventory;
 
-import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.ComputerModule;
 import org.terasology.computer.system.server.lang.ModuleFunctionExecutable;
 import org.terasology.logic.inventory.InventoryManager;
 import org.terasology.world.BlockEntityRegistry;
+
+import java.util.Collection;
 
 public class InventoryComputerModule implements ComputerModule {
     private InventoryModuleConditionsRegister inventoryModuleConditionsRegister;
@@ -49,12 +50,12 @@ public class InventoryComputerModule implements ComputerModule {
     }
 
     @Override
-    public boolean canBePlacedInComputer(ComputerCallback computerCallback) {
+    public boolean canBePlacedInComputer(Collection<ComputerModule> computerModulesInstalled) {
         return true;
     }
 
     @Override
-    public boolean acceptsNewModule(ComputerCallback computerCallback, ComputerModule computerModule) {
+    public boolean acceptsNewModule(ComputerModule computerModule) {
         return true;
     }
 

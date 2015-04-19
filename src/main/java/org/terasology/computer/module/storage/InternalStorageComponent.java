@@ -13,25 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.terasology.computer.component;
+package org.terasology.computer.module.storage;
 
-import com.google.api.client.util.Lists;
 import org.terasology.entitySystem.Component;
-import org.terasology.world.block.ForceBlockActive;
-import org.terasology.world.block.items.AddToBlockBasedItem;
+import org.terasology.entitySystem.Owns;
+import org.terasology.entitySystem.entity.EntityRef;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-@ForceBlockActive
-@AddToBlockBasedItem
-public class ComputerComponent implements Component {
-    public Map<String, String> programs = new HashMap<>();
-    public int moduleSlotStart = 0;
-    public int moduleSlotCount = 4;
-    public int cpuSpeed = 10;
-    public int stackSize = 10;
-    public int memorySize = 1024;
-    public int computerId=-1;
+public class InternalStorageComponent implements Component {
+    @Owns
+    public EntityRef inventoryEntity;
 }

@@ -17,6 +17,8 @@ package org.terasology.computer.system.server.lang;
 
 import org.terasology.computer.context.ComputerCallback;
 
+import java.util.Collection;
+
 public interface ComputerModule {
     /**
      * Returns a string representing the module type. It is recommended to user Camel-Case string, with no spaces,
@@ -38,21 +40,20 @@ public interface ComputerModule {
      * This method is for modules that should not be placed in multiples, or in combinations with other modules, as
      * it allows modules to control the configuration of a computer.
      *
-     * @param computerCallback
+     * @param computerModulesInstalled
      * @return True, if it's ok to place this module in the computer passed as a parameter, false otherwise.
      */
-    public boolean canBePlacedInComputer(ComputerCallback computerCallback);
+    public boolean canBePlacedInComputer(Collection<ComputerModule> computerModulesInstalled);
 
     /**
      * Checks if this module, that is already placed in the computer, is ok with adding a new module to the computer.
      * This method is for modules that should not be placed in multiples, or in combinations with other modules, as
      * it allows modules to control the configuration of a computer.
      *
-     * @param computerCallback
-     * @param computerModule	 New computer module that is being placed into the computer.
+     * @param computerModule     New computer module that is being placed into the computer.
      * @return True, if it's ok to place the module in the computer passed as a parameter, false otherwise.
      */
-    public boolean acceptsNewModule(ComputerCallback computerCallback, ComputerModule computerModule);
+    public boolean acceptsNewModule(ComputerModule computerModule);
 
     /**
      * Returns a function with the specified name. To make the implementation easier, you can subclass

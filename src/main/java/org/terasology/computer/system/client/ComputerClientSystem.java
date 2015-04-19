@@ -15,7 +15,6 @@
  */
 package org.terasology.computer.system.client;
 
-import org.codehaus.plexus.util.StringUtils;
 import org.terasology.computer.component.ComputerComponent;
 import org.terasology.computer.component.ComputerTerminalComponent;
 import org.terasology.computer.event.client.ProgramExecutionResultEvent;
