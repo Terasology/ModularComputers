@@ -23,6 +23,12 @@ import org.terasology.computer.system.server.lang.ModuleFunctionExecutable;
 import java.util.Map;
 
 public class StorageInventoryBindingFunction implements ModuleFunctionExecutable {
+    private boolean input;
+
+    public StorageInventoryBindingFunction(boolean input) {
+        this.input = input;
+    }
+
     @Override
     public int getDuration() {
         return 10;
@@ -40,6 +46,6 @@ public class StorageInventoryBindingFunction implements ModuleFunctionExecutable
 
     @Override
     public Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
-        return new InternalInventoryBindingCustomObject();
+        return new InternalInventoryBindingCustomObject(input);
     }
 }

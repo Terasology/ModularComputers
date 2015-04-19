@@ -27,9 +27,11 @@ import java.util.Map;
 
 public class InventoryBindingFunction implements ModuleFunctionExecutable {
     private BlockEntityRegistry blockEntityRegistry;
+    private boolean input;
 
-    public InventoryBindingFunction(BlockEntityRegistry blockEntityRegistry) {
+    public InventoryBindingFunction(BlockEntityRegistry blockEntityRegistry, boolean input) {
         this.blockEntityRegistry = blockEntityRegistry;
+        this.input = input;
     }
 
     @Override
@@ -58,6 +60,6 @@ public class InventoryBindingFunction implements ModuleFunctionExecutable {
             throw new ExecutionException(line, "Invalid direction in getInventoryBinding()");
         }
 
-        return new RelativeInventoryBindingCustomObject(blockEntityRegistry, direction);
+        return new RelativeInventoryBindingCustomObject(blockEntityRegistry, direction, input);
     }
 }

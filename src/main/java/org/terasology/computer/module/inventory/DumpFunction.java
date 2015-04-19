@@ -54,33 +54,24 @@ public class DumpFunction implements ModuleFunctionExecutable {
     public Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
         Variable inventoryBindingFrom = parameters.get("inventoryBindingFrom");
         if (inventoryBindingFrom.getType() != Variable.Type.CUSTOM_OBJECT
-                || !((CustomObject) inventoryBindingFrom.getValue()).getType().equals("INVENTORY_BINDING"))
+                || !((CustomObject) inventoryBindingFrom.getValue()).getType().equals("INVENTORY_BINDING")
+                || ((InventoryBinding) inventoryBindingFrom.getValue()).isInput())
             throw new ExecutionException(line, "Invalid inventoryBindingFrom in dump()");
 
         Variable inventoryBindingTo = parameters.get("inventoryBindingTo");
         if (inventoryBindingTo.getType() != Variable.Type.CUSTOM_OBJECT
-                || !((CustomObject) inventoryBindingTo.getValue()).getType().equals("INVENTORY_BINDING"))
+                || !((CustomObject) inventoryBindingTo.getValue()).getType().equals("INVENTORY_BINDING")
+                || !((InventoryBinding) inventoryBindingTo.getValue()).isInput())
             throw new ExecutionException(line, "Invalid inventoryBindingTo in dump()");
 
         InventoryBinding bindingFrom = (InventoryBinding) inventoryBindingFrom.getValue();
-        EntityRef inventoryFromEntity = bindingFrom.getInventoryEntity(line, computer);
+        InventoryBinding.InventoryWithSlots inventoryFrom = bindingFrom.getInventoryEntity(line, computer);
 
         InventoryBinding bindingTo = (InventoryBinding) inventoryBindingTo.getValue();
-        EntityRef inventoryToEntity = bindingTo.getInventoryEntity(line, computer);
+        InventoryBinding.InventoryWithSlots inventoryTo = bindingTo.getInventoryEntity(line, computer);
 
-        InventoryComponent inventoryFrom = inventoryFromEntity.getComponent(InventoryComponent.class);
-        int slotFromCount = inventoryFrom.itemSlots.size();
-
-        InventoryComponent inventoryTo = inventoryToEntity.getComponent(InventoryComponent.class);
-        int slotToCount = inventoryTo.itemSlots.size();
-
-        List<Integer> slots = new LinkedList<>();
-        for (int i=0; i<slotToCount; i++) {
-            slots.add(i);
-        }
-
-        for (int slotNo=0; slotNo<slotFromCount; slotNo++) {
-            inventoryManager.moveItemToSlots(computer.getComputerEntity(), inventoryFromEntity, slotNo, inventoryToEntity, slots);
+        for (int slotNo : inventoryFrom.slots) {
+            inventoryManager.moveItemToSlots(computer.getComputerEntity(), inventoryFrom.inventory, slotNo, inventoryTo.inventory, inventoryTo.slots);
         }
 
         return null;

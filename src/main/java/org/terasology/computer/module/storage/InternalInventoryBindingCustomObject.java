@@ -20,15 +20,42 @@ import com.gempukku.lang.ExecutionException;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.module.inventory.InventoryBinding;
 import org.terasology.entitySystem.entity.EntityRef;
+import org.terasology.logic.inventory.InventoryComponent;
+
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 public class InternalInventoryBindingCustomObject implements CustomObject, InventoryBinding {
+    private boolean input;
+
+    public InternalInventoryBindingCustomObject(boolean input) {
+        this.input = input;
+    }
+
     @Override
     public String getType() {
         return "INVENTORY_BINDING";
     }
 
     @Override
-    public EntityRef getInventoryEntity(int line, ComputerCallback computerCallback) throws ExecutionException {
-        return computerCallback.getComputerEntity().getComponent(InternalStorageComponent.class).inventoryEntity;
+    public InventoryWithSlots getInventoryEntity(int line, ComputerCallback computerCallback) throws ExecutionException {
+        EntityRef inventoryEntity = computerCallback.getComputerEntity().getComponent(InternalStorageComponent.class).inventoryEntity;
+        int slotCount = inventoryEntity.getComponent(InventoryComponent.class).itemSlots.size();
+        List<Integer> slots = getSlotList(slotCount);
+        return new InventoryWithSlots(inventoryEntity, Collections.unmodifiableList(slots));
+    }
+
+    @Override
+    public boolean isInput() {
+        return input;
+    }
+
+    private List<Integer> getSlotList(int slotCount) {
+        List<Integer> slots = new LinkedList<>();
+        for (int i=0; i<slotCount; i++) {
+            slots.add(i);
+        }
+        return slots;
     }
 }

@@ -22,6 +22,7 @@ import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.ModuleFunctionExecutable;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.logic.inventory.InventoryComponent;
+import org.terasology.logic.inventory.InventoryUtils;
 
 import java.util.Map;
 
@@ -55,15 +56,14 @@ public class ItemCountFunction implements ModuleFunctionExecutable {
         int slotNo = ((Number) slot.getValue()).intValue();
 
         InventoryBinding binding = (InventoryBinding) inventoryBinding.getValue();
-        EntityRef inventoryEntity = binding.getInventoryEntity(line, computer);
-        InventoryComponent inventory = inventoryEntity.getComponent(InventoryComponent.class);
+        InventoryBinding.InventoryWithSlots inventory = binding.getInventoryEntity(line, computer);
 
-        int slotCount = inventory.itemSlots.size();
+        int slotCount = inventory.slots.size();
 
         if (slotNo<0 || slotCount<=slotNo)
             throw new ExecutionException(line, "Slot number out of range in getItemCount()");
 
-        EntityRef itemEntity = inventory.itemSlots.get(slotNo);
+        EntityRef itemEntity = InventoryUtils.getItemAt(inventory.inventory, inventory.slots.get(slotNo));
         return InventoryModuleUtils.getItemCount(itemEntity);
     }
 }

@@ -23,6 +23,7 @@ import org.terasology.computer.system.server.lang.ModuleFunctionExecutable;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.logic.inventory.InventoryComponent;
 import org.terasology.logic.inventory.InventoryManager;
+import org.terasology.logic.inventory.InventoryUtils;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -54,12 +55,14 @@ public class ItemMoveFunction implements ModuleFunctionExecutable {
     public Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
         Variable inventoryBindingFrom = parameters.get("inventoryBindingFrom");
         if (inventoryBindingFrom.getType() != Variable.Type.CUSTOM_OBJECT
-                || !((CustomObject) inventoryBindingFrom.getValue()).getType().equals("INVENTORY_BINDING"))
+                || !((CustomObject) inventoryBindingFrom.getValue()).getType().equals("INVENTORY_BINDING")
+                || ((InventoryBinding) inventoryBindingFrom.getValue()).isInput())
             throw new ExecutionException(line, "Invalid inventoryBindingFrom in itemMove()");
 
         Variable inventoryBindingTo = parameters.get("inventoryBindingTo");
         if (inventoryBindingTo.getType() != Variable.Type.CUSTOM_OBJECT
-                || !((CustomObject) inventoryBindingTo.getValue()).getType().equals("INVENTORY_BINDING"))
+                || !((CustomObject) inventoryBindingTo.getValue()).getType().equals("INVENTORY_BINDING")
+                || !((InventoryBinding) inventoryBindingTo.getValue()).isInput())
             throw new ExecutionException(line, "Invalid inventoryBindingTo in itemMove()");
 
         Variable slot = parameters.get("slot");
@@ -69,30 +72,21 @@ public class ItemMoveFunction implements ModuleFunctionExecutable {
         int slotNo = ((Number) slot.getValue()).intValue();
 
         InventoryBinding bindingFrom = (InventoryBinding) inventoryBindingFrom.getValue();
-        EntityRef inventoryFromEntity = bindingFrom.getInventoryEntity(line, computer);
+        InventoryBinding.InventoryWithSlots inventoryFrom = bindingFrom.getInventoryEntity(line, computer);
 
         InventoryBinding bindingTo = (InventoryBinding) inventoryBindingTo.getValue();
-        EntityRef inventoryToEntity = bindingTo.getInventoryEntity(line, computer);
+        InventoryBinding.InventoryWithSlots inventoryTo = bindingTo.getInventoryEntity(line, computer);
 
-        InventoryComponent inventoryFrom = inventoryFromEntity.getComponent(InventoryComponent.class);
-        int slotFromCount = inventoryFrom.itemSlots.size();
+        int slotFromCount = inventoryFrom.slots.size();
 
         if (slotNo<0 || slotFromCount<=slotNo)
             throw new ExecutionException(line, "Slot number out of range in itemMove()");
 
-        InventoryComponent inventoryTo = inventoryToEntity.getComponent(InventoryComponent.class);
-        int slotToCount = inventoryTo.itemSlots.size();
+        int itemCountBefore = InventoryModuleUtils.getItemCount(InventoryUtils.getItemAt(inventoryFrom.inventory, inventoryFrom.slots.get(slotNo)));
 
-        int itemCountBefore = InventoryModuleUtils.getItemCount(inventoryFrom.itemSlots.get(slotNo));
+        inventoryManager.moveItemToSlots(computer.getComputerEntity(), inventoryFrom.inventory, slotNo, inventoryTo.inventory, inventoryTo.slots);
 
-        List<Integer> slots = new LinkedList<>();
-        for (int i=0; i<slotToCount; i++) {
-            slots.add(i);
-        }
-
-        inventoryManager.moveItemToSlots(computer.getComputerEntity(), inventoryFromEntity, slotNo, inventoryToEntity, slots);
-
-        int itemCountAfter = InventoryModuleUtils.getItemCount(inventoryFrom.itemSlots.get(slotNo));
+        int itemCountAfter = InventoryModuleUtils.getItemCount(InventoryUtils.getItemAt(inventoryFrom.inventory, inventoryFrom.slots.get(slotNo)));
 
         return itemCountBefore-itemCountAfter;
     }

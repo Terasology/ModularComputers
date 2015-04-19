@@ -61,8 +61,10 @@ public class InventoryComputerModule implements ComputerModule {
 
     @Override
     public ModuleFunctionExecutable getFunctionByName(String name) {
-        if (name.equals("getInventoryBinding"))
-            return new InventoryBindingFunction(blockEntityRegistry);
+        if (name.equals("getInputInventoryBinding"))
+            return new InventoryBindingFunction(blockEntityRegistry, true);
+        if (name.equals("getOutputInventoryBinding"))
+            return new InventoryBindingFunction(blockEntityRegistry, false);
         if (name.equals("getInventorySlotCount"))
             return new InventorySlotCountFunction();
         if (name.equals("getItemCount"))

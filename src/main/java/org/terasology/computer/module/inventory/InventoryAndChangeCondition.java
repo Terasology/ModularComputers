@@ -22,6 +22,7 @@ import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.ModuleFunctionExecutable;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.logic.inventory.InventoryComponent;
+import org.terasology.logic.inventory.InventoryUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,18 +55,19 @@ public class InventoryAndChangeCondition implements ModuleFunctionExecutable {
     public Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
         Variable inventoryBinding = parameters.get("inventoryBinding");
         if (inventoryBinding.getType() != Variable.Type.CUSTOM_OBJECT
-                || !((CustomObject) inventoryBinding.getValue()).getType().equals("INVENTORY_BINDING"))
+                || !((CustomObject) inventoryBinding.getValue()).getType().equals("INVENTORY_BINDING")
+                || !((InventoryBinding) inventoryBinding.getValue()).isInput())
             throw new ExecutionException(line, "Invalid inventoryBinding in getInventoryAndChangeCondition()");
 
         InventoryBinding binding = (InventoryBinding) inventoryBinding.getValue();
-        EntityRef inventoryEntity = binding.getInventoryEntity(line, computer);
-        InventoryComponent inventory = inventoryEntity.getComponent(InventoryComponent.class);
+        InventoryBinding.InventoryWithSlots inventory = binding.getInventoryEntity(line, computer);
 
         Map<String, Object> result = new HashMap<>();
 
         List<Map<String, Object>> inventoryResult = new ArrayList<>();
 
-        for (EntityRef item : inventory.itemSlots) {
+        for (int slot : inventory.slots) {
+            EntityRef item = InventoryUtils.getItemAt(inventory.inventory, slot);
             Map<String, Object> itemMap = new HashMap<>();
 
             int itemCount = InventoryModuleUtils.getItemCount(item);
@@ -79,7 +81,7 @@ public class InventoryAndChangeCondition implements ModuleFunctionExecutable {
 
         result.put("inventory", inventoryResult);
 
-        result.put("condition", inventoryModuleConditionsRegister.registerInventoryChangeListener(inventoryEntity));
+        result.put("condition", inventoryModuleConditionsRegister.registerInventoryChangeListener(inventory.inventory));
 
         return result;
     }

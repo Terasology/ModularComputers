@@ -49,9 +49,8 @@ public class InventorySlotCountFunction implements ModuleFunctionExecutable {
             throw new ExecutionException(line, "Invalid inventoryBinding in getInventorySlotCount()");
 
         InventoryBinding binding = (InventoryBinding) inventoryBinding.getValue();
-        EntityRef inventoryEntity = binding.getInventoryEntity(line, computer);
-        InventoryComponent inventory = inventoryEntity.getComponent(InventoryComponent.class);
+        InventoryBinding.InventoryWithSlots inventory = binding.getInventoryEntity(line, computer);
 
-        return inventory.itemSlots.size();
+        return inventory.slots.size();
     }
 }
