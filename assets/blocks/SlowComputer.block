@@ -2,6 +2,9 @@
     "hardness" : 18,
     "mass" : 100,
     "sounds": "Core:stone",
+    "inventory": {
+        "stackable": false
+    },
     "entity": {
             "prefab": "ModularComputers:SlowComputer"
         }
