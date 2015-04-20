@@ -4,21 +4,36 @@
         "type": "relativeLayout",
         "contents": [
             {
-                "type": "relativeLayout",
+                "type": "columnLayout",
+                "columns": 1,
+                "verticalSpacing": 3,
                 "contents": [
                     {
-                        "type": "ModularComputers:ComputerTerminalWidget",
-                        "id": "computerTerminal",
-                        "layoutInfo": {
-                            "width": 710,
-                            "height": 597,
-                            "position-left": {
-                                "offset": 5
+                        "type": "columnLayout",
+                        "columns": 3,
+                        "horizontalSpacing": 3,
+                        "contents": [
+                            {
+                                "type" : "UIButton",
+                                "id" : "playerConsole",
+                                "text" : "Player console",
+                                "canBeFocus": false
                             },
-                            "position-top": {
-                                "offset": 5
+                            {
+                                "type" : "UIButton",
+                                "id" : "computerConsole",
+                                "text" : "Computer console"
+                            },
+                            {
+                                "type" : "UIButton",
+                                "id" : "documentation",
+                                "text" : "Documentation"
                             }
-                        }
+                        ]
+                    },
+                    {
+                        "type": "ModularComputers:ComputerTerminalWidget",
+                        "id": "computerTerminal"
                     }
                 ],
                 "layoutInfo": {

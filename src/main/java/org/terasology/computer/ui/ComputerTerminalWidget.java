@@ -42,27 +42,19 @@ import java.util.Collection;
 
 public class ComputerTerminalWidget extends CoreWidget {
     public enum TerminalMode {
-        PLAYER_CONSOLE, COMPUTER_CONSOLE
+        PLAYER_CONSOLE, COMPUTER_CONSOLE, DOCUMENTATION
     }
 
     public static final Color BACKGROUND_COLOR = new Color(0x111111ff);
     public static final Color FRAME_COLOR = new Color(0xffffffff);
-    public static final Color BUTTON_TEXT_COLOR = new Color(0xffffffff);
-    public static final Color BUTTON_BG_HOVER_COLOR = new Color(0x7f7f7fff);
-    public static final Color BUTTON_BG_ACTIVE_COLOR = new Color(0xbfbfbfff);
-    public static final Color BUTTON_BG_INACTIVE_COLOR = new Color(0x3f3f3fff);
 
     public static final Color COMPUTER_CONSOLE_TEXT_COLOR = new Color(0xffffffff);
 
     private static final int PADDING_HOR = 5;
     private static final int PADDING_VER = 5;
-    private static final int BUTTON_PADDING_HOR = 3;
-    private static final int BUTTON_PADDING_VER = 3;
 
     public static final int FONT_HEIGHT = 16;
     public static final int CHARACTER_WIDTH = 14;
-    public static final String PLAYER_CONSOLE_TEXT = "Player console";
-    public static final String COMPUTER_CONSOLE_TEXT = "Computer console";
 
     private TerminalMode mode;
     private boolean editingProgram;
@@ -73,13 +65,8 @@ public class ComputerTerminalWidget extends CoreWidget {
     private EntityRef clientEntity;
     private EntityRef computerEntity;
 
-    private Rect2i playerConsoleModeButton;
-    private Rect2i computerConsoleModeButton;
-
     private PlayerCommandConsoleGui playerCommandConsoleGui;
     private ProgramEditingConsoleGui programEditingConsoleGui;
-
-    private Vector2i mousePosition = new Vector2i(-1, -1);
 
     public void setup(Runnable closeRunnable, EntityRef clientEntity, EntityRef computerEntity) {
         mode = TerminalMode.PLAYER_CONSOLE;
@@ -97,6 +84,10 @@ public class ComputerTerminalWidget extends CoreWidget {
         programEditingConsoleGui = new ProgramEditingConsoleGui(this);
 
         this.clientEntity.send(new ConsoleListeningRegistrationEvent(this.computerEntity, true));
+    }
+
+    public void setMode(TerminalMode mode) {
+        this.mode = mode;
     }
 
     public void onClosed() {
@@ -131,86 +122,11 @@ public class ComputerTerminalWidget extends CoreWidget {
         drawVerticalLine(canvas, 0, 0, screenHeight, FRAME_COLOR);
         drawVerticalLine(canvas, screenWidth, 0, screenHeight, FRAME_COLOR);
 
-        int buttonHeight = BUTTON_PADDING_VER * 2 + FONT_HEIGHT;
-
-        int playerConsoleButtonWidth = getFont(canvas).getWidth(PLAYER_CONSOLE_TEXT) + BUTTON_PADDING_HOR * 2;
-        int computerConsoleButtonWidth = getFont(canvas).getWidth(COMPUTER_CONSOLE_TEXT) + BUTTON_PADDING_HOR * 2;
-
-        int mouseX = mousePosition.x;
-        int mouseY = mousePosition.y;
-
-        boolean playerConsoleHover = mouseX >= PADDING_HOR && mouseX < PADDING_HOR + playerConsoleButtonWidth
-                && mouseY >= PADDING_VER && mouseY < PADDING_VER + buttonHeight;
-        boolean computerConsoleHover = mouseX >= PADDING_HOR + playerConsoleButtonWidth && mouseX < PADDING_HOR + playerConsoleButtonWidth + computerConsoleButtonWidth
-                && mouseY >= PADDING_VER && mouseY < PADDING_VER + buttonHeight;
-
-        Color playerConsoleButBgColor = getButBgColor(playerConsoleHover, mode == TerminalMode.PLAYER_CONSOLE);
-        Color computerConsoleButBgColor = getButBgColor(computerConsoleHover, mode == TerminalMode.COMPUTER_CONSOLE);
-
-        // Draw button backgrounds
-        canvas.drawFilledRectangle(Rect2i.createFromMinAndMax(PADDING_HOR, PADDING_VER, PADDING_HOR + playerConsoleButtonWidth, PADDING_VER + buttonHeight), playerConsoleButBgColor);
-        canvas.drawFilledRectangle(Rect2i.createFromMinAndMax(PADDING_HOR + playerConsoleButtonWidth, PADDING_VER, PADDING_HOR + playerConsoleButtonWidth + computerConsoleButtonWidth, PADDING_VER + buttonHeight), computerConsoleButBgColor);
-
-        playerConsoleModeButton = Rect2i.createFromMinAndSize(PADDING_HOR, PADDING_VER, playerConsoleButtonWidth, buttonHeight);
-        computerConsoleModeButton = Rect2i.createFromMinAndSize(PADDING_HOR + playerConsoleButtonWidth, PADDING_VER, computerConsoleButtonWidth, buttonHeight);
-
-        // Draw button texts
-        canvas.drawTextRaw(PLAYER_CONSOLE_TEXT, getFont(canvas), BUTTON_TEXT_COLOR, playerConsoleModeButton);
-        canvas.drawTextRaw(COMPUTER_CONSOLE_TEXT, getFont(canvas), BUTTON_TEXT_COLOR, computerConsoleModeButton);
 
         if (mode == TerminalMode.PLAYER_CONSOLE)
             drawPlayerConsole(canvas);
         else if (mode == TerminalMode.COMPUTER_CONSOLE)
             drawComputerConsole(canvas);
-
-        canvas.addInteractionRegion(
-                new InteractionListener() {
-                    @Override
-                    public void setFocusManager(FocusManager focusManager) {
-
-                    }
-
-                    @Override
-                    public void onMouseOver(Vector2i pos, boolean topMostElement) {
-                        mousePosition.set(pos);
-                    }
-
-                    @Override
-                    public void onMouseLeave() {
-                        mousePosition.set(-1, -1);
-                    }
-
-                    @Override
-                    public boolean onMouseClick(MouseInput button, Vector2i pos) {
-                        return mouseClicked(pos.x, pos.y, button.getId());
-                    }
-
-                    @Override
-                    public boolean onMouseDoubleClick(MouseInput button, Vector2i pos) {
-                        return false;
-                    }
-
-                    @Override
-                    public void onMouseDrag(Vector2i pos) {
-
-                    }
-
-                    @Override
-                    public boolean onMouseWheel(int wheelTurns, Vector2i pos) {
-                        return false;
-                    }
-
-                    @Override
-                    public void onMouseRelease(MouseInput button, Vector2i pos) {
-
-                    }
-
-                    @Override
-                    public boolean isMouseOver() {
-                        return false;
-                    }
-                }
-        );
     }
 
     private Font getFont(Canvas canvas) {
@@ -220,7 +136,7 @@ public class ComputerTerminalWidget extends CoreWidget {
     @Override
     public Vector2i getPreferredContentSize(Canvas canvas, Vector2i sizeHint) {
         int width = PADDING_HOR * 2 + CHARACTER_WIDTH * ComputerConsole.CONSOLE_WIDTH;
-        int height = PADDING_VER * 2 + (BUTTON_PADDING_VER * 2 + FONT_HEIGHT) + FONT_HEIGHT * ComputerConsole.CONSOLE_HEIGHT;
+        int height = PADDING_VER * 2 + FONT_HEIGHT * ComputerConsole.CONSOLE_HEIGHT;
         return new Vector2i(width, height);
     }
 
@@ -230,16 +146,16 @@ public class ComputerTerminalWidget extends CoreWidget {
 
     private void drawPlayerConsole(Canvas canvas) {
         if (editingProgram) {
-            programEditingConsoleGui.drawEditProgramConsole(canvas, PADDING_HOR, PADDING_VER + BUTTON_PADDING_VER * 2 + FONT_HEIGHT);
+            programEditingConsoleGui.drawEditProgramConsole(canvas, PADDING_HOR, PADDING_VER);
         } else {
-            playerCommandConsoleGui.drawPlayerCommandConsole(canvas, PADDING_HOR, PADDING_VER + BUTTON_PADDING_VER * 2 + FONT_HEIGHT);
+            playerCommandConsoleGui.drawPlayerCommandConsole(canvas, PADDING_HOR, PADDING_VER);
         }
     }
 
     private void drawComputerConsole(Canvas canvas) {
         final String[] consoleLines = computerConsole.getLines();
         for (int i = 0; i < consoleLines.length; i++)
-            drawMonospacedText(canvas, consoleLines[i], PADDING_HOR, PADDING_VER + BUTTON_PADDING_VER * 2 + FONT_HEIGHT + i * FONT_HEIGHT, COMPUTER_CONSOLE_TEXT_COLOR);
+            drawMonospacedText(canvas, consoleLines[i], PADDING_HOR, PADDING_VER + i * FONT_HEIGHT, COMPUTER_CONSOLE_TEXT_COLOR);
     }
 
     public void drawVerticalLine(Canvas canvas, int x, int y1, int y2, Color color) {
@@ -259,17 +175,6 @@ public class ComputerTerminalWidget extends CoreWidget {
 
     private void renderCharAt(Canvas canvas, char ch, int x, int y, Color color) {
         canvas.drawTextRaw(String.valueOf(ch), getFont(canvas), color, Rect2i.createFromMinAndSize(x, y, CHARACTER_WIDTH, FONT_HEIGHT), HorizontalAlign.CENTER, VerticalAlign.TOP);
-    }
-
-    private boolean mouseClicked(int mouseX, int mouseY, int which) {
-        if (mode == TerminalMode.PLAYER_CONSOLE && computerConsoleModeButton.contains(mouseX, mouseY)) {
-            mode = TerminalMode.COMPUTER_CONSOLE;
-            return true;
-        } else if (mode == TerminalMode.COMPUTER_CONSOLE && playerConsoleModeButton.contains(mouseX, mouseY)) {
-            mode = TerminalMode.PLAYER_CONSOLE;
-            return true;
-        }
-        return false;
     }
 
     @Override
@@ -371,15 +276,6 @@ public class ComputerTerminalWidget extends CoreWidget {
         playerCommandConsoleGui.appendToConsole("exit - exits this console");
     }
 
-    private Color getButBgColor(boolean hover, boolean inMode) {
-        if (hover)
-            return BUTTON_BG_HOVER_COLOR;
-        else if (inMode)
-            return BUTTON_BG_ACTIVE_COLOR;
-        else
-            return BUTTON_BG_INACTIVE_COLOR;
-    }
-
     public void clearComputerConsole() {
         computerConsole.clearConsole();
     }
@@ -407,11 +303,6 @@ public class ComputerTerminalWidget extends CoreWidget {
         playerCommandConsoleGui.setReadOnly(false);
         editingProgram = true;
         programEditingConsoleGui.setProgramText(programName, programText);
-    }
-
-    @Override
-    public boolean canBeFocus() {
-        return true;
     }
 }
 

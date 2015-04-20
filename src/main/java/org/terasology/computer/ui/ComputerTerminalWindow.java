@@ -19,13 +19,51 @@ import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.registry.CoreRegistry;
 import org.terasology.rendering.nui.CoreScreenLayer;
 import org.terasology.rendering.nui.NUIManager;
+import org.terasology.rendering.nui.UIWidget;
+import org.terasology.rendering.nui.widgets.ActivateEventListener;
+import org.terasology.rendering.nui.widgets.UIButton;
 
 public class ComputerTerminalWindow extends CoreScreenLayer {
     private ComputerTerminalWidget computerTerminalWidget;
+    private UIButton playerConsole;
+    private UIButton computerConsole;
+    private UIButton documentation;
 
     @Override
     protected void initialise() {
         computerTerminalWidget = find("computerTerminal", ComputerTerminalWidget.class);
+        playerConsole = find("playerConsole", UIButton.class);
+        computerConsole = find("computerConsole", UIButton.class);
+        documentation = find("documentation", UIButton.class);
+
+        playerConsole.subscribe(
+                new ActivateEventListener() {
+                    @Override
+                    public void onActivated(UIWidget widget) {
+                        computerTerminalWidget.setMode(ComputerTerminalWidget.TerminalMode.PLAYER_CONSOLE);
+                        requestFocusToTerminal();
+                    }
+                });
+        computerConsole.subscribe(
+                new ActivateEventListener() {
+                    @Override
+                    public void onActivated(UIWidget widget) {
+                        computerTerminalWidget.setMode(ComputerTerminalWidget.TerminalMode.COMPUTER_CONSOLE);
+                        requestFocusToTerminal();
+                    }
+                });
+        documentation.subscribe(
+                new ActivateEventListener() {
+                    @Override
+                    public void onActivated(UIWidget widget) {
+                        computerTerminalWidget.setMode(ComputerTerminalWidget.TerminalMode.DOCUMENTATION);
+                        requestFocusToTerminal();
+                    }
+                });
+    }
+
+    private void requestFocusToTerminal() {
+        CoreRegistry.get(NUIManager.class).setFocus(computerTerminalWidget);
     }
 
     public void initializeWithEntities(EntityRef client, EntityRef computer) {
@@ -35,7 +73,7 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
                         CoreRegistry.get(NUIManager.class).closeScreen(ComputerTerminalWindow.this);
                     }
                 }, client, computer);
-        CoreRegistry.get(NUIManager.class).setFocus(computerTerminalWidget);
+        requestFocusToTerminal();
     }
 
     public ComputerTerminalWidget getComputerTerminalWidget() {
@@ -49,6 +87,6 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
 
     @Override
     public boolean isModal() {
-        return false;
+        return true;
     }
 }
