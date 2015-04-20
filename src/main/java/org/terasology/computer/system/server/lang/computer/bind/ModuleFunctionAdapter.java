@@ -53,7 +53,7 @@ public class ModuleFunctionAdapter implements FunctionExecutable {
 
     @Override
     public Execution createExecution(final int line, ExecutionContext executionContext, CallContext callContext) {
-        return new DelayedExecution(_moduleFunction.getDuration(), _moduleFunction.getMinimumExecutionTicks(),
+        return new DelayedExecution(_moduleFunction.getCpuCycleDuration(), _moduleFunction.getMinimumExecutionTicks(),
                 new SimpleExecution() {
                     @Override
                     protected ExecutionProgress execute(ExecutionContext context, ExecutionCostConfiguration configuration) throws ExecutionException {

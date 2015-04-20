@@ -23,11 +23,13 @@ import org.slf4j.LoggerFactory;
 import org.terasology.computer.component.ComputerComponent;
 import org.terasology.computer.component.ComputerModuleComponent;
 import org.terasology.computer.component.ComputerSystemComponent;
-import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.context.ComputerContext;
 import org.terasology.computer.event.client.ProgramExecutionResultEvent;
 import org.terasology.computer.event.client.ProgramListReceivedEvent;
 import org.terasology.computer.event.client.ProgramTextReceivedEvent;
+import org.terasology.computer.event.server.AfterComputerMoveEvent;
+import org.terasology.computer.event.server.BeforeComputerMoveEvent;
+import org.terasology.computer.event.server.ComputerMoveEvent;
 import org.terasology.computer.event.server.ConsoleListeningRegistrationEvent;
 import org.terasology.computer.event.server.DeleteProgramEvent;
 import org.terasology.computer.event.server.ExecuteProgramEvent;
@@ -42,13 +44,14 @@ import org.terasology.entitySystem.entity.EntityManager;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.entitySystem.entity.lifecycleEvents.BeforeDeactivateComponent;
 import org.terasology.entitySystem.entity.lifecycleEvents.OnActivatedComponent;
-import org.terasology.entitySystem.entity.lifecycleEvents.OnAddedComponent;
 import org.terasology.entitySystem.event.ReceiveEvent;
 import org.terasology.entitySystem.systems.BaseComponentSystem;
 import org.terasology.entitySystem.systems.RegisterMode;
 import org.terasology.entitySystem.systems.RegisterSystem;
 import org.terasology.entitySystem.systems.UpdateSubscriberSystem;
 import org.terasology.logic.inventory.InventoryComponent;
+import org.terasology.logic.inventory.InventoryManager;
+import org.terasology.logic.inventory.InventoryUtils;
 import org.terasology.logic.inventory.events.BeforeItemPutInInventory;
 import org.terasology.network.events.DisconnectedEvent;
 import org.terasology.registry.In;
@@ -61,7 +64,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeSet;
 
 @RegisterSystem(RegisterMode.AUTHORITY)
@@ -71,6 +73,8 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
 
     @In
     private EntityManager entityManager;
+    @In
+    private InventoryManager inventoryManager;
 
     private EntityRef computerSystemEntity;
 
@@ -80,6 +84,8 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
     private ExecutionCostConfiguration executionCostConfiguration = new SampleExecutionCostConfiguration();
 
     private Map<String, ComputerModule> computerModuleRegistry = new HashMap<>();
+
+    private boolean computerInTransitionState = false;
 
     @Override
     public void initialise() {
@@ -117,27 +123,24 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
     }
 
     @ReceiveEvent
-    public void computerAppearsInWorld(OnAddedComponent event, EntityRef computerEntity, BlockComponent block, ComputerComponent computer) {
-        logger.debug("Computer added to world as block");
-        if (computer.computerId == -1) {
-            computer.computerId = assignNextId();
-            logger.debug("Assigning a new ID to computer: "+computer.computerId);
-            computerEntity.saveComponent(computer);
-        } else {
-            logger.debug("Computer has an ID already: "+computer.computerId);
+    public void computerLoadedInWorld(OnActivatedComponent event, EntityRef computerEntity, BlockComponent block, ComputerComponent computer) {
+        if (!computerInTransitionState) {
+            if (computer.computerId == -1) {
+                computer.computerId = assignNextId();
+                logger.debug("Assigning a new ID to computer: " + computer.computerId);
+                computerEntity.saveComponent(computer);
+            }
+            logger.debug("Creating computer context for computer: " + computer.computerId);
+            computerContextMap.put(computer.computerId, new ComputerContext(this, computerEntity, computer.cpuSpeed, computer.stackSize, computer.memorySize));
         }
     }
 
     @ReceiveEvent
-    public void computerLoadedInWorld(OnActivatedComponent event, EntityRef computerEntity, BlockComponent block, ComputerComponent computer) {
-        logger.debug("Creating computer context for computer: "+computer.computerId);
-        computerContextMap.put(computer.computerId, new ComputerContext(this, computerEntity, computer.cpuSpeed, computer.stackSize, computer.memorySize));
-    }
-
-    @ReceiveEvent
     public void computerUnloadedFromWorld(BeforeDeactivateComponent event, EntityRef computerEntity, BlockComponent block, ComputerComponent computer) {
-        logger.debug("Destroying computer context for computer: "+computer.computerId);
-        computerContextMap.remove(computer.computerId);
+        if (!computerInTransitionState) {
+            logger.debug("Destroying computer context for computer: " + computer.computerId);
+            computerContextMap.remove(computer.computerId);
+        }
     }
 
     @ReceiveEvent
@@ -146,14 +149,45 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
         logger.debug("Computer placed from item, computer id: " + itemComponent.computerId);
         if (itemComponent.computerId != -1) {
             ComputerComponent blockComponent = event.getPlacedBlock().getComponent(ComputerComponent.class);
-            copyValues(itemComponent, blockComponent);
+            copyValues(itemComponent, blockComponent, false);
             event.getPlacedBlock().saveComponent(blockComponent);
         }
     }
 
-    private void copyValues(ComputerComponent fromComponent, ComputerComponent toComponent) {
-        // Do not copy computerId, it should be new on each placement
-//        toComponent.computerId = fromComponent.computerId;
+    @ReceiveEvent
+    public void beforeComputerMoveSetTransitionState(BeforeComputerMoveEvent event, EntityRef entity, ComputerComponent computer) {
+        computerInTransitionState = true;
+    }
+
+    @ReceiveEvent
+    public void computerMovedCopyInventory(ComputerMoveEvent event, EntityRef entity, ComputerComponent computer) {
+        EntityRef newEntity = event.getNewEntity();
+
+        ComputerComponent newEntityComponent = newEntity.getComponent(ComputerComponent.class);
+        copyValues(computer, newEntityComponent, true);
+        newEntity.saveComponent(newEntityComponent);
+
+        int slotCount = InventoryUtils.getSlotCount(entity);
+        // We assume the number of slots does not change
+        for (int i = 0; i < slotCount; i++) {
+            // We assume that modules are not stackable, so only one goes in
+            inventoryManager.moveItem(entity, null, i, newEntity, i, 1);
+        }
+
+        // Update context with the new computer entity
+        ComputerContext context = computerContextMap.get(computer.computerId);
+        context.updateComputerEntity(newEntity);
+    }
+
+    @ReceiveEvent
+    public void afterComputerMoveSetTransitionState(AfterComputerMoveEvent event, EntityRef entity, ComputerComponent computer) {
+        computerInTransitionState = false;
+    }
+
+    private void copyValues(ComputerComponent fromComponent, ComputerComponent toComponent, boolean copyComputerId) {
+        if (copyComputerId) {
+            toComponent.computerId = fromComponent.computerId;
+        }
         toComponent.moduleSlotStart = fromComponent.moduleSlotStart;
         toComponent.moduleSlotCount = fromComponent.moduleSlotCount;
         toComponent.cpuSpeed = fromComponent.cpuSpeed;
@@ -258,16 +292,16 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
 
         int slot = event.getSlot();
 
-        if (slotStart<=slot && slot<slotStart+slotCount) {
+        if (slotStart <= slot && slot < slotStart + slotCount) {
             ComputerModuleComponent module = event.getItem().getComponent(ComputerModuleComponent.class);
             if (module == null) {
                 event.consume();
             } else {
-                int moduleSlotEntered = slot-slotStart;
+                int moduleSlotEntered = slot - slotStart;
 
                 InventoryComponent inventory = computerEntity.getComponent(InventoryComponent.class);
                 Collection<ComputerModule> existingModules = new HashSet<>();
-                for (int i=0; i<slotCount; i++) {
+                for (int i = 0; i < slotCount; i++) {
                     if (i != moduleSlotEntered) {
                         ComputerModuleComponent existingModule = inventory.itemSlots.get(i).getComponent(ComputerModuleComponent.class);
                         if (existingModule != null) {

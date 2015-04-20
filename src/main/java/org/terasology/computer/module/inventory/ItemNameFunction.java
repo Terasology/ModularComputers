@@ -28,7 +28,7 @@ import java.util.Map;
 
 public class ItemNameFunction implements ModuleFunctionExecutable {
     @Override
-    public int getDuration() {
+    public int getCpuCycleDuration() {
         return 50;
     }
 

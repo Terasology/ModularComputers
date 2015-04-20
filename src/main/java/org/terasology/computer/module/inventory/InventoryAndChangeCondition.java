@@ -37,7 +37,7 @@ public class InventoryAndChangeCondition implements ModuleFunctionExecutable {
     }
 
     @Override
-    public int getDuration() {
+    public int getCpuCycleDuration() {
         return 200;
     }
 

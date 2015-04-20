@@ -30,7 +30,7 @@ public class StorageInventoryBindingFunction implements ModuleFunctionExecutable
     }
 
     @Override
-    public int getDuration() {
+    public int getCpuCycleDuration() {
         return 10;
     }
 

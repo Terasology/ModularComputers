@@ -35,7 +35,7 @@ public class InventoryBindingFunction implements ModuleFunctionExecutable {
     }
 
     @Override
-    public int getDuration() {
+    public int getCpuCycleDuration() {
         return 10;
     }
 

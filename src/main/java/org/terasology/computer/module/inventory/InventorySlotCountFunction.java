@@ -27,7 +27,7 @@ import java.util.Map;
 
 public class InventorySlotCountFunction implements ModuleFunctionExecutable {
     @Override
-    public int getDuration() {
+    public int getCpuCycleDuration() {
         return 50;
     }
 

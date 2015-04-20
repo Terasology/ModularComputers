@@ -1,0 +1,14 @@
+{
+    "DisplayName" : {
+        "name" : "Mobility Module"
+    },
+    "Item" : {
+        "icon" : "engine:items.coal",
+        "renderWithIcon" : true,
+        "stackId" : "mobilityModule",
+        "maxStackSize": 1
+    },
+    "ComputerModule" : {
+        "moduleType": "Mobility"
+    }
+}

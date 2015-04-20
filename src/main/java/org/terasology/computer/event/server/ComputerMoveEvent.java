@@ -13,20 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.terasology.computer.system.server.lang;
+package org.terasology.computer.event.server;
 
-import com.gempukku.lang.ExecutionException;
-import com.gempukku.lang.Variable;
-import org.terasology.computer.context.ComputerCallback;
+import org.terasology.entitySystem.entity.EntityRef;
+import org.terasology.entitySystem.event.Event;
 
-import java.util.Map;
+public class ComputerMoveEvent implements Event {
+    private EntityRef newEntity;
 
-public interface ModuleFunctionExecutable {
-    public int getCpuCycleDuration();
+    public ComputerMoveEvent(EntityRef newEntity) {
+        this.newEntity = newEntity;
+    }
 
-    public int getMinimumExecutionTicks();
-
-    public String[] getParameterNames();
-
-    public Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException;
+    public EntityRef getNewEntity() {
+        return newEntity;
+    }
 }

@@ -36,7 +36,7 @@ public class DumpFunction implements ModuleFunctionExecutable {
     }
 
     @Override
-    public int getDuration() {
+    public int getCpuCycleDuration() {
         return 300;
     }
 

@@ -76,6 +76,10 @@ public class ComputerContext {
         this.memory = memory;
     }
 
+    public void updateComputerEntity(EntityRef entity) {
+        this.entity = entity;
+    }
+
     public void executeContext(float delta) {
         if (context != null) {
             logger.debug("Executing program - minTicksRemaining: "+minimumTicksRemaining+", remainingWaitingCpuCycles: "+remainingWaitingCpuCycles);

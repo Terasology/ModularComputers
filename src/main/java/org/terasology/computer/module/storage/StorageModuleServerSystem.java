@@ -17,6 +17,7 @@ package org.terasology.computer.module.storage;
 
 import org.terasology.computer.component.ComputerComponent;
 import org.terasology.computer.component.ComputerModuleComponent;
+import org.terasology.computer.event.server.ComputerMoveEvent;
 import org.terasology.computer.system.server.ComputerModuleRegistry;
 import org.terasology.entitySystem.entity.EntityManager;
 import org.terasology.entitySystem.entity.EntityRef;
@@ -26,6 +27,8 @@ import org.terasology.entitySystem.systems.BaseComponentSystem;
 import org.terasology.entitySystem.systems.RegisterMode;
 import org.terasology.entitySystem.systems.RegisterSystem;
 import org.terasology.logic.inventory.InventoryComponent;
+import org.terasology.logic.inventory.InventoryManager;
+import org.terasology.logic.inventory.InventoryUtils;
 import org.terasology.logic.inventory.PickupBuilder;
 import org.terasology.logic.inventory.events.InventorySlotChangedEvent;
 import org.terasology.math.geom.Vector3i;
@@ -43,6 +46,8 @@ public class StorageModuleServerSystem extends BaseComponentSystem {
     private ComputerModuleRegistry computerModuleRegistry;
     @In
     private EntityManager entityManager;
+    @In
+    private InventoryManager inventoryManager;
 
     @Override
     public void preBegin() {
@@ -69,6 +74,19 @@ public class StorageModuleServerSystem extends BaseComponentSystem {
             storageEntity.addComponent(inventoryComponent);
 
             computerEntity.addComponent(internalStorage);
+        }
+    }
+
+    @ReceiveEvent
+    public void computerMovedCopyInternalStorage(ComputerMoveEvent event, EntityRef entity, InternalStorageComponent storage) {
+        EntityRef inventoryEntity = storage.inventoryEntity;
+        EntityRef newInventoryEntity = event.getNewEntity().getComponent(InternalStorageComponent.class).inventoryEntity;
+
+        int slotCount = InventoryUtils.getSlotCount(inventoryEntity);
+        // We assume the number of slots does not change
+        for (int i = 0; i < slotCount; i++) {
+            int stackCount = InventoryUtils.getStackCount(InventoryUtils.getItemAt(inventoryEntity, i));
+            inventoryManager.moveItem(inventoryEntity, null, i, newInventoryEntity, i, stackCount);
         }
     }
 
