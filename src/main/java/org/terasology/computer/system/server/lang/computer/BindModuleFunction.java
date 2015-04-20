@@ -18,6 +18,7 @@ package org.terasology.computer.system.server.lang.computer;
 
 import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.Variable;
+import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.TerasologyFunctionExecutable;
 import org.terasology.computer.system.server.lang.computer.bind.SlotBindingObjectDefinition;
@@ -37,10 +38,7 @@ public class BindModuleFunction extends TerasologyFunctionExecutable {
 
 	@Override
 	protected Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
-		final Variable slot = parameters.get("slot");
-		if (slot.getType() != Variable.Type.NUMBER)
-			throw new ExecutionException(line, "Expected slot number in bindModule()");
-		int slotNo = ((Number) slot.getValue()).intValue();
+		int slotNo = FunctionParamValidationUtil.validateIntParameter(line, parameters, "slot", "bindModule");
 
 		if (slotNo < 0 || slotNo >= computer.getModuleSlotsCount())
 			throw new ExecutionException(line, "Slot number outside of permitted range in bindModule()");

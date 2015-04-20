@@ -17,34 +17,24 @@ package org.terasology.computer.module.mobility;
 
 import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.Variable;
-import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.terasology.computer.component.ComputerComponent;
+import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.event.server.AfterComputerMoveEvent;
 import org.terasology.computer.event.server.BeforeComputerMoveEvent;
 import org.terasology.computer.event.server.ComputerMoveEvent;
-import org.terasology.computer.module.ComputerDirection;
 import org.terasology.computer.system.server.lang.ModuleFunctionExecutable;
-import org.terasology.entitySystem.Component;
 import org.terasology.entitySystem.entity.EntityRef;
-import org.terasology.entitySystem.entity.internal.EntityInfoComponent;
-import org.terasology.entitySystem.metadata.ComponentLibrary;
-import org.terasology.logic.location.LocationComponent;
 import org.terasology.math.Direction;
 import org.terasology.math.geom.Vector3i;
-import org.terasology.network.NetworkComponent;
 import org.terasology.world.BlockEntityRegistry;
 import org.terasology.world.WorldProvider;
 import org.terasology.world.block.Block;
-import org.terasology.world.block.BlockComponent;
 import org.terasology.world.block.BlockManager;
 import org.terasology.world.block.entity.placement.PlaceBlocks;
-import org.terasology.world.block.typeEntity.BlockTypeComponent;
 
 import java.util.Map;
-import java.util.Set;
 
 public class MoveFunction implements ModuleFunctionExecutable {
     private static final Logger logger = LoggerFactory.getLogger(MoveFunction.class);
@@ -74,14 +64,7 @@ public class MoveFunction implements ModuleFunctionExecutable {
 
     @Override
     public Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
-        Variable directionVar = parameters.get("direction");
-        if (directionVar.getType() != Variable.Type.STRING)
-            throw new ExecutionException(line, "Invalid direction in move()");
-
-        Direction direction = ComputerDirection.getDirection((String) directionVar.getValue());
-        if (direction == null) {
-            throw new ExecutionException(line, "Invalid direction in move()");
-        }
+        Direction direction = FunctionParamValidationUtil.validateDirectionParameter(line, parameters, "direction", "move");
 
         Vector3i computerLocation = computer.getComputerLocation();
         Vector3i directionVector = direction.getVector3i();

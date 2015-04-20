@@ -17,6 +17,7 @@ package org.terasology.computer.system.server.lang.console;
 
 import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.Variable;
+import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.TerasologyFunctionExecutable;
 
@@ -35,17 +36,11 @@ public class WriteToConsoleFunction extends TerasologyFunctionExecutable {
 
 	@Override
 	protected Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
-		final Variable x = parameters.get("x");
-		final Variable y = parameters.get("y");
-		final Variable text = parameters.get("text");
-		if (x.getType() != Variable.Type.NUMBER)
-			throw new ExecutionException(line, "Expected NUMBER in write()");
-		if (y.getType() != Variable.Type.NUMBER)
-			throw new ExecutionException(line, "Expected NUMBER in write()");
-		if (text.getType() != Variable.Type.STRING)
-			throw new ExecutionException(line, "Expected STRING in write()");
+        int x = FunctionParamValidationUtil.validateIntParameter(line, parameters, "x", "write");
+        int y = FunctionParamValidationUtil.validateIntParameter(line, parameters, "y", "write");
+        String text = FunctionParamValidationUtil.validateStringParameter(line, parameters, "text", "write");
 
-		computer.getConsole().setCharacters(((Number) x.getValue()).intValue(), ((Number) y.getValue()).intValue(), (String) text.getValue());
+        computer.getConsole().setCharacters(x, y, text);
 
 		return null;
 	}

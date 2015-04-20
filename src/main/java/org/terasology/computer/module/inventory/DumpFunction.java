@@ -15,17 +15,13 @@
  */
 package org.terasology.computer.module.inventory;
 
-import com.gempukku.lang.CustomObject;
 import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.Variable;
+import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.ModuleFunctionExecutable;
-import org.terasology.entitySystem.entity.EntityRef;
-import org.terasology.logic.inventory.InventoryComponent;
 import org.terasology.logic.inventory.InventoryManager;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 public class DumpFunction implements ModuleFunctionExecutable {
@@ -52,23 +48,10 @@ public class DumpFunction implements ModuleFunctionExecutable {
 
     @Override
     public Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
-        Variable inventoryBindingFrom = parameters.get("inventoryBindingFrom");
-        if (inventoryBindingFrom.getType() != Variable.Type.CUSTOM_OBJECT
-                || !((CustomObject) inventoryBindingFrom.getValue()).getType().equals("INVENTORY_BINDING")
-                || ((InventoryBinding) inventoryBindingFrom.getValue()).isInput())
-            throw new ExecutionException(line, "Invalid inventoryBindingFrom in dump()");
-
-        Variable inventoryBindingTo = parameters.get("inventoryBindingTo");
-        if (inventoryBindingTo.getType() != Variable.Type.CUSTOM_OBJECT
-                || !((CustomObject) inventoryBindingTo.getValue()).getType().equals("INVENTORY_BINDING")
-                || !((InventoryBinding) inventoryBindingTo.getValue()).isInput())
-            throw new ExecutionException(line, "Invalid inventoryBindingTo in dump()");
-
-        InventoryBinding bindingFrom = (InventoryBinding) inventoryBindingFrom.getValue();
-        InventoryBinding.InventoryWithSlots inventoryFrom = bindingFrom.getInventoryEntity(line, computer);
-
-        InventoryBinding bindingTo = (InventoryBinding) inventoryBindingTo.getValue();
-        InventoryBinding.InventoryWithSlots inventoryTo = bindingTo.getInventoryEntity(line, computer);
+        InventoryBinding.InventoryWithSlots inventoryFrom = FunctionParamValidationUtil.validateInventoryBinding(line, computer,
+                parameters, "inventoryBindingFrom", "dump", false);
+        InventoryBinding.InventoryWithSlots inventoryTo = FunctionParamValidationUtil.validateInventoryBinding(line, computer,
+                parameters, "inventoryBindingTo", "dump", true);
 
         for (int slotNo : inventoryFrom.slots) {
             inventoryManager.moveItemToSlots(computer.getComputerEntity(), inventoryFrom.inventory, slotNo, inventoryTo.inventory, inventoryTo.slots);

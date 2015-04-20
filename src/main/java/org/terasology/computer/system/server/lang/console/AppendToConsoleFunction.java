@@ -18,6 +18,7 @@ package org.terasology.computer.system.server.lang.console;
 
 import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.Variable;
+import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.TerasologyFunctionExecutable;
 
@@ -36,10 +37,8 @@ public class AppendToConsoleFunction extends TerasologyFunctionExecutable {
 
 	@Override
 	protected Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
-		final Variable text = parameters.get("text");
-		if (text.getType() != Variable.Type.STRING)
-			throw new ExecutionException(line, "Expected STRING in append()");
-		computer.getConsole().appendString((String) text.getValue());
+        String text = FunctionParamValidationUtil.validateStringParameter(line, parameters, "text", "append");
+        computer.getConsole().appendString(text);
 		return null;
 	}
 }

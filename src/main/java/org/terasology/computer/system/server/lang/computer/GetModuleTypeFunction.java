@@ -18,6 +18,7 @@ package org.terasology.computer.system.server.lang.computer;
 
 import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.Variable;
+import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.ComputerModule;
 import org.terasology.computer.system.server.lang.TerasologyFunctionExecutable;
@@ -37,11 +38,7 @@ public class GetModuleTypeFunction extends TerasologyFunctionExecutable {
 
 	@Override
 	protected Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
-		final Variable slot = parameters.get("slot");
-		if (slot.getType() != Variable.Type.NUMBER)
-			throw new ExecutionException(line, "Invalid slot number in getModuleType()");
-
-		int slotNo = ((Number) slot.getValue()).intValue();
+        int slotNo = FunctionParamValidationUtil.validateIntParameter(line, parameters, "slot", "getModuleType");
 
 		final ComputerModule module = computer.getModule(slotNo);
 		String moduleType = null;

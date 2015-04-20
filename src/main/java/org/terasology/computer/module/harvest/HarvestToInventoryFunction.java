@@ -15,12 +15,11 @@
  */
 package org.terasology.computer.module.harvest;
 
-import com.gempukku.lang.CustomObject;
 import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.Variable;
 import org.terasology.asset.Assets;
+import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
-import org.terasology.computer.module.ComputerDirection;
 import org.terasology.computer.module.inventory.InventoryBinding;
 import org.terasology.computer.system.server.lang.ModuleFunctionExecutable;
 import org.terasology.entitySystem.entity.EntityRef;
@@ -60,23 +59,10 @@ public class HarvestToInventoryFunction implements ModuleFunctionExecutable {
 
     @Override
     public Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
-        Variable directionVar = parameters.get("direction");
-        if (directionVar.getType() != Variable.Type.STRING)
-            throw new ExecutionException(line, "Invalid direction in harvestToInventory()");
+        Direction direction = FunctionParamValidationUtil.validateDirectionParameter(line, parameters, "direction", "harvestToInventory");
 
-        Direction direction = ComputerDirection.getDirection((String) directionVar.getValue());
-        if (direction == null) {
-            throw new ExecutionException(line, "Invalid direction in harvestToInventory()");
-        }
-
-        Variable inventoryBinding = parameters.get("inventoryBinding");
-        if (inventoryBinding.getType() != Variable.Type.CUSTOM_OBJECT
-                || !((CustomObject) inventoryBinding.getValue()).getType().equals("INVENTORY_BINDING")
-                || !((InventoryBinding) inventoryBinding.getValue()).isInput())
-            throw new ExecutionException(line, "Invalid inventoryBinding in harvestToInventory()");
-
-        InventoryBinding binding = (InventoryBinding) inventoryBinding.getValue();
-        InventoryBinding.InventoryWithSlots inventory = binding.getInventoryEntity(line, computer);
+        InventoryBinding.InventoryWithSlots inventory = FunctionParamValidationUtil.validateInventoryBinding(line, computer, parameters,
+                "inventoryBinding", "harvestToInventory", true);
 
         Vector3i computerLocation = computer.getComputerLocation();
         Vector3i directionVector = direction.getVector3i();

@@ -15,13 +15,12 @@
  */
 package org.terasology.computer.module.inventory;
 
-import com.gempukku.lang.CustomObject;
 import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.Variable;
+import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.ModuleFunctionExecutable;
 import org.terasology.entitySystem.entity.EntityRef;
-import org.terasology.logic.inventory.InventoryComponent;
 import org.terasology.logic.inventory.InventoryUtils;
 
 import java.util.Map;
@@ -44,24 +43,10 @@ public class ItemNameFunction implements ModuleFunctionExecutable {
 
     @Override
     public Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
-        Variable inventoryBinding = parameters.get("inventoryBinding");
-        if (inventoryBinding.getType() != Variable.Type.CUSTOM_OBJECT
-                || !((CustomObject) inventoryBinding.getValue()).getType().equals("INVENTORY_BINDING"))
-            throw new ExecutionException(line, "Invalid inventoryBinding in getItemName()");
+        InventoryBinding.InventoryWithSlots inventory = FunctionParamValidationUtil.validateInventoryBinding(line, computer,
+                parameters, "inventoryBinding", "getItemName", null);
 
-        Variable slot = parameters.get("slot");
-        if (slot.getType() != Variable.Type.NUMBER)
-            throw new ExecutionException(line, "Invalid slot in getItemName()");
-
-        int slotNo = ((Number) slot.getValue()).intValue();
-
-        InventoryBinding binding = (InventoryBinding) inventoryBinding.getValue();
-        InventoryBinding.InventoryWithSlots inventory = binding.getInventoryEntity(line, computer);
-
-        int slotCount = inventory.slots.size();
-
-        if (slotNo<0 || slotCount<=slotNo)
-            throw new ExecutionException(line, "Slot number out of range in getItemName()");
+        int slotNo = FunctionParamValidationUtil.validateSlotNo(line, parameters, inventory, "slot", "getItemName");
 
         EntityRef itemEntity = InventoryUtils.getItemAt(inventory.inventory, inventory.slots.get(slotNo));
         return InventoryModuleUtils.getItemName(itemEntity);

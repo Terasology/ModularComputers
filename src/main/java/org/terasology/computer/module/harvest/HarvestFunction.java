@@ -18,8 +18,8 @@ package org.terasology.computer.module.harvest;
 import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.Variable;
 import org.terasology.asset.Assets;
+import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
-import org.terasology.computer.module.ComputerDirection;
 import org.terasology.computer.system.server.lang.ModuleFunctionExecutable;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.logic.health.DestroyEvent;
@@ -58,14 +58,7 @@ public class HarvestFunction implements ModuleFunctionExecutable {
 
     @Override
     public Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
-        Variable directionVar = parameters.get("direction");
-        if (directionVar.getType() != Variable.Type.STRING)
-            throw new ExecutionException(line, "Invalid direction in harvest()");
-
-        Direction direction = ComputerDirection.getDirection((String) directionVar.getValue());
-        if (direction == null) {
-            throw new ExecutionException(line, "Invalid direction in harvest()");
-        }
+        Direction direction = FunctionParamValidationUtil.validateDirectionParameter(line, parameters, "direction", "harvest");
 
         Vector3i computerLocation = computer.getComputerLocation();
         Vector3i directionVector = direction.getVector3i();
@@ -84,4 +77,6 @@ public class HarvestFunction implements ModuleFunctionExecutable {
             return true;
         }
     }
+
+
 }
