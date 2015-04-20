@@ -41,6 +41,10 @@ import org.terasology.rendering.nui.VerticalAlign;
 import java.util.Collection;
 
 public class ComputerTerminalWidget extends CoreWidget {
+    public enum TerminalMode {
+        PLAYER_CONSOLE, COMPUTER_CONSOLE
+    }
+
     public static final Color BACKGROUND_COLOR = new Color(0x111111ff);
     public static final Color FRAME_COLOR = new Color(0xffffffff);
     public static final Color BUTTON_TEXT_COLOR = new Color(0xffffffff);
@@ -60,8 +64,7 @@ public class ComputerTerminalWidget extends CoreWidget {
     public static final String PLAYER_CONSOLE_TEXT = "Player console";
     public static final String COMPUTER_CONSOLE_TEXT = "Computer console";
 
-    // mode=0 is user (player) console, mode=1 is program output console
-    private int mode = 0;
+    private TerminalMode mode;
     private boolean editingProgram;
 
     private ComputerConsole computerConsole;
@@ -79,7 +82,7 @@ public class ComputerTerminalWidget extends CoreWidget {
     private Vector2i mousePosition = new Vector2i(-1, -1);
 
     public void setup(Runnable closeRunnable, EntityRef clientEntity, EntityRef computerEntity) {
-        mode = 0;
+        mode = TerminalMode.PLAYER_CONSOLE;
         editingProgram = false;
         computerConsole = new ComputerConsole();
 
@@ -141,8 +144,8 @@ public class ComputerTerminalWidget extends CoreWidget {
         boolean computerConsoleHover = mouseX >= PADDING_HOR + playerConsoleButtonWidth && mouseX < PADDING_HOR + playerConsoleButtonWidth + computerConsoleButtonWidth
                 && mouseY >= PADDING_VER && mouseY < PADDING_VER + buttonHeight;
 
-        Color playerConsoleButBgColor = getButBgColor(playerConsoleHover, mode == 0);
-        Color computerConsoleButBgColor = getButBgColor(computerConsoleHover, mode == 1);
+        Color playerConsoleButBgColor = getButBgColor(playerConsoleHover, mode == TerminalMode.PLAYER_CONSOLE);
+        Color computerConsoleButBgColor = getButBgColor(computerConsoleHover, mode == TerminalMode.COMPUTER_CONSOLE);
 
         // Draw button backgrounds
         canvas.drawFilledRectangle(Rect2i.createFromMinAndMax(PADDING_HOR, PADDING_VER, PADDING_HOR + playerConsoleButtonWidth, PADDING_VER + buttonHeight), playerConsoleButBgColor);
@@ -155,9 +158,9 @@ public class ComputerTerminalWidget extends CoreWidget {
         canvas.drawTextRaw(PLAYER_CONSOLE_TEXT, getFont(canvas), BUTTON_TEXT_COLOR, playerConsoleModeButton);
         canvas.drawTextRaw(COMPUTER_CONSOLE_TEXT, getFont(canvas), BUTTON_TEXT_COLOR, computerConsoleModeButton);
 
-        if (mode == 0)
+        if (mode == TerminalMode.PLAYER_CONSOLE)
             drawPlayerConsole(canvas);
-        else if (mode == 1)
+        else if (mode == TerminalMode.COMPUTER_CONSOLE)
             drawComputerConsole(canvas);
 
         canvas.addInteractionRegion(
@@ -259,11 +262,11 @@ public class ComputerTerminalWidget extends CoreWidget {
     }
 
     private boolean mouseClicked(int mouseX, int mouseY, int which) {
-        if (mode == 0 && computerConsoleModeButton.contains(mouseX, mouseY)) {
-            mode = 1;
+        if (mode == TerminalMode.PLAYER_CONSOLE && computerConsoleModeButton.contains(mouseX, mouseY)) {
+            mode = TerminalMode.COMPUTER_CONSOLE;
             return true;
-        } else if (mode == 1 && playerConsoleModeButton.contains(mouseX, mouseY)) {
-            mode = 0;
+        } else if (mode == TerminalMode.COMPUTER_CONSOLE && playerConsoleModeButton.contains(mouseX, mouseY)) {
+            mode = TerminalMode.PLAYER_CONSOLE;
             return true;
         }
         return false;
@@ -275,7 +278,7 @@ public class ComputerTerminalWidget extends CoreWidget {
             int keyboardCharId = event.getKey().getId();
             if (event.isDown()) {
                 char character = event.getKeyCharacter();
-                if (mode == 0) {
+                if (mode == TerminalMode.PLAYER_CONSOLE) {
                     if (editingProgram) {
                         programEditingConsoleGui.keyTypedInEditingProgram(character, keyboardCharId,
                                 Keyboard.isKeyDown(Keyboard.KeyId.LEFT_CTRL) || Keyboard.isKeyDown(Keyboard.KeyId.RIGHT_CTRL));
