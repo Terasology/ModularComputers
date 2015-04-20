@@ -1,0 +1,14 @@
+{
+    "DisplayName" : {
+        "name" : "Harvest Module"
+    },
+    "Item" : {
+        "icon" : "engine:items.coal",
+        "renderWithIcon" : true,
+        "stackId" : "harvestModule",
+        "maxStackSize": 1
+    },
+    "ComputerModule" : {
+        "moduleType": "Harvest"
+    }
+}

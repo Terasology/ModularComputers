@@ -1,0 +1,6 @@
+{
+    "parent": "engine:directDamage",
+    "blockDamageModifier": {
+        "directPickup": true
+    }
+}
