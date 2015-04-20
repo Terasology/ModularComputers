@@ -17,6 +17,8 @@ package org.terasology.computer.module.storage;
 
 import org.terasology.computer.component.ComputerComponent;
 import org.terasology.computer.component.ComputerModuleComponent;
+import org.terasology.computer.event.server.AfterComputerMoveEvent;
+import org.terasology.computer.event.server.BeforeComputerMoveEvent;
 import org.terasology.computer.event.server.ComputerMoveEvent;
 import org.terasology.computer.system.server.ComputerModuleRegistry;
 import org.terasology.entitySystem.entity.EntityManager;
@@ -49,6 +51,8 @@ public class StorageModuleServerSystem extends BaseComponentSystem {
     @In
     private InventoryManager inventoryManager;
 
+    private boolean doNotMoveInventory = false;
+
     @Override
     public void preBegin() {
         computerModuleRegistry.registerComputerModule(
@@ -58,9 +62,11 @@ public class StorageModuleServerSystem extends BaseComponentSystem {
 
     @ReceiveEvent
     public void computerModuleSlotChanged(InventorySlotChangedEvent event, EntityRef computerEntity, ComputerComponent computer, BlockComponent block) {
-        ComputerModuleComponent oldModule = event.getOldItem().getComponent(ComputerModuleComponent.class);
-        if (oldModule != null && oldModule.moduleType.equals(COMPUTER_STORAGE_MODULE_TYPE)) {
-            dropItemsFromComputerInternalStorage(computerEntity);
+        if (!doNotMoveInventory) {
+            ComputerModuleComponent oldModule = event.getOldItem().getComponent(ComputerModuleComponent.class);
+            if (oldModule != null && oldModule.moduleType.equals(COMPUTER_STORAGE_MODULE_TYPE)) {
+                dropItemsFromComputerInternalStorage(computerEntity);
+            }
         }
 
         ComputerModuleComponent newModule = event.getNewItem().getComponent(ComputerModuleComponent.class);
@@ -78,6 +84,16 @@ public class StorageModuleServerSystem extends BaseComponentSystem {
     }
 
     @ReceiveEvent
+    public void beforeComputerMoveStopDroppingInventory(BeforeComputerMoveEvent event, EntityRef entity, ComputerComponent component) {
+        doNotMoveInventory = true;
+    }
+
+    @ReceiveEvent
+    public void afterComputerMoveRestartDroppingInventory(AfterComputerMoveEvent event, EntityRef entity, ComputerComponent component) {
+        doNotMoveInventory = false;
+    }
+
+    @ReceiveEvent(priority = EventPriority.PRIORITY_TRIVIAL)
     public void computerMovedCopyInternalStorage(ComputerMoveEvent event, EntityRef entity, InternalStorageComponent storage) {
         EntityRef inventoryEntity = storage.inventoryEntity;
         EntityRef newInventoryEntity = event.getNewEntity().getComponent(InternalStorageComponent.class).inventoryEntity;

@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -48,6 +49,9 @@ public class ExecutionContext {
         } else if (value instanceof Map) {
             Map<String, Variable> map = (Map<String, Variable>) value;
             return 4 + getVariablesSize(counted, map.values());
+        } else if (value instanceof List) {
+            List<Variable> list = (List<Variable>) value;
+            return 4+ getVariablesSize(counted, list);
         } else if (value instanceof Boolean) {
             return 1;
         } else if (value instanceof FunctionExecutable) {
