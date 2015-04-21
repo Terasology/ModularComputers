@@ -17,6 +17,7 @@ package org.terasology.computer.component;
 
 import com.google.api.client.util.Lists;
 import org.terasology.entitySystem.Component;
+import org.terasology.network.Replicate;
 import org.terasology.world.block.ForceBlockActive;
 import org.terasology.world.block.items.AddToBlockBasedItem;
 
@@ -33,5 +34,6 @@ public class ComputerComponent implements Component {
     public int cpuSpeed = 10;
     public int stackSize = 10;
     public int memorySize = 1024;
+    @Replicate
     public int computerId=-1;
 }
