@@ -16,17 +16,14 @@
 package org.terasology.computer.ui.documentation;
 
 import com.gempukku.lang.ObjectDefinition;
-import org.terasology.asset.Assets;
 import org.terasology.browser.data.ParagraphData;
 import org.terasology.browser.data.basic.HTMLLikeParser;
 import org.terasology.browser.data.basic.HyperlinkParagraphData;
 import org.terasology.browser.ui.style.ParagraphRenderStyle;
-import org.terasology.browser.ui.style.TextRenderStyle;
+import org.terasology.browser.ui.style.base.BaseParagraphRenderStyle;
 import org.terasology.computer.system.common.ComputerLanguageContext;
 import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
 import org.terasology.computer.system.server.lang.ComputerModule;
-import org.terasology.rendering.assets.font.Font;
-import org.terasology.rendering.nui.Color;
 
 import java.util.Collection;
 import java.util.Map;
@@ -72,9 +69,9 @@ public class DocumentationBuilder {
                         String modulePageId = getComputerModulePageId(moduleType);
 
                         PageData pageData = new PageData(modulePageId, "Computer Module - " + computerModule.getModuleName(), null);
-                        pageData.addParagraph(createTitleParagraph("Computer module - " + computerModule.getModuleName()));
+                        pageData.addParagraphs(createTitleParagraph("Computer module - " + computerModule.getModuleName()));
                         pageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, description));
-                        pageData.addParagraph(paragraphWithSpaceBefore("Methods:"));
+                        pageData.addParagraphs(paragraphWithSpaceBefore("Methods:"));
                         for (String methodName : methodDescriptions.keySet()) {
                             HyperlinkParagraphData paragraphData = new HyperlinkParagraphData(null);
                             paragraphData.append(methodName, null, "navigate:" + getComputerModuleMethodPageId(moduleType, methodName));
@@ -87,10 +84,10 @@ public class DocumentationBuilder {
                             String methodName = methodEntry.getKey();
 
                             PageData functionPageData = new PageData(getComputerModuleMethodPageId(moduleType, methodName), "Method - " + methodName, null);
-                            functionPageData.addParagraph(createTitleParagraph("Method - " + methodName));
+                            functionPageData.addParagraphs(createTitleParagraph("Method - " + methodName));
                             functionPageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, methodEntry.getValue()));
 
-                            functionPageData.addParagraph(paragraphWithSpaceBefore("Parameters:"));
+                            functionPageData.addParagraphs(paragraphWithSpaceBefore("Parameters:"));
 
                             Map<String, String> methodParameters = methodParametersDescriptions.get(methodName);
 
@@ -104,7 +101,7 @@ public class DocumentationBuilder {
 
                             Collection<ParagraphData> returnDescription = HTMLLikeParser.parseHTMLLike(null, methodReturnDescriptions.get(methodName));
                             if (!returnDescription.isEmpty()) {
-                                functionPageData.addParagraph(paragraphWithSpaceBefore("Returns:"));
+                                functionPageData.addParagraphs(paragraphWithSpaceBefore("Returns:"));
                                 functionPageData.addParagraphs(returnDescription);
                             }
 
@@ -127,9 +124,9 @@ public class DocumentationBuilder {
                         String objectPageId = getBuiltInObjectPageId(object);
 
                         PageData pageData = new PageData(objectPageId, "Variable - " + object, null);
-                        pageData.addParagraph(createTitleParagraph("Variable - " + object));
+                        pageData.addParagraphs(createTitleParagraph("Variable - " + object));
                         pageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, objectDescription));
-                        pageData.addParagraph(paragraphWithSpaceBefore("Functions:"));
+                        pageData.addParagraphs(paragraphWithSpaceBefore("Functions:"));
                         for (String functionName : functionDescriptions.keySet()) {
                             HyperlinkParagraphData paragraphData = new HyperlinkParagraphData(null);
                             paragraphData.append(functionName, null, "navigate:" + getBuiltInObjectMethodPageId(object, functionName));
@@ -142,10 +139,10 @@ public class DocumentationBuilder {
                             String functionName = functionEntry.getKey();
 
                             PageData functionPageData = new PageData(getBuiltInObjectMethodPageId(object, functionName), "Function - " + functionName, null);
-                            functionPageData.addParagraph(createTitleParagraph("Function - " + functionName));
+                            functionPageData.addParagraphs(createTitleParagraph("Function - " + functionName));
                             functionPageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, functionEntry.getValue()));
 
-                            functionPageData.addParagraph(paragraphWithSpaceBefore("Parameters:"));
+                            functionPageData.addParagraphs(paragraphWithSpaceBefore("Parameters:"));
 
                             Map<String, String> functionParameters = functionParametersDescriptions.get(functionName);
 
@@ -158,7 +155,7 @@ public class DocumentationBuilder {
 
                             Collection<ParagraphData> returnDescription = HTMLLikeParser.parseHTMLLike(null, functionReturnDescriptions.get(functionName));
                             if (!returnDescription.isEmpty()) {
-                                functionPageData.addParagraph(paragraphWithSpaceBefore("Returns:"));
+                                functionPageData.addParagraphs(paragraphWithSpaceBefore("Returns:"));
                                 functionPageData.addParagraphs(returnDescription);
                             }
 
@@ -175,10 +172,10 @@ public class DocumentationBuilder {
 
     private static PageData buildIntroductionPage(ComputerLanguageContextInitializer computerLanguageContextInitializer) {
         PageData pageData = new PageData("introduction", "Introduction", null);
-        pageData.addParagraph(createTitleParagraph("Introduction"));
+        pageData.addParagraphs(createTitleParagraph("Introduction"));
         pageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, "This is the first page of the documentation."));
 
-        pageData.addParagraph(paragraphWithSpaceBefore("List of built-in objects:"));
+        pageData.addParagraphs(paragraphWithSpaceBefore("List of built-in objects:"));
 
         computerLanguageContextInitializer.initializeContext(
                 new ComputerLanguageContext() {
@@ -195,7 +192,7 @@ public class DocumentationBuilder {
                     }
                 });
 
-        pageData.addParagraph(paragraphWithSpaceBefore("List of registered computer modules:"));
+        pageData.addParagraphs(paragraphWithSpaceBefore("List of registered computer modules:"));
 
         computerLanguageContextInitializer.initializeContext(
                 new ComputerLanguageContext() {
@@ -215,57 +212,17 @@ public class DocumentationBuilder {
         return pageData;
     }
 
-    private static HyperlinkParagraphData paragraphWithSpaceBefore(String text) {
-        HyperlinkParagraphData hyperlinkParagraphData = new HyperlinkParagraphData(
-                new ParagraphRenderStyle() {
-                    @Override
-                    public Integer getIndentAbove(boolean firstParagraph) {
-                        return 10;
-                    }
-
-                    @Override
-                    public Integer getIndentBelow(boolean lastParagraph) {
-                        return null;
-                    }
-
-                    @Override
-                    public Integer getIndentLeft() {
-                        return null;
-                    }
-
-                    @Override
-                    public Integer getIndentRight() {
-                        return null;
-                    }
-
-                    @Override
-                    public Font getFont(boolean hyperlink) {
-                        return null;
-                    }
-
-                    @Override
-                    public Color getColor(boolean hyperlink) {
-                        return null;
-                    }
-                }
-        );
-        hyperlinkParagraphData.append(text, null, null);
-        return hyperlinkParagraphData;
+    private static Collection<ParagraphData> paragraphWithSpaceBefore(String text) {
+        ParagraphRenderStyle renderStyle = new BaseParagraphRenderStyle() {
+            @Override
+            public Integer getIndentAbove(boolean firstParagraph) {
+                return 10;
+            }
+        };
+        return HTMLLikeParser.parseHTMLLike(renderStyle, text);
     }
 
-    private static HyperlinkParagraphData createTitleParagraph(String title) {
-        HyperlinkParagraphData paragraphData = new HyperlinkParagraphData(null);
-        paragraphData.append(title, new TextRenderStyle() {
-            @Override
-            public Font getFont(boolean hyperlink) {
-                return Assets.getFont("engine:title");
-            }
-
-            @Override
-            public Color getColor(boolean hyperlink) {
-                return null;
-            }
-        }, null);
-        return paragraphData;
+    private static Collection<ParagraphData> createTitleParagraph(String title) {
+        return HTMLLikeParser.parseHTMLLike(null, "<f engine:title>"+title+"</f>");
     }
 }

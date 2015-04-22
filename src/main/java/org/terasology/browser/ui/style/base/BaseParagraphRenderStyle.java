@@ -13,56 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.terasology.browser.ui.style;
+package org.terasology.browser.ui.style.base;
 
-import org.terasology.rendering.assets.font.Font;
-import org.terasology.rendering.nui.Canvas;
+import org.terasology.browser.ui.style.ParagraphRenderStyle;
 import org.terasology.rendering.nui.Color;
 
-public class DefaultDocumentRenderStyle implements DocumentRenderStyle {
-    private Canvas canvas;
-
-    public DefaultDocumentRenderStyle(Canvas canvas) {
-        this.canvas = canvas;
-    }
-
+public class BaseParagraphRenderStyle extends BaseTextRenderStyle implements ParagraphRenderStyle {
     @Override
     public Integer getIndentAbove(boolean firstParagraph) {
-        return 0;
+        return null;
     }
 
     @Override
     public Integer getIndentBelow(boolean lastParagraph) {
-        return 0;
+        return null;
     }
 
     @Override
     public Integer getIndentLeft() {
-        return 0;
+        return null;
     }
 
     @Override
     public Integer getIndentRight() {
-        return 0;
-    }
-
-    @Override
-    public Font getFont(boolean hyperlink) {
-        return canvas.getCurrentStyle().getFont();
-    }
-
-    @Override
-    public Color getColor(boolean hyperlink) {
-        if (hyperlink) {
-            return Color.BLUE;
-        } else {
-            return canvas.getCurrentStyle().getTextColor();
-        }
-    }
-
-    @Override
-    public Color getBackgroundColor() {
-        return Color.BLACK;
+        return null;
     }
 
     @Override

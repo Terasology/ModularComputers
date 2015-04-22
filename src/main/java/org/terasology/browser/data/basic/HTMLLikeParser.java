@@ -159,10 +159,6 @@ public class HTMLLikeParser {
 
         @Override
         public Color getColor(boolean hyperlink) {
-            if (this.hyperlink != null) {
-                return Color.BLUE;
-            }
-
             return color;
         }
     }

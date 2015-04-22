@@ -15,6 +15,8 @@
  */
 package org.terasology.browser.ui.style;
 
+import org.terasology.rendering.nui.Color;
+
 public class FallbackParagraphRenderStyle extends FallbackTextRenderStyle implements ParagraphRenderStyle {
     private ParagraphRenderStyle style;
     private ParagraphRenderStyle fallback;
@@ -59,5 +61,14 @@ public class FallbackParagraphRenderStyle extends FallbackTextRenderStyle implem
             indentRight = fallback.getIndentRight();
         }
         return indentRight;
+    }
+
+    @Override
+    public Color getParagraphBackground() {
+        Color paragraphBackground = style.getParagraphBackground();
+        if (paragraphBackground == null) {
+            paragraphBackground = fallback.getParagraphBackground();
+        }
+        return paragraphBackground;
     }
 }

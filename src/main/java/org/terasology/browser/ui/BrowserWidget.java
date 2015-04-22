@@ -72,9 +72,16 @@ public class BrowserWidget extends CoreWidget {
 
                 ParagraphRenderable paragraphContents = paragraphData.getParagraphContents();
                 int paragraphHeight = paragraphContents.getPreferredHeight(canvas, paragraphRenderStyle, paragraphWidth);
-                paragraphContents.render(canvas,
-                        Rect2i.createFromMinAndSize(region.minX() + paragraphRenderStyle.getIndentLeft(), y,
-                                paragraphWidth, paragraphHeight), paragraphRenderStyle, register);
+
+                Rect2i paragraphRegion = Rect2i.createFromMinAndSize(region.minX() + paragraphRenderStyle.getIndentLeft(), y,
+                        paragraphWidth, paragraphHeight);
+
+                Color paragraphBackground = paragraphRenderStyle.getParagraphBackground();
+                if (paragraphBackground != null) {
+                    canvas.drawFilledRectangle(paragraphRegion, paragraphBackground);
+                }
+                paragraphContents.render(canvas, paragraphRegion, paragraphRenderStyle, register);
+
                 y += paragraphHeight;
 
                 lastRenderStyle = paragraphRenderStyle;

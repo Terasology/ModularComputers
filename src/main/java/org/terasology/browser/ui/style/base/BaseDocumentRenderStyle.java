@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.terasology.browser.ui.style;
+package org.terasology.browser.ui.style.base;
 
+import org.terasology.browser.ui.style.DocumentRenderStyle;
 import org.terasology.rendering.nui.Color;
 
-public interface ParagraphRenderStyle extends TextRenderStyle {
-    public Integer getIndentAbove(boolean firstParagraph);
-    public Integer getIndentBelow(boolean lastParagraph);
-    public Integer getIndentLeft();
-    public Integer getIndentRight();
-    public Color getParagraphBackground();
+public class BaseDocumentRenderStyle extends BaseParagraphRenderStyle implements DocumentRenderStyle {
+    @Override
+    public Color getBackgroundColor() {
+        return null;
+    }
 }
