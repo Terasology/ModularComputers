@@ -74,21 +74,21 @@ public class ProgramEditingConsoleGui {
         onTheFlyCompiler = new CompileScriptOnTheFly(computerLanguageContextInitializer);
     }
 
-    public void drawEditProgramConsole(Canvas canvas, int x, int y) {
+    public void drawEditProgramConsole(Canvas canvas, int x, int y, int characterWidth, int fontHeight) {
         for (int line = editedDisplayStartY; line < Math.min(editedProgramLines.size(), editedDisplayStartY + getCharactersInColumn() - 1); line++) {
             String programLine = editedProgramLines.get(line).toString();
             if (programLine.length() > editedDisplayStartX) {
                 String displayedLine = programLine.substring(editedDisplayStartX, Math.min(programLine.length(), editedDisplayStartX + getCharactersInRow()));
-                computerTerminalWidget.drawMonospacedText(canvas, displayedLine, x, y + (line - editedDisplayStartY) * ComputerTerminalWidget.FONT_HEIGHT, PROGRAM_TEXT_COLOR);
+                computerTerminalWidget.drawMonospacedText(canvas, displayedLine, x, y + (line - editedDisplayStartY) * fontHeight, PROGRAM_TEXT_COLOR);
             }
         }
 
         // Draw status line
-        drawStatusLine(canvas, x, y);
+        drawStatusLine(canvas, x, y, characterWidth, fontHeight);
 
         blinkDrawTick = ((++blinkDrawTick) % BLINK_LENGTH);
         if (blinkDrawTick * 2 > BLINK_LENGTH)
-            computerTerminalWidget.drawVerticalLine(canvas, x + (editedProgramCursorX - editedDisplayStartX) * ComputerTerminalWidget.CHARACTER_WIDTH - 1, y + (editedProgramCursorY - editedDisplayStartY) * ComputerTerminalWidget.FONT_HEIGHT, y + 1 + (editedProgramCursorY - editedDisplayStartY + 1) * ComputerTerminalWidget.FONT_HEIGHT, PROGRAM_CURSOR_COLOR);
+            computerTerminalWidget.drawVerticalLine(canvas, x + (editedProgramCursorX - editedDisplayStartX) * characterWidth - 1, y + (editedProgramCursorY - editedDisplayStartY) * fontHeight, y + 1 + (editedProgramCursorY - editedDisplayStartY + 1) * fontHeight, PROGRAM_CURSOR_COLOR);
     }
 
     private int getCharactersInColumn() {
@@ -99,25 +99,25 @@ public class ProgramEditingConsoleGui {
         return CHARACTER_COUNT_WIDTH[_scale];
     }
 
-    private void drawStatusLine(Canvas canvas, int x, int y) {
-        final int lastLineY = y + ComputerTerminalWidget.FONT_HEIGHT * (getCharactersInColumn() - 1);
+    private void drawStatusLine(Canvas canvas, int x, int y, int characterWidth, int fontHeight) {
+        final int lastLineY = y + fontHeight * (getCharactersInColumn() - 1);
         final CompileScriptOnTheFly.CompileStatus compileStatusObj = onTheFlyCompiler.getCompileStatus();
         if (waitingForExitConfirmation) {
             computerTerminalWidget.drawMonospacedText(canvas, "File was not saved, exit? [Y]es/[N]o", 0, lastLineY, PROGRAM_LAST_LINE_COLOR);
         } else if (waitingForGotoLineEntered) {
             computerTerminalWidget.drawMonospacedText(canvas, "Go to line: " + gotoLineNumber.toString(), 0, lastLineY, PROGRAM_LAST_LINE_COLOR);
         } else if (displayErrorMessage && compileStatusObj != null && compileStatusObj.error != null) {
-            displayErrorInformation(canvas, x, y, lastLineY, compileStatusObj);
+            displayErrorInformation(canvas, x, y, lastLineY, characterWidth, fontHeight, compileStatusObj);
         } else {
-            displayNormalEditingInformation(canvas, x, y, lastLineY, compileStatusObj);
+            displayNormalEditingInformation(canvas, x, y, lastLineY, characterWidth, fontHeight, compileStatusObj);
         }
     }
 
-    private void displayNormalEditingInformation(Canvas canvas, int x, int y, int lastLineY, CompileScriptOnTheFly.CompileStatus compileStatusObj) {
+    private void displayNormalEditingInformation(Canvas canvas, int x, int y, int lastLineY, int characterWidth, int fontHeight, CompileScriptOnTheFly.CompileStatus compileStatusObj) {
         computerTerminalWidget.drawMonospacedText(canvas, "[S]ave E[x]it", x, lastLineY, PROGRAM_LAST_LINE_COLOR);
 
         if (programSaveDirty)
-            computerTerminalWidget.drawMonospacedText(canvas, "*", x + 15 * ComputerTerminalWidget.CHARACTER_WIDTH, lastLineY, PROGRAM_LAST_LINE_COLOR);
+            computerTerminalWidget.drawMonospacedText(canvas, "*", x + 15 * characterWidth, lastLineY, PROGRAM_LAST_LINE_COLOR);
 
         String compileStatus = "...";
         Color compileColor = COMPILE_PENDING_COLOR;
@@ -135,7 +135,7 @@ public class ProgramEditingConsoleGui {
         }
 
         int index = getCharactersInRow() - compileStatus.length();
-        computerTerminalWidget.drawMonospacedText(canvas, compileStatus, x + index * ComputerTerminalWidget.CHARACTER_WIDTH, lastLineY, compileColor);
+        computerTerminalWidget.drawMonospacedText(canvas, compileStatus, x + index * characterWidth, lastLineY, compileColor);
 
         if (compileStatusObj != null && compileStatusObj.error != null) {
             final IllegalSyntaxException error = compileStatusObj.error;
@@ -144,11 +144,11 @@ public class ProgramEditingConsoleGui {
 
             if (errorLine >= 0 && errorLine < getCharactersInColumn() - 1
                     && errorColumn >= 0 && errorColumn < getCharactersInRow())
-                computerTerminalWidget.drawHorizontalLine(canvas, x + errorColumn * ComputerTerminalWidget.CHARACTER_WIDTH, y + (errorLine + 1) * ComputerTerminalWidget.FONT_HEIGHT, x + (errorColumn + 1) * ComputerTerminalWidget.CHARACTER_WIDTH, PROGRAM_ERROR_UNDERLINE_COLOR);
+                computerTerminalWidget.drawHorizontalLine(canvas, x + errorColumn * characterWidth, y + (errorLine + 1) * fontHeight, x + (errorColumn + 1) * characterWidth, PROGRAM_ERROR_UNDERLINE_COLOR);
         }
     }
 
-    private void displayErrorInformation(Canvas canvas, int x, int y, int lastLineY, CompileScriptOnTheFly.CompileStatus compileStatusObj) {
+    private void displayErrorInformation(Canvas canvas, int x, int y, int lastLineY, int characterWidth, int fontHeight, CompileScriptOnTheFly.CompileStatus compileStatusObj) {
         final IllegalSyntaxException error = compileStatusObj.error;
         computerTerminalWidget.drawMonospacedText(canvas, error.getError(), x, lastLineY, PROGRAM_ERROR_MESSAGE_COLOR);
         final int errorLine = error.getLine() - editedDisplayStartY;
@@ -156,7 +156,7 @@ public class ProgramEditingConsoleGui {
 
         if (errorLine >= 0 && errorLine < getCharactersInColumn() - 1
                 && errorColumn >= 0 && errorColumn < getCharactersInRow())
-            computerTerminalWidget.drawHorizontalLine(canvas, x + errorColumn * ComputerTerminalWidget.CHARACTER_WIDTH, y + (errorLine + 1) * ComputerTerminalWidget.FONT_HEIGHT, x + (errorColumn + 1) * ComputerTerminalWidget.CHARACTER_WIDTH, PROGRAM_ERROR_UNDERLINE_COLOR);
+            computerTerminalWidget.drawHorizontalLine(canvas, x + errorColumn * characterWidth, y + (errorLine + 1) * fontHeight, x + (errorColumn + 1) * characterWidth, PROGRAM_ERROR_UNDERLINE_COLOR);
     }
 
     public void keyTypedInEditingProgram(char character, int keyboardCharId, boolean controlDown) {

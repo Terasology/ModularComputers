@@ -40,7 +40,10 @@
                         "contents": [
                             {
                                 "id": "computerTerminal",
-                                "type": "ModularComputers:ComputerTerminalWidget"
+                                "type": "ModularComputers:ComputerTerminalWidget",
+                                "monospaceFont": "ModularComputers:november",
+                                "characterWidth": 10,
+                                "fontHeight": 16
                             },
                             {
                                 "id": "browserTab",

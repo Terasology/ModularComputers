@@ -16,6 +16,7 @@
 package org.terasology.computer.ui;
 
 import org.codehaus.plexus.util.StringUtils;
+import org.terasology.asset.Assets;
 import org.terasology.computer.context.ComputerConsole;
 import org.terasology.computer.event.server.ConsoleListeningRegistrationEvent;
 import org.terasology.computer.event.server.DeleteProgramEvent;
@@ -34,6 +35,7 @@ import org.terasology.rendering.nui.Canvas;
 import org.terasology.rendering.nui.Color;
 import org.terasology.rendering.nui.CoreWidget;
 import org.terasology.rendering.nui.HorizontalAlign;
+import org.terasology.rendering.nui.LayoutConfig;
 import org.terasology.rendering.nui.VerticalAlign;
 
 import java.util.Collection;
@@ -43,6 +45,17 @@ public class ComputerTerminalWidget extends CoreWidget {
         PLAYER_CONSOLE, COMPUTER_CONSOLE
     }
 
+    @LayoutConfig
+    private String monospaceFont;
+
+    @LayoutConfig
+    private int characterWidth;
+
+    @LayoutConfig
+    private int fontHeight;
+
+    private Font monospacedFont;
+
     public static final Color BACKGROUND_COLOR = new Color(0x111111ff);
     public static final Color FRAME_COLOR = new Color(0xffffffff);
 
@@ -50,9 +63,6 @@ public class ComputerTerminalWidget extends CoreWidget {
 
     private static final int PADDING_HOR = 5;
     private static final int PADDING_VER = 5;
-
-    public static final int FONT_HEIGHT = 16;
-    public static final int CHARACTER_WIDTH = 14;
 
     private TerminalMode mode;
     private boolean editingProgram;
@@ -122,19 +132,22 @@ public class ComputerTerminalWidget extends CoreWidget {
 
 
         if (mode == TerminalMode.PLAYER_CONSOLE)
-            drawPlayerConsole(canvas);
+            drawPlayerConsole(canvas, characterWidth, fontHeight);
         else if (mode == TerminalMode.COMPUTER_CONSOLE)
             drawComputerConsole(canvas);
     }
 
     private Font getFont(Canvas canvas) {
-        return canvas.getSkin().getDefaultStyle().getFont();
+        if (monospacedFont == null) {
+            monospacedFont = Assets.getFont(monospaceFont);
+        }
+        return monospacedFont;
     }
 
     @Override
     public Vector2i getPreferredContentSize(Canvas canvas, Vector2i sizeHint) {
-        int width = PADDING_HOR * 2 + CHARACTER_WIDTH * ComputerConsole.CONSOLE_WIDTH;
-        int height = PADDING_VER * 2 + FONT_HEIGHT * ComputerConsole.CONSOLE_HEIGHT;
+        int width = PADDING_HOR * 2 + characterWidth * ComputerConsole.CONSOLE_WIDTH;
+        int height = PADDING_VER * 2 + fontHeight * ComputerConsole.CONSOLE_HEIGHT;
         return new Vector2i(width, height);
     }
 
@@ -142,18 +155,18 @@ public class ComputerTerminalWidget extends CoreWidget {
         clientEntity.send(new SaveProgramEvent(computerEntity, programName, programText));
     }
 
-    private void drawPlayerConsole(Canvas canvas) {
+    private void drawPlayerConsole(Canvas canvas, int characterWidth, int fontHeight) {
         if (editingProgram) {
-            programEditingConsoleGui.drawEditProgramConsole(canvas, PADDING_HOR, PADDING_VER);
+            programEditingConsoleGui.drawEditProgramConsole(canvas, PADDING_HOR, PADDING_VER, characterWidth, fontHeight);
         } else {
-            playerCommandConsoleGui.drawPlayerCommandConsole(canvas, PADDING_HOR, PADDING_VER);
+            playerCommandConsoleGui.drawPlayerCommandConsole(canvas, PADDING_HOR, PADDING_VER, characterWidth, fontHeight);
         }
     }
 
     private void drawComputerConsole(Canvas canvas) {
         final String[] consoleLines = computerConsole.getLines();
         for (int i = 0; i < consoleLines.length; i++)
-            drawMonospacedText(canvas, consoleLines[i], PADDING_HOR, PADDING_VER + i * FONT_HEIGHT, COMPUTER_CONSOLE_TEXT_COLOR);
+            drawMonospacedText(canvas, consoleLines[i], PADDING_HOR, PADDING_VER + i * fontHeight, COMPUTER_CONSOLE_TEXT_COLOR);
     }
 
     public void drawVerticalLine(Canvas canvas, int x, int y1, int y2, Color color) {
@@ -168,11 +181,11 @@ public class ComputerTerminalWidget extends CoreWidget {
         // For some reason the text is actually drawn a bit higher than expected, so to correct it, I add 2 to "y"
         char[] chars = text.toCharArray();
         for (int i = 0; i < chars.length; i++)
-            renderCharAt(canvas, chars[i], x + i * CHARACTER_WIDTH, y, color);
+            renderCharAt(canvas, chars[i], x + i * characterWidth, y, color);
     }
 
     private void renderCharAt(Canvas canvas, char ch, int x, int y, Color color) {
-        canvas.drawTextRaw(String.valueOf(ch), getFont(canvas), color, Rect2i.createFromMinAndSize(x, y, CHARACTER_WIDTH, FONT_HEIGHT), HorizontalAlign.CENTER, VerticalAlign.TOP);
+        canvas.drawTextRaw(String.valueOf(ch), getFont(canvas), color, Rect2i.createFromMinAndSize(x, y, characterWidth, fontHeight), HorizontalAlign.CENTER, VerticalAlign.TOP);
     }
 
     @Override

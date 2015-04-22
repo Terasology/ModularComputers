@@ -45,23 +45,23 @@ public class PlayerCommandConsoleGui{
         this.readOnly = readOnly;
     }
 
-    public void drawPlayerCommandConsole(Canvas canvas, int x, int y) {
+    public void drawPlayerCommandConsole(Canvas canvas, int x, int y, int characterWidth, int fontHeight) {
         final String[] consoleLines = playerConsole.getLines();
         // Draw all lines but first (we need to fill current edited line at the bottom)
         for (int i = 1; i < consoleLines.length; i++)
-            computerTerminalWidget.drawMonospacedText(canvas, consoleLines[i], x, y+(i - 1) * ComputerTerminalWidget.FONT_HEIGHT, PLAYER_CONSOLE_TEXT_COLOR);
+            computerTerminalWidget.drawMonospacedText(canvas, consoleLines[i], x, y+(i - 1) * fontHeight, PLAYER_CONSOLE_TEXT_COLOR);
 
         if (!readOnly) {
             String wholeCommandLine = ">" + currentCommand.toString();
             String commandLine = wholeCommandLine.substring(currentCommandDisplayStartIndex, Math.min(currentCommandDisplayStartIndex + ComputerConsole.CONSOLE_WIDTH, wholeCommandLine.length()));
             int cursorPositionInDisplayedCommandLine = 1 + cursorPositionInPlayerCommand - currentCommandDisplayStartIndex;
 
-            final int lastLineY = y + ComputerTerminalWidget.FONT_HEIGHT * (ComputerConsole.CONSOLE_HEIGHT - 1);
+            final int lastLineY = y + fontHeight * (ComputerConsole.CONSOLE_HEIGHT - 1);
             computerTerminalWidget.drawMonospacedText(canvas, commandLine, x, lastLineY, COMMAND_LINE_TEXT_COLOR);
 
             blinkDrawTick = ((++blinkDrawTick) % BLINK_LENGTH);
             if (blinkDrawTick * 2 > BLINK_LENGTH)
-                computerTerminalWidget.drawVerticalLine(canvas, x + cursorPositionInDisplayedCommandLine * ComputerTerminalWidget.CHARACTER_WIDTH - 1, 1 + lastLineY, lastLineY + ComputerTerminalWidget.FONT_HEIGHT, PLAYER_CONSOLE_CURSOR_COLOR);
+                computerTerminalWidget.drawVerticalLine(canvas, x + cursorPositionInDisplayedCommandLine * characterWidth - 1, 1 + lastLineY, lastLineY + fontHeight, PLAYER_CONSOLE_CURSOR_COLOR);
         }
     }
 
