@@ -44,22 +44,6 @@ public class PageData implements BrowserPageInfo, DocumentData {
         paragraphs.add(paragraphData);
     }
 
-    public void addHyperlinkableParagraph(ParagraphRenderStyle paragraphRenderStyle, HyperlinkParagraphData paragraphData) {
-        HyperlinkableTextParagraphRenderable paragraphRenderable = new HyperlinkableTextParagraphRenderable(paragraphData);
-        paragraphs.add(
-                new ParagraphData() {
-                    @Override
-                    public ParagraphRenderStyle getParagraphRenderStyle() {
-                        return paragraphRenderStyle;
-                    }
-
-                    @Override
-                    public ParagraphRenderable getParagraphContents() {
-                        return paragraphRenderable;
-                    }
-                });
-    }
-
     @Override
     public String getPageId() {
         return pageId;

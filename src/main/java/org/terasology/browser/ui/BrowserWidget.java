@@ -69,12 +69,13 @@ public class BrowserWidget extends CoreWidget {
             canvas.drawFilledRectangle(canvas.getRegion(), backgroundColor);
 
             ParagraphRenderStyle lastRenderStyle = null;
+            boolean first = true;
             for (ParagraphData paragraphData : document.getParagraphs()) {
                 if (lastRenderStyle != null) {
                     y += lastRenderStyle.getIndentBelow(false);
                 }
                 ParagraphRenderStyle paragraphRenderStyle = getParagraphRenderStyle(documentRenderStyle, paragraphData);
-                y += paragraphRenderStyle.getIndentAbove();
+                y += paragraphRenderStyle.getIndentAbove(first);
 
                 int paragraphWidth = region.width() - paragraphRenderStyle.getIndentLeft() - paragraphRenderStyle.getIndentRight();
 
@@ -86,6 +87,7 @@ public class BrowserWidget extends CoreWidget {
                 y += paragraphHeight;
 
                 lastRenderStyle = paragraphRenderStyle;
+                first = false;
             }
         }
         canvas.addInteractionRegion(
@@ -127,17 +129,19 @@ public class BrowserWidget extends CoreWidget {
             DocumentRenderStyle documentRenderStyle = getDocumentRenderStyle(defaultDocumentRenderStyle, document);
 
             ParagraphRenderStyle lastRenderStyle = null;
+            boolean first = true;
             for (ParagraphData paragraphData : document.getParagraphs()) {
                 if (lastRenderStyle != null) {
                     y += lastRenderStyle.getIndentBelow(false);
                 }
                 ParagraphRenderStyle paragraphRenderStyle = getParagraphRenderStyle(documentRenderStyle, paragraphData);
-                y += paragraphRenderStyle.getIndentAbove();
+                y += paragraphRenderStyle.getIndentAbove(first);
 
                 int sideIndent = paragraphRenderStyle.getIndentLeft() + paragraphRenderStyle.getIndentRight();
                 y += paragraphData.getParagraphContents().getPreferredHeight(canvas, paragraphRenderStyle, x - sideIndent);
 
                 lastRenderStyle = paragraphRenderStyle;
+                first = false;
             }
             if (lastRenderStyle != null) {
                 y += lastRenderStyle.getIndentBelow(true);

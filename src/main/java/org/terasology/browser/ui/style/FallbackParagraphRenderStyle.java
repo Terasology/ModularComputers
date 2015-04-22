@@ -26,10 +26,10 @@ public class FallbackParagraphRenderStyle extends FallbackTextRenderStyle implem
     }
 
     @Override
-    public Integer getIndentAbove() {
-        Integer indentAbove = style.getIndentAbove();
+    public Integer getIndentAbove(boolean firstParagraph) {
+        Integer indentAbove = style.getIndentAbove(firstParagraph);
         if (indentAbove == null) {
-            indentAbove = fallback.getIndentAbove();
+            indentAbove = fallback.getIndentAbove(firstParagraph);
         }
         return indentAbove;
     }

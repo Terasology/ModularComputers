@@ -17,6 +17,8 @@ package org.terasology.computer.system.common;
 
 import com.gempukku.lang.FunctionExecutable;
 import org.terasology.browser.data.ParagraphData;
+import org.terasology.browser.data.basic.HyperlinkParagraphData;
+import org.terasology.browser.render.HyperlinkableTextParagraphRenderable;
 import org.terasology.computer.system.server.lang.computer.BindFirstModuleOfTypeFunction;
 import org.terasology.computer.system.server.lang.computer.BindModuleFunction;
 import org.terasology.computer.system.server.lang.computer.GetModuleSlotCountFunction;

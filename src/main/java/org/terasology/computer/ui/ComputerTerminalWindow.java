@@ -139,7 +139,7 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
     }
 
     private HyperlinkParagraphData createTitleParagraph(String title) {
-        HyperlinkParagraphData paragraphData = new HyperlinkParagraphData();
+        HyperlinkParagraphData paragraphData = new HyperlinkParagraphData(null);
         paragraphData.append(title, new TextRenderStyle() {
             @Override
             public Font getFont() {
@@ -171,13 +171,13 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
                         String objectPageId = "built-in-" + object;
 
                         PageData pageData = new PageData(objectPageId, "Variable - " + object, null);
-                        pageData.addHyperlinkableParagraph(null, createTitleParagraph("Variable - " + object));
+                        pageData.addParagraph(createTitleParagraph("Variable - " + object));
                         for (ParagraphData paragraphData : objectDescription) {
                             pageData.addParagraph(paragraphData);
                         }
-                        pageData.addHyperlinkableParagraph(null, simpleParagraphData("Functions:"));
+                        pageData.addParagraph(simpleParagraphData("Functions:"));
                         for (String functionName : functionDescriptions.keySet()) {
-                            HyperlinkParagraphData paragraphData = new HyperlinkParagraphData();
+                            HyperlinkParagraphData paragraphData = new HyperlinkParagraphData(null);
                             paragraphData.append(functionName, new TextRenderStyle() {
                                 @Override
                                 public Font getFont() {
@@ -189,7 +189,7 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
                                     return Color.BLUE;
                                 }
                             }, "navigate:" + object + "-" + functionName);
-                            pageData.addHyperlinkableParagraph(null, paragraphData);
+                            pageData.addParagraph(paragraphData);
                         }
 
                         defaultBrowserData.addEntry(null, pageData);
@@ -198,20 +198,20 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
                             String functionName = functionEntry.getKey();
 
                             PageData functionPageData = new PageData(object + "-" + functionName, "Function - " + functionName, null);
-                            functionPageData.addHyperlinkableParagraph(null, createTitleParagraph("Function - " + functionName));
+                            functionPageData.addParagraph(createTitleParagraph("Function - " + functionName));
                             for (ParagraphData paragraphData : functionEntry.getValue()) {
                                 functionPageData.addParagraph(paragraphData);
                             }
 
-                            functionPageData.addHyperlinkableParagraph(null, simpleParagraphData("Parameters:"));
+                            functionPageData.addParagraph(simpleParagraphData("Parameters:"));
 
                             Map<String, Collection<ParagraphData>> functionParameters = functionParametersDescriptions.get(functionName);
 
                             if (functionParameters.isEmpty()) {
-                                functionPageData.addHyperlinkableParagraph(null, simpleParagraphData("None"));
+                                functionPageData.addParagraph(simpleParagraphData("None"));
                             }
                             for (Map.Entry<String, Collection<ParagraphData>> parameterDescription : functionParameters.entrySet()) {
-                                functionPageData.addHyperlinkableParagraph(null, simpleParagraphData(parameterDescription.getKey()));
+                                functionPageData.addParagraph(simpleParagraphData(parameterDescription.getKey()));
                                 for (ParagraphData paragraphData : parameterDescription.getValue()) {
                                     functionPageData.addParagraph(paragraphData);
                                 }
@@ -219,7 +219,7 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
 
                             Collection<ParagraphData> returnDescription = functionReturnDescriptions.get(functionName);
                             if (returnDescription != null) {
-                                functionPageData.addHyperlinkableParagraph(null, simpleParagraphData("Returns:"));
+                                functionPageData.addParagraph(simpleParagraphData("Returns:"));
                                 for (ParagraphData paragraphData : returnDescription) {
                                     functionPageData.addParagraph(paragraphData);
                                 }
@@ -232,15 +232,15 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
     }
 
     private HyperlinkParagraphData simpleParagraphData(String text) {
-        HyperlinkParagraphData hyperlinkParagraphData = new HyperlinkParagraphData();
+        HyperlinkParagraphData hyperlinkParagraphData = new HyperlinkParagraphData(null);
         hyperlinkParagraphData.append(text, null, null);
         return hyperlinkParagraphData;
     }
 
     private PageData buildIntroductionPage() {
         PageData pageData = new PageData("introduction", "Introduction", null);
-        pageData.addHyperlinkableParagraph(null, createTitleParagraph("Introduction"));
-        pageData.addHyperlinkableParagraph(null, simpleParagraphData("This is the first page of the documentation."));
+        pageData.addParagraph(createTitleParagraph("Introduction"));
+        pageData.addParagraph(simpleParagraphData("This is the first page of the documentation."));
         return pageData;
     }
 

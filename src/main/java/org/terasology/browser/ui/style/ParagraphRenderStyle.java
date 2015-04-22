@@ -16,7 +16,7 @@
 package org.terasology.browser.ui.style;
 
 public interface ParagraphRenderStyle extends TextRenderStyle {
-    public Integer getIndentAbove();
+    public Integer getIndentAbove(boolean firstParagraph);
     public Integer getIndentBelow(boolean lastParagraph);
     public Integer getIndentLeft();
     public Integer getIndentRight();

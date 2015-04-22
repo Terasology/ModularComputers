@@ -27,7 +27,7 @@ public class DefaultDocumentRenderStyle implements DocumentRenderStyle {
     }
 
     @Override
-    public Integer getIndentAbove() {
+    public Integer getIndentAbove(boolean firstParagraph) {
         return 0;
     }
 

@@ -15,7 +15,11 @@
  */
 package org.terasology.browser.data.basic;
 
+import org.terasology.browser.data.ParagraphData;
+import org.terasology.browser.render.HyperlinkableTextParagraphRenderable;
+import org.terasology.browser.ui.ParagraphRenderable;
 import org.terasology.browser.ui.style.FallbackTextRenderStyle;
+import org.terasology.browser.ui.style.ParagraphRenderStyle;
 import org.terasology.browser.ui.style.TextRenderStyle;
 import org.terasology.flow.FlowRenderable;
 import org.terasology.math.Rect2i;
@@ -26,8 +30,23 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class HyperlinkParagraphData {
+public class HyperlinkParagraphData implements ParagraphData {
+    private ParagraphRenderStyle paragraphRenderStyle;
     private List<HyperlinkParagraphElement> data = new LinkedList<>();
+
+    public HyperlinkParagraphData(ParagraphRenderStyle paragraphRenderStyle) {
+        this.paragraphRenderStyle = paragraphRenderStyle;
+    }
+
+    @Override
+    public ParagraphRenderStyle getParagraphRenderStyle() {
+        return paragraphRenderStyle;
+    }
+
+    @Override
+    public ParagraphRenderable getParagraphContents() {
+        return new HyperlinkableTextParagraphRenderable(this);
+    }
 
     public void append(String text, TextRenderStyle textRenderStyle, String hyperlink) {
         data.add(new HyperlinkParagraphElement(text, textRenderStyle, hyperlink));
