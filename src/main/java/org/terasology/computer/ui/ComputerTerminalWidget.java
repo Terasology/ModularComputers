@@ -42,7 +42,7 @@ import java.util.Collection;
 
 public class ComputerTerminalWidget extends CoreWidget {
     public enum TerminalMode {
-        PLAYER_CONSOLE, COMPUTER_CONSOLE, DOCUMENTATION
+        PLAYER_CONSOLE, COMPUTER_CONSOLE
     }
 
     public static final Color BACKGROUND_COLOR = new Color(0x111111ff);

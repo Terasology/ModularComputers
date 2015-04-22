@@ -14,26 +14,140 @@
                         "horizontalSpacing": 3,
                         "contents": [
                             {
-                                "type" : "UIButton",
                                 "id" : "playerConsole",
+                                "type" : "UIButton",
                                 "text" : "Player console",
                                 "canBeFocus": false
                             },
                             {
-                                "type" : "UIButton",
                                 "id" : "computerConsole",
-                                "text" : "Computer console"
+                                "type" : "UIButton",
+                                "text" : "Computer console",
+                                "canBeFocus": false
                             },
                             {
-                                "type" : "UIButton",
                                 "id" : "documentation",
-                                "text" : "Documentation"
+                                "type" : "UIButton",
+                                "text" : "Documentation",
+                                "canBeFocus": false
                             }
                         ]
                     },
                     {
-                        "type": "ModularComputers:ComputerTerminalWidget",
-                        "id": "computerTerminal"
+                        "type": "CardLayout",
+                        "id": "tabs",
+                        "defaultCard": "computerTerminal",
+                        "contents": [
+                            {
+                                "id": "computerTerminal",
+                                "type": "ModularComputers:ComputerTerminalWidget"
+                            },
+                            {
+                                "id": "browserTab",
+                                "type": "RelativeLayout",
+                                "contents": [
+                                    {
+                                        "type": "ScrollableArea",
+                                        "id": "tableOfContentsScrollable",
+                                        "content": {
+                                            "id": "tableOfContents",
+                                            "type": "UIList"
+                                        },
+                                        "layoutInfo": {
+                                            "position-top": {},
+                                            "position-bottom": {},
+                                            "width": 150,
+                                            "position-left": {}
+                                        }
+                                    },
+                                    {
+                                        "type": "RelativeLayout",
+                                        "contents": [
+                                            {
+                                                "id": "buttonBar",
+                                                "type": "RelativeLayout",
+                                                "contents": [
+                                                    {
+                                                        "id": "homeButton",
+                                                        "type": "UIButton",
+                                                        "text": "Home",
+                                                        "layoutInfo": {
+                                                            "position-left": {},
+                                                            "use-content-width": true,
+                                                            "use-content-height": true,
+                                                            "position-top": {},
+                                                            "position-bottom": {}
+                                                        }
+                                                    },
+                                                    {
+                                                        "id": "backButton",
+                                                        "type": "UIButton",
+                                                        "text": "Back",
+                                                        "layoutInfo": {
+                                                            "position-left": {
+                                                                "widget": "homeButton",
+                                                                "target": "RIGHT"
+                                                            },
+                                                            "use-content-width": true,
+                                                            "use-content-height": true,
+                                                            "position-top": {},
+                                                            "position-bottom": {}
+                                                        }
+                                                    },
+                                                    {
+                                                        "id": "forwardButton",
+                                                        "type": "UIButton",
+                                                        "text": "Forward",
+                                                        "layoutInfo": {
+                                                            "position-left": {
+                                                                "widget": "backButton",
+                                                                "target": "RIGHT"
+                                                            },
+                                                            "use-content-width": true,
+                                                            "use-content-height": true,
+                                                            "position-top": {},
+                                                            "position-bottom": {}
+                                                        }
+                                                    }
+                                                ],
+                                                "layoutInfo": {
+                                                    "position-left": {},
+                                                    "position-right": {},
+                                                    "height": 25,
+                                                    "position-top": {}
+                                                }
+                                            },
+                                            {
+                                                "id": "browserScrollable",
+                                                "type": "ScrollableArea",
+                                                "content": {
+                                                    "id": "browser",
+                                                    "type": "BrowserWidget"
+                                                },
+                                                "layoutInfo": {
+                                                    "position-left": {},
+                                                    "position-right": {},
+                                                    "position-bottom": {},
+                                                    "position-top": {
+                                                        "widget": "buttonBar",
+                                                        "target": "BOTTOM"
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "layoutInfo": {
+                                            "position-top": {},
+                                            "position-bottom": {},
+                                            "position-right": {},
+                                            "position-left": {
+                                                "widget": "tableOfContentsScrollable",
+                                                "target": "RIGHT"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
                     }
                 ],
                 "layoutInfo": {
