@@ -15,6 +15,7 @@
  */
 package org.terasology.computer.ui;
 
+import com.gempukku.lang.ObjectDefinition;
 import org.terasology.asset.Assets;
 import org.terasology.browser.data.BrowserPageInfo;
 import org.terasology.browser.data.ParagraphData;
@@ -22,8 +23,10 @@ import org.terasology.browser.data.TableOfContents;
 import org.terasology.browser.data.basic.DefaultBrowserData;
 import org.terasology.browser.data.basic.HyperlinkParagraphData;
 import org.terasology.browser.data.basic.PageData;
+import org.terasology.browser.ui.BrowserHyperlinkListener;
 import org.terasology.browser.ui.BrowserWidget;
 import org.terasology.browser.ui.style.TextRenderStyle;
+import org.terasology.computer.system.common.ComputerLanguageContext;
 import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.registry.CoreRegistry;
@@ -35,7 +38,7 @@ import org.terasology.rendering.nui.UIWidget;
 import org.terasology.rendering.nui.itemRendering.StringTextRenderer;
 import org.terasology.rendering.nui.layouts.CardLayout;
 import org.terasology.rendering.nui.widgets.ActivateEventListener;
-import org.terasology.rendering.nui.widgets.ItemActivateEventListener;
+import org.terasology.rendering.nui.widgets.ItemSelectEventListener;
 import org.terasology.rendering.nui.widgets.UIButton;
 import org.terasology.rendering.nui.widgets.UIList;
 
@@ -43,6 +46,7 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class ComputerTerminalWindow extends CoreScreenLayer {
     private ComputerTerminalWidget computerTerminalWidget;
@@ -52,6 +56,9 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
     private UIButton backButton;
     private UIButton forwardButton;
 
+    private DefaultBrowserData browserData;
+    private BrowserWidget browser;
+
     @Override
     protected void initialise() {
         computerTerminalWidget = find("computerTerminal", ComputerTerminalWidget.class);
@@ -60,7 +67,16 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
         UIButton computerConsole = find("computerConsole", UIButton.class);
         UIButton documentation = find("documentation", UIButton.class);
         final CardLayout tabs = find("tabs", CardLayout.class);
-        BrowserWidget browser = find("browser", BrowserWidget.class);
+        browser = find("browser", BrowserWidget.class);
+        browser.addBrowserHyperlinkListener(
+                new BrowserHyperlinkListener() {
+                    @Override
+                    public void hyperlinkClicked(String hyperlink) {
+                        if (hyperlink.startsWith("navigate:")) {
+                            navigateTo(hyperlink.substring(9));
+                        }
+                    }
+                });
 
         playerConsole.subscribe(
                 new ActivateEventListener() {
@@ -95,7 +111,7 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
                 new ActivateEventListener() {
                     @Override
                     public void onActivated(UIWidget widget) {
-                        navigateTo(browser, "introduction");
+                        navigateTo("introduction");
                     }
                 }
         );
@@ -120,13 +136,6 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
                         updateHistoryButtons();
                     }
                 });
-
-        DefaultBrowserData defaultBrowserData = buildDocumentation();
-
-        setupTableOfContents(browser, defaultBrowserData);
-
-        browser.setBrowserData(defaultBrowserData);
-        navigateTo(browser, "introduction");
     }
 
     private HyperlinkParagraphData createTitleParagraph(String title) {
@@ -145,18 +154,97 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
         return paragraphData;
     }
 
-    private DefaultBrowserData buildDocumentation() {
+    private DefaultBrowserData buildDocumentation(ComputerLanguageContextInitializer computerLanguageContextInitializer) {
         DefaultBrowserData defaultBrowserData = new DefaultBrowserData();
-        PageData pageData = new PageData("introduction", "Introduction", null);
-        pageData.addHyperlinkableParagraph(null, createTitleParagraph("Introduction"));
-        HyperlinkParagraphData paragraphData = new HyperlinkParagraphData();
-        paragraphData.append("This is the first page of the documentation.", null, null);
-        pageData.addHyperlinkableParagraph(null, paragraphData);
-        defaultBrowserData.addEntry(null, pageData);
+
+        defaultBrowserData.addEntry(null, buildIntroductionPage());
+        buildBuiltinObjectsPages(defaultBrowserData, computerLanguageContextInitializer);
+
         return defaultBrowserData;
     }
 
-    private void setupTableOfContents(BrowserWidget browser, TableOfContents tableOfContents) {
+    private void buildBuiltinObjectsPages(DefaultBrowserData defaultBrowserData, ComputerLanguageContextInitializer computerLanguageContextInitializer) {
+        computerLanguageContextInitializer.initializeContext(
+                new ComputerLanguageContext() {
+                    @Override
+                    public void addObject(String object, ObjectDefinition objectDefinition, Collection<ParagraphData> objectDescription, Map<String, Collection<ParagraphData>> functionDescriptions, Map<String, Map<String, Collection<ParagraphData>>> functionParametersDescriptions, Map<String, Collection<ParagraphData>> functionReturnDescriptions) {
+                        String objectPageId = "built-in-" + object;
+
+                        PageData pageData = new PageData(objectPageId, "Variable - " + object, null);
+                        pageData.addHyperlinkableParagraph(null, createTitleParagraph("Variable - " + object));
+                        for (ParagraphData paragraphData : objectDescription) {
+                            pageData.addParagraph(paragraphData);
+                        }
+                        pageData.addHyperlinkableParagraph(null, simpleParagraphData("Functions:"));
+                        for (String functionName : functionDescriptions.keySet()) {
+                            HyperlinkParagraphData paragraphData = new HyperlinkParagraphData();
+                            paragraphData.append(functionName, new TextRenderStyle() {
+                                @Override
+                                public Font getFont() {
+                                    return null;
+                                }
+
+                                @Override
+                                public Color getColor() {
+                                    return Color.BLUE;
+                                }
+                            }, "navigate:" + object + "-" + functionName);
+                            pageData.addHyperlinkableParagraph(null, paragraphData);
+                        }
+
+                        defaultBrowserData.addEntry(null, pageData);
+
+                        for (Map.Entry<String, Collection<ParagraphData>> functionEntry : functionDescriptions.entrySet()) {
+                            String functionName = functionEntry.getKey();
+
+                            PageData functionPageData = new PageData(object + "-" + functionName, "Function - " + functionName, null);
+                            functionPageData.addHyperlinkableParagraph(null, createTitleParagraph("Function - " + functionName));
+                            for (ParagraphData paragraphData : functionEntry.getValue()) {
+                                functionPageData.addParagraph(paragraphData);
+                            }
+
+                            functionPageData.addHyperlinkableParagraph(null, simpleParagraphData("Parameters:"));
+
+                            Map<String, Collection<ParagraphData>> functionParameters = functionParametersDescriptions.get(functionName);
+
+                            if (functionParameters.isEmpty()) {
+                                functionPageData.addHyperlinkableParagraph(null, simpleParagraphData("None"));
+                            }
+                            for (Map.Entry<String, Collection<ParagraphData>> parameterDescription : functionParameters.entrySet()) {
+                                functionPageData.addHyperlinkableParagraph(null, simpleParagraphData(parameterDescription.getKey()));
+                                for (ParagraphData paragraphData : parameterDescription.getValue()) {
+                                    functionPageData.addParagraph(paragraphData);
+                                }
+                            }
+
+                            Collection<ParagraphData> returnDescription = functionReturnDescriptions.get(functionName);
+                            if (returnDescription != null) {
+                                functionPageData.addHyperlinkableParagraph(null, simpleParagraphData("Returns:"));
+                                for (ParagraphData paragraphData : returnDescription) {
+                                    functionPageData.addParagraph(paragraphData);
+                                }
+                            }
+
+                            defaultBrowserData.addEntry(objectPageId, functionPageData);
+                        }
+                    }
+                });
+    }
+
+    private HyperlinkParagraphData simpleParagraphData(String text) {
+        HyperlinkParagraphData hyperlinkParagraphData = new HyperlinkParagraphData();
+        hyperlinkParagraphData.append(text, null, null);
+        return hyperlinkParagraphData;
+    }
+
+    private PageData buildIntroductionPage() {
+        PageData pageData = new PageData("introduction", "Introduction", null);
+        pageData.addHyperlinkableParagraph(null, createTitleParagraph("Introduction"));
+        pageData.addHyperlinkableParagraph(null, simpleParagraphData("This is the first page of the documentation."));
+        return pageData;
+    }
+
+    private void setupTableOfContents(TableOfContents tableOfContents) {
         UIList<BrowserPageInfo> tocList = find("tableOfContents", UIList.class);
         List<BrowserPageInfo> items = new LinkedList<>();
         int level = 0;
@@ -171,19 +259,18 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
         });
         tocList.setList(items);
 
-        tocList.subscribe(
-                new ItemActivateEventListener<BrowserPageInfo>() {
+        tocList.subscribeSelection(
+                new ItemSelectEventListener<BrowserPageInfo>() {
                     @Override
-                    public void onItemActivated(UIWidget widget, BrowserPageInfo item) {
-                        navigateTo(browser, item.getPageId());
+                    public void onItemSelected(UIWidget widget, BrowserPageInfo item) {
+                        navigateTo(item.getPageId());
                     }
-                }
-        );
+                });
     }
 
     private void populateChildrenOfParent(TableOfContents tableOfContents, List<BrowserPageInfo> items, int level, String parent) {
         StringBuilder sb = new StringBuilder();
-        for (int i=0; i<level; i++) {
+        for (int i = 0; i < level; i++) {
             sb.append("  ");
         }
         String prefix = sb.toString();
@@ -197,14 +284,14 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
 
                 @Override
                 public String getDisplayableTitle() {
-                    return prefix+content.getDisplayableTitle();
+                    return prefix + content.getDisplayableTitle();
                 }
             });
-            populateChildrenOfParent(tableOfContents, items, level+1, content.getPageId());
+            populateChildrenOfParent(tableOfContents, items, level + 1, content.getPageId());
         }
     }
 
-    private void navigateTo(BrowserWidget browser, String page) {
+    private void navigateTo(String page) {
         if (browserHistory.peekLast() == null || !browserHistory.peekLast().equals(page)) {
             browserHistory.add(page);
             browser.navigateTo(page);
@@ -222,8 +309,17 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
         CoreRegistry.get(NUIManager.class).setFocus(computerTerminalWidget);
     }
 
-    public void initializeWithEntities(ComputerLanguageContextInitializer computerLanguageContextInitializer,
-                                       EntityRef client, EntityRef computer) {
+    public void initializeTerminal(ComputerLanguageContextInitializer computerLanguageContextInitializer,
+                                   EntityRef client, EntityRef computer) {
+        if (browserData == null) {
+            browserData = buildDocumentation(computerLanguageContextInitializer);
+
+            setupTableOfContents(browserData);
+
+            browser.setBrowserData(browserData);
+            navigateTo("introduction");
+        }
+
         computerTerminalWidget.setup(
                 computerLanguageContextInitializer,
                 new Runnable() {

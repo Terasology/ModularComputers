@@ -23,11 +23,15 @@ import org.terasology.browser.ui.style.DocumentRenderStyle;
 import org.terasology.browser.ui.style.FallbackDocumentRenderStyle;
 import org.terasology.browser.ui.style.FallbackParagraphRenderStyle;
 import org.terasology.browser.ui.style.ParagraphRenderStyle;
+import org.terasology.input.MouseInput;
 import org.terasology.math.Rect2i;
 import org.terasology.math.Vector2i;
+import org.terasology.rendering.nui.BaseInteractionListener;
 import org.terasology.rendering.nui.Canvas;
 import org.terasology.rendering.nui.Color;
 import org.terasology.rendering.nui.CoreWidget;
+import org.terasology.rendering.nui.FocusManager;
+import org.terasology.rendering.nui.InteractionListener;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -43,6 +47,10 @@ public class BrowserWidget extends CoreWidget {
 
     public void setBrowserData(BrowserData browserData) {
         this.browserData = browserData;
+    }
+
+    public void addBrowserHyperlinkListener(BrowserHyperlinkListener listener) {
+        listenerList.add(listener);
     }
 
     @Override
@@ -79,8 +87,24 @@ public class BrowserWidget extends CoreWidget {
 
                 lastRenderStyle = paragraphRenderStyle;
             }
-
         }
+        canvas.addInteractionRegion(
+                new BaseInteractionListener() {
+                    @Override
+                    public boolean onMouseClick(MouseInput button, Vector2i pos) {
+                        for (HyperlinkBox hyperlinkBox : hyperlinkBoxes) {
+                            if (hyperlinkBox.box.contains(pos)) {
+                                for (BrowserHyperlinkListener browserHyperlinkListener : listenerList) {
+                                    browserHyperlinkListener.hyperlinkClicked(hyperlinkBox.hyperlink);
+                                }
+
+                                break;
+                            }
+                        }
+
+                        return true;
+                    }
+                });
     }
 
     private DocumentRenderStyle getDocumentRenderStyle(DefaultDocumentRenderStyle defaultDocumentRenderStyle, DocumentData document) {
@@ -111,7 +135,7 @@ public class BrowserWidget extends CoreWidget {
                 y += paragraphRenderStyle.getIndentAbove();
 
                 int sideIndent = paragraphRenderStyle.getIndentLeft() + paragraphRenderStyle.getIndentRight();
-//                y += paragraphData.getParagraphContents().getPreferredHeight(canvas, x - sideIndent);
+                y += paragraphData.getParagraphContents().getPreferredHeight(canvas, paragraphRenderStyle, x - sideIndent);
 
                 lastRenderStyle = paragraphRenderStyle;
             }
@@ -132,10 +156,6 @@ public class BrowserWidget extends CoreWidget {
 
     public void navigateTo(String pageId) {
         this.displayedPage = pageId;
-    }
-
-    public String getDisplayedPage() {
-        return displayedPage;
     }
 
     private class HyperlinkBox {

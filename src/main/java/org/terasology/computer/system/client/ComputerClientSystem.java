@@ -54,7 +54,7 @@ public class ComputerClientSystem extends BaseComponentSystem {
             nuiManager.toggleScreen(COMPUTER_TERMINAL_UI);
 
             ComputerTerminalWindow window = (ComputerTerminalWindow) nuiManager.getScreen(COMPUTER_TERMINAL_UI);
-            window.initializeWithEntities(computerLanguageContextInitializer, client, target);
+            window.initializeTerminal(computerLanguageContextInitializer, client, target);
 
             event.consume();
         }
