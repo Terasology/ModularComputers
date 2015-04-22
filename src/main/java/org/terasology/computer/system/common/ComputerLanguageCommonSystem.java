@@ -16,8 +16,6 @@
 package org.terasology.computer.system.common;
 
 import com.gempukku.lang.FunctionExecutable;
-import org.terasology.browser.data.ParagraphData;
-import org.terasology.browser.data.basic.HyperlinkParagraphData;
 import org.terasology.computer.system.server.lang.computer.BindFirstModuleOfTypeFunction;
 import org.terasology.computer.system.server.lang.computer.BindModuleFunction;
 import org.terasology.computer.system.server.lang.computer.GetModuleSlotCountFunction;
@@ -58,7 +56,7 @@ public class ComputerLanguageCommonSystem extends BaseComponentSystem implements
 
     @Override
     public void initialise() {
-        registerComputerDefinedVariable("console", "");
+        registerComputerDefinedVariable("console", "Contains functions that allow to manipulate Computer console.");
         registerComputerDefinedVariableFunction("console", "append", new AppendToConsoleFunction(),
                 "This method appends the specified text as a new line in Computer console.",
                 new LinkedHashMap<String, String>() {{
@@ -74,7 +72,7 @@ public class ComputerLanguageCommonSystem extends BaseComponentSystem implements
                     put("text", "[String] Text to display at the specified position in the console.");
                 }}, null);
 
-        registerComputerDefinedVariable("os", "");
+        registerComputerDefinedVariable("os", "Contains various functions that allow to do some common operations.");
         registerComputerDefinedVariableFunction("os", "parseFloat", new ParseFloatFunction(),
                 "Parses the specified text as a float number.",
                 new LinkedHashMap<String, String>() {{
@@ -110,7 +108,7 @@ public class ComputerLanguageCommonSystem extends BaseComponentSystem implements
                 new LinkedHashMap<String, String>() {{
                     put("conditions", "[Array of conditions] Conditions that this condition will wait for to become true.");
                 }}, "[Condition] Condition that becomes true, when any of the passed conditions becomes true.\n" +
-                        "In addition when this condition is <h:navigate:os-waitFor>waitedFor</h> the waitFor for this " +
+                        "In addition when this condition is <h navigate:os-waitFor>waitedFor</h> the waitFor for this " +
                         "condition will return an array containing two objects - index of the condition that became true, " +
                         "and the value returned by the condition.");
         registerComputerDefinedVariableFunction("os", "all", new AllFunction(),
@@ -118,7 +116,7 @@ public class ComputerLanguageCommonSystem extends BaseComponentSystem implements
                 new LinkedHashMap<String, String>() {{
                     put("conditions", "[Array of conditions] Conditions that this condition will wait for to become true.");
                 }}, "[Condition] Condition that becomes true, when all of the passed conditions become true.\n"+
-                        "In addition when this condition is <h:navigate:os-waitFor>waitedFor</h> the waitFor for this "+
+                        "In addition when this condition is <h navigate:os-waitFor>waitedFor</h> the waitFor for this "+
                         "condition will return an array containing all the objects returned by the conditions, in the " +
                         "order they appear in the original array passed as a parameter.");
         registerComputerDefinedVariableFunction("os", "format", new FormatFunction(),
@@ -129,7 +127,8 @@ public class ComputerLanguageCommonSystem extends BaseComponentSystem implements
                     put("number", "[Number] Number to format.");
                 }}, "[String] Formatted number as specified by parameters.");
 
-        registerComputerDefinedVariable("computer", "");
+        registerComputerDefinedVariable("computer", "Contains functions that allow reading information about the computer, as well as " +
+                "bind modules for their use.");
         registerComputerDefinedVariableFunction("computer", "bindModule", new BindModuleFunction(),
                 "Binds the module specified in the slot number.",
                 new LinkedHashMap<String, String>() {{
