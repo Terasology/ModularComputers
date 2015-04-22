@@ -21,6 +21,9 @@ import org.terasology.entitySystem.systems.RegisterMode;
 import org.terasology.entitySystem.systems.RegisterSystem;
 import org.terasology.registry.In;
 
+import java.util.HashMap;
+import java.util.TreeMap;
+
 @RegisterSystem(RegisterMode.ALWAYS)
 public class StorageModuleCommonSystem extends BaseComponentSystem {
     public static final String COMPUTER_STORAGE_MODULE_TYPE = "Storage";
@@ -32,6 +35,21 @@ public class StorageModuleCommonSystem extends BaseComponentSystem {
     public void preBegin() {
         computerModuleRegistry.registerComputerModule(
                 COMPUTER_STORAGE_MODULE_TYPE,
-                new StorageComputerModule(COMPUTER_STORAGE_MODULE_TYPE, "Internal storage", 9));
+                new StorageComputerModule(COMPUTER_STORAGE_MODULE_TYPE, "Internal storage", 9),
+                "This module allows storing items within the computer itself. Only one module of this type can be installed in a computer " +
+                        "at a time. Player does not have access to the storage itself via user interface, however " +
+                        "<h navigate:computer-module-Inventory>Inventory manipulator</h> module can be used to access it and store in an external " +
+                        "storage (i.e. chest) using the <h navigate:Inventory-dump>dump</h> method.\n" +
+                        "For more information about usage of this module - refer to <h navigate:computer-module-Inventory>Inventory manipulator</h> " +
+                        "module documentation.",
+                new TreeMap<String, String>() {{
+                    put("getInputInventoryBinding", "Creates the input inventory binding for the Internal storage.");
+                    put("getOutputInventoryBinding", "Creates the output inventory binding for the Internal storage.");
+                }},
+                new HashMap<>(),
+                new HashMap<String, String>() {{
+                    put("getInputInventoryBinding", "[Inventory Binding] Returns inventory binding allowing to put items into this Internal storage.");
+                    put("getOutputInventoryBinding", "[Inventory Binding] Returns inventory binding allowing to extract items from this Internal storage.");
+                }});
     }
 }

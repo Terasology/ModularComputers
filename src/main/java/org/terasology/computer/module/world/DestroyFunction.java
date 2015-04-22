@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.terasology.computer.module.harvest;
+package org.terasology.computer.module.world;
 
 import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.Variable;
 import org.terasology.asset.Assets;
 import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
-import org.terasology.computer.module.inventory.InventoryBinding;
 import org.terasology.computer.system.server.lang.ModuleFunctionExecutable;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.logic.health.DestroyEvent;
@@ -33,11 +32,11 @@ import org.terasology.world.block.BlockManager;
 
 import java.util.Map;
 
-public class HarvestToInventoryFunction implements ModuleFunctionExecutable {
+public class DestroyFunction implements ModuleFunctionExecutable {
     private WorldProvider worldProvider;
     private BlockEntityRegistry blockEntityRegistry;
 
-    public HarvestToInventoryFunction(WorldProvider worldProvider, BlockEntityRegistry blockEntityRegistry) {
+    public DestroyFunction(WorldProvider worldProvider, BlockEntityRegistry blockEntityRegistry) {
         this.worldProvider = worldProvider;
         this.blockEntityRegistry = blockEntityRegistry;
     }
@@ -54,15 +53,12 @@ public class HarvestToInventoryFunction implements ModuleFunctionExecutable {
 
     @Override
     public String[] getParameterNames() {
-        return new String[] {"direction", "inventoryBinding"};
+        return new String[] {"direction"};
     }
 
     @Override
     public Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
-        Direction direction = FunctionParamValidationUtil.validateDirectionParameter(line, parameters, "direction", "harvestToInventory");
-
-        InventoryBinding.InventoryWithSlots inventory = FunctionParamValidationUtil.validateInventoryBinding(line, computer, parameters,
-                "inventoryBinding", "harvestToInventory", true);
+        Direction direction = FunctionParamValidationUtil.validateDirectionParameter(line, parameters, "direction", "harvest");
 
         Vector3i computerLocation = computer.getComputerLocation();
         Vector3i directionVector = direction.getVector3i();
@@ -74,11 +70,13 @@ public class HarvestToInventoryFunction implements ModuleFunctionExecutable {
         Block blockBeforeDestroy = worldProvider.getBlock(harvestLocation);
         if (blockBeforeDestroy != BlockManager.getAir()) {
             EntityRef harvestedEntity = blockEntityRegistry.getBlockEntityAt(harvestLocation);
-            harvestedEntity.send(new DestroyEvent(inventory.inventory, computer.getComputerEntity(), Assets.getPrefab("ModularComputers:harvestDamagePickup")));
+            harvestedEntity.send(new DestroyEvent(computer.getComputerEntity(), EntityRef.NULL, Assets.getPrefab("ModularComputers:harvestDamage")));
 
             return worldProvider.getBlock(harvestLocation) != blockBeforeDestroy;
         } else {
             return true;
         }
     }
+
+
 }

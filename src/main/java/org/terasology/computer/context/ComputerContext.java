@@ -126,6 +126,11 @@ public class ComputerContext {
                                 // Ignore - can't happen
                             }
                         }
+
+                        @Override
+                        public void addComputerModule(ComputerModule computerModule, String description, Map<String, String> methodDescriptions, Map<String, Map<String, String>> methodParametersDescriptions, Map<String, String> methodReturnDescriptions) {
+                            // Ignore
+                        }
                     });
 
             ScriptExecutable scriptExecutable = new ScriptParser().parseScript(new StringReader(programText), variables);

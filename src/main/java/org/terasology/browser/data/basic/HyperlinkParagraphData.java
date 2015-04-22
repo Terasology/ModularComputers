@@ -69,13 +69,13 @@ public class HyperlinkParagraphData implements ParagraphData {
         @Override
         public void render(Canvas canvas, Rect2i bounds, TextRenderStyle defaultRenderStyle) {
             TextRenderStyle textRenderStyle = getTextRenderStyle(defaultRenderStyle);
-            canvas.drawTextRaw(text, textRenderStyle.getFont(), textRenderStyle.getColor(), bounds);
+            canvas.drawTextRaw(text, textRenderStyle.getFont(hyperlink != null), textRenderStyle.getColor(hyperlink != null), bounds);
         }
 
         @Override
         public int getMinWidth(TextRenderStyle defaultRenderStyle) {
             TextRenderStyle textRenderStyle = getTextRenderStyle(defaultRenderStyle);
-            Font font = textRenderStyle.getFont();
+            Font font = textRenderStyle.getFont(hyperlink != null);
 
             int minWidth = 0;
             String[] words = text.split(" ");
@@ -90,7 +90,7 @@ public class HyperlinkParagraphData implements ParagraphData {
         @Override
         public int getWidth(TextRenderStyle defaultRenderStyle) {
             TextRenderStyle textRenderStyle = getTextRenderStyle(defaultRenderStyle);
-            Font font = textRenderStyle.getFont();
+            Font font = textRenderStyle.getFont(hyperlink != null);
 
             return font.getWidth(text);
         }
@@ -98,14 +98,14 @@ public class HyperlinkParagraphData implements ParagraphData {
         @Override
         public int getHeight(TextRenderStyle defaultRenderStyle) {
             TextRenderStyle textRenderStyle = getTextRenderStyle(defaultRenderStyle);
-            Font font = textRenderStyle.getFont();
+            Font font = textRenderStyle.getFont(hyperlink != null);
             return font.getLineHeight();
         }
 
         @Override
         public FlowRenderable.SplitResult<HyperlinkParagraphElement> splitAt(TextRenderStyle defaultRenderStyle, int width) {
             TextRenderStyle textRenderStyle = getTextRenderStyle(defaultRenderStyle);
-            Font font = textRenderStyle.getFont();
+            Font font = textRenderStyle.getFont(hyperlink != null);
             int wholeTextWidth = font.getWidth(text);
             if (wholeTextWidth <=width)
                 return new SplitResult<>(this, null);

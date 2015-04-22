@@ -28,19 +28,19 @@ public class FallbackTextRenderStyle implements TextRenderStyle {
     }
 
     @Override
-    public Font getFont() {
-        Font font = style.getFont();
+    public Font getFont(boolean hyperlink) {
+        Font font = style.getFont(hyperlink);
         if (font == null) {
-            font = fallback.getFont();
+            font = fallback.getFont(hyperlink);
         }
         return font;
     }
 
     @Override
-    public Color getColor() {
-        Color color = style.getColor();
+    public Color getColor(boolean hyperlink) {
+        Color color = style.getColor(hyperlink);
         if (color == null) {
-            color = fallback.getColor();
+            color = fallback.getColor(hyperlink);
         }
         return color;
     }

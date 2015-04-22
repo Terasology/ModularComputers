@@ -21,6 +21,7 @@ import com.gempukku.lang.parser.ScriptParser;
 import org.terasology.browser.data.ParagraphData;
 import org.terasology.computer.system.common.ComputerLanguageContext;
 import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
+import org.terasology.computer.system.server.lang.ComputerModule;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -44,6 +45,11 @@ public class CompileScriptOnTheFly {
                     @Override
                     public void addObject(String object, ObjectDefinition objectDefinition, String objectDescription, Map<String, String> functionDescriptions, Map<String, Map<String, String>> functionParametersDescriptions, Map<String, String> functionReturnDescriptions) {
                         _predefinedVariables.add(object);
+                    }
+
+                    @Override
+                    public void addComputerModule(ComputerModule computerModule, String description, Map<String, String> methodDescriptions, Map<String, Map<String, String>> methodParametersDescriptions, Map<String, String> methodReturnDescriptions) {
+                        // Ignore for now
                     }
                 }
         );

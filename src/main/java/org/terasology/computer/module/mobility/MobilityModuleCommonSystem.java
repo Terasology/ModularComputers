@@ -23,6 +23,11 @@ import org.terasology.registry.In;
 import org.terasology.world.BlockEntityRegistry;
 import org.terasology.world.WorldProvider;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.TreeMap;
+
 @RegisterSystem(RegisterMode.ALWAYS)
 public class MobilityModuleCommonSystem extends BaseComponentSystem {
     public static final String MOBILITY_MODULE_TYPE = "Mobility";
@@ -40,6 +45,20 @@ public class MobilityModuleCommonSystem extends BaseComponentSystem {
                 MOBILITY_MODULE_TYPE,
                 new MobilityComputerModule(
                         worldProvider, blockEntityRegistry,
-                        MOBILITY_MODULE_TYPE, "Internal storage"));
+                        MOBILITY_MODULE_TYPE, "Mobility"),
+                "This module allows computer to move within the world.",
+                new TreeMap<String, String>() {{
+                    put("move", "Moves the computer in the specified direction (if able).");
+                }},
+                new HashMap<String, Map<String, String>>() {{
+                    put("move",
+                            new LinkedHashMap<String, String>() {{
+                                put("direction", "[String] Specifies the direction in which the computer should move. For more information " +
+                                        "about <h navigate:object-type-Direction>Direction</h> - read the link.");
+                            }});
+                }},
+                new HashMap<String, String>() {{
+                    put("move", "[Boolean] If the movement was successful.");
+                }});
     }
 }

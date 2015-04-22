@@ -16,6 +16,7 @@
 package org.terasology.computer.system.common;
 
 import com.gempukku.lang.FunctionExecutable;
+import org.terasology.computer.system.server.lang.ComputerModule;
 import org.terasology.computer.system.server.lang.computer.BindFirstModuleOfTypeFunction;
 import org.terasology.computer.system.server.lang.computer.BindModuleFunction;
 import org.terasology.computer.system.server.lang.computer.GetModuleSlotCountFunction;
@@ -44,15 +45,21 @@ import java.util.Map;
 import java.util.TreeMap;
 
 @RegisterSystem(RegisterMode.ALWAYS)
-@Share(value = {ComputerDefinedVariablesRegistry.class, ComputerLanguageContextInitializer.class})
+@Share(value = {ComputerDefinedVariablesRegistry.class, ComputerModuleRegistry.class, ComputerLanguageContextInitializer.class})
 public class ComputerLanguageCommonSystem extends BaseComponentSystem implements ComputerDefinedVariablesRegistry,
-        ComputerLanguageContextInitializer
+        ComputerModuleRegistry, ComputerLanguageContextInitializer
 {
     private Map<String, MapObjectDefinition> objectDefinitions = new TreeMap<>();
     private Map<String, String> objectDescriptions = new HashMap<>();
     Map<String, Map<String, String>> functionDescriptions = new HashMap<>();
     Map<String, Map<String, Map<String, String>>> functionParametersDescriptions = new HashMap<>();
     Map<String, Map<String, String>> functionReturnDescriptions = new HashMap<>();
+
+    private Map<String, ComputerModule> computerModuleRegistry = new HashMap<>();
+    private Map<String, String> computerModuleDescriptions = new TreeMap<>();
+    private Map<String, Map<String, String>> computerModuleFunctions = new HashMap<>();
+    private Map<String, Map<String, Map<String, String>>> computerModuleFunctionParameters = new HashMap<>();
+    private Map<String, Map<String, String>> computerModuleFunctionReturnDescriptions = new HashMap<>();
 
     @Override
     public void initialise() {
@@ -151,6 +158,22 @@ public class ComputerLanguageCommonSystem extends BaseComponentSystem implements
     }
 
     @Override
+    public void registerComputerModule(String type, ComputerModule computerModule, String description, Map<String, String> methodDescriptions,
+                                       Map<String, Map<String, String>> methodParametersDescriptions, Map<String, String> returnValuesDescriptions) {
+        computerModuleRegistry.put(type, computerModule);
+        String moduleName = computerModule.getModuleName();
+        computerModuleDescriptions.put(moduleName, description);
+        computerModuleFunctions.put(moduleName, new TreeMap<>(methodDescriptions));
+        computerModuleFunctionParameters.put(moduleName, methodParametersDescriptions);
+        computerModuleFunctionReturnDescriptions.put(moduleName, returnValuesDescriptions);
+    }
+
+    @Override
+    public ComputerModule getComputerModuleByType(String type) {
+        return computerModuleRegistry.get(type);
+    }
+
+    @Override
     public void registerComputerDefinedVariable(String variable, String description) {
         objectDefinitions.put(variable, new MapObjectDefinition());
         objectDescriptions.put(variable, description);
@@ -176,6 +199,13 @@ public class ComputerLanguageCommonSystem extends BaseComponentSystem implements
             computerLanguageContext.addObject(variable, objectDefinitionEntry.getValue(),
                     objectDescriptions.get(variable), functionDescriptions.get(variable),
                     functionParametersDescriptions.get(variable), functionReturnDescriptions.get(variable));
+        }
+
+        for (ComputerModule computerModule : computerModuleRegistry.values()) {
+            String moduleName = computerModule.getModuleName();
+            computerLanguageContext.addComputerModule(computerModule, computerModuleDescriptions.get(moduleName),
+                    computerModuleFunctions.get(moduleName), computerModuleFunctionParameters.get(moduleName),
+                    computerModuleFunctionReturnDescriptions.get(moduleName));
         }
     }
 }

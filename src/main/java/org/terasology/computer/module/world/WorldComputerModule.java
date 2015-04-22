@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.terasology.computer.module.harvest;
+package org.terasology.computer.module.world;
 
 import org.terasology.computer.system.server.lang.ComputerModule;
 import org.terasology.computer.system.server.lang.ModuleFunctionExecutable;
@@ -22,13 +22,13 @@ import org.terasology.world.WorldProvider;
 
 import java.util.Collection;
 
-public class HarvestComputerModule implements ComputerModule {
+public class WorldComputerModule implements ComputerModule {
     private WorldProvider worldProvider;
     private BlockEntityRegistry blockEntityRegistry;
     private String moduleType;
     private String moduleName;
 
-    public HarvestComputerModule(WorldProvider worldProvider, BlockEntityRegistry blockEntityRegistry, String moduleType, String moduleName) {
+    public WorldComputerModule(WorldProvider worldProvider, BlockEntityRegistry blockEntityRegistry, String moduleType, String moduleName) {
         this.worldProvider = worldProvider;
         this.blockEntityRegistry = blockEntityRegistry;
         this.moduleType = moduleType;
@@ -57,10 +57,10 @@ public class HarvestComputerModule implements ComputerModule {
 
     @Override
     public ModuleFunctionExecutable getFunctionByName(String name) {
-        if (name.equals("harvest")) {
-            return new HarvestFunction(worldProvider, blockEntityRegistry);
-        } else if (name.equals("harvestToInventory")) {
-            return new HarvestToInventoryFunction(worldProvider, blockEntityRegistry);
+        if (name.equals("destroyBlock")) {
+            return new DestroyFunction(worldProvider, blockEntityRegistry);
+        } else if (name.equals("destroyBlockToInventory")) {
+            return new DestroyToInventoryFunction(worldProvider, blockEntityRegistry);
         }
         return null;
     }

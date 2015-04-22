@@ -30,6 +30,7 @@ import org.terasology.browser.ui.style.ParagraphRenderStyle;
 import org.terasology.browser.ui.style.TextRenderStyle;
 import org.terasology.computer.system.common.ComputerLanguageContext;
 import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
+import org.terasology.computer.system.server.lang.ComputerModule;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.registry.CoreRegistry;
 import org.terasology.rendering.assets.font.Font;
@@ -144,12 +145,12 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
         HyperlinkParagraphData paragraphData = new HyperlinkParagraphData(null);
         paragraphData.append(title, new TextRenderStyle() {
             @Override
-            public Font getFont() {
+            public Font getFont(boolean hyperlink) {
                 return Assets.getFont("engine:title");
             }
 
             @Override
-            public Color getColor() {
+            public Color getColor(boolean hyperlink) {
                 return null;
             }
         }, null);
@@ -160,12 +161,70 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
         DefaultBrowserData defaultBrowserData = new DefaultBrowserData();
 
         defaultBrowserData.addEntry(null, buildIntroductionPage(computerLanguageContextInitializer));
-        buildBuiltinObjectsPages(defaultBrowserData, computerLanguageContextInitializer);
+        buildBuiltinObjectPages(defaultBrowserData, computerLanguageContextInitializer);
+        buildComputerModulePages(defaultBrowserData, computerLanguageContextInitializer);
 
         return defaultBrowserData;
     }
 
-    private void buildBuiltinObjectsPages(DefaultBrowserData defaultBrowserData, ComputerLanguageContextInitializer computerLanguageContextInitializer) {
+    private void buildComputerModulePages(DefaultBrowserData defaultBrowserData, ComputerLanguageContextInitializer computerLanguageContextInitializer) {
+        computerLanguageContextInitializer.initializeContext(
+                new ComputerLanguageContext() {
+                    @Override
+                    public void addComputerModule(ComputerModule computerModule, String description, Map<String, String> methodDescriptions,
+                                                  Map<String, Map<String, String>> methodParametersDescriptions, Map<String, String> methodReturnDescriptions) {
+                        String moduleType = computerModule.getModuleType();
+                        String modulePageId = "computer-module-" + moduleType;
+
+                        PageData pageData = new PageData(modulePageId, "Computer Module - " + computerModule.getModuleName(), null);
+                        pageData.addParagraph(createTitleParagraph("Computer module - " + computerModule.getModuleName()));
+                        pageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, description));
+                        pageData.addParagraph(paragraphWithSpaceBefore("Methods:"));
+                        for (String methodName : methodDescriptions.keySet()) {
+                            HyperlinkParagraphData paragraphData = new HyperlinkParagraphData(null);
+                            paragraphData.append(methodName, null, "navigate:" + moduleType + "-" + methodName);
+                            pageData.addParagraph(paragraphData);
+                        }
+
+                        defaultBrowserData.addEntry(null, pageData);
+
+                        for (Map.Entry<String, String> methodEntry : methodDescriptions.entrySet()) {
+                            String methodName = methodEntry.getKey();
+
+                            PageData functionPageData = new PageData(moduleType + "-" + methodName, "Method - " + methodName, null);
+                            functionPageData.addParagraph(createTitleParagraph("Method - " + methodName));
+                            functionPageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, methodEntry.getValue()));
+
+                            functionPageData.addParagraph(paragraphWithSpaceBefore("Parameters:"));
+
+                            Map<String, String> methodParameters = methodParametersDescriptions.get(methodName);
+
+                            if (methodParameters == null || methodParameters.isEmpty()) {
+                                functionPageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, "None"));
+                            } else {
+                                for (Map.Entry<String, String> parameterDescription : methodParameters.entrySet()) {
+                                    functionPageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, parameterDescription.getKey() + " - " + parameterDescription.getValue()));
+                                }
+                            }
+
+                            Collection<ParagraphData> returnDescription = HTMLLikeParser.parseHTMLLike(null, methodReturnDescriptions.get(methodName));
+                            if (!returnDescription.isEmpty()) {
+                                functionPageData.addParagraph(paragraphWithSpaceBefore("Returns:"));
+                                functionPageData.addParagraphs(returnDescription);
+                            }
+
+                            defaultBrowserData.addEntry(modulePageId, functionPageData);
+                        }
+                    }
+
+                    @Override
+                    public void addObject(String object, ObjectDefinition objectDefinition, String objectDescription, Map<String, String> functionDescriptions, Map<String, Map<String, String>> functionParametersDescriptions, Map<String, String> functionReturnDescriptions) {
+                        // Ignore
+                    }
+                });
+    }
+
+    private void buildBuiltinObjectPages(DefaultBrowserData defaultBrowserData, ComputerLanguageContextInitializer computerLanguageContextInitializer) {
         computerLanguageContextInitializer.initializeContext(
                 new ComputerLanguageContext() {
                     @Override
@@ -178,17 +237,7 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
                         pageData.addParagraph(paragraphWithSpaceBefore("Functions:"));
                         for (String functionName : functionDescriptions.keySet()) {
                             HyperlinkParagraphData paragraphData = new HyperlinkParagraphData(null);
-                            paragraphData.append(functionName, new TextRenderStyle() {
-                                @Override
-                                public Font getFont() {
-                                    return null;
-                                }
-
-                                @Override
-                                public Color getColor() {
-                                    return Color.BLUE;
-                                }
-                            }, "navigate:" + object + "-" + functionName);
+                            paragraphData.append(functionName, null, "navigate:" + object + "-" + functionName);
                             pageData.addParagraph(paragraphData);
                         }
 
@@ -221,6 +270,11 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
                             defaultBrowserData.addEntry(objectPageId, functionPageData);
                         }
                     }
+
+                    @Override
+                    public void addComputerModule(ComputerModule computerModule, String description, Map<String, String> methodDescriptions, Map<String, Map<String, String>> methodParametersDescriptions, Map<String, String> methodReturnDescriptions) {
+                        // Ignore
+                    }
                 });
     }
 
@@ -248,12 +302,12 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
                     }
 
                     @Override
-                    public Font getFont() {
+                    public Font getFont(boolean hyperlink) {
                         return null;
                     }
 
                     @Override
-                    public Color getColor() {
+                    public Color getColor(boolean hyperlink) {
                         return null;
                     }
                 }
@@ -274,21 +328,32 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
                     @Override
                     public void addObject(String object, ObjectDefinition objectDefinition, String objectDescription, Map<String, String> functionDescriptions, Map<String, Map<String, String>> functionParametersDescriptions, Map<String, String> functionReturnDescriptions) {
                         HyperlinkParagraphData paragraphData = new HyperlinkParagraphData(null);
-                        paragraphData.append(object, new TextRenderStyle() {
-                            @Override
-                            public Font getFont() {
-                                return null;
-                            }
-
-                            @Override
-                            public Color getColor() {
-                                return Color.BLUE;
-                            }
-                        }, "navigate:built-in-" + object);
+                        paragraphData.append(object, null, "navigate:built-in-" + object);
                         pageData.addParagraph(paragraphData);
                     }
-                }
-        );
+
+                    @Override
+                    public void addComputerModule(ComputerModule computerModule, String description, Map<String, String> methodDescriptions, Map<String, Map<String, String>> methodParametersDescriptions, Map<String, String> methodReturnDescriptions) {
+                        // Ignore
+                    }
+                });
+
+        pageData.addParagraph(paragraphWithSpaceBefore("List of registered computer modules:"));
+
+        computerLanguageContextInitializer.initializeContext(
+                new ComputerLanguageContext() {
+                    @Override
+                    public void addObject(String object, ObjectDefinition objectDefinition, String objectDescription, Map<String, String> functionDescriptions, Map<String, Map<String, String>> functionParametersDescriptions, Map<String, String> functionReturnDescriptions) {
+                        // Ignore
+                    }
+
+                    @Override
+                    public void addComputerModule(ComputerModule computerModule, String description, Map<String, String> methodDescriptions, Map<String, Map<String, String>> methodParametersDescriptions, Map<String, String> methodReturnDescriptions) {
+                        HyperlinkParagraphData paragraphData = new HyperlinkParagraphData(null);
+                        paragraphData.append(computerModule.getModuleName(), null, "navigate:computer-module-" + computerModule.getModuleType());
+                        pageData.addParagraph(paragraphData);
+                    }
+                });
 
         return pageData;
     }

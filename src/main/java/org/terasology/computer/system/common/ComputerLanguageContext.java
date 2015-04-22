@@ -16,6 +16,8 @@
 package org.terasology.computer.system.common;
 
 import com.gempukku.lang.ObjectDefinition;
+import org.terasology.computer.system.server.lang.ComputerModule;
+
 import java.util.Map;
 
 public interface ComputerLanguageContext {
@@ -23,4 +25,9 @@ public interface ComputerLanguageContext {
                           Map<String, String> functionDescriptions,
                           Map<String, Map<String, String>> functionParametersDescriptions,
                           Map<String, String> functionReturnDescriptions);
+
+    public void addComputerModule(ComputerModule computerModule, String description,
+                                  Map<String, String> methodDescriptions,
+                                  Map<String, Map<String, String>> methodParametersDescriptions,
+                                  Map<String, String> methodReturnDescriptions);
 }

@@ -17,11 +17,13 @@ package org.terasology.computer.system.common;
 
 import org.terasology.computer.system.server.lang.ComputerModule;
 
-import java.util.Collection;
 import java.util.Map;
 
 public interface ComputerModuleRegistry {
-    public void registerComputerModule(String type, ComputerModule computerModule);
+    public void registerComputerModule(
+            String type, ComputerModule computerModule,
+            String description, Map<String, String> methodDescriptions,
+            Map<String, Map<String, String>> methodParametersDescriptions,
+            Map<String, String> returnValuesDescriptions);
     public ComputerModule getComputerModuleByType(String type);
-    public Collection<ComputerModule> getAllRegisteredModules();
 }

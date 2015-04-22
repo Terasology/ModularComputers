@@ -153,13 +153,13 @@ public class HTMLLikeParser {
         }
 
         @Override
-        public Font getFont() {
+        public Font getFont(boolean hyperlink) {
             return font;
         }
 
         @Override
-        public Color getColor() {
-            if (hyperlink != null) {
+        public Color getColor(boolean hyperlink) {
+            if (this.hyperlink != null) {
                 return Color.BLUE;
             }
 

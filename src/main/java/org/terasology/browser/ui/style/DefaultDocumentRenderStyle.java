@@ -47,13 +47,17 @@ public class DefaultDocumentRenderStyle implements DocumentRenderStyle {
     }
 
     @Override
-    public Font getFont() {
+    public Font getFont(boolean hyperlink) {
         return canvas.getCurrentStyle().getFont();
     }
 
     @Override
-    public Color getColor() {
-        return canvas.getCurrentStyle().getTextColor();
+    public Color getColor(boolean hyperlink) {
+        if (hyperlink) {
+            return Color.BLUE;
+        } else {
+            return canvas.getCurrentStyle().getTextColor();
+        }
     }
 
     @Override
