@@ -18,14 +18,12 @@ package org.terasology.computer.ui;
 import com.gempukku.lang.IllegalSyntaxException;
 import com.gempukku.lang.ObjectDefinition;
 import com.gempukku.lang.parser.ScriptParser;
-import org.terasology.browser.data.ParagraphData;
 import org.terasology.computer.system.common.ComputerLanguageContext;
 import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
 import org.terasology.computer.system.server.lang.ComputerModule;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;

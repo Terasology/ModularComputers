@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.terasology.browser.data.basic;
+package org.terasology.computer.ui.documentation;
 
-import org.terasology.browser.data.BrowserPageInfo;
 import org.terasology.browser.data.DocumentData;
 import org.terasology.browser.data.ParagraphData;
 import org.terasology.browser.ui.style.DocumentRenderStyle;
@@ -25,7 +24,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class PageData implements BrowserPageInfo, DocumentData {
+public class PageData implements DocumentationPageInfo, DocumentData {
     private String pageId;
     private String displayTitle;
     private DocumentRenderStyle documentRenderStyle;

@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.terasology.browser.data;
+package org.terasology.computer.ui.documentation;
 
-import java.util.Collection;
+import org.terasology.browser.data.DocumentData;
 
-public interface TableOfContents {
-    public Collection<BrowserPageInfo> getContents(String parentPageId);
+public interface DocumentationData {
+    public DocumentData getDocument(String pageId);
 }

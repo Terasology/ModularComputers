@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.terasology.browser.data;
+package org.terasology.browser.data.basic.flow;
 
-public interface BrowserPageInfo {
-    public String getPageId();
-    public String getDisplayableTitle();
+public interface LaidFlowLine<T extends FlowRenderable> {
+    public int getWidth();
+    public int getHeight();
+    public Iterable<T> getFlowRenderables();
 }

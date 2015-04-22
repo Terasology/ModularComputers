@@ -17,7 +17,6 @@ package org.terasology.computer.module.mobility;
 
 import org.terasology.computer.system.server.lang.ComputerModule;
 import org.terasology.computer.system.server.lang.ModuleFunctionExecutable;
-import org.terasology.entitySystem.metadata.ComponentLibrary;
 import org.terasology.world.BlockEntityRegistry;
 import org.terasology.world.WorldProvider;
 

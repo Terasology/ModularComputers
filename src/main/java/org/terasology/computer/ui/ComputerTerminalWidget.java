@@ -26,7 +26,6 @@ import org.terasology.computer.event.server.SaveProgramEvent;
 import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.input.Keyboard;
-import org.terasology.input.MouseInput;
 import org.terasology.input.events.KeyEvent;
 import org.terasology.math.Rect2i;
 import org.terasology.math.Vector2i;
@@ -34,9 +33,7 @@ import org.terasology.rendering.assets.font.Font;
 import org.terasology.rendering.nui.Canvas;
 import org.terasology.rendering.nui.Color;
 import org.terasology.rendering.nui.CoreWidget;
-import org.terasology.rendering.nui.FocusManager;
 import org.terasology.rendering.nui.HorizontalAlign;
-import org.terasology.rendering.nui.InteractionListener;
 import org.terasology.rendering.nui.VerticalAlign;
 
 import java.util.Collection;

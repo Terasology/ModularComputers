@@ -15,14 +15,12 @@
  */
 package org.terasology.computer.component;
 
-import com.google.api.client.util.Lists;
 import org.terasology.entitySystem.Component;
 import org.terasology.network.Replicate;
 import org.terasology.world.block.ForceBlockActive;
 import org.terasology.world.block.items.AddToBlockBasedItem;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @ForceBlockActive

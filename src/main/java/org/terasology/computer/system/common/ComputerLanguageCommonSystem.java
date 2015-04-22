@@ -33,6 +33,7 @@ import org.terasology.computer.system.server.lang.os.ParseFloatFunction;
 import org.terasology.computer.system.server.lang.os.ParseIntFunction;
 import org.terasology.computer.system.server.lang.os.TypeOfFunction;
 import org.terasology.computer.system.server.lang.os.WaitForFunction;
+import org.terasology.computer.ui.documentation.DocumentationBuilder;
 import org.terasology.entitySystem.systems.BaseComponentSystem;
 import org.terasology.entitySystem.systems.RegisterMode;
 import org.terasology.entitySystem.systems.RegisterSystem;
@@ -47,8 +48,7 @@ import java.util.TreeMap;
 @RegisterSystem(RegisterMode.ALWAYS)
 @Share(value = {ComputerDefinedVariablesRegistry.class, ComputerModuleRegistry.class, ComputerLanguageContextInitializer.class})
 public class ComputerLanguageCommonSystem extends BaseComponentSystem implements ComputerDefinedVariablesRegistry,
-        ComputerModuleRegistry, ComputerLanguageContextInitializer
-{
+        ComputerModuleRegistry, ComputerLanguageContextInitializer {
     private Map<String, MapObjectDefinition> objectDefinitions = new TreeMap<>();
     private Map<String, String> objectDescriptions = new HashMap<>();
     Map<String, Map<String, String>> functionDescriptions = new HashMap<>();
@@ -87,7 +87,7 @@ public class ComputerLanguageCommonSystem extends BaseComponentSystem implements
                 }}, "[Number] The number it was able to parse.");
         registerComputerDefinedVariableFunction("os", "parseInt", new ParseIntFunction(),
                 "Parses the specified text as an integer number.",
-                new LinkedHashMap<String,String>() {{
+                new LinkedHashMap<String, String>() {{
                     put("text", "[String] Text to parse as an integer number.");
                 }}, "[Number] The number it was able to parse.");
         registerComputerDefinedVariableFunction("os", "typeOf", new TypeOfFunction(),
@@ -115,15 +115,15 @@ public class ComputerLanguageCommonSystem extends BaseComponentSystem implements
                 new LinkedHashMap<String, String>() {{
                     put("conditions", "[Array of conditions] Conditions that this condition will wait for to become true.");
                 }}, "[Condition] Condition that becomes true, when any of the passed conditions becomes true.\n" +
-                        "In addition when this condition is <h navigate:os-waitFor>waitedFor</h> the waitFor for this " +
+                        "In addition when this condition is <h navigate:" + DocumentationBuilder.getBuiltInObjectMethodPageId("os", "waitFor") + ">waitedFor</h> the waitFor for this " +
                         "condition will return an array containing two objects - index of the condition that became true, " +
                         "and the value returned by the condition.");
         registerComputerDefinedVariableFunction("os", "all", new AllFunction(),
                 "Creates a condition that becomes true, when all the conditions passed become true.",
                 new LinkedHashMap<String, String>() {{
                     put("conditions", "[Array of conditions] Conditions that this condition will wait for to become true.");
-                }}, "[Condition] Condition that becomes true, when all of the passed conditions become true.\n"+
-                        "In addition when this condition is <h navigate:os-waitFor>waitedFor</h> the waitFor for this "+
+                }}, "[Condition] Condition that becomes true, when all of the passed conditions become true.\n" +
+                        "In addition when this condition is <h navigate:" + DocumentationBuilder.getBuiltInObjectMethodPageId("os", "waitFor") + ">waitedFor</h> the waitFor for this " +
                         "condition will return an array containing all the objects returned by the conditions, in the " +
                         "order they appear in the original array passed as a parameter.");
         registerComputerDefinedVariableFunction("os", "format", new FormatFunction(),

@@ -15,7 +15,9 @@
  */
 package org.terasology.computer.module.storage;
 
+import org.terasology.computer.module.inventory.InventoryModuleCommonSystem;
 import org.terasology.computer.system.common.ComputerModuleRegistry;
+import org.terasology.computer.ui.documentation.DocumentationBuilder;
 import org.terasology.entitySystem.systems.BaseComponentSystem;
 import org.terasology.entitySystem.systems.RegisterMode;
 import org.terasology.entitySystem.systems.RegisterSystem;
@@ -33,14 +35,17 @@ public class StorageModuleCommonSystem extends BaseComponentSystem {
 
     @Override
     public void preBegin() {
+        String inventoryModulePageId = DocumentationBuilder.getComputerModulePageId(InventoryModuleCommonSystem.COMPUTER_INVENTORY_MODULE_TYPE);
+        String inventoryModuleDumpMethodPageId = DocumentationBuilder.getComputerModuleMethodPageId(InventoryModuleCommonSystem.COMPUTER_INVENTORY_MODULE_TYPE, "dump");
+
         computerModuleRegistry.registerComputerModule(
                 COMPUTER_STORAGE_MODULE_TYPE,
                 new StorageComputerModule(COMPUTER_STORAGE_MODULE_TYPE, "Internal storage", 9),
                 "This module allows storing items within the computer itself. Only one module of this type can be installed in a computer " +
                         "at a time. Player does not have access to the storage itself via user interface, however " +
-                        "<h navigate:computer-module-Inventory>Inventory manipulator</h> module can be used to access it and store in an external " +
-                        "storage (i.e. chest) using the <h navigate:Inventory-dump>dump</h> method.\n" +
-                        "For more information about usage of this module - refer to <h navigate:computer-module-Inventory>Inventory manipulator</h> " +
+                        "<h navigate:" + inventoryModulePageId + ">Inventory manipulator</h> module can be used to access it and store in an external " +
+                        "storage (i.e. chest) using the <h navigate:" + inventoryModuleDumpMethodPageId + ">dump</h> method.\n" +
+                        "For more information about usage of this module - refer to <h navigate:" + inventoryModulePageId + ">Inventory manipulator</h> " +
                         "module documentation.",
                 new TreeMap<String, String>() {{
                     put("getInputInventoryBinding", "Creates the input inventory binding for the Internal storage.");

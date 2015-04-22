@@ -17,7 +17,6 @@ package org.terasology.computer.system.server;
 
 import com.gempukku.lang.ExecutionCostConfiguration;
 import com.gempukku.lang.IllegalSyntaxException;
-import com.gempukku.lang.ObjectDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terasology.computer.component.ComputerComponent;

@@ -13,15 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.terasology.browser.data.basic;
+package org.terasology.computer.ui.documentation;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.TreeMultimap;
-import org.terasology.browser.data.BrowserData;
-import org.terasology.browser.data.BrowserPageInfo;
 import org.terasology.browser.data.DocumentData;
-import org.terasology.browser.data.TableOfContents;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -31,7 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class DefaultBrowserData implements BrowserData, TableOfContents {
+public class DefaultDocumentationData implements DocumentationData, TableOfContents {
     private Set<PageData> rootPages = new TreeSet<>(new PageDataComparator());
     private Multimap<String, PageData> childPages = TreeMultimap.create(Ordering.natural(), new PageDataComparator());
     private Map<String, PageData> allPages = new HashMap<>();
@@ -46,7 +43,7 @@ public class DefaultBrowserData implements BrowserData, TableOfContents {
     }
 
     @Override
-    public Collection<BrowserPageInfo> getContents(String parentPageId) {
+    public Collection<DocumentationPageInfo> getContents(String parentPageId) {
         if (parentPageId == null)
             return Collections.unmodifiableCollection(rootPages);
         Collection<PageData> children = childPages.get(parentPageId);

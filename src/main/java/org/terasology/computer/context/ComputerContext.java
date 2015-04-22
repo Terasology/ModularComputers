@@ -31,7 +31,6 @@ import com.gempukku.lang.Variable;
 import com.gempukku.lang.parser.ScriptParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.terasology.browser.data.ParagraphData;
 import org.terasology.computer.component.ComputerComponent;
 import org.terasology.computer.component.ComputerModuleComponent;
 import org.terasology.computer.system.common.ComputerLanguageContext;
@@ -45,7 +44,6 @@ import org.terasology.world.block.BlockComponent;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;

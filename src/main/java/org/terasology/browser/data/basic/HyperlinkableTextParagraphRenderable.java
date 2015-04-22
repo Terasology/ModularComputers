@@ -15,19 +15,12 @@
  */
 package org.terasology.browser.data.basic;
 
-import org.terasology.browser.data.basic.HyperlinkParagraphData;
+import org.terasology.browser.data.basic.flow.FlowLineBuilder;
+import org.terasology.browser.data.basic.flow.LaidFlowLine;
 import org.terasology.browser.ui.ParagraphRenderable;
-import org.terasology.browser.ui.style.FallbackTextRenderStyle;
 import org.terasology.browser.ui.style.TextRenderStyle;
-import org.terasology.flow.FlowLineBuilder;
-import org.terasology.flow.LaidFlowLine;
 import org.terasology.math.Rect2i;
-import org.terasology.rendering.assets.font.Font;
 import org.terasology.rendering.nui.Canvas;
-import org.terasology.rendering.nui.Color;
-import org.terasology.rendering.nui.TextLineBuilder;
-
-import java.util.List;
 
 public class HyperlinkableTextParagraphRenderable implements ParagraphRenderable {
     private HyperlinkParagraphData hyperlinkParagraphData;

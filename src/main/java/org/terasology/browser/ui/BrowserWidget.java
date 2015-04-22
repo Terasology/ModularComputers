@@ -15,7 +15,6 @@
  */
 package org.terasology.browser.ui;
 
-import org.terasology.browser.data.BrowserData;
 import org.terasology.browser.data.DocumentData;
 import org.terasology.browser.data.ParagraphData;
 import org.terasology.browser.ui.style.DefaultDocumentRenderStyle;
@@ -30,24 +29,17 @@ import org.terasology.rendering.nui.BaseInteractionListener;
 import org.terasology.rendering.nui.Canvas;
 import org.terasology.rendering.nui.Color;
 import org.terasology.rendering.nui.CoreWidget;
-import org.terasology.rendering.nui.FocusManager;
-import org.terasology.rendering.nui.InteractionListener;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class BrowserWidget extends CoreWidget {
-    private BrowserData browserData;
-    private String displayedPage;
+    private DocumentData displayedPage;
 
     private List<BrowserHyperlinkListener> listenerList = new LinkedList<>();
 
     private List<HyperlinkBox> hyperlinkBoxes = new LinkedList<>();
     private ParagraphRenderable.HyperlinkRegister register = new HyperlinkRegisterImpl();
-
-    public void setBrowserData(BrowserData browserData) {
-        this.browserData = browserData;
-    }
 
     public void addBrowserHyperlinkListener(BrowserHyperlinkListener listener) {
         listenerList.add(listener);
@@ -62,34 +54,31 @@ public class BrowserWidget extends CoreWidget {
 
             DefaultDocumentRenderStyle defaultDocumentRenderStyle = new DefaultDocumentRenderStyle(canvas);
 
-            DocumentData document = browserData.getDocument(displayedPage);
-            if (document != null) {
-                DocumentRenderStyle documentRenderStyle = getDocumentRenderStyle(defaultDocumentRenderStyle, document);
+            DocumentRenderStyle documentRenderStyle = getDocumentRenderStyle(defaultDocumentRenderStyle, displayedPage);
 
-                Color backgroundColor = documentRenderStyle.getBackgroundColor();
-                canvas.drawFilledRectangle(canvas.getRegion(), backgroundColor);
+            Color backgroundColor = documentRenderStyle.getBackgroundColor();
+            canvas.drawFilledRectangle(canvas.getRegion(), backgroundColor);
 
-                ParagraphRenderStyle lastRenderStyle = null;
-                boolean first = true;
-                for (ParagraphData paragraphData : document.getParagraphs()) {
-                    if (lastRenderStyle != null) {
-                        y += lastRenderStyle.getIndentBelow(false);
-                    }
-                    ParagraphRenderStyle paragraphRenderStyle = getParagraphRenderStyle(documentRenderStyle, paragraphData);
-                    y += paragraphRenderStyle.getIndentAbove(first);
-
-                    int paragraphWidth = region.width() - paragraphRenderStyle.getIndentLeft() - paragraphRenderStyle.getIndentRight();
-
-                    ParagraphRenderable paragraphContents = paragraphData.getParagraphContents();
-                    int paragraphHeight = paragraphContents.getPreferredHeight(canvas, paragraphRenderStyle, paragraphWidth);
-                    paragraphContents.render(canvas,
-                            Rect2i.createFromMinAndSize(region.minX() + paragraphRenderStyle.getIndentLeft(), y,
-                                    paragraphWidth, paragraphHeight), paragraphRenderStyle, register);
-                    y += paragraphHeight;
-
-                    lastRenderStyle = paragraphRenderStyle;
-                    first = false;
+            ParagraphRenderStyle lastRenderStyle = null;
+            boolean first = true;
+            for (ParagraphData paragraphData : displayedPage.getParagraphs()) {
+                if (lastRenderStyle != null) {
+                    y += lastRenderStyle.getIndentBelow(false);
                 }
+                ParagraphRenderStyle paragraphRenderStyle = getParagraphRenderStyle(documentRenderStyle, paragraphData);
+                y += paragraphRenderStyle.getIndentAbove(first);
+
+                int paragraphWidth = region.width() - paragraphRenderStyle.getIndentLeft() - paragraphRenderStyle.getIndentRight();
+
+                ParagraphRenderable paragraphContents = paragraphData.getParagraphContents();
+                int paragraphHeight = paragraphContents.getPreferredHeight(canvas, paragraphRenderStyle, paragraphWidth);
+                paragraphContents.render(canvas,
+                        Rect2i.createFromMinAndSize(region.minX() + paragraphRenderStyle.getIndentLeft(), y,
+                                paragraphWidth, paragraphHeight), paragraphRenderStyle, register);
+                y += paragraphHeight;
+
+                lastRenderStyle = paragraphRenderStyle;
+                first = false;
             }
         }
         canvas.addInteractionRegion(
@@ -127,28 +116,30 @@ public class BrowserWidget extends CoreWidget {
         if (displayedPage != null) {
             DefaultDocumentRenderStyle defaultDocumentRenderStyle = new DefaultDocumentRenderStyle(canvas);
 
-            DocumentData document = browserData.getDocument(displayedPage);
-            if (document != null) {
-                DocumentRenderStyle documentRenderStyle = getDocumentRenderStyle(defaultDocumentRenderStyle, document);
+            DocumentRenderStyle documentRenderStyle = getDocumentRenderStyle(defaultDocumentRenderStyle, displayedPage);
 
-                ParagraphRenderStyle lastRenderStyle = null;
-                boolean first = true;
-                for (ParagraphData paragraphData : document.getParagraphs()) {
-                    if (lastRenderStyle != null) {
-                        y += lastRenderStyle.getIndentBelow(false);
-                    }
-                    ParagraphRenderStyle paragraphRenderStyle = getParagraphRenderStyle(documentRenderStyle, paragraphData);
-                    y += paragraphRenderStyle.getIndentAbove(first);
+            for (ParagraphData paragraphData : displayedPage.getParagraphs()) {
+                ParagraphRenderStyle paragraphRenderStyle = getParagraphRenderStyle(documentRenderStyle, paragraphData);
+                x = Math.max(x, paragraphData.getParagraphContents().getMinWidth(canvas, paragraphRenderStyle));
+            }
 
-                    int sideIndent = paragraphRenderStyle.getIndentLeft() + paragraphRenderStyle.getIndentRight();
-                    y += paragraphData.getParagraphContents().getPreferredHeight(canvas, paragraphRenderStyle, x - sideIndent);
-
-                    lastRenderStyle = paragraphRenderStyle;
-                    first = false;
-                }
+            ParagraphRenderStyle lastRenderStyle = null;
+            boolean first = true;
+            for (ParagraphData paragraphData : displayedPage.getParagraphs()) {
                 if (lastRenderStyle != null) {
-                    y += lastRenderStyle.getIndentBelow(true);
+                    y += lastRenderStyle.getIndentBelow(false);
                 }
+                ParagraphRenderStyle paragraphRenderStyle = getParagraphRenderStyle(documentRenderStyle, paragraphData);
+                y += paragraphRenderStyle.getIndentAbove(first);
+
+                int sideIndent = paragraphRenderStyle.getIndentLeft() + paragraphRenderStyle.getIndentRight();
+                y += paragraphData.getParagraphContents().getPreferredHeight(canvas, paragraphRenderStyle, x - sideIndent);
+
+                lastRenderStyle = paragraphRenderStyle;
+                first = false;
+            }
+            if (lastRenderStyle != null) {
+                y += lastRenderStyle.getIndentBelow(true);
             }
         }
         return new Vector2i(x, y);
@@ -162,8 +153,8 @@ public class BrowserWidget extends CoreWidget {
         return new FallbackParagraphRenderStyle(paragraphStyle, documentRenderStyle);
     }
 
-    public void navigateTo(String pageId) {
-        this.displayedPage = pageId;
+    public void navigateTo(DocumentData page) {
+        this.displayedPage = page;
     }
 
     private class HyperlinkBox {

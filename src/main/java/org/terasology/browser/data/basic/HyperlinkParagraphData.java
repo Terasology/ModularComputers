@@ -16,11 +16,11 @@
 package org.terasology.browser.data.basic;
 
 import org.terasology.browser.data.ParagraphData;
+import org.terasology.browser.data.basic.flow.FlowRenderable;
 import org.terasology.browser.ui.ParagraphRenderable;
 import org.terasology.browser.ui.style.FallbackTextRenderStyle;
 import org.terasology.browser.ui.style.ParagraphRenderStyle;
 import org.terasology.browser.ui.style.TextRenderStyle;
-import org.terasology.flow.FlowRenderable;
 import org.terasology.math.Rect2i;
 import org.terasology.rendering.assets.font.Font;
 import org.terasology.rendering.nui.Canvas;

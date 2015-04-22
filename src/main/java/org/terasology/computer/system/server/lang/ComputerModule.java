@@ -15,8 +15,6 @@
  */
 package org.terasology.computer.system.server.lang;
 
-import org.terasology.computer.context.ComputerCallback;
-
 import java.util.Collection;
 
 public interface ComputerModule {
