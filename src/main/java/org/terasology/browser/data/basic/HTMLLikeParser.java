@@ -30,7 +30,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class HTMLLikeParser {
-    // TODO: Quick and dirty - replace with something more solid
+    // TODO: Quick and dirty - add something more solid and replaces uses of this one with it
     public static Collection<ParagraphData> parseHTMLLike(ParagraphRenderStyle paragraphRenderStyle, String text) {
         if (text == null) {
             return Collections.emptyList();
@@ -103,6 +103,9 @@ public class HTMLLikeParser {
                         }
                         reader.read();
                         hyperlink = readUntilCharacter(reader, '>');
+                    } else if (nextChar == 'l') {
+                        readUntilCharacter(reader, '>');
+                        sb.append('\n');
                     }
                 } else if (c == '&') {
                     String escape = readUntilCharacter(reader, ';');

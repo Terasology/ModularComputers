@@ -78,7 +78,7 @@ public class HyperlinkParagraphData implements ParagraphData {
             Font font = textRenderStyle.getFont(hyperlink != null);
 
             int minWidth = 0;
-            String[] words = text.split(" ");
+            String[] words = text.split("[ \\n]");
             for (String word : words) {
                 int width = font.getWidth(word);
                 minWidth = Math.max(minWidth, width);
@@ -107,7 +107,7 @@ public class HyperlinkParagraphData implements ParagraphData {
             TextRenderStyle textRenderStyle = getTextRenderStyle(defaultRenderStyle);
             Font font = textRenderStyle.getFont(hyperlink != null);
             int wholeTextWidth = font.getWidth(text);
-            if (wholeTextWidth <=width)
+            if (wholeTextWidth <= width)
                 return new SplitResult<>(this, null);
 
             int spaceWidth = font.getWidth(' ');
@@ -120,20 +120,22 @@ public class HyperlinkParagraphData implements ParagraphData {
 
             boolean appendingToBefore = true;
 
-            String[] words = text.split(" ");
-            if (text.startsWith(" ")) {
+            String[] lines = text.split("\n");
+
+            String[] words = lines[0].split(" ");
+            if (lines[0].startsWith(" ")) {
                 before.append(" ");
-                usedSpace+=spaceWidth;
+                usedSpace += spaceWidth;
             }
             for (String word : words) {
                 if (appendingToBefore) {
                     if (!first) {
-                        usedSpace+=spaceWidth;
+                        usedSpace += spaceWidth;
                         before.append(" ");
                     }
 
                     usedSpace += font.getWidth(word);
-                    if (usedSpace>width) {
+                    if (usedSpace > width) {
                         if (before.length() == 0) {
                             return new SplitResult<>(null, this);
                         } else {
@@ -149,8 +151,17 @@ public class HyperlinkParagraphData implements ParagraphData {
                     after.append(word);
                 }
             }
-            if (text.endsWith(" ")) {
+            if (lines[0].endsWith(" ")) {
                 after.append(" ");
+            }
+
+            boolean firstLine = true;
+            for (int i = 1; i < lines.length; i++) {
+                if (!firstLine) {
+                    after.append("\n");
+                }
+                after.append(lines[i]);
+                firstLine = false;
             }
 
             String beforeText = trimRight(before).toString();
@@ -175,9 +186,9 @@ public class HyperlinkParagraphData implements ParagraphData {
 
         private StringBuilder trimRight(StringBuilder stringBuilder) {
             int size = stringBuilder.length();
-            for (int i=size-1; i>=0; i--) {
+            for (int i = size - 1; i >= 0; i--) {
                 if (stringBuilder.charAt(i) != ' ') {
-                    stringBuilder.replace(i+1, size, "");
+                    stringBuilder.replace(i + 1, size, "");
                     break;
                 }
             }
@@ -186,7 +197,7 @@ public class HyperlinkParagraphData implements ParagraphData {
 
         private StringBuilder trimLeft(StringBuilder stringBuilder) {
             int size = stringBuilder.length();
-            for (int i=0; i<size; i++) {
+            for (int i = 0; i < size; i++) {
                 if (stringBuilder.charAt(i) != ' ') {
                     stringBuilder.replace(0, i, "");
                     break;
