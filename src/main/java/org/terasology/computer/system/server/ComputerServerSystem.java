@@ -36,10 +36,9 @@ import org.terasology.computer.event.server.ExecuteProgramEvent;
 import org.terasology.computer.event.server.GetProgramTextEvent;
 import org.terasology.computer.event.server.ListProgramsEvent;
 import org.terasology.computer.event.server.SaveProgramEvent;
+import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
+import org.terasology.computer.system.common.ComputerModuleRegistry;
 import org.terasology.computer.system.server.lang.ComputerModule;
-import org.terasology.computer.system.server.lang.computer.ComputerObjectDefinition;
-import org.terasology.computer.system.server.lang.console.ConsoleObjectDefinition;
-import org.terasology.computer.system.server.lang.os.OSObjectDefinition;
 import org.terasology.entitySystem.entity.EntityManager;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.entitySystem.entity.lifecycleEvents.BeforeDeactivateComponent;
@@ -55,7 +54,6 @@ import org.terasology.logic.inventory.InventoryUtils;
 import org.terasology.logic.inventory.events.BeforeItemPutInInventory;
 import org.terasology.network.events.DisconnectedEvent;
 import org.terasology.registry.In;
-import org.terasology.registry.Share;
 import org.terasology.world.block.BlockComponent;
 import org.terasology.world.block.items.OnBlockItemPlaced;
 
@@ -67,32 +65,25 @@ import java.util.Map;
 import java.util.TreeSet;
 
 @RegisterSystem(RegisterMode.AUTHORITY)
-@Share(value = ComputerModuleRegistry.class)
-public class ComputerServerSystem extends BaseComponentSystem implements UpdateSubscriberSystem, ComputerModuleRegistry {
+public class ComputerServerSystem extends BaseComponentSystem implements UpdateSubscriberSystem {
     private static final Logger logger = LoggerFactory.getLogger(ComputerServerSystem.class);
 
     @In
     private EntityManager entityManager;
     @In
     private InventoryManager inventoryManager;
+    @In
+    private ComputerModuleRegistry computerModuleRegistry;
+    @In
+    private ComputerLanguageContextInitializer computerLanguageContextInitializer;
 
     private EntityRef computerSystemEntity;
 
     private Map<Integer, ComputerContext> computerContextMap = new HashMap<>();
 
-    private Map<String, ObjectDefinition> predefinedComputerVariables = new HashMap<>();
     private ExecutionCostConfiguration executionCostConfiguration = new SampleExecutionCostConfiguration();
 
-    private Map<String, ComputerModule> computerModuleRegistry = new HashMap<>();
-
     private boolean computerInTransitionState = false;
-
-    @Override
-    public void initialise() {
-        predefinedComputerVariables.put("console", new ConsoleObjectDefinition());
-        predefinedComputerVariables.put("os", new OSObjectDefinition());
-        predefinedComputerVariables.put("computer", new ComputerObjectDefinition());
-    }
 
     @Override
     public void postBegin() {
@@ -112,16 +103,6 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
         }
     }
 
-    @Override
-    public void registerComputerModule(String type, ComputerModule computerModule) {
-        computerModuleRegistry.put(type, computerModule);
-    }
-
-    @Override
-    public ComputerModule getComputerModuleByType(String type) {
-        return computerModuleRegistry.get(type);
-    }
-
     @ReceiveEvent
     public void computerLoadedInWorld(OnActivatedComponent event, EntityRef computerEntity, BlockComponent block, ComputerComponent computer) {
         if (!computerInTransitionState) {
@@ -131,7 +112,7 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
                 computerEntity.saveComponent(computer);
             }
             logger.debug("Creating computer context for computer: " + computer.computerId);
-            computerContextMap.put(computer.computerId, new ComputerContext(this, computerEntity, computer.cpuSpeed, computer.stackSize, computer.memorySize));
+            computerContextMap.put(computer.computerId, new ComputerContext(computerModuleRegistry, computerEntity, computer.cpuSpeed, computer.stackSize, computer.memorySize));
         }
     }
 
@@ -209,7 +190,7 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
                 String programText = computer.programs.get(programName);
                 if (programText != null) {
                     try {
-                        computerContext.startProgram(programName, programText, predefinedComputerVariables, executionCostConfiguration);
+                        computerContext.startProgram(programName, programText, computerLanguageContextInitializer, executionCostConfiguration);
                         client.send(new ProgramExecutionResultEvent("Program started"));
                     } catch (IllegalSyntaxException exp) {
                         client.send(new ProgramExecutionResultEvent(exp.getMessage()));
@@ -305,12 +286,12 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
                     if (i != moduleSlotEntered) {
                         ComputerModuleComponent existingModule = inventory.itemSlots.get(i).getComponent(ComputerModuleComponent.class);
                         if (existingModule != null) {
-                            existingModules.add(getComputerModuleByType(existingModule.moduleType));
+                            existingModules.add(computerModuleRegistry.getComputerModuleByType(existingModule.moduleType));
                         }
                     }
                 }
 
-                ComputerModule computerModule = getComputerModuleByType(module.moduleType);
+                ComputerModule computerModule = computerModuleRegistry.getComputerModuleByType(module.moduleType);
                 if (!computerModule.canBePlacedInComputer(existingModules)) {
                     event.consume();
                 }

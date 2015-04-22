@@ -20,7 +20,6 @@ import org.terasology.computer.component.ComputerModuleComponent;
 import org.terasology.computer.event.server.AfterComputerMoveEvent;
 import org.terasology.computer.event.server.BeforeComputerMoveEvent;
 import org.terasology.computer.event.server.ComputerMoveEvent;
-import org.terasology.computer.system.server.ComputerModuleRegistry;
 import org.terasology.entitySystem.entity.EntityManager;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.entitySystem.event.EventPriority;
@@ -42,10 +41,6 @@ import org.terasology.world.block.items.OnBlockToItem;
 
 @RegisterSystem(RegisterMode.AUTHORITY)
 public class StorageModuleServerSystem extends BaseComponentSystem {
-    public static final String COMPUTER_STORAGE_MODULE_TYPE = "Storage";
-
-    @In
-    private ComputerModuleRegistry computerModuleRegistry;
     @In
     private EntityManager entityManager;
     @In
@@ -53,24 +48,17 @@ public class StorageModuleServerSystem extends BaseComponentSystem {
 
     private boolean doNotMoveInventory = false;
 
-    @Override
-    public void preBegin() {
-        computerModuleRegistry.registerComputerModule(
-                COMPUTER_STORAGE_MODULE_TYPE,
-                new StorageComputerModule(COMPUTER_STORAGE_MODULE_TYPE, "Internal storage", 9));
-    }
-
     @ReceiveEvent
     public void computerModuleSlotChanged(InventorySlotChangedEvent event, EntityRef computerEntity, ComputerComponent computer, BlockComponent block) {
         if (!doNotMoveInventory) {
             ComputerModuleComponent oldModule = event.getOldItem().getComponent(ComputerModuleComponent.class);
-            if (oldModule != null && oldModule.moduleType.equals(COMPUTER_STORAGE_MODULE_TYPE)) {
+            if (oldModule != null && oldModule.moduleType.equals(StorageModuleCommonSystem.COMPUTER_STORAGE_MODULE_TYPE)) {
                 dropItemsFromComputerInternalStorage(computerEntity);
             }
         }
 
         ComputerModuleComponent newModule = event.getNewItem().getComponent(ComputerModuleComponent.class);
-        if (newModule != null && newModule.moduleType.equals(COMPUTER_STORAGE_MODULE_TYPE)) {
+        if (newModule != null && newModule.moduleType.equals(StorageModuleCommonSystem.COMPUTER_STORAGE_MODULE_TYPE)) {
             EntityRef storageEntity = entityManager.create();
 
             InternalStorageComponent internalStorage = new InternalStorageComponent();
@@ -129,7 +117,7 @@ public class StorageModuleServerSystem extends BaseComponentSystem {
     public void computerDestroyed(OnBlockToItem event, EntityRef computerEntity, ComputerComponent computer) {
         InventoryComponent component = computerEntity.getComponent(InventoryComponent.class);
         for (EntityRef module : component.itemSlots) {
-            if (module.exists() && module.getComponent(ComputerModuleComponent.class).moduleType.equals(COMPUTER_STORAGE_MODULE_TYPE)) {
+            if (module.exists() && module.getComponent(ComputerModuleComponent.class).moduleType.equals(StorageModuleCommonSystem.COMPUTER_STORAGE_MODULE_TYPE)) {
                 dropItemsFromComputerInternalStorage(computerEntity);
             }
         }

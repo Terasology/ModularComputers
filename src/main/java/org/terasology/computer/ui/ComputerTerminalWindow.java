@@ -15,11 +15,16 @@
  */
 package org.terasology.computer.ui;
 
+import org.terasology.asset.Assets;
+import org.terasology.browser.data.BrowserPageInfo;
+import org.terasology.browser.data.ParagraphData;
+import org.terasology.browser.data.TableOfContents;
 import org.terasology.browser.data.basic.DefaultBrowserData;
 import org.terasology.browser.data.basic.HyperlinkParagraphData;
 import org.terasology.browser.data.basic.PageData;
 import org.terasology.browser.ui.BrowserWidget;
 import org.terasology.browser.ui.style.TextRenderStyle;
+import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.registry.CoreRegistry;
 import org.terasology.rendering.assets.font.Font;
@@ -27,12 +32,17 @@ import org.terasology.rendering.nui.Color;
 import org.terasology.rendering.nui.CoreScreenLayer;
 import org.terasology.rendering.nui.NUIManager;
 import org.terasology.rendering.nui.UIWidget;
+import org.terasology.rendering.nui.itemRendering.StringTextRenderer;
 import org.terasology.rendering.nui.layouts.CardLayout;
 import org.terasology.rendering.nui.widgets.ActivateEventListener;
+import org.terasology.rendering.nui.widgets.ItemActivateEventListener;
 import org.terasology.rendering.nui.widgets.UIButton;
+import org.terasology.rendering.nui.widgets.UIList;
 
+import java.util.Collection;
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.List;
 
 public class ComputerTerminalWindow extends CoreScreenLayer {
     private ComputerTerminalWidget computerTerminalWidget;
@@ -75,7 +85,6 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
                     @Override
                     public void onActivated(UIWidget widget) {
                         tabs.setDisplayedCard("browserTab");
-                        requestFocusToTerminal();
                     }
                 });
 
@@ -112,27 +121,87 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
                     }
                 });
 
-        DefaultBrowserData defaultBrowserData = new DefaultBrowserData();
-        PageData pageData = new PageData("introduction", "Introduction", null);
+        DefaultBrowserData defaultBrowserData = buildDocumentation();
+
+        setupTableOfContents(browser, defaultBrowserData);
+
+        browser.setBrowserData(defaultBrowserData);
+        navigateTo(browser, "introduction");
+    }
+
+    private HyperlinkParagraphData createTitleParagraph(String title) {
         HyperlinkParagraphData paragraphData = new HyperlinkParagraphData();
-        paragraphData.append("This is a very long text that will hopefully wrap around in the browser window." +
-                " It was not enough, so I added this sentence. ", null, null);
-        paragraphData.append("Hello again!", new TextRenderStyle() {
+        paragraphData.append(title, new TextRenderStyle() {
             @Override
             public Font getFont() {
-                return null;
+                return Assets.getFont("engine:title");
             }
 
             @Override
             public Color getColor() {
-                return new Color(1f, 0f, 0f);
+                return null;
             }
         }, null);
+        return paragraphData;
+    }
+
+    private DefaultBrowserData buildDocumentation() {
+        DefaultBrowserData defaultBrowserData = new DefaultBrowserData();
+        PageData pageData = new PageData("introduction", "Introduction", null);
+        pageData.addHyperlinkableParagraph(null, createTitleParagraph("Introduction"));
+        HyperlinkParagraphData paragraphData = new HyperlinkParagraphData();
+        paragraphData.append("This is the first page of the documentation.", null, null);
         pageData.addHyperlinkableParagraph(null, paragraphData);
         defaultBrowserData.addEntry(null, pageData);
+        return defaultBrowserData;
+    }
 
-        browser.setBrowserData(defaultBrowserData);
-        navigateTo(browser, "introduction");
+    private void setupTableOfContents(BrowserWidget browser, TableOfContents tableOfContents) {
+        UIList<BrowserPageInfo> tocList = find("tableOfContents", UIList.class);
+        List<BrowserPageInfo> items = new LinkedList<>();
+        int level = 0;
+        String parent = null;
+        populateChildrenOfParent(tableOfContents, items, level, parent);
+
+        tocList.setItemRenderer(new StringTextRenderer<BrowserPageInfo>() {
+            @Override
+            public String getString(BrowserPageInfo value) {
+                return value.getDisplayableTitle();
+            }
+        });
+        tocList.setList(items);
+
+        tocList.subscribe(
+                new ItemActivateEventListener<BrowserPageInfo>() {
+                    @Override
+                    public void onItemActivated(UIWidget widget, BrowserPageInfo item) {
+                        navigateTo(browser, item.getPageId());
+                    }
+                }
+        );
+    }
+
+    private void populateChildrenOfParent(TableOfContents tableOfContents, List<BrowserPageInfo> items, int level, String parent) {
+        StringBuilder sb = new StringBuilder();
+        for (int i=0; i<level; i++) {
+            sb.append("  ");
+        }
+        String prefix = sb.toString();
+        Collection<BrowserPageInfo> contents = tableOfContents.getContents(parent);
+        for (BrowserPageInfo content : contents) {
+            items.add(new BrowserPageInfo() {
+                @Override
+                public String getPageId() {
+                    return content.getPageId();
+                }
+
+                @Override
+                public String getDisplayableTitle() {
+                    return prefix+content.getDisplayableTitle();
+                }
+            });
+            populateChildrenOfParent(tableOfContents, items, level+1, content.getPageId());
+        }
     }
 
     private void navigateTo(BrowserWidget browser, String page) {
@@ -153,8 +222,10 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
         CoreRegistry.get(NUIManager.class).setFocus(computerTerminalWidget);
     }
 
-    public void initializeWithEntities(EntityRef client, EntityRef computer) {
+    public void initializeWithEntities(ComputerLanguageContextInitializer computerLanguageContextInitializer,
+                                       EntityRef client, EntityRef computer) {
         computerTerminalWidget.setup(
+                computerLanguageContextInitializer,
                 new Runnable() {
                     public void run() {
                         CoreRegistry.get(NUIManager.class).closeScreen(ComputerTerminalWindow.this);
@@ -171,9 +242,9 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
     public void onClosed() {
         computerTerminalWidget.onClosed();
     }
-
-    @Override
-    public boolean isModal() {
-        return true;
-    }
+//
+//    @Override
+//    public boolean isModal() {
+//        return true;
+//    }
 }

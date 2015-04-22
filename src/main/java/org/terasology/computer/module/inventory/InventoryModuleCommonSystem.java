@@ -13,33 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.terasology.computer.module.mobility;
+package org.terasology.computer.module.inventory;
 
-import org.terasology.computer.system.server.ComputerModuleRegistry;
+import org.terasology.computer.system.common.ComputerModuleRegistry;
 import org.terasology.entitySystem.systems.BaseComponentSystem;
 import org.terasology.entitySystem.systems.RegisterMode;
 import org.terasology.entitySystem.systems.RegisterSystem;
+import org.terasology.logic.inventory.InventoryManager;
 import org.terasology.registry.In;
 import org.terasology.world.BlockEntityRegistry;
-import org.terasology.world.WorldProvider;
 
-@RegisterSystem(RegisterMode.AUTHORITY)
-public class MobilityModuleServerSystem extends BaseComponentSystem {
-    public static final String MOBILITY_MODULE_TYPE = "Mobility";
+@RegisterSystem(RegisterMode.ALWAYS)
+public class InventoryModuleCommonSystem extends BaseComponentSystem {
+    public static final String COMPUTER_INVENTORY_MODULE_TYPE = "Inventory";
 
     @In
     private ComputerModuleRegistry computerModuleRegistry;
     @In
-    private WorldProvider worldProvider;
-    @In
     private BlockEntityRegistry blockEntityRegistry;
+    @In
+    private InventoryManager inventoryManager;
+    @In
+    private InventoryModuleConditionsRegister inventoryModuleConditionsRegister;
 
     @Override
     public void preBegin() {
         computerModuleRegistry.registerComputerModule(
-                MOBILITY_MODULE_TYPE,
-                new MobilityComputerModule(
-                        worldProvider, blockEntityRegistry,
-                        MOBILITY_MODULE_TYPE, "Internal storage"));
+                COMPUTER_INVENTORY_MODULE_TYPE,
+                new InventoryComputerModule(inventoryModuleConditionsRegister, inventoryManager,
+                        blockEntityRegistry, COMPUTER_INVENTORY_MODULE_TYPE, "Inventory manipulator"));
     }
+
 }

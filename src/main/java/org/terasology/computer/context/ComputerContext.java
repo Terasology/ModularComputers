@@ -31,9 +31,12 @@ import com.gempukku.lang.Variable;
 import com.gempukku.lang.parser.ScriptParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.terasology.browser.data.ParagraphData;
 import org.terasology.computer.component.ComputerComponent;
 import org.terasology.computer.component.ComputerModuleComponent;
-import org.terasology.computer.system.server.ComputerModuleRegistry;
+import org.terasology.computer.system.common.ComputerLanguageContext;
+import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
+import org.terasology.computer.system.common.ComputerModuleRegistry;
 import org.terasology.computer.system.server.lang.ComputerModule;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.logic.inventory.InventoryComponent;
@@ -42,8 +45,11 @@ import org.terasology.world.block.BlockComponent;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class ComputerContext {
     private static final Logger logger = LoggerFactory.getLogger(ComputerContext.class);
@@ -102,20 +108,27 @@ public class ComputerContext {
         return context != null;
     }
 
-    public void startProgram(String name, String programText, Map<String, ObjectDefinition> predefinedVariables, ExecutionCostConfiguration configuration) throws IllegalSyntaxException {
+    public void startProgram(String name, String programText, ComputerLanguageContextInitializer computerLanguageContextInitializer, ExecutionCostConfiguration configuration) throws IllegalSyntaxException {
         try {
             logger.debug("starting program: "+name);
 
-            ScriptExecutable scriptExecutable = new ScriptParser().parseScript(new StringReader(programText), predefinedVariables.keySet());
+            Set<String> variables = new HashSet<>();
 
             CallContext callContext = new CallContext(null, false, true);
-            try {
-                for (Map.Entry<String, ObjectDefinition> stringDefinedVariablesEntry : predefinedVariables.entrySet()) {
-                    callContext.defineVariable(stringDefinedVariablesEntry.getKey()).setValue(stringDefinedVariablesEntry.getValue());
-                }
-            } catch (ExecutionException exp) {
-                // Ignore - can't happen
-            }
+            computerLanguageContextInitializer.initializeContext(
+                    new ComputerLanguageContext() {
+                        @Override
+                        public void addObject(String object, ObjectDefinition objectDefinition, Collection<ParagraphData> objectDescription, Map<String, Collection<ParagraphData>> functionDescriptions, Map<String, Map<String, Collection<ParagraphData>>> functionParametersDescriptions, Map<String, Collection<ParagraphData>> functionReturnDescriptions) {
+                            variables.add(object);
+                            try {
+                                callContext.defineVariable(object).setValue(objectDefinition);
+                            } catch (ExecutionException exp) {
+                                // Ignore - can't happen
+                            }
+                        }
+                    });
+
+            ScriptExecutable scriptExecutable = new ScriptParser().parseScript(new StringReader(programText), variables);
 
             ExecutionContext executionContext = new TerasologyComputerExecutionContext(configuration,
                     getComputerCallback());

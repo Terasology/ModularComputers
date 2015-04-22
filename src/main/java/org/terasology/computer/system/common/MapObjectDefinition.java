@@ -13,25 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.terasology.computer.system.server.lang.console;
+package org.terasology.computer.system.common;
 
 import com.gempukku.lang.ExecutionContext;
 import com.gempukku.lang.ObjectDefinition;
 import com.gempukku.lang.Variable;
 
-public class ConsoleObjectDefinition implements ObjectDefinition {
-	private Variable _append = new Variable(new AppendToConsoleFunction());
-	private Variable _clear = new Variable(new ClearConsoleFunction());
-	private Variable _write = new Variable(new WriteToConsoleFunction());
+import java.util.HashMap;
+import java.util.Map;
 
-	@Override
-	public Variable getMember(ExecutionContext context, String name) {
-		if (name.equals("append"))
-			return _append;
-		else if (name.equals("clear"))
-			return _clear;
-		else if (name.equals("write"))
-			return _write;
-		return new Variable(null);
-	}
+public class MapObjectDefinition implements ObjectDefinition {
+    private Map<String, Variable> variableMap = new HashMap<>();
+
+    public void addMember(String name, Object value) {
+        variableMap.put(name, new Variable(value));
+    }
+
+    @Override
+    public Variable getMember(ExecutionContext context, String name) {
+        Variable variable = variableMap.get(name);
+        if (variable != null) {
+            return variable;
+        }
+        return new Variable(null);
+    }
 }

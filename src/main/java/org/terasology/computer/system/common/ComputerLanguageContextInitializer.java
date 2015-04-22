@@ -13,11 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.terasology.computer.system.server;
+package org.terasology.computer.system.common;
 
-import org.terasology.computer.system.server.lang.ComputerModule;
-
-public interface ComputerModuleRegistry {
-    public void registerComputerModule(String type, ComputerModule computerModule);
-    public ComputerModule getComputerModuleByType(String type);
+public interface ComputerLanguageContextInitializer {
+    public void initializeContext(ComputerLanguageContext computerLanguageContext);
 }

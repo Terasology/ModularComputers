@@ -15,7 +15,7 @@
  */
 package org.terasology.computer.module.harvest;
 
-import org.terasology.computer.system.server.ComputerModuleRegistry;
+import org.terasology.computer.system.common.ComputerModuleRegistry;
 import org.terasology.entitySystem.systems.BaseComponentSystem;
 import org.terasology.entitySystem.systems.RegisterMode;
 import org.terasology.entitySystem.systems.RegisterSystem;
@@ -23,8 +23,8 @@ import org.terasology.registry.In;
 import org.terasology.world.BlockEntityRegistry;
 import org.terasology.world.WorldProvider;
 
-@RegisterSystem(RegisterMode.AUTHORITY)
-public class HarvestModuleServerSystem extends BaseComponentSystem {
+@RegisterSystem(RegisterMode.ALWAYS)
+public class HarvestModuleCommonSystem extends BaseComponentSystem {
     private static final String HARVEST_MODULE_TYPE="Harvest";
     @In
     private ComputerModuleRegistry computerModuleRegistry;

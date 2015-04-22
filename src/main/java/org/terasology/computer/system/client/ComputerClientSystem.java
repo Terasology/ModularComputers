@@ -24,6 +24,7 @@ import org.terasology.computer.event.client.console.AppendConsoleLinesEvent;
 import org.terasology.computer.event.client.console.ClearConsoleScreenEvent;
 import org.terasology.computer.event.client.console.SetConsoleCharactersAtEvent;
 import org.terasology.computer.event.client.console.SetConsoleScreenEvent;
+import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
 import org.terasology.computer.ui.ComputerTerminalWidget;
 import org.terasology.computer.ui.ComputerTerminalWindow;
 import org.terasology.entitySystem.entity.EntityRef;
@@ -41,6 +42,8 @@ public class ComputerClientSystem extends BaseComponentSystem {
 
     @In
     private NUIManager nuiManager;
+    @In
+    private ComputerLanguageContextInitializer computerLanguageContextInitializer;
 
     @ReceiveEvent
     public void terminalActivated(ActivateEvent event, EntityRef item, ComputerTerminalComponent component) {
@@ -51,7 +54,7 @@ public class ComputerClientSystem extends BaseComponentSystem {
             nuiManager.toggleScreen(COMPUTER_TERMINAL_UI);
 
             ComputerTerminalWindow window = (ComputerTerminalWindow) nuiManager.getScreen(COMPUTER_TERMINAL_UI);
-            window.initializeWithEntities(client, target);
+            window.initializeWithEntities(computerLanguageContextInitializer, client, target);
 
             event.consume();
         }

@@ -16,11 +16,17 @@
 package org.terasology.computer.ui;
 
 import com.gempukku.lang.IllegalSyntaxException;
+import com.gempukku.lang.ObjectDefinition;
 import com.gempukku.lang.parser.ScriptParser;
+import org.terasology.browser.data.ParagraphData;
+import org.terasology.computer.system.common.ComputerLanguageContext;
+import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class CompileScriptOnTheFly {
@@ -32,10 +38,15 @@ public class CompileScriptOnTheFly {
     private ScriptParser _scriptParser = new ScriptParser();
     private Set<String> _predefinedVariables = new HashSet<String>();
 
-    public CompileScriptOnTheFly() {
-        _predefinedVariables.add("os");
-        _predefinedVariables.add("console");
-        _predefinedVariables.add("computer");
+    public CompileScriptOnTheFly(ComputerLanguageContextInitializer computerLanguageContextInitializer) {
+        computerLanguageContextInitializer.initializeContext(
+                new ComputerLanguageContext() {
+                    @Override
+                    public void addObject(String object, ObjectDefinition objectDefinition, Collection<ParagraphData> objectDescription, Map<String, Collection<ParagraphData>> functionDescriptions, Map<String, Map<String, Collection<ParagraphData>>> functionParametersDescriptions, Map<String, Collection<ParagraphData>> functionReturnDescriptions) {
+                        _predefinedVariables.add(object);
+                    }
+                }
+        );
     }
 
     public void startCompiler() {

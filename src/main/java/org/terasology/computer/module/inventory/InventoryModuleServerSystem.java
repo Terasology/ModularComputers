@@ -15,7 +15,6 @@
  */
 package org.terasology.computer.module.inventory;
 
-import org.terasology.computer.system.server.ComputerModuleRegistry;
 import org.terasology.computer.system.server.lang.os.condition.AbstractConditionCustomObject;
 import org.terasology.computer.system.server.lang.os.condition.LatchCondition;
 import org.terasology.entitySystem.entity.EntityRef;
@@ -26,35 +25,17 @@ import org.terasology.entitySystem.systems.BaseComponentSystem;
 import org.terasology.entitySystem.systems.RegisterMode;
 import org.terasology.entitySystem.systems.RegisterSystem;
 import org.terasology.logic.inventory.InventoryComponent;
-import org.terasology.logic.inventory.InventoryManager;
 import org.terasology.logic.inventory.events.InventorySlotChangedEvent;
 import org.terasology.logic.inventory.events.InventorySlotStackSizeChangedEvent;
-import org.terasology.registry.In;
-import org.terasology.world.BlockEntityRegistry;
+import org.terasology.registry.Share;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @RegisterSystem(RegisterMode.AUTHORITY)
+@Share(InventoryModuleConditionsRegister.class)
 public class InventoryModuleServerSystem extends BaseComponentSystem implements InventoryModuleConditionsRegister {
-    public static final String COMPUTER_INVENTORY_MODULE_TYPE = "Inventory";
-
-    @In
-    private ComputerModuleRegistry computerModuleRegistry;
-    @In
-    private BlockEntityRegistry blockEntityRegistry;
-    @In
-    private InventoryManager inventoryManager;
-
     private Map<EntityRef, LatchCondition> inventoryChangeLatchConditions = new HashMap<>();
-
-    @Override
-    public void preBegin() {
-        computerModuleRegistry.registerComputerModule(
-                COMPUTER_INVENTORY_MODULE_TYPE,
-                new InventoryComputerModule(this, inventoryManager,
-                        blockEntityRegistry, COMPUTER_INVENTORY_MODULE_TYPE, "Inventory manipulator"));
-    }
 
     @Override
     public AbstractConditionCustomObject registerInventoryChangeListener(EntityRef entity) {

@@ -18,6 +18,7 @@ package org.terasology.computer.ui;
 import com.gempukku.lang.IllegalSyntaxException;
 import org.lwjgl.input.Keyboard;
 import org.terasology.computer.context.ComputerConsole;
+import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
 import org.terasology.rendering.nui.Canvas;
 import org.terasology.rendering.nui.Color;
 
@@ -68,9 +69,9 @@ public class ProgramEditingConsoleGui {
     private static final int[] CHARACTER_COUNT_WIDTH = new int[]{ComputerConsole.CONSOLE_WIDTH, (int) (ComputerConsole.CONSOLE_WIDTH * 1.2f), (int) (ComputerConsole.CONSOLE_WIDTH * 1.5f), ComputerConsole.CONSOLE_WIDTH * 2};
     private static final int[] CHARACTER_COUNT_HEIGHT = new int[]{ComputerConsole.CONSOLE_HEIGHT, (int) (ComputerConsole.CONSOLE_HEIGHT * 1.2f), (int) (ComputerConsole.CONSOLE_HEIGHT * 1.5f), ComputerConsole.CONSOLE_HEIGHT * 2};
 
-    public ProgramEditingConsoleGui(ComputerTerminalWidget ComputerConsoleWidget) {
+    public ProgramEditingConsoleGui(ComputerTerminalWidget ComputerConsoleWidget, ComputerLanguageContextInitializer computerLanguageContextInitializer) {
         computerTerminalWidget = ComputerConsoleWidget;
-        onTheFlyCompiler = new CompileScriptOnTheFly();
+        onTheFlyCompiler = new CompileScriptOnTheFly(computerLanguageContextInitializer);
     }
 
     public void drawEditProgramConsole(Canvas canvas, int x, int y) {
