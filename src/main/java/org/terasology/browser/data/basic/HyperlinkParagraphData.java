@@ -16,7 +16,6 @@
 package org.terasology.browser.data.basic;
 
 import org.terasology.browser.data.ParagraphData;
-import org.terasology.browser.render.HyperlinkableTextParagraphRenderable;
 import org.terasology.browser.ui.ParagraphRenderable;
 import org.terasology.browser.ui.style.FallbackTextRenderStyle;
 import org.terasology.browser.ui.style.ParagraphRenderStyle;

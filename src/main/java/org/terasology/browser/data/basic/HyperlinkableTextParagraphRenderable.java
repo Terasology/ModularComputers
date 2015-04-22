@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.terasology.browser.render;
+package org.terasology.browser.data.basic;
 
 import org.terasology.browser.data.basic.HyperlinkParagraphData;
 import org.terasology.browser.ui.ParagraphRenderable;

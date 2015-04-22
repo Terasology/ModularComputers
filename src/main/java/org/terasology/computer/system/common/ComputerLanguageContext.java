@@ -16,14 +16,11 @@
 package org.terasology.computer.system.common;
 
 import com.gempukku.lang.ObjectDefinition;
-import org.terasology.browser.data.ParagraphData;
-
-import java.util.Collection;
 import java.util.Map;
 
 public interface ComputerLanguageContext {
-    public void addObject(String object, ObjectDefinition objectDefinition, Collection<ParagraphData> objectDescription,
-                          Map<String, Collection<ParagraphData>> functionDescriptions,
-                          Map<String, Map<String, Collection<ParagraphData>>> functionParametersDescriptions,
-                          Map<String, Collection<ParagraphData>> functionReturnDescriptions);
+    public void addObject(String object, ObjectDefinition objectDefinition, String objectDescription,
+                          Map<String, String> functionDescriptions,
+                          Map<String, Map<String, String>> functionParametersDescriptions,
+                          Map<String, String> functionReturnDescriptions);
 }

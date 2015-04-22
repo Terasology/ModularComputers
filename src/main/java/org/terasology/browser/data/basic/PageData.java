@@ -18,10 +18,7 @@ package org.terasology.browser.data.basic;
 import org.terasology.browser.data.BrowserPageInfo;
 import org.terasology.browser.data.DocumentData;
 import org.terasology.browser.data.ParagraphData;
-import org.terasology.browser.render.HyperlinkableTextParagraphRenderable;
-import org.terasology.browser.ui.ParagraphRenderable;
 import org.terasology.browser.ui.style.DocumentRenderStyle;
-import org.terasology.browser.ui.style.ParagraphRenderStyle;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -42,6 +39,10 @@ public class PageData implements BrowserPageInfo, DocumentData {
 
     public void addParagraph(ParagraphData paragraphData) {
         paragraphs.add(paragraphData);
+    }
+
+    public void addParagraphs(Collection<ParagraphData> paragraphs) {
+        this.paragraphs.addAll(paragraphs);
     }
 
     @Override

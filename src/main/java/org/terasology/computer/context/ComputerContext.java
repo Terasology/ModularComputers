@@ -118,7 +118,7 @@ public class ComputerContext {
             computerLanguageContextInitializer.initializeContext(
                     new ComputerLanguageContext() {
                         @Override
-                        public void addObject(String object, ObjectDefinition objectDefinition, Collection<ParagraphData> objectDescription, Map<String, Collection<ParagraphData>> functionDescriptions, Map<String, Map<String, Collection<ParagraphData>>> functionParametersDescriptions, Map<String, Collection<ParagraphData>> functionReturnDescriptions) {
+                        public void addObject(String object, ObjectDefinition objectDefinition, String objectDescription, Map<String, String> functionDescriptions, Map<String, Map<String, String>> functionParametersDescriptions, Map<String, String> functionReturnDescriptions) {
                             variables.add(object);
                             try {
                                 callContext.defineVariable(object).setValue(objectDefinition);

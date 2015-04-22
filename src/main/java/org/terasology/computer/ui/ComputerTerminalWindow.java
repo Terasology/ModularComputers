@@ -21,10 +21,12 @@ import org.terasology.browser.data.BrowserPageInfo;
 import org.terasology.browser.data.ParagraphData;
 import org.terasology.browser.data.TableOfContents;
 import org.terasology.browser.data.basic.DefaultBrowserData;
+import org.terasology.browser.data.basic.HTMLLikeParser;
 import org.terasology.browser.data.basic.HyperlinkParagraphData;
 import org.terasology.browser.data.basic.PageData;
 import org.terasology.browser.ui.BrowserHyperlinkListener;
 import org.terasology.browser.ui.BrowserWidget;
+import org.terasology.browser.ui.style.ParagraphRenderStyle;
 import org.terasology.browser.ui.style.TextRenderStyle;
 import org.terasology.computer.system.common.ComputerLanguageContext;
 import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
@@ -157,7 +159,7 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
     private DefaultBrowserData buildDocumentation(ComputerLanguageContextInitializer computerLanguageContextInitializer) {
         DefaultBrowserData defaultBrowserData = new DefaultBrowserData();
 
-        defaultBrowserData.addEntry(null, buildIntroductionPage());
+        defaultBrowserData.addEntry(null, buildIntroductionPage(computerLanguageContextInitializer));
         buildBuiltinObjectsPages(defaultBrowserData, computerLanguageContextInitializer);
 
         return defaultBrowserData;
@@ -167,15 +169,13 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
         computerLanguageContextInitializer.initializeContext(
                 new ComputerLanguageContext() {
                     @Override
-                    public void addObject(String object, ObjectDefinition objectDefinition, Collection<ParagraphData> objectDescription, Map<String, Collection<ParagraphData>> functionDescriptions, Map<String, Map<String, Collection<ParagraphData>>> functionParametersDescriptions, Map<String, Collection<ParagraphData>> functionReturnDescriptions) {
+                    public void addObject(String object, ObjectDefinition objectDefinition, String objectDescription, Map<String, String> functionDescriptions, Map<String, Map<String, String>> functionParametersDescriptions, Map<String, String> functionReturnDescriptions) {
                         String objectPageId = "built-in-" + object;
 
                         PageData pageData = new PageData(objectPageId, "Variable - " + object, null);
                         pageData.addParagraph(createTitleParagraph("Variable - " + object));
-                        for (ParagraphData paragraphData : objectDescription) {
-                            pageData.addParagraph(paragraphData);
-                        }
-                        pageData.addParagraph(simpleParagraphData("Functions:"));
+                        pageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, objectDescription));
+                        pageData.addParagraph(paragraphWithSpaceBefore("Functions:"));
                         for (String functionName : functionDescriptions.keySet()) {
                             HyperlinkParagraphData paragraphData = new HyperlinkParagraphData(null);
                             paragraphData.append(functionName, new TextRenderStyle() {
@@ -194,35 +194,28 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
 
                         defaultBrowserData.addEntry(null, pageData);
 
-                        for (Map.Entry<String, Collection<ParagraphData>> functionEntry : functionDescriptions.entrySet()) {
+                        for (Map.Entry<String, String> functionEntry : functionDescriptions.entrySet()) {
                             String functionName = functionEntry.getKey();
 
                             PageData functionPageData = new PageData(object + "-" + functionName, "Function - " + functionName, null);
                             functionPageData.addParagraph(createTitleParagraph("Function - " + functionName));
-                            for (ParagraphData paragraphData : functionEntry.getValue()) {
-                                functionPageData.addParagraph(paragraphData);
-                            }
+                            functionPageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, functionEntry.getValue()));
 
-                            functionPageData.addParagraph(simpleParagraphData("Parameters:"));
+                            functionPageData.addParagraph(paragraphWithSpaceBefore("Parameters:"));
 
-                            Map<String, Collection<ParagraphData>> functionParameters = functionParametersDescriptions.get(functionName);
+                            Map<String, String> functionParameters = functionParametersDescriptions.get(functionName);
 
                             if (functionParameters.isEmpty()) {
-                                functionPageData.addParagraph(simpleParagraphData("None"));
+                                functionPageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, "None"));
                             }
-                            for (Map.Entry<String, Collection<ParagraphData>> parameterDescription : functionParameters.entrySet()) {
-                                functionPageData.addParagraph(simpleParagraphData(parameterDescription.getKey()));
-                                for (ParagraphData paragraphData : parameterDescription.getValue()) {
-                                    functionPageData.addParagraph(paragraphData);
-                                }
+                            for (Map.Entry<String, String> parameterDescription : functionParameters.entrySet()) {
+                                functionPageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, parameterDescription.getKey() + " - " + parameterDescription.getValue()));
                             }
 
-                            Collection<ParagraphData> returnDescription = functionReturnDescriptions.get(functionName);
-                            if (returnDescription != null) {
-                                functionPageData.addParagraph(simpleParagraphData("Returns:"));
-                                for (ParagraphData paragraphData : returnDescription) {
-                                    functionPageData.addParagraph(paragraphData);
-                                }
+                            Collection<ParagraphData> returnDescription = HTMLLikeParser.parseHTMLLike(null, functionReturnDescriptions.get(functionName));
+                            if (!returnDescription.isEmpty()) {
+                                functionPageData.addParagraph(paragraphWithSpaceBefore("Returns:"));
+                                functionPageData.addParagraphs(returnDescription);
                             }
 
                             defaultBrowserData.addEntry(objectPageId, functionPageData);
@@ -231,16 +224,72 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
                 });
     }
 
-    private HyperlinkParagraphData simpleParagraphData(String text) {
-        HyperlinkParagraphData hyperlinkParagraphData = new HyperlinkParagraphData(null);
+    private HyperlinkParagraphData paragraphWithSpaceBefore(String text) {
+        HyperlinkParagraphData hyperlinkParagraphData = new HyperlinkParagraphData(
+                new ParagraphRenderStyle() {
+                    @Override
+                    public Integer getIndentAbove(boolean firstParagraph) {
+                        return 10;
+                    }
+
+                    @Override
+                    public Integer getIndentBelow(boolean lastParagraph) {
+                        return null;
+                    }
+
+                    @Override
+                    public Integer getIndentLeft() {
+                        return null;
+                    }
+
+                    @Override
+                    public Integer getIndentRight() {
+                        return null;
+                    }
+
+                    @Override
+                    public Font getFont() {
+                        return null;
+                    }
+
+                    @Override
+                    public Color getColor() {
+                        return null;
+                    }
+                }
+        );
         hyperlinkParagraphData.append(text, null, null);
         return hyperlinkParagraphData;
     }
 
-    private PageData buildIntroductionPage() {
+    private PageData buildIntroductionPage(ComputerLanguageContextInitializer computerLanguageContextInitializer) {
         PageData pageData = new PageData("introduction", "Introduction", null);
         pageData.addParagraph(createTitleParagraph("Introduction"));
-        pageData.addParagraph(simpleParagraphData("This is the first page of the documentation."));
+        pageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, "This is the first page of the documentation."));
+
+        pageData.addParagraph(paragraphWithSpaceBefore("List of built-in objects:"));
+
+        computerLanguageContextInitializer.initializeContext(
+                new ComputerLanguageContext() {
+                    @Override
+                    public void addObject(String object, ObjectDefinition objectDefinition, String objectDescription, Map<String, String> functionDescriptions, Map<String, Map<String, String>> functionParametersDescriptions, Map<String, String> functionReturnDescriptions) {
+                        HyperlinkParagraphData paragraphData = new HyperlinkParagraphData(null);
+                        paragraphData.append(object, new TextRenderStyle() {
+                            @Override
+                            public Font getFont() {
+                                return null;
+                            }
+
+                            @Override
+                            public Color getColor() {
+                                return Color.BLUE;
+                            }
+                        }, "navigate:built-in-" + object);
+                        pageData.addParagraph(paragraphData);
+                    }
+                }
+        );
+
         return pageData;
     }
 
