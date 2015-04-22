@@ -25,6 +25,8 @@ import org.terasology.rendering.nui.Canvas;
 public class HyperlinkableTextParagraphRenderable implements ParagraphRenderable {
     private HyperlinkParagraphData hyperlinkParagraphData;
 
+    private LineBuilderCache lineBuilderCache;
+
     public HyperlinkableTextParagraphRenderable(HyperlinkParagraphData hyperlinkParagraphData) {
         this.hyperlinkParagraphData = hyperlinkParagraphData;
     }
@@ -43,7 +45,10 @@ public class HyperlinkableTextParagraphRenderable implements ParagraphRenderable
     public void render(Canvas canvas, Rect2i region, TextRenderStyle defaultStyle, HyperlinkRegister hyperlinkRegister) {
         int y = 0;
 
-        for (LaidFlowLine<HyperlinkParagraphData.HyperlinkParagraphElement> line : FlowLineBuilder.getLines(hyperlinkParagraphData.getElements(), defaultStyle, region.width())) {
+        int width = region.width();
+
+        updateCacheIfNeeded(defaultStyle, width);
+        for (LaidFlowLine<HyperlinkParagraphData.HyperlinkParagraphElement> line : lineBuilderCache.laidLines) {
             int x = 0;
 
             int height = line.getHeight();
@@ -56,19 +61,36 @@ public class HyperlinkableTextParagraphRenderable implements ParagraphRenderable
                 }
                 hyperlinkParagraphElement.render(canvas, elementRegion,
                         defaultStyle);
-                x+=elementWidth;
+                x += elementWidth;
             }
 
-            y+=height;
+            y += height;
         }
     }
 
     @Override
     public int getPreferredHeight(Canvas canvas, TextRenderStyle defaultStyle, int width) {
         int height = 0;
-        for (LaidFlowLine<HyperlinkParagraphData.HyperlinkParagraphElement> element : FlowLineBuilder.getLines(hyperlinkParagraphData.getElements(), defaultStyle, width)) {
-            height+=element.getHeight();
+        updateCacheIfNeeded(defaultStyle, width);
+        for (LaidFlowLine<HyperlinkParagraphData.HyperlinkParagraphElement> element : lineBuilderCache.laidLines) {
+            height += element.getHeight();
         }
         return height;
+    }
+
+    private void updateCacheIfNeeded(TextRenderStyle defaultStyle, int width) {
+        if (lineBuilderCache == null || width != lineBuilderCache.width) {
+            lineBuilderCache = new LineBuilderCache(width, FlowLineBuilder.getLines(hyperlinkParagraphData.getElements(), defaultStyle, width));
+        }
+    }
+
+    private static class LineBuilderCache {
+        public final int width;
+        public final Iterable<LaidFlowLine<HyperlinkParagraphData.HyperlinkParagraphElement>> laidLines;
+
+        private LineBuilderCache(int width, Iterable<LaidFlowLine<HyperlinkParagraphData.HyperlinkParagraphElement>> laidLines) {
+            this.width = width;
+            this.laidLines = laidLines;
+        }
     }
 }
