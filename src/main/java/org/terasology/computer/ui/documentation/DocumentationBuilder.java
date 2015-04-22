@@ -73,9 +73,9 @@ public class DocumentationBuilder {
                         pageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, description));
                         pageData.addParagraphs(paragraphWithSpaceBefore("Methods:"));
                         for (String methodName : methodDescriptions.keySet()) {
-                            HyperlinkParagraphData paragraphData = new HyperlinkParagraphData(null);
-                            paragraphData.append(methodName, null, "navigate:" + getComputerModuleMethodPageId(moduleType, methodName));
-                            pageData.addParagraph(paragraphData);
+                            pageData.addParagraphs(
+                                    HTMLLikeParser.parseHTMLLike(null,
+                                            " * <h navigate:" + getComputerModuleMethodPageId(moduleType, methodName) + ">" + methodName + "()</h> - " + methodDescriptions.get(methodName)));
                         }
 
                         pageData.addParagraphs(additionalParagraphs);
@@ -132,9 +132,9 @@ public class DocumentationBuilder {
                         pageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, objectDescription));
                         pageData.addParagraphs(paragraphWithSpaceBefore("Functions:"));
                         for (String functionName : functionDescriptions.keySet()) {
-                            HyperlinkParagraphData paragraphData = new HyperlinkParagraphData(null);
-                            paragraphData.append(functionName, null, "navigate:" + getBuiltInObjectMethodPageId(object, functionName));
-                            pageData.addParagraph(paragraphData);
+                            pageData.addParagraphs(
+                                    HTMLLikeParser.parseHTMLLike(null,
+                                            " * <h navigate:" + getBuiltInObjectMethodPageId(object, functionName) + ">" + functionName + "()</h> - " + functionDescriptions.get(functionName)));
                         }
 
                         pageData.addParagraphs(additionalParagraphs);
@@ -156,7 +156,7 @@ public class DocumentationBuilder {
                                 functionPageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, "None"));
                             }
                             for (Map.Entry<String, String> parameterDescription : functionParameters.entrySet()) {
-                                functionPageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, parameterDescription.getKey() + " - " + parameterDescription.getValue()));
+                                functionPageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, " * "+parameterDescription.getKey() + " - " + parameterDescription.getValue()));
                             }
 
                             Collection<ParagraphData> returnDescription = HTMLLikeParser.parseHTMLLike(null, functionReturnDescriptions.get(functionName));
