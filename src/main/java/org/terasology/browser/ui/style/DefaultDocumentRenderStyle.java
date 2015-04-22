@@ -27,22 +27,42 @@ public class DefaultDocumentRenderStyle implements DocumentRenderStyle {
     }
 
     @Override
-    public Integer getIndentAbove(boolean firstParagraph) {
+    public Integer getDocumentIndentTop() {
+        return 3;
+    }
+
+    @Override
+    public Integer getDocumentIndentBottom() {
+        return 3;
+    }
+
+    @Override
+    public Integer getDocumentIndentLeft() {
+        return 3;
+    }
+
+    @Override
+    public Integer getDocumentIndentRight() {
+        return 3;
+    }
+
+    @Override
+    public Integer getParagraphIndentTop(boolean firstParagraph) {
         return 0;
     }
 
     @Override
-    public Integer getIndentBelow(boolean lastParagraph) {
+    public Integer getParagraphIndentBottom(boolean lastParagraph) {
         return 0;
     }
 
     @Override
-    public Integer getIndentLeft() {
+    public Integer getParagraphIndentLeft() {
         return 0;
     }
 
     @Override
-    public Integer getIndentRight() {
+    public Integer getParagraphIndentRight() {
         return 0;
     }
 

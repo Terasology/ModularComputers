@@ -47,6 +47,7 @@ public class StorageModuleCommonSystem extends BaseComponentSystem {
                         "storage (i.e. chest) using the <h navigate:" + inventoryModuleDumpMethodPageId + ">dump</h> method.\n" +
                         "For more information about usage of this module - refer to <h navigate:" + inventoryModulePageId + ">Inventory manipulator</h> " +
                         "module documentation.",
+                null,
                 new TreeMap<String, String>() {{
                     put("getInputInventoryBinding", "Creates the input inventory binding for the Internal storage.");
                     put("getOutputInventoryBinding", "Creates the output inventory binding for the Internal storage.");
@@ -55,6 +56,6 @@ public class StorageModuleCommonSystem extends BaseComponentSystem {
                 new HashMap<String, String>() {{
                     put("getInputInventoryBinding", "[Inventory Binding] Returns inventory binding allowing to put items into this Internal storage.");
                     put("getOutputInventoryBinding", "[Inventory Binding] Returns inventory binding allowing to extract items from this Internal storage.");
-                }});
+                }}, null);
     }
 }

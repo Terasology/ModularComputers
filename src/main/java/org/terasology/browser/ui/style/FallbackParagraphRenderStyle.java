@@ -28,37 +28,37 @@ public class FallbackParagraphRenderStyle extends FallbackTextRenderStyle implem
     }
 
     @Override
-    public Integer getIndentAbove(boolean firstParagraph) {
-        Integer indentAbove = style.getIndentAbove(firstParagraph);
+    public Integer getParagraphIndentTop(boolean firstParagraph) {
+        Integer indentAbove = style.getParagraphIndentTop(firstParagraph);
         if (indentAbove == null) {
-            indentAbove = fallback.getIndentAbove(firstParagraph);
+            indentAbove = fallback.getParagraphIndentTop(firstParagraph);
         }
         return indentAbove;
     }
 
     @Override
-    public Integer getIndentBelow(boolean lastParagraph) {
-        Integer indentBelow = style.getIndentBelow(lastParagraph);
+    public Integer getParagraphIndentBottom(boolean lastParagraph) {
+        Integer indentBelow = style.getParagraphIndentBottom(lastParagraph);
         if (indentBelow == null) {
-            indentBelow = fallback.getIndentBelow(lastParagraph);
+            indentBelow = fallback.getParagraphIndentBottom(lastParagraph);
         }
         return indentBelow;
     }
 
     @Override
-    public Integer getIndentLeft() {
-        Integer indentLeft = style.getIndentLeft();
+    public Integer getParagraphIndentLeft() {
+        Integer indentLeft = style.getParagraphIndentLeft();
         if (indentLeft == null) {
-            indentLeft = fallback.getIndentLeft();
+            indentLeft = fallback.getParagraphIndentLeft();
         }
         return indentLeft;
     }
 
     @Override
-    public Integer getIndentRight() {
-        Integer indentRight = style.getIndentRight();
+    public Integer getParagraphIndentRight() {
+        Integer indentRight = style.getParagraphIndentRight();
         if (indentRight == null) {
-            indentRight = fallback.getIndentRight();
+            indentRight = fallback.getParagraphIndentRight();
         }
         return indentRight;
     }

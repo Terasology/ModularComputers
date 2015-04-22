@@ -16,12 +16,15 @@
 package org.terasology.computer.system.common;
 
 import com.gempukku.lang.FunctionExecutable;
+import org.terasology.browser.data.ParagraphData;
+import org.terasology.browser.ui.ParagraphRenderable;
 
+import java.util.Collection;
 import java.util.Map;
 
 public interface ComputerDefinedVariablesRegistry {
-    public void registerComputerDefinedVariable(String variable, String description);
+    public void registerComputerDefinedVariable(String variable, String description, Collection<ParagraphData> additionalParagraphs);
     public void registerComputerDefinedVariableFunction(String variable, String function, FunctionExecutable terasologyFunctionExecutable,
                                                         String description, Map<String, String> parametersDescription,
-                                                        String returnValueDescription);
+                                                        String returnValueDescription, Collection<ParagraphData> additionalParagraphs);
 }

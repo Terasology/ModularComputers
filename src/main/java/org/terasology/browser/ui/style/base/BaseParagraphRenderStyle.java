@@ -20,22 +20,22 @@ import org.terasology.rendering.nui.Color;
 
 public class BaseParagraphRenderStyle extends BaseTextRenderStyle implements ParagraphRenderStyle {
     @Override
-    public Integer getIndentAbove(boolean firstParagraph) {
+    public Integer getParagraphIndentTop(boolean firstParagraph) {
         return null;
     }
 
     @Override
-    public Integer getIndentBelow(boolean lastParagraph) {
+    public Integer getParagraphIndentBottom(boolean lastParagraph) {
         return null;
     }
 
     @Override
-    public Integer getIndentLeft() {
+    public Integer getParagraphIndentLeft() {
         return null;
     }
 
     @Override
-    public Integer getIndentRight() {
+    public Integer getParagraphIndentRight() {
         return null;
     }
 

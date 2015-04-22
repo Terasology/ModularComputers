@@ -23,4 +23,24 @@ public class BaseDocumentRenderStyle extends BaseParagraphRenderStyle implements
     public Color getBackgroundColor() {
         return null;
     }
+
+    @Override
+    public Integer getDocumentIndentTop() {
+        return null;
+    }
+
+    @Override
+    public Integer getDocumentIndentBottom() {
+        return null;
+    }
+
+    @Override
+    public Integer getDocumentIndentLeft() {
+        return null;
+    }
+
+    @Override
+    public Integer getDocumentIndentRight() {
+        return null;
+    }
 }

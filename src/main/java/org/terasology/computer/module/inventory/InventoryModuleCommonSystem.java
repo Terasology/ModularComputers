@@ -48,6 +48,7 @@ public class InventoryModuleCommonSystem extends BaseComponentSystem {
                 new InventoryComputerModule(inventoryModuleConditionsRegister, inventoryManager,
                         blockEntityRegistry, COMPUTER_INVENTORY_MODULE_TYPE, "Inventory manipulator"),
                 "This module allows computer to manipulate inventories.",
+                null,
                 new TreeMap<String, String>() {{
                     put("getInputInventoryBinding", "Creates the input inventory binding for the storage specified in the direction. " +
                             "This binding allows to insert items into the inventory only.");
@@ -118,7 +119,7 @@ public class InventoryModuleCommonSystem extends BaseComponentSystem {
                             "the state described in the \"inventory\" key. Please note, that the condition might be fulfilled event though " +
                             "the inventory state has not changed.");
                     put("itemMove", "[Number] Number of items that was successfully moved.");
-                }});
+                }}, null);
     }
 
 }

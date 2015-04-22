@@ -15,15 +15,18 @@
  */
 package org.terasology.computer.system.common;
 
+import org.terasology.browser.data.ParagraphData;
 import org.terasology.computer.system.server.lang.ComputerModule;
 
+import java.util.Collection;
 import java.util.Map;
 
 public interface ComputerModuleRegistry {
     public void registerComputerModule(
             String type, ComputerModule computerModule,
-            String description, Map<String, String> methodDescriptions,
+            String description, Collection<ParagraphData> additionalParagraphs, Map<String, String> methodDescriptions,
             Map<String, Map<String, String>> methodParametersDescriptions,
-            Map<String, String> returnValuesDescriptions);
+            Map<String, String> returnValuesDescriptions,
+            Map<String, Collection<ParagraphData>> additionalMethodParagraphs);
     public ComputerModule getComputerModuleByType(String type);
 }

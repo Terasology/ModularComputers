@@ -49,33 +49,38 @@ public class BrowserWidget extends CoreWidget {
     public void onDraw(Canvas canvas) {
         hyperlinkBoxes.clear();
         if (displayedPage != null) {
-            Rect2i region = canvas.getRegion();
-            int y = region.minY();
-
             DefaultDocumentRenderStyle defaultDocumentRenderStyle = new DefaultDocumentRenderStyle(canvas);
 
             DocumentRenderStyle documentRenderStyle = getDocumentRenderStyle(defaultDocumentRenderStyle, displayedPage);
+
+            Rect2i region = canvas.getRegion();
+
+            int x = region.minX() + documentRenderStyle.getDocumentIndentLeft();
+            int y = region.minY() + documentRenderStyle.getDocumentIndentTop();
+            int width = region.width() - documentRenderStyle.getDocumentIndentLeft() - documentRenderStyle.getDocumentIndentRight();
 
             Color backgroundColor = documentRenderStyle.getBackgroundColor();
             if (backgroundColor != null) {
                 canvas.drawFilledRectangle(canvas.getRegion(), backgroundColor);
             }
 
+            y += documentRenderStyle.getDocumentIndentTop();
+
             ParagraphRenderStyle lastRenderStyle = null;
             boolean first = true;
             for (ParagraphData paragraphData : displayedPage.getParagraphs()) {
                 if (lastRenderStyle != null) {
-                    y += lastRenderStyle.getIndentBelow(false);
+                    y += lastRenderStyle.getParagraphIndentBottom(false);
                 }
                 ParagraphRenderStyle paragraphRenderStyle = getParagraphRenderStyle(documentRenderStyle, paragraphData);
-                y += paragraphRenderStyle.getIndentAbove(first);
+                y += paragraphRenderStyle.getParagraphIndentTop(first);
 
-                int paragraphWidth = region.width() - paragraphRenderStyle.getIndentLeft() - paragraphRenderStyle.getIndentRight();
+                int paragraphWidth = width - paragraphRenderStyle.getParagraphIndentLeft() - paragraphRenderStyle.getParagraphIndentRight();
 
                 ParagraphRenderable paragraphContents = paragraphData.getParagraphContents();
                 int paragraphHeight = paragraphContents.getPreferredHeight(canvas, paragraphRenderStyle, paragraphWidth);
 
-                Rect2i paragraphRegion = Rect2i.createFromMinAndSize(region.minX() + paragraphRenderStyle.getIndentLeft(), y,
+                Rect2i paragraphRegion = Rect2i.createFromMinAndSize(x + paragraphRenderStyle.getParagraphIndentLeft(), y,
                         paragraphWidth, paragraphHeight);
 
                 Color paragraphBackground = paragraphRenderStyle.getParagraphBackground();
@@ -127,29 +132,41 @@ public class BrowserWidget extends CoreWidget {
 
             DocumentRenderStyle documentRenderStyle = getDocumentRenderStyle(defaultDocumentRenderStyle, displayedPage);
 
+            y += documentRenderStyle.getDocumentIndentTop();
+
+            // Reduce available space
+            int documentIndentSides = documentRenderStyle.getDocumentIndentLeft() + documentRenderStyle.getDocumentIndentRight();
+            x -= documentIndentSides;
+
             for (ParagraphData paragraphData : displayedPage.getParagraphs()) {
                 ParagraphRenderStyle paragraphRenderStyle = getParagraphRenderStyle(documentRenderStyle, paragraphData);
-                x = Math.max(x, paragraphData.getParagraphContents().getMinWidth(canvas, paragraphRenderStyle));
+                int sideIndent = paragraphRenderStyle.getParagraphIndentLeft() + paragraphRenderStyle.getParagraphIndentRight();
+                x = Math.max(x, sideIndent + paragraphData.getParagraphContents().getMinWidth(canvas, paragraphRenderStyle));
             }
 
             ParagraphRenderStyle lastRenderStyle = null;
             boolean first = true;
             for (ParagraphData paragraphData : displayedPage.getParagraphs()) {
                 if (lastRenderStyle != null) {
-                    y += lastRenderStyle.getIndentBelow(false);
+                    y += lastRenderStyle.getParagraphIndentBottom(false);
                 }
                 ParagraphRenderStyle paragraphRenderStyle = getParagraphRenderStyle(documentRenderStyle, paragraphData);
-                y += paragraphRenderStyle.getIndentAbove(first);
+                y += paragraphRenderStyle.getParagraphIndentTop(first);
 
-                int sideIndent = paragraphRenderStyle.getIndentLeft() + paragraphRenderStyle.getIndentRight();
+                int sideIndent = paragraphRenderStyle.getParagraphIndentLeft() + paragraphRenderStyle.getParagraphIndentRight();
                 y += paragraphData.getParagraphContents().getPreferredHeight(canvas, paragraphRenderStyle, x - sideIndent);
 
                 lastRenderStyle = paragraphRenderStyle;
                 first = false;
             }
             if (lastRenderStyle != null) {
-                y += lastRenderStyle.getIndentBelow(true);
+                y += lastRenderStyle.getParagraphIndentBottom(true);
             }
+
+            y += documentRenderStyle.getDocumentIndentBottom();
+
+            // Bring back the document indents to sides
+            x += documentIndentSides;
         }
         return new Vector2i(x, y);
     }

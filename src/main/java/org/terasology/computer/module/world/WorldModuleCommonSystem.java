@@ -46,6 +46,7 @@ public class WorldModuleCommonSystem extends BaseComponentSystem {
                         worldProvider, blockEntityRegistry,
                         WORLD_MODULE_TYPE, "World interaction"),
                 "This module allows to interact with objects in the world.",
+                null,
                 new TreeMap<String, String>() {{
                     put("destroyBlock", "Destroys the block in the specified direction. The resulting items from destroying the " +
                             "block are scattered on the ground.");
@@ -70,6 +71,6 @@ public class WorldModuleCommonSystem extends BaseComponentSystem {
                 new HashMap<String, String>() {{
                     put("destroyBlock", "[Boolean] Whether destroying the specified block was successful.");
                     put("destroyBlockToInventory", "[Boolean] Whether destroying the specified block was successful.");
-                }});
+                }}, null);
     }
 }

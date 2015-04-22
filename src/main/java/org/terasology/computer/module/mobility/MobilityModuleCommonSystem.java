@@ -47,6 +47,7 @@ public class MobilityModuleCommonSystem extends BaseComponentSystem {
                         worldProvider, blockEntityRegistry,
                         MOBILITY_MODULE_TYPE, "Mobility"),
                 "This module allows computer to move within the world.",
+                null,
                 new TreeMap<String, String>() {{
                     put("move", "Moves the computer in the specified direction (if able).");
                 }},
@@ -59,6 +60,6 @@ public class MobilityModuleCommonSystem extends BaseComponentSystem {
                 }},
                 new HashMap<String, String>() {{
                     put("move", "[Boolean] If the movement was successful.");
-                }});
+                }}, null);
     }
 }

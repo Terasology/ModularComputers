@@ -35,4 +35,40 @@ public class FallbackDocumentRenderStyle extends FallbackParagraphRenderStyle im
         }
         return backgroundColor;
     }
+
+    @Override
+    public Integer getDocumentIndentTop() {
+        Integer documentIndentTop = style.getDocumentIndentTop();
+        if (documentIndentTop == null) {
+            documentIndentTop = fallback.getDocumentIndentTop();
+        }
+        return documentIndentTop;
+    }
+
+    @Override
+    public Integer getDocumentIndentBottom() {
+        Integer documentIndentBottom = style.getDocumentIndentBottom();
+        if (documentIndentBottom == null) {
+            documentIndentBottom = fallback.getDocumentIndentBottom();
+        }
+        return documentIndentBottom;
+    }
+
+    @Override
+    public Integer getDocumentIndentLeft() {
+        Integer documentIndentLeft = style.getDocumentIndentLeft();
+        if (documentIndentLeft == null) {
+            documentIndentLeft = fallback.getDocumentIndentLeft();
+        }
+        return documentIndentLeft;
+    }
+
+    @Override
+    public Integer getDocumentIndentRight() {
+        Integer documentIndentRight = style.getDocumentIndentRight();
+        if (documentIndentRight == null) {
+            documentIndentRight = fallback.getDocumentIndentRight();
+        }
+        return documentIndentRight;
+    }
 }

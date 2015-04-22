@@ -41,7 +41,9 @@ public class PageData implements DocumentationPageInfo, DocumentData {
     }
 
     public void addParagraphs(Collection<ParagraphData> paragraphs) {
-        this.paragraphs.addAll(paragraphs);
+        if (paragraphs != null) {
+            this.paragraphs.addAll(paragraphs);
+        }
     }
 
     @Override
