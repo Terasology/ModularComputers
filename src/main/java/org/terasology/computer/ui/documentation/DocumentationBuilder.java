@@ -68,8 +68,8 @@ public class DocumentationBuilder {
                         String moduleType = computerModule.getModuleType();
                         String modulePageId = getComputerModulePageId(moduleType);
 
-                        PageData pageData = new PageData(modulePageId, "Computer Module - " + computerModule.getModuleName(), null);
-                        pageData.addParagraphs(createTitleParagraph("Computer module - " + computerModule.getModuleName()));
+                        PageData pageData = new PageData(modulePageId, "Module - " + computerModule.getModuleName(), null);
+                        pageData.addParagraphs(createTitleParagraph("Module - " + computerModule.getModuleName()));
                         pageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, description));
                         pageData.addParagraphs(paragraphWithSpaceBefore("Methods:"));
                         for (String methodName : methodDescriptions.keySet()) {
@@ -83,7 +83,7 @@ public class DocumentationBuilder {
                         for (Map.Entry<String, String> methodEntry : methodDescriptions.entrySet()) {
                             String methodName = methodEntry.getKey();
 
-                            PageData functionPageData = new PageData(getComputerModuleMethodPageId(moduleType, methodName), "Method - " + methodName, null);
+                            PageData functionPageData = new PageData(getComputerModuleMethodPageId(moduleType, methodName), methodName+"()", null);
                             functionPageData.addParagraphs(createTitleParagraph("Method - " + methodName));
                             functionPageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, methodEntry.getValue()));
 
@@ -138,7 +138,7 @@ public class DocumentationBuilder {
                         for (Map.Entry<String, String> functionEntry : functionDescriptions.entrySet()) {
                             String functionName = functionEntry.getKey();
 
-                            PageData functionPageData = new PageData(getBuiltInObjectMethodPageId(object, functionName), "Function - " + functionName, null);
+                            PageData functionPageData = new PageData(getBuiltInObjectMethodPageId(object, functionName), functionName+"()", null);
                             functionPageData.addParagraphs(createTitleParagraph("Function - " + functionName));
                             functionPageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, functionEntry.getValue()));
 

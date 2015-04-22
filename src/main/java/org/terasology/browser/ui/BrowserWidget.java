@@ -57,7 +57,9 @@ public class BrowserWidget extends CoreWidget {
             DocumentRenderStyle documentRenderStyle = getDocumentRenderStyle(defaultDocumentRenderStyle, displayedPage);
 
             Color backgroundColor = documentRenderStyle.getBackgroundColor();
-            canvas.drawFilledRectangle(canvas.getRegion(), backgroundColor);
+            if (backgroundColor != null) {
+                canvas.drawFilledRectangle(canvas.getRegion(), backgroundColor);
+            }
 
             ParagraphRenderStyle lastRenderStyle = null;
             boolean first = true;

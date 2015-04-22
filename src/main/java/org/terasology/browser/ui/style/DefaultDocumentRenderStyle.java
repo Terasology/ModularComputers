@@ -62,7 +62,7 @@ public class DefaultDocumentRenderStyle implements DocumentRenderStyle {
 
     @Override
     public Color getBackgroundColor() {
-        return Color.BLACK;
+        return null;
     }
 
     @Override

@@ -136,7 +136,7 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
         String parent = null;
         populateChildrenOfParent(tableOfContents, items, level, parent);
 
-        tocList.setItemRenderer(new StringTextRenderer<DocumentationPageInfo>() {
+        tocList.setItemRenderer(new StringTextRenderer<DocumentationPageInfo>(false) {
             @Override
             public String getString(DocumentationPageInfo value) {
                 return value.getDisplayableTitle();
@@ -156,7 +156,7 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
     private void populateChildrenOfParent(TableOfContents tableOfContents, List<DocumentationPageInfo> items, int level, String parent) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < level; i++) {
-            sb.append("  ");
+            sb.append("    ");
         }
         String prefix = sb.toString();
         Collection<DocumentationPageInfo> contents = tableOfContents.getContents(parent);
@@ -222,9 +222,4 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
     public void onClosed() {
         computerTerminalWidget.onClosed();
     }
-//
-//    @Override
-//    public boolean isModal() {
-//        return true;
-//    }
 }

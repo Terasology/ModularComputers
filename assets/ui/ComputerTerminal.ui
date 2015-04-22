@@ -1,5 +1,6 @@
 {
     "type": "ComputerTerminalWindow",
+    "skin": "documentation",
     "contents": {
         "type": "relativeLayout",
         "contents": [
@@ -59,7 +60,7 @@
                                         "layoutInfo": {
                                             "position-top": {},
                                             "position-bottom": {},
-                                            "width": 150,
+                                            "width": 250,
                                             "position-left": {}
                                         }
                                     },

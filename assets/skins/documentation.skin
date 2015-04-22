@@ -1,0 +1,32 @@
+{
+    "inherit": "default",
+    "elements": {
+        "UIList" : {
+            "parts" : {
+                "item" : {
+                    "text-align-horizontal" : "left",
+                    "background" : "engine:color.FFFFFFFF",
+                    "background-border" : {},
+                    "margin" : {},
+                    "texture-scale-mode" : "",
+                    "text-color": "000000FF",
+                    "text-shadowed" : false,
+                    "modes" : {
+                        "hover" : {
+                            "background": "engine:color.CCCCCCFF",
+                            "text-color" : "000000FF"
+                        },
+                        "active" : {
+                            "background" : "engine:color.000000FF",
+                            "text-color" : "FFFFFFFF"
+                        }
+                    }
+                }
+            }
+        },
+        "BrowserWidget": {
+            "background": "engine:color.FFFFFFFF",
+            "text-color": "000000FF"
+        }
+    }
+}
