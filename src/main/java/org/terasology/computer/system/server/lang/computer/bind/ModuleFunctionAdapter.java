@@ -53,22 +53,41 @@ public class ModuleFunctionAdapter implements FunctionExecutable {
 
     @Override
     public Execution createExecution(final int line, ExecutionContext executionContext, CallContext callContext) {
+
         return new DelayedExecution(_moduleFunction.getCpuCycleDuration(), _moduleFunction.getMinimumExecutionTicks(),
-                new SimpleExecution() {
-                    @Override
-                    protected ExecutionProgress execute(ExecutionContext context, ExecutionCostConfiguration configuration) throws ExecutionException {
-                        final TerasologyComputerExecutionContext terasologyExecutionContext = (TerasologyComputerExecutionContext) context;
-                        ComputerCallback computerCallback = terasologyExecutionContext.getComputerCallback();
+                getModuleFunctionExecution(line)) {
+            @Override
+            protected void onExecutionStart(ExecutionContext executionContext) throws ExecutionException {
+                _moduleFunction.onFunctionStart(line, getComputerCallback(executionContext), getVariableMap(executionContext));
+            }
+        };
+    }
 
-                        final String[] parameterNames = getParameterNames();
-                        Map<String, Variable> parameters = new HashMap<String, Variable>();
-                        final CallContext callContext = context.peekCallContext();
-                        for (String parameterName : parameterNames)
-                            parameters.put(parameterName, callContext.getVariableValue(parameterName));
+    private SimpleExecution getModuleFunctionExecution(final int line) {
+        return new SimpleExecution() {
+            @Override
+            protected ExecutionProgress execute(ExecutionContext context, ExecutionCostConfiguration configuration) throws ExecutionException {
+                ComputerCallback computerCallback = getComputerCallback(context);
 
-                        context.setReturnValue(new Variable(_moduleFunction.executeFunction(line, computerCallback, parameters)));
-                        return new ExecutionProgress(configuration.getSetReturnValue());
-                    }
-                });
+                Map<String, Variable> parameters = getVariableMap(context);
+
+                context.setReturnValue(new Variable(_moduleFunction.executeFunction(line, computerCallback, parameters)));
+                return new ExecutionProgress(configuration.getSetReturnValue());
+            }
+        };
+    }
+
+    private Map<String, Variable> getVariableMap(ExecutionContext context) throws ExecutionException {
+        final String[] parameterNames = getParameterNames();
+        Map<String, Variable> parameters = new HashMap<String, Variable>();
+        final CallContext callContext = context.peekCallContext();
+        for (String parameterName : parameterNames)
+            parameters.put(parameterName, callContext.getVariableValue(parameterName));
+        return parameters;
+    }
+
+    private ComputerCallback getComputerCallback(ExecutionContext context) {
+        final TerasologyComputerExecutionContext terasologyExecutionContext = (TerasologyComputerExecutionContext) context;
+        return terasologyExecutionContext.getComputerCallback();
     }
 }
