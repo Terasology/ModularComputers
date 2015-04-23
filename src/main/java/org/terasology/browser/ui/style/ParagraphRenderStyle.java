@@ -18,14 +18,39 @@ package org.terasology.browser.ui.style;
 import org.terasology.rendering.nui.Color;
 
 public interface ParagraphRenderStyle extends TextRenderStyle {
-    public Integer getParagraphIndentTop(boolean firstParagraph);
-    public Integer getParagraphIndentBottom(boolean lastParagraph);
-    public Integer getParagraphIndentLeft();
-    public Integer getParagraphIndentRight();
+    public default Integer getParagraphIndentTop(boolean firstParagraph) {
+        return null;
+    }
 
-    public Integer getParagraphBackgroundIndentTop();
-    public Integer getParagraphBackgroundIndentBottom();
-    public Integer getParagraphBackgroundIndentLeft();
-    public Integer getParagraphBackgroundIndentRight();
-    public Color getParagraphBackground();
+    public default Integer getParagraphIndentBottom(boolean lastParagraph) {
+        return null;
+    }
+
+    public default Integer getParagraphIndentLeft() {
+        return null;
+    }
+
+    public default Integer getParagraphIndentRight() {
+        return null;
+    }
+
+    public default Integer getParagraphBackgroundIndentTop() {
+        return null;
+    }
+
+    public default Integer getParagraphBackgroundIndentBottom() {
+        return null;
+    }
+
+    public default Integer getParagraphBackgroundIndentLeft() {
+        return null;
+    }
+
+    public default Integer getParagraphBackgroundIndentRight() {
+        return null;
+    }
+
+    public default Color getParagraphBackground() {
+        return null;
+    }
 }

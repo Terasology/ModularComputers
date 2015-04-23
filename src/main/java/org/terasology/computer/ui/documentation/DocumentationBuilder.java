@@ -19,7 +19,6 @@ import com.gempukku.lang.ObjectDefinition;
 import org.terasology.browser.data.ParagraphData;
 import org.terasology.browser.data.basic.HTMLLikeParser;
 import org.terasology.browser.ui.style.ParagraphRenderStyle;
-import org.terasology.browser.ui.style.base.BaseParagraphRenderStyle;
 import org.terasology.computer.system.common.ComputerLanguageContext;
 import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
 import org.terasology.computer.system.server.lang.ComputerModule;
@@ -223,7 +222,7 @@ public class DocumentationBuilder {
     }
 
     private static Collection<ParagraphData> paragraphWithSpaceBefore(String text) {
-        ParagraphRenderStyle renderStyle = new BaseParagraphRenderStyle() {
+        ParagraphRenderStyle renderStyle = new ParagraphRenderStyle() {
             @Override
             public Integer getParagraphIndentTop(boolean firstParagraph) {
                 return 10;
@@ -255,7 +254,7 @@ public class DocumentationBuilder {
 
         result.addAll(
                 HTMLLikeParser.parseHTMLLike(
-                        new BaseParagraphRenderStyle() {
+                        new ParagraphRenderStyle() {
                             @Override
                             public Integer getParagraphIndentTop(boolean firstParagraph) {
                                 return 5;

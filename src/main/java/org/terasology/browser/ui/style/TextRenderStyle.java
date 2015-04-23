@@ -19,6 +19,11 @@ import org.terasology.rendering.assets.font.Font;
 import org.terasology.rendering.nui.Color;
 
 public interface TextRenderStyle {
-    public Font getFont(boolean hyperlink);
-    public Color getColor(boolean hyperlink);
+    public default Font getFont(boolean hyperlink) {
+        return null;
+    }
+
+    public default Color getColor(boolean hyperlink) {
+        return null;
+    }
 }

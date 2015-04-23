@@ -18,9 +18,9 @@ package org.terasology.browser.ui.style;
 import org.terasology.rendering.nui.Color;
 
 public interface DocumentRenderStyle extends ParagraphRenderStyle {
-    public Integer getDocumentIndentTop();
-    public Integer getDocumentIndentBottom();
-    public Integer getDocumentIndentLeft();
-    public Integer getDocumentIndentRight();
-    public Color getBackgroundColor();
+    public default Integer getDocumentIndentTop()  {return null;}
+    public default Integer getDocumentIndentBottom() {return null;}
+    public default Integer getDocumentIndentLeft() {return null;}
+    public default Integer getDocumentIndentRight() {return null;}
+    public default Color getBackgroundColor() {return null;}
 }
