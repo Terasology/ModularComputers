@@ -19,16 +19,16 @@ import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.Variable;
 import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
-import org.terasology.computer.system.server.lang.ModuleFunctionExecutable;
+import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
 import org.terasology.logic.inventory.InventoryManager;
 import org.terasology.logic.inventory.InventoryUtils;
 
 import java.util.Map;
 
-public class ItemMoveFunction implements ModuleFunctionExecutable {
+public class ItemMoveMethod implements ModuleMethodExecutable {
     private InventoryManager inventoryManager;
 
-    public ItemMoveFunction(InventoryManager inventoryManager) {
+    public ItemMoveMethod(InventoryManager inventoryManager) {
         this.inventoryManager = inventoryManager;
     }
 
@@ -38,17 +38,12 @@ public class ItemMoveFunction implements ModuleFunctionExecutable {
     }
 
     @Override
-    public int getMinimumExecutionTicks() {
-        return 0;
-    }
-
-    @Override
     public String[] getParameterNames() {
         return new String[] {"inventoryBindingFrom", "inventoryBindingTo", "slot"};
     }
 
     @Override
-    public Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
+    public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
         InventoryBinding.InventoryWithSlots inventoryFrom = FunctionParamValidationUtil.validateInventoryBinding(line, computer,
                 parameters, "inventoryBindingFrom", "itemMove", false);
         InventoryBinding.InventoryWithSlots inventoryTo = FunctionParamValidationUtil.validateInventoryBinding(line, computer,

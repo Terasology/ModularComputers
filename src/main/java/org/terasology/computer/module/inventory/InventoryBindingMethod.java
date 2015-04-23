@@ -19,17 +19,17 @@ import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.Variable;
 import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
-import org.terasology.computer.system.server.lang.ModuleFunctionExecutable;
+import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
 import org.terasology.math.Direction;
 import org.terasology.world.BlockEntityRegistry;
 
 import java.util.Map;
 
-public class InventoryBindingFunction implements ModuleFunctionExecutable {
+public class InventoryBindingMethod implements ModuleMethodExecutable {
     private BlockEntityRegistry blockEntityRegistry;
     private boolean input;
 
-    public InventoryBindingFunction(BlockEntityRegistry blockEntityRegistry, boolean input) {
+    public InventoryBindingMethod(BlockEntityRegistry blockEntityRegistry, boolean input) {
         this.blockEntityRegistry = blockEntityRegistry;
         this.input = input;
     }
@@ -40,17 +40,12 @@ public class InventoryBindingFunction implements ModuleFunctionExecutable {
     }
 
     @Override
-    public int getMinimumExecutionTicks() {
-        return 0;
-    }
-
-    @Override
     public String[] getParameterNames() {
         return new String[] { "direction" };
     }
 
     @Override
-    public Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
+    public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
         Direction direction = FunctionParamValidationUtil.validateDirectionParameter(line, parameters,
                 "direction", "getInventoryBinding");
 

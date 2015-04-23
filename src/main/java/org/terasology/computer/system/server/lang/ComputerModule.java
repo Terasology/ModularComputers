@@ -61,6 +61,6 @@ public interface ComputerModule {
      * @return Function that will be executed, when invoked by the program, or null if there is no function with this
      *         name.
      */
-    public ModuleFunctionExecutable getFunctionByName(String name);
+    public ModuleMethodExecutable getFunctionByName(String name);
 
 }

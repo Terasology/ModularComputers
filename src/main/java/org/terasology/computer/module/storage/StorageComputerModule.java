@@ -16,7 +16,7 @@
 package org.terasology.computer.module.storage;
 
 import org.terasology.computer.system.server.lang.ComputerModule;
-import org.terasology.computer.system.server.lang.ModuleFunctionExecutable;
+import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
 
 import java.util.Collection;
 
@@ -59,11 +59,11 @@ public class StorageComputerModule implements ComputerModule {
     }
 
     @Override
-    public ModuleFunctionExecutable getFunctionByName(String name) {
+    public ModuleMethodExecutable getFunctionByName(String name) {
         if (name.equals("getInputInventoryBinding")) {
-            return new StorageInventoryBindingFunction(true);
+            return new StorageInventoryBindingMethod(true);
         } else if (name.equals("getOutputInventoryBinding")) {
-            return new StorageInventoryBindingFunction(false);
+            return new StorageInventoryBindingMethod(false);
         }
         return null;
     }

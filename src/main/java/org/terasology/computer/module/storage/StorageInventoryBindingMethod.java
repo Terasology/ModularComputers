@@ -13,24 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.terasology.computer.system.server.lang;
+package org.terasology.computer.module.storage;
 
 import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.Variable;
 import org.terasology.computer.context.ComputerCallback;
+import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
 
 import java.util.Map;
 
-public interface ModuleFunctionExecutable {
-    public int getCpuCycleDuration();
+public class StorageInventoryBindingMethod implements ModuleMethodExecutable {
+    private boolean input;
 
-    public int getMinimumExecutionTicks();
-
-    public String[] getParameterNames();
-
-    public default void onFunctionStart(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
-
+    public StorageInventoryBindingMethod(boolean input) {
+        this.input = input;
     }
 
-    public Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException;
+    @Override
+    public int getCpuCycleDuration() {
+        return 10;
+    }
+
+    @Override
+    public String[] getParameterNames() {
+        return new String[0];
+    }
+
+    @Override
+    public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
+        return new InternalInventoryBindingCustomObject(input);
+    }
 }

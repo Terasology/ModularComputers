@@ -65,7 +65,8 @@ public class ComputerContext {
     private int memoryConsumptionCheckCounter;
 
     private int remainingWaitingCpuCycles;
-    private int minimumTicksRemaining;
+    private long lastExecutionTime;
+    private long minimumTimeRemaining;
 
     private ComputerConsole console = new ComputerConsole();
 
@@ -88,16 +89,19 @@ public class ComputerContext {
 
     public void executeContext(float delta) {
         if (context != null) {
-            logger.debug("Executing program - minTicksRemaining: "+minimumTicksRemaining+", remainingWaitingCpuCycles: "+remainingWaitingCpuCycles);
-            if (minimumTicksRemaining > 0) {
-                minimumTicksRemaining--;
+            long executionTime = System.currentTimeMillis();
+            logger.debug("Executing program - minTicksRemaining: " + minimumTimeRemaining + ", remainingWaitingCpuCycles: " + remainingWaitingCpuCycles);
+            if (minimumTimeRemaining > 0) {
+                // Decrement by the time between calls
+                minimumTimeRemaining -= (executionTime - lastExecutionTime);
             }
+            lastExecutionTime = executionTime;
             if (remainingWaitingCpuCycles >= speed) {
                 remainingWaitingCpuCycles -= speed;
             } else {
                 int freeCycles = speed - remainingWaitingCpuCycles;
                 remainingWaitingCpuCycles = 0;
-                if (minimumTicksRemaining == 0) {
+                if (minimumTimeRemaining <= 0) {
                     executeNextProgramStepUntilRunsOutOfCycles(freeCycles);
                 }
             }
@@ -110,7 +114,7 @@ public class ComputerContext {
 
     public void startProgram(String name, String programText, ComputerLanguageContextInitializer computerLanguageContextInitializer, ExecutionCostConfiguration configuration) throws IllegalSyntaxException {
         try {
-            logger.debug("starting program: "+name);
+            logger.debug("starting program: " + name);
 
             Set<String> variables = new HashSet<>();
 
@@ -146,7 +150,7 @@ public class ComputerContext {
 
             context = executionContext;
 
-            logger.debug("started program: "+name);
+            logger.debug("started program: " + name);
         } catch (IOException exp) {
             // Can't happen - ignore
         }
@@ -169,12 +173,12 @@ public class ComputerContext {
                 ComputerComponent computerComponent = entity.getComponent(ComputerComponent.class);
 
                 int moduleSlotCount = computerComponent.moduleSlotCount;
-                if (slot<0 || moduleSlotCount<=slot)
+                if (slot < 0 || moduleSlotCount <= slot)
                     return null;
 
                 InventoryComponent inventory = entity.getComponent(InventoryComponent.class);
 
-                EntityRef moduleEntity = inventory.itemSlots.get(computerComponent.moduleSlotStart+slot);
+                EntityRef moduleEntity = inventory.itemSlots.get(computerComponent.moduleSlotStart + slot);
                 if (moduleEntity.hasComponent(ComputerModuleComponent.class)) {
                     ComputerModuleComponent moduleComponent = moduleEntity.getComponent(ComputerModuleComponent.class);
                     return computerModuleRegistry.getComputerModuleByType(moduleComponent.moduleType);
@@ -216,16 +220,16 @@ public class ComputerContext {
                 if (context.getStackTraceSize() > stackSize)
                     throw new ExecutionException(-1, "StackOverflow");
 
-                if (((++memoryConsumptionCheckCounter)%MEMORY_CHECK_INTERVAL == 0) && context.getMemoryUsage()>memory)
+                if (((++memoryConsumptionCheckCounter) % MEMORY_CHECK_INTERVAL == 0) && context.getMemoryUsage() > memory)
                     throw new ExecutionException(-1, "OutOfMemory");
 
-                freeCycles-=executionProgress.getCost();
-                minimumTicksRemaining = executionProgress.getMinExecutionTicks();
+                freeCycles -= executionProgress.getCost();
+                minimumTimeRemaining = executionProgress.getMinExecutionTime();
 
-                if (freeCycles<=0) {
+                if (freeCycles <= 0) {
                     remainingWaitingCpuCycles = -freeCycles;
                 }
-                if (minimumTicksRemaining>0 || remainingWaitingCpuCycles>0) {
+                if (minimumTimeRemaining > 0 || remainingWaitingCpuCycles > 0) {
                     // Time to break execution, we've done enough in this computer for this tick
                     break;
                 }

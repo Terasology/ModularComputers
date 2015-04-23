@@ -19,15 +19,15 @@ import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.Variable;
 import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
-import org.terasology.computer.system.server.lang.ModuleFunctionExecutable;
+import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
 import org.terasology.logic.inventory.InventoryManager;
 
 import java.util.Map;
 
-public class DumpFunction implements ModuleFunctionExecutable {
+public class DumpMethod implements ModuleMethodExecutable {
     private InventoryManager inventoryManager;
 
-    public DumpFunction(InventoryManager inventoryManager) {
+    public DumpMethod(InventoryManager inventoryManager) {
         this.inventoryManager = inventoryManager;
     }
 
@@ -37,17 +37,12 @@ public class DumpFunction implements ModuleFunctionExecutable {
     }
 
     @Override
-    public int getMinimumExecutionTicks() {
-        return 0;
-    }
-
-    @Override
     public String[] getParameterNames() {
         return new String[] {"inventoryBindingFrom", "inventoryBindingTo"};
     }
 
     @Override
-    public Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
+    public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
         InventoryBinding.InventoryWithSlots inventoryFrom = FunctionParamValidationUtil.validateInventoryBinding(line, computer,
                 parameters, "inventoryBindingFrom", "dump", false);
         InventoryBinding.InventoryWithSlots inventoryTo = FunctionParamValidationUtil.validateInventoryBinding(line, computer,

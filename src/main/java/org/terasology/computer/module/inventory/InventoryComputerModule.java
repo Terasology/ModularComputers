@@ -16,7 +16,7 @@
 package org.terasology.computer.module.inventory;
 
 import org.terasology.computer.system.server.lang.ComputerModule;
-import org.terasology.computer.system.server.lang.ModuleFunctionExecutable;
+import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
 import org.terasology.logic.inventory.InventoryManager;
 import org.terasology.world.BlockEntityRegistry;
 
@@ -60,23 +60,23 @@ public class InventoryComputerModule implements ComputerModule {
     }
 
     @Override
-    public ModuleFunctionExecutable getFunctionByName(String name) {
+    public ModuleMethodExecutable getFunctionByName(String name) {
         if (name.equals("getInputInventoryBinding"))
-            return new InventoryBindingFunction(blockEntityRegistry, true);
+            return new InventoryBindingMethod(blockEntityRegistry, true);
         if (name.equals("getOutputInventoryBinding"))
-            return new InventoryBindingFunction(blockEntityRegistry, false);
+            return new InventoryBindingMethod(blockEntityRegistry, false);
         if (name.equals("getInventorySlotCount"))
-            return new InventorySlotCountFunction();
+            return new InventorySlotCountMethod();
         if (name.equals("getItemCount"))
-            return new ItemCountFunction();
+            return new ItemCountMethod();
         if (name.equals("getItemName"))
-            return new ItemNameFunction();
+            return new ItemNameMethod();
         if (name.equals("getInventoryAndChangeCondition"))
             return new InventoryAndChangeCondition(inventoryModuleConditionsRegister);
         if (name.equals("itemMove"))
-            return new ItemMoveFunction(inventoryManager);
+            return new ItemMoveMethod(inventoryManager);
         if (name.equals("dump"))
-            return new DumpFunction(inventoryManager);
+            return new DumpMethod(inventoryManager);
         return null;
     }
 }

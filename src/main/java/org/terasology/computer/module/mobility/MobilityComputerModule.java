@@ -16,7 +16,7 @@
 package org.terasology.computer.module.mobility;
 
 import org.terasology.computer.system.server.lang.ComputerModule;
-import org.terasology.computer.system.server.lang.ModuleFunctionExecutable;
+import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
 import org.terasology.world.BlockEntityRegistry;
 import org.terasology.world.WorldProvider;
 
@@ -58,9 +58,9 @@ public class MobilityComputerModule implements ComputerModule {
     }
 
     @Override
-    public ModuleFunctionExecutable getFunctionByName(String name) {
+    public ModuleMethodExecutable getFunctionByName(String name) {
         if (name.equals("move")) {
-            return new MoveFunction(worldProvider, blockEntityRegistry);
+            return new MoveMethod(worldProvider, blockEntityRegistry);
         }
         return null;
     }

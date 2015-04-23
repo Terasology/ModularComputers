@@ -22,7 +22,7 @@ import com.gempukku.lang.Variable;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.context.TerasologyComputerExecutionContext;
 import org.terasology.computer.system.server.lang.ComputerModule;
-import org.terasology.computer.system.server.lang.ModuleFunctionExecutable;
+import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
 
 public class SlotBindingObjectDefinition implements ObjectDefinition {
 	private int _slotNo;
@@ -40,7 +40,7 @@ public class SlotBindingObjectDefinition implements ObjectDefinition {
 		if (module == null)
 			return new Variable(null);
 
-		final ModuleFunctionExecutable moduleFunction = module.getFunctionByName(name);
+		final ModuleMethodExecutable moduleFunction = module.getFunctionByName(name);
 
 		if (moduleFunction != null) {
 			return new Variable(new BindingFunctionWrapper(module, _slotNo, new ModuleFunctionAdapter(_slotNo, moduleFunction)));

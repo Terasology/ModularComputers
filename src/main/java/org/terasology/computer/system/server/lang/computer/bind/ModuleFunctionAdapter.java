@@ -27,16 +27,16 @@ import com.gempukku.lang.Variable;
 import com.gempukku.lang.execution.SimpleExecution;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.context.TerasologyComputerExecutionContext;
-import org.terasology.computer.system.server.lang.ModuleFunctionExecutable;
+import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class ModuleFunctionAdapter implements FunctionExecutable {
     private int _slotNo;
-    private ModuleFunctionExecutable _moduleFunction;
+    private ModuleMethodExecutable _moduleFunction;
 
-    public ModuleFunctionAdapter(int slotNo, ModuleFunctionExecutable moduleFunction) {
+    public ModuleFunctionAdapter(int slotNo, ModuleMethodExecutable moduleFunction) {
         _slotNo = slotNo;
         _moduleFunction = moduleFunction;
     }
@@ -54,7 +54,7 @@ public class ModuleFunctionAdapter implements FunctionExecutable {
     @Override
     public Execution createExecution(final int line, ExecutionContext executionContext, CallContext callContext) {
 
-        return new DelayedExecution(_moduleFunction.getCpuCycleDuration(), _moduleFunction.getMinimumExecutionTicks(),
+        return new DelayedExecution(_moduleFunction.getCpuCycleDuration(), _moduleFunction.getMinimumExecutionTime(),
                 getModuleFunctionExecution(line)) {
             @Override
             protected void onExecutionStart(ExecutionContext executionContext) throws ExecutionException {
@@ -71,7 +71,7 @@ public class ModuleFunctionAdapter implements FunctionExecutable {
 
                 Map<String, Variable> parameters = getVariableMap(context);
 
-                context.setReturnValue(new Variable(_moduleFunction.executeFunction(line, computerCallback, parameters)));
+                context.setReturnValue(new Variable(_moduleFunction.onFunctionEnd(line, computerCallback, parameters)));
                 return new ExecutionProgress(configuration.getSetReturnValue());
             }
         };

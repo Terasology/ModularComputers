@@ -16,7 +16,7 @@
 package org.terasology.computer.module.world;
 
 import org.terasology.computer.system.server.lang.ComputerModule;
-import org.terasology.computer.system.server.lang.ModuleFunctionExecutable;
+import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
 import org.terasology.world.BlockEntityRegistry;
 import org.terasology.world.WorldProvider;
 
@@ -56,11 +56,11 @@ public class WorldComputerModule implements ComputerModule {
     }
 
     @Override
-    public ModuleFunctionExecutable getFunctionByName(String name) {
+    public ModuleMethodExecutable getFunctionByName(String name) {
         if (name.equals("destroyBlock")) {
-            return new DestroyFunction(worldProvider, blockEntityRegistry);
+            return new DestroyMethod(worldProvider, blockEntityRegistry);
         } else if (name.equals("destroyBlockToInventory")) {
-            return new DestroyToInventoryFunction(worldProvider, blockEntityRegistry);
+            return new DestroyToInventoryMethod(worldProvider, blockEntityRegistry);
         }
         return null;
     }

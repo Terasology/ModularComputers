@@ -19,7 +19,7 @@ import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.Variable;
 import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
-import org.terasology.computer.system.server.lang.ModuleFunctionExecutable;
+import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.logic.inventory.InventoryUtils;
 
@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class InventoryAndChangeCondition implements ModuleFunctionExecutable {
+public class InventoryAndChangeCondition implements ModuleMethodExecutable {
     private InventoryModuleConditionsRegister inventoryModuleConditionsRegister;
 
     public InventoryAndChangeCondition(InventoryModuleConditionsRegister inventoryModuleConditionsRegister) {
@@ -41,17 +41,12 @@ public class InventoryAndChangeCondition implements ModuleFunctionExecutable {
     }
 
     @Override
-    public int getMinimumExecutionTicks() {
-        return 0;
-    }
-
-    @Override
     public String[] getParameterNames() {
         return new String[] {"inventoryBinding"};
     }
 
     @Override
-    public Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
+    public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
         InventoryBinding.InventoryWithSlots inventory = FunctionParamValidationUtil.validateInventoryBinding(line, computer,
                 parameters, "inventoryBinding", "dump", null);
 

@@ -24,7 +24,7 @@ import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.event.server.AfterComputerMoveEvent;
 import org.terasology.computer.event.server.BeforeComputerMoveEvent;
 import org.terasology.computer.event.server.ComputerMoveEvent;
-import org.terasology.computer.system.server.lang.ModuleFunctionExecutable;
+import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.math.Direction;
 import org.terasology.math.geom.Vector3i;
@@ -36,13 +36,13 @@ import org.terasology.world.block.entity.placement.PlaceBlocks;
 
 import java.util.Map;
 
-public class MoveFunction implements ModuleFunctionExecutable {
-    private static final Logger logger = LoggerFactory.getLogger(MoveFunction.class);
+public class MoveMethod implements ModuleMethodExecutable {
+    private static final Logger logger = LoggerFactory.getLogger(MoveMethod.class);
 
     private WorldProvider worldProvider;
     private BlockEntityRegistry blockEntityRegistry;
 
-    public MoveFunction(WorldProvider worldProvider, BlockEntityRegistry blockEntityRegistry) {
+    public MoveMethod(WorldProvider worldProvider, BlockEntityRegistry blockEntityRegistry) {
         this.worldProvider = worldProvider;
         this.blockEntityRegistry = blockEntityRegistry;
     }
@@ -53,8 +53,8 @@ public class MoveFunction implements ModuleFunctionExecutable {
     }
 
     @Override
-    public int getMinimumExecutionTicks() {
-        return 20;
+    public int getMinimumExecutionTime() {
+        return 500;
     }
 
     @Override
@@ -63,7 +63,7 @@ public class MoveFunction implements ModuleFunctionExecutable {
     }
 
     @Override
-    public Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
+    public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
         Direction direction = FunctionParamValidationUtil.validateDirectionParameter(line, parameters, "direction", "move");
 
         Vector3i computerLocation = computer.getComputerLocation();

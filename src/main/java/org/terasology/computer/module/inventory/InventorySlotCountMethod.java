@@ -19,37 +19,26 @@ import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.Variable;
 import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
-import org.terasology.computer.system.server.lang.ModuleFunctionExecutable;
-import org.terasology.entitySystem.entity.EntityRef;
-import org.terasology.logic.inventory.InventoryUtils;
+import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
 
 import java.util.Map;
 
-public class ItemNameFunction implements ModuleFunctionExecutable {
+public class InventorySlotCountMethod implements ModuleMethodExecutable {
     @Override
     public int getCpuCycleDuration() {
         return 50;
     }
 
     @Override
-    public int getMinimumExecutionTicks() {
-        return 0;
-    }
-
-    @Override
     public String[] getParameterNames() {
-        return new String[] {"inventoryBinding", "slot"};
+        return new String[] {"inventoryBinding"};
     }
 
     @Override
-    public Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
+    public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
         InventoryBinding.InventoryWithSlots inventory = FunctionParamValidationUtil.validateInventoryBinding(line, computer,
-                parameters, "inventoryBinding", "getItemName", null);
+                parameters, "inventoryBinding", "getInventorySlotCount", null);
 
-        int slotNo = FunctionParamValidationUtil.validateSlotNo(line, parameters, inventory, "slot", "getItemName");
-
-        EntityRef itemEntity = InventoryUtils.getItemAt(inventory.inventory, inventory.slots.get(slotNo));
-        return InventoryModuleUtils.getItemName(itemEntity);
+        return inventory.slots.size();
     }
-
 }
