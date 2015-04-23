@@ -18,14 +18,16 @@ package org.terasology.computer.ui.documentation;
 import com.gempukku.lang.ObjectDefinition;
 import org.terasology.browser.data.ParagraphData;
 import org.terasology.browser.data.basic.HTMLLikeParser;
-import org.terasology.browser.data.basic.HyperlinkParagraphData;
 import org.terasology.browser.ui.style.ParagraphRenderStyle;
 import org.terasology.browser.ui.style.base.BaseParagraphRenderStyle;
 import org.terasology.computer.system.common.ComputerLanguageContext;
 import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
 import org.terasology.computer.system.server.lang.ComputerModule;
+import org.terasology.rendering.nui.Color;
 
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public class DocumentationBuilder {
@@ -97,7 +99,7 @@ public class DocumentationBuilder {
                                 functionPageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, "None"));
                             } else {
                                 for (Map.Entry<String, String> parameterDescription : methodParameters.entrySet()) {
-                                    functionPageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, parameterDescription.getKey() + " - " + parameterDescription.getValue()));
+                                    functionPageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, " * "+parameterDescription.getKey() + " - " + parameterDescription.getValue()));
                                 }
                             }
 
@@ -156,7 +158,7 @@ public class DocumentationBuilder {
                                 functionPageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, "None"));
                             }
                             for (Map.Entry<String, String> parameterDescription : functionParameters.entrySet()) {
-                                functionPageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, " * "+parameterDescription.getKey() + " - " + parameterDescription.getValue()));
+                                functionPageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, " * " + parameterDescription.getKey() + " - " + parameterDescription.getValue()));
                             }
 
                             Collection<ParagraphData> returnDescription = HTMLLikeParser.parseHTMLLike(null, functionReturnDescriptions.get(functionName));
@@ -232,5 +234,75 @@ public class DocumentationBuilder {
 
     private static Collection<ParagraphData> createTitleParagraph(String title) {
         return HTMLLikeParser.parseHTMLLike(null, "<f engine:title>" + title + "</f>");
+    }
+
+    public static Collection<ParagraphData> createExampleParagraphs(String description, String code) {
+        List<ParagraphData> result = new LinkedList<>();
+        result.addAll(paragraphWithSpaceBefore("Example:"));
+        result.addAll(
+                HTMLLikeParser.parseHTMLLike(null, description));
+
+        String[] lines = code.split("\n");
+        StringBuilder codeEncoded = new StringBuilder();
+        boolean first = true;
+        for (String line : lines) {
+            if (!first) {
+                codeEncoded.append("<l>");
+            }
+            codeEncoded.append(HTMLLikeParser.encodeHTMLLike(line));
+            first = false;
+        }
+
+        result.addAll(
+                HTMLLikeParser.parseHTMLLike(
+                        new BaseParagraphRenderStyle() {
+                            @Override
+                            public Integer getParagraphIndentTop(boolean firstParagraph) {
+                                return 5;
+                            }
+
+                            @Override
+                            public Integer getParagraphIndentBottom(boolean lastParagraph) {
+                                return 5;
+                            }
+
+                            @Override
+                            public Integer getParagraphIndentLeft() {
+                                return 5;
+                            }
+
+                            @Override
+                            public Integer getParagraphIndentRight() {
+                                return 5;
+                            }
+
+                            @Override
+                            public Integer getParagraphBackgroundIndentTop() {
+                                return 3;
+                            }
+
+                            @Override
+                            public Integer getParagraphBackgroundIndentBottom() {
+                                return 3;
+                            }
+
+                            @Override
+                            public Integer getParagraphBackgroundIndentLeft() {
+                                return 3;
+                            }
+
+                            @Override
+                            public Integer getParagraphBackgroundIndentRight() {
+                                return 3;
+                            }
+
+                            @Override
+                            public Color getParagraphBackground() {
+                                return new Color(0.8f, 0.8f, 1f);
+                            }
+                        },
+                        "<f ModularComputers:november>"+codeEncoded.toString()+"</f>"));
+
+        return result;
     }
 }

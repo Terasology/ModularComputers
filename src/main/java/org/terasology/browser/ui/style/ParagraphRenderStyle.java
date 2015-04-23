@@ -22,5 +22,10 @@ public interface ParagraphRenderStyle extends TextRenderStyle {
     public Integer getParagraphIndentBottom(boolean lastParagraph);
     public Integer getParagraphIndentLeft();
     public Integer getParagraphIndentRight();
+
+    public Integer getParagraphBackgroundIndentTop();
+    public Integer getParagraphBackgroundIndentBottom();
+    public Integer getParagraphBackgroundIndentLeft();
+    public Integer getParagraphBackgroundIndentRight();
     public Color getParagraphBackground();
 }

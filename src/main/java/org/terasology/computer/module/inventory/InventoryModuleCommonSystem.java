@@ -15,7 +15,9 @@
  */
 package org.terasology.computer.module.inventory;
 
+import org.terasology.browser.data.ParagraphData;
 import org.terasology.computer.system.common.ComputerModuleRegistry;
+import org.terasology.computer.ui.documentation.DocumentationBuilder;
 import org.terasology.entitySystem.systems.BaseComponentSystem;
 import org.terasology.entitySystem.systems.RegisterMode;
 import org.terasology.entitySystem.systems.RegisterSystem;
@@ -23,6 +25,7 @@ import org.terasology.logic.inventory.InventoryManager;
 import org.terasology.registry.In;
 import org.terasology.world.BlockEntityRegistry;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -119,7 +122,15 @@ public class InventoryModuleCommonSystem extends BaseComponentSystem {
                             "the state described in the \"inventory\" key. Please note, that the condition might be fulfilled event though " +
                             "the inventory state has not changed.");
                     put("itemMove", "[Number] Number of items that was successfully moved.");
-                }}, null);
+                }},
+                new HashMap<String, Collection<ParagraphData>>() {{
+                    put("dump", DocumentationBuilder.createExampleParagraphs(
+                            "To move all items from an inventory above the computer to inventory to the east of the computer, you could use the following script.",
+                            "var invBind = computer.bindModuleOfType(\"" + COMPUTER_INVENTORY_MODULE_TYPE + "\");\n" +
+                                    "var topInv = invBind.getOutputInventoryBinding(\"top\");\n" +
+                                    "var eastInv = invBind.getInputInventoryBinding(\"east\");\n" +
+                                    "invBind.dump(topInv, eastInv);"));
+                }});
     }
 
 }

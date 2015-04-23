@@ -141,6 +141,11 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
             public String getString(DocumentationPageInfo value) {
                 return value.getDisplayableTitle();
             }
+
+            @Override
+            public String getTooltip(DocumentationPageInfo value) {
+                return value.getDisplayableTitle().trim();
+            }
         });
         tocList.setList(items);
 

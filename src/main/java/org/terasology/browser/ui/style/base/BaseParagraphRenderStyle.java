@@ -40,6 +40,26 @@ public class BaseParagraphRenderStyle extends BaseTextRenderStyle implements Par
     }
 
     @Override
+    public Integer getParagraphBackgroundIndentTop() {
+        return null;
+    }
+
+    @Override
+    public Integer getParagraphBackgroundIndentBottom() {
+        return null;
+    }
+
+    @Override
+    public Integer getParagraphBackgroundIndentLeft() {
+        return null;
+    }
+
+    @Override
+    public Integer getParagraphBackgroundIndentRight() {
+        return null;
+    }
+
+    @Override
     public Color getParagraphBackground() {
         return null;
     }

@@ -64,6 +64,42 @@ public class FallbackParagraphRenderStyle extends FallbackTextRenderStyle implem
     }
 
     @Override
+    public Integer getParagraphBackgroundIndentTop() {
+        Integer paragraphBackgroundIndentTop = style.getParagraphBackgroundIndentTop();
+        if (paragraphBackgroundIndentTop == null) {
+            paragraphBackgroundIndentTop = fallback.getParagraphBackgroundIndentTop();
+        }
+        return paragraphBackgroundIndentTop;
+    }
+
+    @Override
+    public Integer getParagraphBackgroundIndentBottom() {
+        Integer paragraphBackgroundIndentBottom = style.getParagraphBackgroundIndentBottom();
+        if (paragraphBackgroundIndentBottom == null) {
+            paragraphBackgroundIndentBottom = fallback.getParagraphBackgroundIndentBottom();
+        }
+        return paragraphBackgroundIndentBottom;
+    }
+
+    @Override
+    public Integer getParagraphBackgroundIndentLeft() {
+        Integer paragraphBackgroundIndentLeft = style.getParagraphBackgroundIndentLeft();
+        if (paragraphBackgroundIndentLeft == null) {
+            paragraphBackgroundIndentLeft = fallback.getParagraphBackgroundIndentLeft();
+        }
+        return paragraphBackgroundIndentLeft;
+    }
+
+    @Override
+    public Integer getParagraphBackgroundIndentRight() {
+        Integer paragraphBackgroundIndentRight = style.getParagraphBackgroundIndentRight();
+        if (paragraphBackgroundIndentRight == null) {
+            paragraphBackgroundIndentRight = fallback.getParagraphBackgroundIndentRight();
+        }
+        return paragraphBackgroundIndentRight;
+    }
+
+    @Override
     public Color getParagraphBackground() {
         Color paragraphBackground = style.getParagraphBackground();
         if (paragraphBackground == null) {

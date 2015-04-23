@@ -106,9 +106,11 @@ public class HyperlinkParagraphData implements ParagraphData {
         public FlowRenderable.SplitResult<HyperlinkParagraphElement> splitAt(TextRenderStyle defaultRenderStyle, int width) {
             TextRenderStyle textRenderStyle = getTextRenderStyle(defaultRenderStyle);
             Font font = textRenderStyle.getFont(hyperlink != null);
-            int wholeTextWidth = font.getWidth(text);
-            if (wholeTextWidth <= width)
-                return new SplitResult<>(this, null);
+            if (!text.contains("\n")) {
+                int wholeTextWidth = font.getWidth(text);
+                if (wholeTextWidth <= width)
+                    return new SplitResult<>(this, null);
+            }
 
             int spaceWidth = font.getWidth(' ');
 
@@ -157,7 +159,7 @@ public class HyperlinkParagraphData implements ParagraphData {
 
             boolean firstLine = true;
             for (int i = 1; i < lines.length; i++) {
-                if (!firstLine) {
+                if (!firstLine || after.length() > 0) {
                     after.append("\n");
                 }
                 after.append(lines[i]);

@@ -67,6 +67,26 @@ public class DefaultDocumentRenderStyle implements DocumentRenderStyle {
     }
 
     @Override
+    public Integer getParagraphBackgroundIndentTop() {
+        return 0;
+    }
+
+    @Override
+    public Integer getParagraphBackgroundIndentBottom() {
+        return 0;
+    }
+
+    @Override
+    public Integer getParagraphBackgroundIndentLeft() {
+        return 0;
+    }
+
+    @Override
+    public Integer getParagraphBackgroundIndentRight() {
+        return 0;
+    }
+
+    @Override
     public Font getFont(boolean hyperlink) {
         return canvas.getCurrentStyle().getFont();
     }

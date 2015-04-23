@@ -57,7 +57,7 @@ public class BrowserWidget extends CoreWidget {
 
             int x = region.minX() + documentRenderStyle.getDocumentIndentLeft();
             int y = region.minY() + documentRenderStyle.getDocumentIndentTop();
-            int width = region.width() - documentRenderStyle.getDocumentIndentLeft() - documentRenderStyle.getDocumentIndentRight();
+            int availableWidth = region.width() - documentRenderStyle.getDocumentIndentLeft() - documentRenderStyle.getDocumentIndentRight();
 
             Color backgroundColor = documentRenderStyle.getBackgroundColor();
             if (backgroundColor != null) {
@@ -73,23 +73,30 @@ public class BrowserWidget extends CoreWidget {
                     y += lastRenderStyle.getParagraphIndentBottom(false);
                 }
                 ParagraphRenderStyle paragraphRenderStyle = getParagraphRenderStyle(documentRenderStyle, paragraphData);
-                y += paragraphRenderStyle.getParagraphIndentTop(first);
 
-                int paragraphWidth = width - paragraphRenderStyle.getParagraphIndentLeft() - paragraphRenderStyle.getParagraphIndentRight();
+                int paragraphBorderWidth = availableWidth - paragraphRenderStyle.getParagraphIndentLeft() - paragraphRenderStyle.getParagraphIndentRight();
+                int paragraphWidth = paragraphBorderWidth - paragraphRenderStyle.getParagraphBackgroundIndentLeft() - paragraphRenderStyle.getParagraphBackgroundIndentRight();
 
                 ParagraphRenderable paragraphContents = paragraphData.getParagraphContents();
                 int paragraphHeight = paragraphContents.getPreferredHeight(canvas, paragraphRenderStyle, paragraphWidth);
+                int paragraphBorderHeight = paragraphHeight + paragraphRenderStyle.getParagraphBackgroundIndentTop() + paragraphRenderStyle.getParagraphBackgroundIndentBottom();
 
-                Rect2i paragraphRegion = Rect2i.createFromMinAndSize(x + paragraphRenderStyle.getParagraphIndentLeft(), y,
-                        paragraphWidth, paragraphHeight);
+                Rect2i paragraphBorderRegion = Rect2i.createFromMinAndSize(x + paragraphRenderStyle.getParagraphIndentLeft(), y+paragraphRenderStyle.getParagraphIndentTop(first),
+                        paragraphBorderWidth, paragraphBorderHeight);
 
                 Color paragraphBackground = paragraphRenderStyle.getParagraphBackground();
                 if (paragraphBackground != null) {
-                    canvas.drawFilledRectangle(paragraphRegion, paragraphBackground);
+                    canvas.drawFilledRectangle(paragraphBorderRegion, paragraphBackground);
                 }
+
+                Rect2i paragraphRegion = Rect2i.createFromMinAndSize(x + paragraphRenderStyle.getParagraphIndentLeft() + paragraphRenderStyle.getParagraphBackgroundIndentLeft(),
+                        y + paragraphRenderStyle.getParagraphIndentTop(first) + paragraphRenderStyle.getParagraphBackgroundIndentTop(),
+                        paragraphWidth, paragraphHeight);
+
                 paragraphContents.render(canvas, paragraphRegion, paragraphRenderStyle, register);
 
-                y += paragraphHeight;
+                y += paragraphRenderStyle.getParagraphIndentTop(first);
+                y += paragraphBorderHeight;
 
                 lastRenderStyle = paragraphRenderStyle;
                 first = false;
@@ -124,7 +131,7 @@ public class BrowserWidget extends CoreWidget {
 
     @Override
     public Vector2i getPreferredContentSize(Canvas canvas, Vector2i sizeHint) {
-        int x = canvas.getRegion().sizeX();
+        int x = 0;
         int y = 0;
 
         if (displayedPage != null) {
@@ -134,14 +141,13 @@ public class BrowserWidget extends CoreWidget {
 
             y += documentRenderStyle.getDocumentIndentTop();
 
-            // Reduce available space
             int documentIndentSides = documentRenderStyle.getDocumentIndentLeft() + documentRenderStyle.getDocumentIndentRight();
-            x -= documentIndentSides;
+            int availableSpace = canvas.getRegion().sizeX() - documentIndentSides;
 
             for (ParagraphData paragraphData : displayedPage.getParagraphs()) {
                 ParagraphRenderStyle paragraphRenderStyle = getParagraphRenderStyle(documentRenderStyle, paragraphData);
-                int sideIndent = paragraphRenderStyle.getParagraphIndentLeft() + paragraphRenderStyle.getParagraphIndentRight();
-                x = Math.max(x, sideIndent + paragraphData.getParagraphContents().getMinWidth(canvas, paragraphRenderStyle));
+                int paragraphSideIndent = paragraphRenderStyle.getParagraphIndentLeft() + paragraphRenderStyle.getParagraphIndentRight();
+                availableSpace = Math.max(availableSpace, paragraphSideIndent + paragraphData.getParagraphContents().getMinWidth(canvas, paragraphRenderStyle));
             }
 
             ParagraphRenderStyle lastRenderStyle = null;
@@ -153,8 +159,10 @@ public class BrowserWidget extends CoreWidget {
                 ParagraphRenderStyle paragraphRenderStyle = getParagraphRenderStyle(documentRenderStyle, paragraphData);
                 y += paragraphRenderStyle.getParagraphIndentTop(first);
 
-                int sideIndent = paragraphRenderStyle.getParagraphIndentLeft() + paragraphRenderStyle.getParagraphIndentRight();
-                y += paragraphData.getParagraphContents().getPreferredHeight(canvas, paragraphRenderStyle, x - sideIndent);
+                int paragraphSideIndent = paragraphRenderStyle.getParagraphIndentLeft() + paragraphRenderStyle.getParagraphIndentRight()
+                        + paragraphRenderStyle.getParagraphBackgroundIndentLeft() + paragraphRenderStyle.getParagraphBackgroundIndentRight();
+
+                y += paragraphData.getParagraphContents().getPreferredHeight(canvas, paragraphRenderStyle, availableSpace - paragraphSideIndent);
 
                 lastRenderStyle = paragraphRenderStyle;
                 first = false;
@@ -166,7 +174,7 @@ public class BrowserWidget extends CoreWidget {
             y += documentRenderStyle.getDocumentIndentBottom();
 
             // Bring back the document indents to sides
-            x += documentIndentSides;
+            x += availableSpace + documentIndentSides;
         }
         return new Vector2i(x, y);
     }

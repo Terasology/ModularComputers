@@ -30,6 +30,22 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class HTMLLikeParser {
+    public static String encodeHTMLLike(String text) {
+        StringBuilder result = new StringBuilder();
+        for (char c : text.toCharArray()) {
+            if (c == '&') {
+                result.append("&amp;");
+            } else if (c == '<') {
+                result.append("&lt;");
+            } else if (c == '>') {
+                result.append("&gt;");
+            } else {
+                result.append(c);
+            }
+        }
+        return result.toString();
+    }
+
     // TODO: Quick and dirty - add something more solid and replaces uses of this one with it
     public static Collection<ParagraphData> parseHTMLLike(ParagraphRenderStyle paragraphRenderStyle, String text) {
         if (text == null) {
@@ -123,7 +139,9 @@ public class HTMLLikeParser {
                 }
             }
 
-            hyperlinkParagraphData.append(sb.toString(), new DefaultTextRenderStyle(font, color, hyperlink), hyperlink);
+            if (sb.length()>0) {
+                hyperlinkParagraphData.append(sb.toString(), new DefaultTextRenderStyle(font, color, hyperlink), hyperlink);
+            }
             result.add(hyperlinkParagraphData);
         } catch (IOException exp) {
             // Ignore - can't happen
