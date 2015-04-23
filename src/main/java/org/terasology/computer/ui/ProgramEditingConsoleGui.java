@@ -16,6 +16,7 @@
 package org.terasology.computer.ui;
 
 import com.gempukku.lang.IllegalSyntaxException;
+import com.gempukku.lang.parser.ScriptParsingCallback;
 import org.lwjgl.input.Keyboard;
 import org.terasology.computer.context.ComputerConsole;
 import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
@@ -75,16 +76,44 @@ public class ProgramEditingConsoleGui {
     }
 
     public void drawEditProgramConsole(Canvas canvas, int x, int y, int characterWidth, int fontHeight) {
+        final CompileScriptOnTheFly.CompileStatus compileStatusObj = onTheFlyCompiler.getCompileStatus();
+
         for (int line = editedDisplayStartY; line < Math.min(editedProgramLines.size(), editedDisplayStartY + getCharactersInColumn() - 1); line++) {
             String programLine = editedProgramLines.get(line).toString();
             if (programLine.length() > editedDisplayStartX) {
                 String displayedLine = programLine.substring(editedDisplayStartX, Math.min(programLine.length(), editedDisplayStartX + getCharactersInRow()));
-                computerTerminalWidget.drawMonospacedText(canvas, displayedLine, x, y + (line - editedDisplayStartY) * fontHeight, PROGRAM_TEXT_COLOR);
+
+                final int finalLine = line;
+                computerTerminalWidget.drawMonospacedText(canvas, displayedLine, x, y + (line - editedDisplayStartY) * fontHeight, new ComputerTerminalWidget.Coloring() {
+                    @Override
+                    public Color getColor(int column) {
+                        int realColumn = column + editedDisplayStartX;
+                        if (compileStatusObj != null) {
+                            for (CompileScriptOnTheFly.ParseInfo parseInfo : compileStatusObj.parseInfo) {
+                                if (parseInfo.line == finalLine && parseInfo.column <= realColumn && realColumn < parseInfo.column + parseInfo.length) {
+                                    if (parseInfo.type == ScriptParsingCallback.Type.KEYWORD) {
+                                        return Color.GREEN;
+                                    } else if (parseInfo.type == ScriptParsingCallback.Type.LITERAL) {
+                                        return Color.YELLOW;
+                                    } else if (parseInfo.type == ScriptParsingCallback.Type.COMMENT) {
+                                        return Color.GREY;
+                                    } else if (parseInfo.type == ScriptParsingCallback.Type.VARIABLE) {
+                                        return Color.RED;
+                                    } else if (parseInfo.type == ScriptParsingCallback.Type.CONSTANT) {
+                                        return Color.BLUE;
+                                    }
+                                }
+                            }
+                        }
+
+                        return PROGRAM_TEXT_COLOR;
+                    }
+                });
             }
         }
 
         // Draw status line
-        drawStatusLine(canvas, x, y, characterWidth, fontHeight);
+        drawStatusLine(canvas, x, y, characterWidth, fontHeight, compileStatusObj);
 
         blinkDrawTick = ((++blinkDrawTick) % BLINK_LENGTH);
         if (blinkDrawTick * 2 > BLINK_LENGTH)
@@ -99,9 +128,8 @@ public class ProgramEditingConsoleGui {
         return CHARACTER_COUNT_WIDTH[_scale];
     }
 
-    private void drawStatusLine(Canvas canvas, int x, int y, int characterWidth, int fontHeight) {
+    private void drawStatusLine(Canvas canvas, int x, int y, int characterWidth, int fontHeight, CompileScriptOnTheFly.CompileStatus compileStatusObj) {
         final int lastLineY = y + fontHeight * (getCharactersInColumn() - 1);
-        final CompileScriptOnTheFly.CompileStatus compileStatusObj = onTheFlyCompiler.getCompileStatus();
         if (waitingForExitConfirmation) {
             computerTerminalWidget.drawMonospacedText(canvas, "File was not saved, exit? [Y]es/[N]o", 0, lastLineY, PROGRAM_LAST_LINE_COLOR);
         } else if (waitingForGotoLineEntered) {

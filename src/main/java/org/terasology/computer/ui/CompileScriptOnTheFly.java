@@ -18,6 +18,7 @@ package org.terasology.computer.ui;
 import com.gempukku.lang.IllegalSyntaxException;
 import com.gempukku.lang.ObjectDefinition;
 import com.gempukku.lang.parser.ScriptParser;
+import com.gempukku.lang.parser.ScriptParsingCallback;
 import org.terasology.browser.data.ParagraphData;
 import org.terasology.computer.system.common.ComputerLanguageContext;
 import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
@@ -26,7 +27,10 @@ import org.terasology.computer.system.server.lang.ComputerModule;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -96,16 +100,17 @@ public class CompileScriptOnTheFly {
 
             CompileStatus newCompileStatus = null;
             if (scriptText != null) {
+                ParseInfoProducer parseInfoProducer = new ParseInfoProducer();
                 try {
-                    _scriptParser.parseScript(new StringReader(scriptText), _predefinedVariables);
-                    newCompileStatus = new CompileStatus(true, null);
+                    _scriptParser.parseScript(new StringReader(scriptText), _predefinedVariables, parseInfoProducer);
+                    newCompileStatus = new CompileStatus(true, null, parseInfoProducer.result);
                 } catch (IllegalSyntaxException exp) {
-                    newCompileStatus = new CompileStatus(false, exp);
+                    newCompileStatus = new CompileStatus(false, exp, parseInfoProducer.result);
                 } catch (IOException exp) {
                     // Can't really happen, as we use StringReader, but oh well
-                    newCompileStatus = new CompileStatus(false, null);
+                    newCompileStatus = new CompileStatus(false, null, parseInfoProducer.result);
                 } catch (RuntimeException exp) {
-                    newCompileStatus = new CompileStatus(false, null);
+                    newCompileStatus = new CompileStatus(false, null, parseInfoProducer.result);
                 }
             }
 
@@ -123,13 +128,38 @@ public class CompileScriptOnTheFly {
         }
     }
 
-    public class CompileStatus {
+    public static class CompileStatus {
         public final boolean success;
         public final IllegalSyntaxException error;
+        public final Collection<ParseInfo> parseInfo;
 
-        public CompileStatus(boolean success, IllegalSyntaxException error) {
+        private CompileStatus(boolean success, IllegalSyntaxException error, Collection<ParseInfo> parseInfo) {
             this.error = error;
             this.success = success;
+            this.parseInfo = Collections.unmodifiableCollection(parseInfo);
+        }
+    }
+
+    public static class ParseInfo {
+        public final int line;
+        public final int column;
+        public final int length;
+        public final ScriptParsingCallback.Type type;
+
+        public ParseInfo(int line, int column, int length, ScriptParsingCallback.Type type) {
+            this.line = line;
+            this.column = column;
+            this.length = length;
+            this.type = type;
+        }
+    }
+
+    private static class ParseInfoProducer implements ScriptParsingCallback {
+        private List<ParseInfo> result = new LinkedList<>();
+
+        @Override
+        public void parsed(int line, int column, int length, Type type) {
+            result.add(new ParseInfo(line, column, length, type));
         }
     }
 }

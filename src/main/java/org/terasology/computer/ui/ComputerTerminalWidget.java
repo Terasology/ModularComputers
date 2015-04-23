@@ -177,8 +177,19 @@ public class ComputerTerminalWidget extends CoreWidget {
         canvas.drawLine(x1, y, x2, y, color);
     }
 
+    public interface Coloring {
+        public Color getColor(int column);
+    }
+
+    protected void drawMonospacedText(Canvas canvas, String text, int x, int y, Coloring coloring) {
+        char[] chars = text.toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            Color color = coloring.getColor(i);
+            renderCharAt(canvas, chars[i], x + i * characterWidth, y, color);
+        }
+    }
+
     protected void drawMonospacedText(Canvas canvas, String text, int x, int y, Color color) {
-        // For some reason the text is actually drawn a bit higher than expected, so to correct it, I add 2 to "y"
         char[] chars = text.toCharArray();
         for (int i = 0; i < chars.length; i++)
             renderCharAt(canvas, chars[i], x + i * characterWidth, y, color);
