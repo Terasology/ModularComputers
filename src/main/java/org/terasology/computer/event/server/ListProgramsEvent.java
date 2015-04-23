@@ -21,16 +21,16 @@ import org.terasology.network.ServerEvent;
 
 @ServerEvent
 public class ListProgramsEvent implements Event {
-    private EntityRef computerEntity;
+    private int computerId;
 
     public ListProgramsEvent() {
     }
 
-    public ListProgramsEvent(EntityRef computerEntity) {
-        this.computerEntity = computerEntity;
+    public ListProgramsEvent(int computerId) {
+        this.computerId = computerId;
     }
 
-    public EntityRef getComputerEntity() {
-        return computerEntity;
+    public int getComputerId() {
+        return computerId;
     }
 }

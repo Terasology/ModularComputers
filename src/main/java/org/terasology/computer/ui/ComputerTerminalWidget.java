@@ -71,19 +71,19 @@ public class ComputerTerminalWidget extends CoreWidget {
 
     private Runnable closeRunnable;
     private EntityRef clientEntity;
-    private EntityRef computerEntity;
+    private int computerId;
 
     private PlayerCommandConsoleGui playerCommandConsoleGui;
     private ProgramEditingConsoleGui programEditingConsoleGui;
 
-    public void setup(ComputerLanguageContextInitializer computerLanguageContextInitializer, Runnable closeRunnable, EntityRef clientEntity, EntityRef computerEntity) {
+    public void setup(ComputerLanguageContextInitializer computerLanguageContextInitializer, Runnable closeRunnable, EntityRef clientEntity, int computerId) {
         mode = TerminalMode.PLAYER_CONSOLE;
         editingProgram = false;
         computerConsole = new ComputerConsole();
 
         this.closeRunnable = closeRunnable;
         this.clientEntity = clientEntity;
-        this.computerEntity = computerEntity;
+        this.computerId = computerId;
 
         playerCommandConsoleGui = new PlayerCommandConsoleGui(this);
         playerCommandConsoleGui.appendToConsole("AutomationOS v. 0.0");
@@ -91,7 +91,7 @@ public class ComputerTerminalWidget extends CoreWidget {
         playerCommandConsoleGui.appendToConsole("You're logged in as " + userName + ", use \"exit\" command to exit the console, use \"help\" to list commands.");
         programEditingConsoleGui = new ProgramEditingConsoleGui(this, computerLanguageContextInitializer);
 
-        this.clientEntity.send(new ConsoleListeningRegistrationEvent(this.computerEntity, true));
+        this.clientEntity.send(new ConsoleListeningRegistrationEvent(this.computerId, true));
     }
 
     public void setMode(TerminalMode mode) {
@@ -99,7 +99,7 @@ public class ComputerTerminalWidget extends CoreWidget {
     }
 
     public void onClosed() {
-        clientEntity.send(new ConsoleListeningRegistrationEvent(computerEntity, false));
+        clientEntity.send(new ConsoleListeningRegistrationEvent(computerId, false));
     }
 
     public void appendToPlayerConsole(String text) {
@@ -152,7 +152,7 @@ public class ComputerTerminalWidget extends CoreWidget {
     }
 
     protected void requestSave(String programName, String programText) {
-        clientEntity.send(new SaveProgramEvent(computerEntity, programName, programText));
+        clientEntity.send(new SaveProgramEvent(computerId, programName, programText));
     }
 
     private void drawPlayerConsole(Canvas canvas, int characterWidth, int fontHeight) {
@@ -242,7 +242,7 @@ public class ComputerTerminalWidget extends CoreWidget {
                     playerCommandConsoleGui.appendToConsole("Downloading program...");
 
                     playerCommandConsoleGui.setReadOnly(true);
-                    clientEntity.send(new GetProgramTextEvent(computerEntity, programName));
+                    clientEntity.send(new GetProgramTextEvent(computerId, programName));
                 }
             } else if (commandParts[0].equals("execute")) {
                 if (commandParts.length != 2) {
@@ -251,7 +251,7 @@ public class ComputerTerminalWidget extends CoreWidget {
                 } else if (!isValidProgramName(commandParts[1]))
                     playerCommandConsoleGui.appendToConsole("Invalid program name - only letters and digits allowed and a maximum length of 10");
                 else {
-                    clientEntity.send(new ExecuteProgramEvent(computerEntity, commandParts[1]));
+                    clientEntity.send(new ExecuteProgramEvent(computerId, commandParts[1]));
                 }
             } else if (commandParts[0].equals("list")) {
                 if (commandParts.length > 1) {
@@ -261,7 +261,7 @@ public class ComputerTerminalWidget extends CoreWidget {
                     playerCommandConsoleGui.appendToConsole("Retrieving list of programs...");
 
                     playerCommandConsoleGui.setReadOnly(true);
-                    clientEntity.send(new ListProgramsEvent(computerEntity));
+                    clientEntity.send(new ListProgramsEvent(computerId));
                 }
             } else if (commandParts[0].equals("delete")) {
                 if (commandParts.length != 2) {
@@ -270,7 +270,7 @@ public class ComputerTerminalWidget extends CoreWidget {
                 } else if (!isValidProgramName(commandParts[1]))
                     playerCommandConsoleGui.appendToConsole("Invalid program name - only letters and digits allowed and a maximum length of 10");
                 else {
-                    clientEntity.send(new DeleteProgramEvent(computerEntity, commandParts[1]));
+                    clientEntity.send(new DeleteProgramEvent(computerId, commandParts[1]));
                 }
             } else {
                 if (commandParts[0].length() > 0)

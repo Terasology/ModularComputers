@@ -17,9 +17,9 @@ package org.terasology.computer.module.storage;
 
 import org.terasology.computer.component.ComputerComponent;
 import org.terasology.computer.component.ComputerModuleComponent;
-import org.terasology.computer.event.server.AfterComputerMoveEvent;
-import org.terasology.computer.event.server.BeforeComputerMoveEvent;
-import org.terasology.computer.event.server.ComputerMoveEvent;
+import org.terasology.computer.event.server.move.AfterComputerMoveEvent;
+import org.terasology.computer.event.server.move.BeforeComputerMoveEvent;
+import org.terasology.computer.event.server.move.ComputerMoveEvent;
 import org.terasology.entitySystem.entity.EntityManager;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.entitySystem.event.EventPriority;

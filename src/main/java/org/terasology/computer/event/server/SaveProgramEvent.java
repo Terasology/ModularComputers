@@ -21,21 +21,21 @@ import org.terasology.network.ServerEvent;
 
 @ServerEvent
 public class SaveProgramEvent implements Event {
-    private EntityRef computerEntity;
+    private int computerId;
     private String programName;
     private String programText;
 
     public SaveProgramEvent() {
     }
 
-    public SaveProgramEvent(EntityRef computerEntity, String programName, String programText) {
-        this.computerEntity = computerEntity;
+    public SaveProgramEvent(int computerId, String programName, String programText) {
+        this.computerId = computerId;
         this.programName = programName;
         this.programText = programText;
     }
 
-    public EntityRef getComputerEntity() {
-        return computerEntity;
+    public int getComputerId() {
+        return computerId;
     }
 
     public String getProgramName() {

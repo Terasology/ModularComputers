@@ -87,6 +87,10 @@ public class ComputerContext {
         this.entity = entity;
     }
 
+    public EntityRef getEntity() {
+        return entity;
+    }
+
     public void executeContext(float delta) {
         if (context != null) {
             long executionTime = System.currentTimeMillis();

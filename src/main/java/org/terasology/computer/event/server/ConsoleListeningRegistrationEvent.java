@@ -21,19 +21,19 @@ import org.terasology.network.ServerEvent;
 
 @ServerEvent
 public class ConsoleListeningRegistrationEvent implements Event {
-    private EntityRef computerEntity;
+    private int computerId;
     private boolean register;
 
     public ConsoleListeningRegistrationEvent() {
     }
 
-    public ConsoleListeningRegistrationEvent(EntityRef computerEntity, boolean register) {
-        this.computerEntity = computerEntity;
+    public ConsoleListeningRegistrationEvent(int computerId, boolean register) {
+        this.computerId = computerId;
         this.register = register;
     }
 
-    public EntityRef getComputerEntity() {
-        return computerEntity;
+    public int getComputerId() {
+        return computerId;
     }
 
     public boolean isRegister() {

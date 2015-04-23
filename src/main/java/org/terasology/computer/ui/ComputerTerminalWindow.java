@@ -200,7 +200,7 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
     }
 
     public void initializeTerminal(ComputerLanguageContextInitializer computerLanguageContextInitializer,
-                                   EntityRef client, EntityRef computer) {
+                                   EntityRef client, int computerId) {
         if (documentationData == null) {
             documentationData = DocumentationBuilder.buildDocumentation(computerLanguageContextInitializer);
 
@@ -215,7 +215,7 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
                     public void run() {
                         CoreRegistry.get(NUIManager.class).closeScreen(ComputerTerminalWindow.this);
                     }
-                }, client, computer);
+                }, client, computerId);
         requestFocusToTerminal();
     }
 

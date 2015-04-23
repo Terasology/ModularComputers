@@ -26,15 +26,15 @@ import org.terasology.computer.context.ComputerContext;
 import org.terasology.computer.event.client.ProgramExecutionResultEvent;
 import org.terasology.computer.event.client.ProgramListReceivedEvent;
 import org.terasology.computer.event.client.ProgramTextReceivedEvent;
-import org.terasology.computer.event.server.AfterComputerMoveEvent;
-import org.terasology.computer.event.server.BeforeComputerMoveEvent;
-import org.terasology.computer.event.server.ComputerMoveEvent;
 import org.terasology.computer.event.server.ConsoleListeningRegistrationEvent;
 import org.terasology.computer.event.server.DeleteProgramEvent;
 import org.terasology.computer.event.server.ExecuteProgramEvent;
 import org.terasology.computer.event.server.GetProgramTextEvent;
 import org.terasology.computer.event.server.ListProgramsEvent;
 import org.terasology.computer.event.server.SaveProgramEvent;
+import org.terasology.computer.event.server.move.AfterComputerMoveEvent;
+import org.terasology.computer.event.server.move.BeforeComputerMoveEvent;
+import org.terasology.computer.event.server.move.ComputerMoveEvent;
 import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
 import org.terasology.computer.system.common.ComputerModuleRegistry;
 import org.terasology.computer.system.server.lang.ComputerModule;
@@ -178,10 +178,9 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
 
     @ReceiveEvent
     public void executeProgramRequested(ExecuteProgramEvent event, EntityRef client) {
-        EntityRef computerEntity = event.getComputerEntity();
-        ComputerComponent computer = computerEntity.getComponent(ComputerComponent.class);
-        if (computer != null) {
-            ComputerContext computerContext = computerContextMap.get(computer.computerId);
+        ComputerContext computerContext = computerContextMap.get(event.getComputerId());
+        if (computerContext != null) {
+            ComputerComponent computer = computerContext.getEntity().getComponent(ComputerComponent.class);
             if (computerContext.isRunningProgram()) {
                 client.send(new ProgramExecutionResultEvent("There is a program already running on the computer"));
             } else {
@@ -203,9 +202,10 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
 
     @ReceiveEvent
     public void saveProgramRequested(SaveProgramEvent event, EntityRef client) {
-        EntityRef computerEntity = event.getComputerEntity();
-        ComputerComponent computer = computerEntity.getComponent(ComputerComponent.class);
-        if (computer != null) {
+        ComputerContext computerContext = computerContextMap.get(event.getComputerId());
+        if (computerContext != null) {
+            EntityRef computerEntity = computerContext.getEntity();
+            ComputerComponent computer = computerEntity.getComponent(ComputerComponent.class);
             computer.programs.put(event.getProgramName(), event.getProgramText());
             computerEntity.saveComponent(computer);
         }
@@ -213,9 +213,10 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
 
     @ReceiveEvent
     public void deleteProgramRequested(DeleteProgramEvent event, EntityRef client) {
-        EntityRef computerEntity = event.getComputerEntity();
-        ComputerComponent computer = computerEntity.getComponent(ComputerComponent.class);
-        if (computer != null) {
+        ComputerContext computerContext = computerContextMap.get(event.getComputerId());
+        if (computerContext != null) {
+            EntityRef computerEntity = computerContext.getEntity();
+            ComputerComponent computer = computerEntity.getComponent(ComputerComponent.class);
             computer.programs.remove(event.getProgramName());
             computerEntity.saveComponent(computer);
         }
@@ -223,9 +224,9 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
 
     @ReceiveEvent
     public void programTextRequested(GetProgramTextEvent event, EntityRef client) {
-        EntityRef computerEntity = event.getComputerEntity();
-        ComputerComponent computer = computerEntity.getComponent(ComputerComponent.class);
-        if (computer != null) {
+        ComputerContext computerContext = computerContextMap.get(event.getComputerId());
+        if (computerContext != null) {
+            ComputerComponent computer = computerContext.getEntity().getComponent(ComputerComponent.class);
             String programText = computer.programs.get(event.getProgramName());
             if (programText == null)
                 programText = "";
@@ -235,9 +236,10 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
 
     @ReceiveEvent
     public void listOfProgramsRequested(ListProgramsEvent event, EntityRef client) {
-        EntityRef computerEntity = event.getComputerEntity();
-        ComputerComponent computer = computerEntity.getComponent(ComputerComponent.class);
-        if (computer != null) {
+        ComputerContext computerContext = computerContextMap.get(event.getComputerId());
+        if (computerContext != null) {
+            EntityRef computerEntity = computerContext.getEntity();
+            ComputerComponent computer = computerEntity.getComponent(ComputerComponent.class);
             TreeSet<String> programNames = new TreeSet<>(computer.programs.keySet());
             client.send(new ProgramListReceivedEvent(programNames));
         }
@@ -245,10 +247,8 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
 
     @ReceiveEvent
     public void consoleListeningRegistrationRequested(ConsoleListeningRegistrationEvent event, EntityRef client) {
-        EntityRef computerEntity = event.getComputerEntity();
-        ComputerComponent computer = computerEntity.getComponent(ComputerComponent.class);
-        if (computer != null) {
-            ComputerContext computerContext = computerContextMap.get(computer.computerId);
+        ComputerContext computerContext = computerContextMap.get(event.getComputerId());
+        if (computerContext != null) {
             if (event.isRegister()) {
                 computerContext.registerConsoleListener(client, new SendingEventsComputerConsoleListener(client));
             } else {

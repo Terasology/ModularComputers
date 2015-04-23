@@ -49,12 +49,14 @@ public class ComputerClientSystem extends BaseComponentSystem {
     public void terminalActivated(ActivateEvent event, EntityRef item, ComputerTerminalComponent component) {
         EntityRef target = event.getTarget();
         if (target.hasComponent(ComputerComponent.class)) {
+            ComputerComponent computerComponent = target.getComponent(ComputerComponent.class);
+
             EntityRef client = event.getInstigator();
 
             nuiManager.toggleScreen(COMPUTER_TERMINAL_UI);
 
             ComputerTerminalWindow window = (ComputerTerminalWindow) nuiManager.getScreen(COMPUTER_TERMINAL_UI);
-            window.initializeTerminal(computerLanguageContextInitializer, client, target);
+            window.initializeTerminal(computerLanguageContextInitializer, client, computerComponent.computerId);
 
             event.consume();
         }

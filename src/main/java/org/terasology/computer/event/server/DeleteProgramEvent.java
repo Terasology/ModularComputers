@@ -21,19 +21,19 @@ import org.terasology.network.ServerEvent;
 
 @ServerEvent
 public class DeleteProgramEvent implements Event {
-    private EntityRef computerEntity;
+    private int computerId;
     private String programName;
 
     public DeleteProgramEvent() {
     }
 
-    public DeleteProgramEvent(EntityRef computerEntity, String programName) {
-        this.computerEntity = computerEntity;
+    public DeleteProgramEvent(int computerId, String programName) {
+        this.computerId = computerId;
         this.programName = programName;
     }
 
-    public EntityRef getComputerEntity() {
-        return computerEntity;
+    public int getComputerId() {
+        return computerId;
     }
 
     public String getProgramName() {

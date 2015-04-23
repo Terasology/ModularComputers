@@ -13,19 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.terasology.computer.event.server;
+package org.terasology.computer.event.server.move;
 
-import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.entitySystem.event.Event;
 
-public class ComputerMoveEvent implements Event {
-    private EntityRef newEntity;
-
-    public ComputerMoveEvent(EntityRef newEntity) {
-        this.newEntity = newEntity;
-    }
-
-    public EntityRef getNewEntity() {
-        return newEntity;
-    }
+public class AfterComputerMoveEvent implements Event {
 }
