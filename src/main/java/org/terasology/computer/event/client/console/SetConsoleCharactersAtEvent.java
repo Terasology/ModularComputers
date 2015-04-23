@@ -20,6 +20,7 @@ import org.terasology.network.OwnerEvent;
 
 @OwnerEvent
 public class SetConsoleCharactersAtEvent implements Event {
+    private int computerId;
     private String text;
     private int x;
     private int y;
@@ -27,10 +28,15 @@ public class SetConsoleCharactersAtEvent implements Event {
     public SetConsoleCharactersAtEvent() {
     }
 
-    public SetConsoleCharactersAtEvent(String text, int x, int y) {
+    public SetConsoleCharactersAtEvent(int computerId, String text, int x, int y) {
+        this.computerId = computerId;
         this.text = text;
         this.x = x;
         this.y = y;
+    }
+
+    public int getComputerId() {
+        return computerId;
     }
 
     public String getText() {

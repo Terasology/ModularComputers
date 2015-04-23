@@ -46,6 +46,7 @@ import org.terasology.world.block.BlockComponent;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -89,6 +90,10 @@ public class ComputerContext {
 
     public EntityRef getEntity() {
         return entity;
+    }
+
+    public Map<EntityRef, ComputerConsoleListener> getConsoleListenerMap() {
+        return Collections.unmodifiableMap(consoleListenerMap);
     }
 
     public void executeContext(float delta) {

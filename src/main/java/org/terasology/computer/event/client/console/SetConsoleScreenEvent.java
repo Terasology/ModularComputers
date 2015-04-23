@@ -20,13 +20,19 @@ import org.terasology.network.OwnerEvent;
 
 @OwnerEvent
 public class SetConsoleScreenEvent implements Event {
+    private int computerId;
     private String[] screenLines;
 
     public SetConsoleScreenEvent() {
     }
 
-    public SetConsoleScreenEvent(String[] screenLines) {
+    public SetConsoleScreenEvent(int computerId, String[] screenLines) {
+        this.computerId = computerId;
         this.screenLines = screenLines;
+    }
+
+    public int getComputerId() {
+        return computerId;
     }
 
     public String[] getScreenLines() {

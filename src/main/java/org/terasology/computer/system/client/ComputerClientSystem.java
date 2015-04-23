@@ -17,6 +17,7 @@ package org.terasology.computer.system.client;
 
 import org.terasology.computer.component.ComputerComponent;
 import org.terasology.computer.component.ComputerTerminalComponent;
+import org.terasology.computer.event.client.ForceTerminalCloseEvent;
 import org.terasology.computer.event.client.ProgramExecutionResultEvent;
 import org.terasology.computer.event.client.ProgramListReceivedEvent;
 import org.terasology.computer.event.client.ProgramTextReceivedEvent;
@@ -53,7 +54,7 @@ public class ComputerClientSystem extends BaseComponentSystem {
 
             EntityRef client = event.getInstigator();
 
-            nuiManager.toggleScreen(COMPUTER_TERMINAL_UI);
+            nuiManager.pushScreen(COMPUTER_TERMINAL_UI);
 
             ComputerTerminalWindow window = (ComputerTerminalWindow) nuiManager.getScreen(COMPUTER_TERMINAL_UI);
             window.initializeTerminal(computerLanguageContextInitializer, client, computerComponent.computerId);
@@ -67,7 +68,9 @@ public class ComputerClientSystem extends BaseComponentSystem {
         ComputerTerminalWindow window = (ComputerTerminalWindow) nuiManager.getScreen(COMPUTER_TERMINAL_UI);
         if (window != null) {
             ComputerTerminalWidget computerTerminalWidget = window.getComputerTerminalWidget();
-            computerTerminalWidget.appendToPlayerConsole(event.getMessage());
+            if (computerTerminalWidget.getComputerId() == event.getComputerId()) {
+                computerTerminalWidget.appendToPlayerConsole(event.getMessage());
+            }
         }
     }
 
@@ -76,7 +79,9 @@ public class ComputerClientSystem extends BaseComponentSystem {
         ComputerTerminalWindow window = (ComputerTerminalWindow) nuiManager.getScreen(COMPUTER_TERMINAL_UI);
         if (window != null) {
             ComputerTerminalWidget computerTerminalWidget = window.getComputerTerminalWidget();
-            computerTerminalWidget.appendComputerConsoleLines(event.getLines());
+            if (computerTerminalWidget.getComputerId() == event.getComputerId()) {
+                computerTerminalWidget.appendComputerConsoleLines(event.getLines());
+            }
         }
     }
 
@@ -85,7 +90,9 @@ public class ComputerClientSystem extends BaseComponentSystem {
         ComputerTerminalWindow window = (ComputerTerminalWindow) nuiManager.getScreen(COMPUTER_TERMINAL_UI);
         if (window != null) {
             ComputerTerminalWidget computerTerminalWidget = window.getComputerTerminalWidget();
-            computerTerminalWidget.clearComputerConsole();
+            if (computerTerminalWidget.getComputerId() == event.getComputerId()) {
+                computerTerminalWidget.clearComputerConsole();
+            }
         }
     }
 
@@ -94,7 +101,9 @@ public class ComputerClientSystem extends BaseComponentSystem {
         ComputerTerminalWindow window = (ComputerTerminalWindow) nuiManager.getScreen(COMPUTER_TERMINAL_UI);
         if (window != null) {
             ComputerTerminalWidget computerTerminalWidget = window.getComputerTerminalWidget();
-            computerTerminalWidget.setComputerConsoleCharacters(event.getX(), event.getY(), event.getText());
+            if (computerTerminalWidget.getComputerId() == event.getComputerId()) {
+                computerTerminalWidget.setComputerConsoleCharacters(event.getX(), event.getY(), event.getText());
+            }
         }
     }
 
@@ -103,7 +112,9 @@ public class ComputerClientSystem extends BaseComponentSystem {
         ComputerTerminalWindow window = (ComputerTerminalWindow) nuiManager.getScreen(COMPUTER_TERMINAL_UI);
         if (window != null) {
             ComputerTerminalWidget computerTerminalWidget = window.getComputerTerminalWidget();
-            computerTerminalWidget.setComputerConsoleState(event.getScreenLines());
+            if (computerTerminalWidget.getComputerId() == event.getComputerId()) {
+                computerTerminalWidget.setComputerConsoleState(event.getScreenLines());
+            }
         }
     }
 
@@ -112,7 +123,9 @@ public class ComputerClientSystem extends BaseComponentSystem {
         ComputerTerminalWindow window = (ComputerTerminalWindow) nuiManager.getScreen(COMPUTER_TERMINAL_UI);
         if (window != null) {
             ComputerTerminalWidget computerTerminalWidget = window.getComputerTerminalWidget();
-            computerTerminalWidget.setProgramText(event.getProgramName(), event.getProgramText());
+            if (computerTerminalWidget.getComputerId() == event.getComputerId()) {
+                computerTerminalWidget.setProgramText(event.getProgramName(), event.getProgramText());
+            }
         }
     }
 
@@ -121,7 +134,17 @@ public class ComputerClientSystem extends BaseComponentSystem {
         ComputerTerminalWindow window = (ComputerTerminalWindow) nuiManager.getScreen(COMPUTER_TERMINAL_UI);
         if (window != null) {
             ComputerTerminalWidget computerTerminalWidget = window.getComputerTerminalWidget();
-            computerTerminalWidget.displayProgramList(event.getPrograms());
+            if (computerTerminalWidget.getComputerId() == event.getComputerId()) {
+                computerTerminalWidget.displayProgramList(event.getPrograms());
+            }
+        }
+    }
+
+    @ReceiveEvent
+    public void forceTerminalCloseReceived(ForceTerminalCloseEvent event, EntityRef client) {
+        ComputerTerminalWindow window = (ComputerTerminalWindow) nuiManager.getScreen(COMPUTER_TERMINAL_UI);
+        if (window != null) {
+            nuiManager.closeScreen(window);
         }
     }
 }

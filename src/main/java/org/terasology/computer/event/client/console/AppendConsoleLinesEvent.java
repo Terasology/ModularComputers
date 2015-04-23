@@ -20,13 +20,19 @@ import org.terasology.network.OwnerEvent;
 
 @OwnerEvent
 public class AppendConsoleLinesEvent implements Event {
+    private int computerId;
     private String[] lines;
 
     public AppendConsoleLinesEvent() {
     }
 
-    public AppendConsoleLinesEvent(String[] lines) {
+    public AppendConsoleLinesEvent(int computerId, String[] lines) {
+        this.computerId = computerId;
         this.lines = lines;
+    }
+
+    public int getComputerId() {
+        return computerId;
     }
 
     public String[] getLines() {

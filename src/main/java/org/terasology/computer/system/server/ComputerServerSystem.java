@@ -23,6 +23,7 @@ import org.terasology.computer.component.ComputerComponent;
 import org.terasology.computer.component.ComputerModuleComponent;
 import org.terasology.computer.component.ComputerSystemComponent;
 import org.terasology.computer.context.ComputerContext;
+import org.terasology.computer.event.client.ForceTerminalCloseEvent;
 import org.terasology.computer.event.client.ProgramExecutionResultEvent;
 import org.terasology.computer.event.client.ProgramListReceivedEvent;
 import org.terasology.computer.event.client.ProgramTextReceivedEvent;
@@ -47,10 +48,14 @@ import org.terasology.entitySystem.systems.BaseComponentSystem;
 import org.terasology.entitySystem.systems.RegisterMode;
 import org.terasology.entitySystem.systems.RegisterSystem;
 import org.terasology.entitySystem.systems.UpdateSubscriberSystem;
+import org.terasology.logic.characters.CharacterComponent;
 import org.terasology.logic.inventory.InventoryComponent;
 import org.terasology.logic.inventory.InventoryManager;
 import org.terasology.logic.inventory.InventoryUtils;
 import org.terasology.logic.inventory.events.BeforeItemPutInInventory;
+import org.terasology.logic.location.LocationComponent;
+import org.terasology.math.geom.Vector3f;
+import org.terasology.network.ClientComponent;
 import org.terasology.network.events.DisconnectedEvent;
 import org.terasology.registry.In;
 import org.terasology.world.block.BlockComponent;
@@ -66,6 +71,7 @@ import java.util.TreeSet;
 @RegisterSystem(RegisterMode.AUTHORITY)
 public class ComputerServerSystem extends BaseComponentSystem implements UpdateSubscriberSystem {
     private static final Logger logger = LoggerFactory.getLogger(ComputerServerSystem.class);
+    private static final float TERMINAL_MAX_DISTANCE = 10;
 
     @In
     private EntityManager entityManager;
@@ -99,7 +105,37 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
     public void update(float delta) {
         for (ComputerContext computerContext : computerContextMap.values()) {
             computerContext.executeContext(delta);
+
+            Vector3f computerLocation = computerContext.getComputerCallback().getComputerLocation().toVector3f();
+
+            ComputerComponent computer = computerContext.getEntity().getComponent(ComputerComponent.class);
+
+            // Validate computer distance from listening clients
+            for (EntityRef listeningClient : computerContext.getConsoleListenerMap().keySet()) {
+                if (!validateComputerToCharacterDistance(listeningClient, computerLocation)) {
+                    computerContext.deregisterConsoleListener(listeningClient);
+                    listeningClient.send(new ForceTerminalCloseEvent(computer.computerId));
+                }
+            }
         }
+    }
+
+    private boolean validateComputerToCharacterDistance(EntityRef character, ComputerContext computerContext) {
+        Vector3f computerLocation = computerContext.getComputerCallback().getComputerLocation().toVector3f();
+        return validateComputerToCharacterDistance(character, computerLocation);
+    }
+
+    private boolean validateComputerToCharacterDistance(EntityRef character, Vector3f computerLocation) {
+        Vector3f clientLocation = getClientLocation(character);
+        return clientLocation != null && clientLocation.distance(computerLocation) <= TERMINAL_MAX_DISTANCE;
+    }
+
+    private Vector3f getClientLocation(EntityRef listeningClient) {
+        LocationComponent location = listeningClient.getComponent(LocationComponent.class);
+        if (location == null) {
+            return null;
+        }
+        return location.getWorldPosition();
     }
 
     @ReceiveEvent
@@ -179,22 +215,22 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
     @ReceiveEvent
     public void executeProgramRequested(ExecuteProgramEvent event, EntityRef client) {
         ComputerContext computerContext = computerContextMap.get(event.getComputerId());
-        if (computerContext != null) {
+        if (computerContext != null && validateComputerToCharacterDistance(client, computerContext)) {
             ComputerComponent computer = computerContext.getEntity().getComponent(ComputerComponent.class);
             if (computerContext.isRunningProgram()) {
-                client.send(new ProgramExecutionResultEvent("There is a program already running on the computer"));
+                client.send(new ProgramExecutionResultEvent(computer.computerId, "There is a program already running on the computer"));
             } else {
                 String programName = event.getProgramName();
                 String programText = computer.programs.get(programName);
                 if (programText != null) {
                     try {
                         computerContext.startProgram(programName, programText, computerLanguageContextInitializer, executionCostConfiguration);
-                        client.send(new ProgramExecutionResultEvent("Program started"));
+                        client.send(new ProgramExecutionResultEvent(computer.computerId, "Program started"));
                     } catch (IllegalSyntaxException exp) {
-                        client.send(new ProgramExecutionResultEvent(exp.getMessage()));
+                        client.send(new ProgramExecutionResultEvent(computer.computerId, exp.getMessage()));
                     }
                 } else {
-                    client.send(new ProgramExecutionResultEvent("Program not found"));
+                    client.send(new ProgramExecutionResultEvent(computer.computerId, "Program not found"));
                 }
             }
         }
@@ -203,7 +239,7 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
     @ReceiveEvent
     public void saveProgramRequested(SaveProgramEvent event, EntityRef client) {
         ComputerContext computerContext = computerContextMap.get(event.getComputerId());
-        if (computerContext != null) {
+        if (computerContext != null && validateComputerToCharacterDistance(client, computerContext)) {
             EntityRef computerEntity = computerContext.getEntity();
             ComputerComponent computer = computerEntity.getComponent(ComputerComponent.class);
             computer.programs.put(event.getProgramName(), event.getProgramText());
@@ -214,7 +250,7 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
     @ReceiveEvent
     public void deleteProgramRequested(DeleteProgramEvent event, EntityRef client) {
         ComputerContext computerContext = computerContextMap.get(event.getComputerId());
-        if (computerContext != null) {
+        if (computerContext != null && validateComputerToCharacterDistance(client, computerContext)) {
             EntityRef computerEntity = computerContext.getEntity();
             ComputerComponent computer = computerEntity.getComponent(ComputerComponent.class);
             computer.programs.remove(event.getProgramName());
@@ -225,32 +261,33 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
     @ReceiveEvent
     public void programTextRequested(GetProgramTextEvent event, EntityRef client) {
         ComputerContext computerContext = computerContextMap.get(event.getComputerId());
-        if (computerContext != null) {
+        if (computerContext != null && validateComputerToCharacterDistance(client, computerContext)) {
             ComputerComponent computer = computerContext.getEntity().getComponent(ComputerComponent.class);
             String programText = computer.programs.get(event.getProgramName());
             if (programText == null)
                 programText = "";
-            client.send(new ProgramTextReceivedEvent(event.getProgramName(), programText));
+            client.send(new ProgramTextReceivedEvent(computer.computerId, event.getProgramName(), programText));
         }
     }
 
     @ReceiveEvent
     public void listOfProgramsRequested(ListProgramsEvent event, EntityRef client) {
         ComputerContext computerContext = computerContextMap.get(event.getComputerId());
-        if (computerContext != null) {
+        if (computerContext != null && validateComputerToCharacterDistance(client, computerContext)) {
             EntityRef computerEntity = computerContext.getEntity();
             ComputerComponent computer = computerEntity.getComponent(ComputerComponent.class);
             TreeSet<String> programNames = new TreeSet<>(computer.programs.keySet());
-            client.send(new ProgramListReceivedEvent(programNames));
+            client.send(new ProgramListReceivedEvent(computer.computerId, programNames));
         }
     }
 
     @ReceiveEvent
     public void consoleListeningRegistrationRequested(ConsoleListeningRegistrationEvent event, EntityRef client) {
         ComputerContext computerContext = computerContextMap.get(event.getComputerId());
-        if (computerContext != null) {
+        if (computerContext != null && validateComputerToCharacterDistance(client, computerContext)) {
+            ComputerComponent computer = computerContext.getEntity().getComponent(ComputerComponent.class);
             if (event.isRegister()) {
-                computerContext.registerConsoleListener(client, new SendingEventsComputerConsoleListener(client));
+                computerContext.registerConsoleListener(client, new SendingEventsComputerConsoleListener(computer.computerId, client));
             } else {
                 computerContext.deregisterConsoleListener(client);
             }

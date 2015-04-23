@@ -20,4 +20,17 @@ import org.terasology.network.OwnerEvent;
 
 @OwnerEvent
 public class ClearConsoleScreenEvent implements Event {
+    private int computerId;
+
+    public ClearConsoleScreenEvent() {
+
+    }
+
+    public ClearConsoleScreenEvent(int computerId) {
+        this.computerId = computerId;
+    }
+
+    public int getComputerId() {
+        return computerId;
+    }
 }

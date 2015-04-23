@@ -20,15 +20,21 @@ import org.terasology.network.OwnerEvent;
 
 @OwnerEvent
 public class ProgramTextReceivedEvent implements Event {
+    private int computerId;
     private String programName;
     private String programText;
 
     public ProgramTextReceivedEvent() {
     }
 
-    public ProgramTextReceivedEvent(String programName, String programText) {
+    public ProgramTextReceivedEvent(int computerId, String programName, String programText) {
+        this.computerId = computerId;
         this.programName = programName;
         this.programText = programText;
+    }
+
+    public int getComputerId() {
+        return computerId;
     }
 
     public String getProgramName() {

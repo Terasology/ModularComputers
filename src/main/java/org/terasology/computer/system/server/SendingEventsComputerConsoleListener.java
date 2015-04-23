@@ -23,29 +23,31 @@ import org.terasology.computer.event.client.console.SetConsoleScreenEvent;
 import org.terasology.entitySystem.entity.EntityRef;
 
 public class SendingEventsComputerConsoleListener implements ComputerConsoleListener {
+    private int computerId;
     private EntityRef entityRef;
 
-    public SendingEventsComputerConsoleListener(EntityRef entityRef) {
+    public SendingEventsComputerConsoleListener(int computerId, EntityRef entityRef) {
+        this.computerId = computerId;
         this.entityRef = entityRef;
     }
 
     @Override
     public void clearScreen() {
-        entityRef.send(new ClearConsoleScreenEvent());
+        entityRef.send(new ClearConsoleScreenEvent(computerId));
     }
 
     @Override
     public void setScreenState(String[] screen) {
-        entityRef.send(new SetConsoleScreenEvent(screen));
+        entityRef.send(new SetConsoleScreenEvent(computerId, screen));
     }
 
     @Override
     public void setCharactersStartingAt(int x, int y, String chars) {
-        entityRef.send(new SetConsoleCharactersAtEvent(chars, x, y));
+        entityRef.send(new SetConsoleCharactersAtEvent(computerId, chars, x, y));
     }
 
     @Override
     public void appendLines(String[] lines) {
-        entityRef.send(new AppendConsoleLinesEvent(lines));
+        entityRef.send(new AppendConsoleLinesEvent(computerId, lines));
     }
 }

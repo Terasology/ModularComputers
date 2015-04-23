@@ -19,23 +19,17 @@ import org.terasology.entitySystem.event.Event;
 import org.terasology.network.OwnerEvent;
 
 @OwnerEvent
-public class ProgramExecutionResultEvent implements Event {
+public class ForceTerminalCloseEvent implements Event {
     private int computerId;
-    private String message;
 
-    public ProgramExecutionResultEvent() {
+    public ForceTerminalCloseEvent() {
     }
 
-    public ProgramExecutionResultEvent(int computerId, String message) {
+    public ForceTerminalCloseEvent(int computerId) {
         this.computerId = computerId;
-        this.message = message;
     }
 
     public int getComputerId() {
         return computerId;
-    }
-
-    public String getMessage() {
-        return message;
     }
 }

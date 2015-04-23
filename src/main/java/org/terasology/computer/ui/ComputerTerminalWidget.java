@@ -94,6 +94,10 @@ public class ComputerTerminalWidget extends CoreWidget {
         this.clientEntity.send(new ConsoleListeningRegistrationEvent(this.computerId, true));
     }
 
+    public int getComputerId() {
+        return computerId;
+    }
+
     public void setMode(TerminalMode mode) {
         this.mode = mode;
     }

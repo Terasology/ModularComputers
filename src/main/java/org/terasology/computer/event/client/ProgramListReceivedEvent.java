@@ -22,13 +22,19 @@ import java.util.Collection;
 
 @OwnerEvent
 public class ProgramListReceivedEvent implements Event {
+    private int computerId;
     private Collection<String> programs;
 
     public ProgramListReceivedEvent() {
     }
 
-    public ProgramListReceivedEvent(Collection<String> programs) {
+    public ProgramListReceivedEvent(int computerId, Collection<String> programs) {
+        this.computerId = computerId;
         this.programs = programs;
+    }
+
+    public int getComputerId() {
+        return computerId;
     }
 
     public Collection<String> getPrograms() {
