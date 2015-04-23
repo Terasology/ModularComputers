@@ -100,7 +100,7 @@ public class ProgramEditingConsoleGui {
                                     } else if (parseInfo.type == ScriptParsingCallback.Type.VARIABLE) {
                                         return Color.RED;
                                     } else if (parseInfo.type == ScriptParsingCallback.Type.CONSTANT) {
-                                        return Color.BLUE;
+                                        return new Color(0.8f, 0.8f, 1f);
                                     }
                                 }
                             }
