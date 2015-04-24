@@ -16,15 +16,11 @@
 package org.terasology.computer.module.mobility;
 
 import org.terasology.computer.system.common.ComputerModuleRegistry;
-import org.terasology.engine.Time;
-import org.terasology.entitySystem.entity.EntityManager;
 import org.terasology.entitySystem.systems.BaseComponentSystem;
 import org.terasology.entitySystem.systems.RegisterMode;
 import org.terasology.entitySystem.systems.RegisterSystem;
+import org.terasology.world.block.move.server.BlockMoveManager;
 import org.terasology.registry.In;
-import org.terasology.world.BlockEntityRegistry;
-import org.terasology.world.WorldProvider;
-import org.terasology.world.block.BlockManager;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -38,23 +34,13 @@ public class MobilityModuleCommonSystem extends BaseComponentSystem {
     @In
     private ComputerModuleRegistry computerModuleRegistry;
     @In
-    private WorldProvider worldProvider;
-    @In
-    private BlockEntityRegistry blockEntityRegistry;
-    @In
-    private Time time;
-    @In
-    private EntityManager entityManager;
-    @In
-    private BlockManager blockManager;
+    private BlockMoveManager blockMoveManager;
 
     @Override
     public void preBegin() {
         computerModuleRegistry.registerComputerModule(
                 MOBILITY_MODULE_TYPE,
-                new MobilityComputerModule(
-                        worldProvider, blockManager, worldProvider.getWorldEntity(), entityManager, blockEntityRegistry,
-                        time, MOBILITY_MODULE_TYPE, "Mobility"),
+                new MobilityComputerModule(blockMoveManager, MOBILITY_MODULE_TYPE, "Mobility"),
                 "This module allows computer to move within the world.",
                 null,
                 new TreeMap<String, String>() {{

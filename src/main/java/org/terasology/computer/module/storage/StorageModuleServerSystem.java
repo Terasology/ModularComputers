@@ -17,9 +17,6 @@ package org.terasology.computer.module.storage;
 
 import org.terasology.computer.component.ComputerComponent;
 import org.terasology.computer.component.ComputerModuleComponent;
-import org.terasology.computer.event.server.move.AfterComputerMoveEvent;
-import org.terasology.computer.event.server.move.BeforeComputerMoveEvent;
-import org.terasology.computer.event.server.move.ComputerMoveEvent;
 import org.terasology.entitySystem.entity.EntityManager;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.entitySystem.event.EventPriority;
@@ -27,16 +24,23 @@ import org.terasology.entitySystem.event.ReceiveEvent;
 import org.terasology.entitySystem.systems.BaseComponentSystem;
 import org.terasology.entitySystem.systems.RegisterMode;
 import org.terasology.entitySystem.systems.RegisterSystem;
+import org.terasology.logic.health.BeforeDamagedEvent;
 import org.terasology.logic.inventory.InventoryComponent;
 import org.terasology.logic.inventory.InventoryManager;
 import org.terasology.logic.inventory.InventoryUtils;
 import org.terasology.logic.inventory.PickupBuilder;
 import org.terasology.logic.inventory.events.InventorySlotChangedEvent;
 import org.terasology.math.geom.Vector3i;
+import org.terasology.world.block.move.server.AfterBlockMovedEvent;
+import org.terasology.world.block.move.server.BeforeBlockMovesEvent;
+import org.terasology.world.block.move.server.BlockTransitionDuringMoveEvent;
+import org.terasology.world.block.move.server.MovingBlockReplacementComponent;
 import org.terasology.physics.events.ImpulseEvent;
 import org.terasology.registry.In;
 import org.terasology.utilities.random.FastRandom;
+import org.terasology.world.BlockEntityRegistry;
 import org.terasology.world.block.BlockComponent;
+import org.terasology.world.block.entity.placement.PlaceBlocks;
 import org.terasology.world.block.items.OnBlockToItem;
 
 @RegisterSystem(RegisterMode.AUTHORITY)
@@ -45,6 +49,8 @@ public class StorageModuleServerSystem extends BaseComponentSystem {
     private EntityManager entityManager;
     @In
     private InventoryManager inventoryManager;
+    @In
+    private BlockEntityRegistry blockEntityRegistry;
 
     private boolean doNotMoveInventory = false;
 
@@ -72,19 +78,19 @@ public class StorageModuleServerSystem extends BaseComponentSystem {
     }
 
     @ReceiveEvent
-    public void beforeComputerMoveStopDroppingInventory(BeforeComputerMoveEvent event, EntityRef entity, ComputerComponent component) {
+    public void beforeComputerMoveStopDroppingInventory(BeforeBlockMovesEvent event, EntityRef entity, ComputerComponent component) {
         doNotMoveInventory = true;
     }
 
     @ReceiveEvent
-    public void afterComputerMoveRestartDroppingInventory(AfterComputerMoveEvent event, EntityRef entity, ComputerComponent component) {
+    public void afterComputerMoveRestartDroppingInventory(AfterBlockMovedEvent event, EntityRef entity, ComputerComponent component) {
         doNotMoveInventory = false;
     }
 
     @ReceiveEvent(priority = EventPriority.PRIORITY_TRIVIAL)
-    public void computerMovedCopyInternalStorage(ComputerMoveEvent event, EntityRef entity, InternalStorageComponent storage) {
+    public void computerMovedCopyInternalStorage(BlockTransitionDuringMoveEvent event, EntityRef entity, InternalStorageComponent storage) {
         EntityRef inventoryEntity = storage.inventoryEntity;
-        EntityRef newInventoryEntity = event.getNewEntity().getComponent(InternalStorageComponent.class).inventoryEntity;
+        EntityRef newInventoryEntity = event.getIntoEntity().getComponent(InternalStorageComponent.class).inventoryEntity;
 
         int slotCount = InventoryUtils.getSlotCount(inventoryEntity);
         // We assume the number of slots does not change
@@ -121,5 +127,22 @@ public class StorageModuleServerSystem extends BaseComponentSystem {
                 dropItemsFromComputerInternalStorage(computerEntity);
             }
         }
+    }
+
+    @ReceiveEvent
+    public void preventDestructionOfBlocksByOtherInstigators(PlaceBlocks placeBlocks, EntityRef world) {
+        if (placeBlocks.getInstigator() != world) {
+            for (Vector3i location : placeBlocks.getBlocks().keySet()) {
+                if (blockEntityRegistry.getBlockEntityAt(location).hasComponent(MovingBlockReplacementComponent.class)) {
+                    placeBlocks.consume();
+                    break;
+                }
+            }
+        }
+    }
+
+    @ReceiveEvent
+    public void preventDamagingOfBlocks(BeforeDamagedEvent event, EntityRef entity, MovingBlockReplacementComponent movingBlockReplacementComponent) {
+        event.consume();
     }
 }

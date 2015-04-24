@@ -33,9 +33,6 @@ import org.terasology.computer.event.server.ExecuteProgramEvent;
 import org.terasology.computer.event.server.GetProgramTextEvent;
 import org.terasology.computer.event.server.ListProgramsEvent;
 import org.terasology.computer.event.server.SaveProgramEvent;
-import org.terasology.computer.event.server.move.AfterComputerMoveEvent;
-import org.terasology.computer.event.server.move.BeforeComputerMoveEvent;
-import org.terasology.computer.event.server.move.ComputerMoveEvent;
 import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
 import org.terasology.computer.system.common.ComputerModuleRegistry;
 import org.terasology.computer.system.server.lang.ComputerModule;
@@ -54,6 +51,9 @@ import org.terasology.logic.inventory.InventoryUtils;
 import org.terasology.logic.inventory.events.BeforeItemPutInInventory;
 import org.terasology.logic.location.LocationComponent;
 import org.terasology.math.geom.Vector3f;
+import org.terasology.world.block.move.server.AfterBlockMovedEvent;
+import org.terasology.world.block.move.server.BeforeBlockMovesEvent;
+import org.terasology.world.block.move.server.BlockTransitionDuringMoveEvent;
 import org.terasology.network.events.DisconnectedEvent;
 import org.terasology.registry.In;
 import org.terasology.world.block.BlockComponent;
@@ -169,13 +169,13 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
     }
 
     @ReceiveEvent
-    public void beforeComputerMoveSetTransitionState(BeforeComputerMoveEvent event, EntityRef entity, ComputerComponent computer) {
+    public void beforeComputerMoveSetTransitionState(BeforeBlockMovesEvent event, EntityRef entity, ComputerComponent computer) {
         computerInTransitionState = true;
     }
 
     @ReceiveEvent
-    public void computerMovedCopyInventory(ComputerMoveEvent event, EntityRef entity, ComputerComponent computer) {
-        EntityRef newEntity = event.getNewEntity();
+    public void computerMovedCopyInventory(BlockTransitionDuringMoveEvent event, EntityRef entity, ComputerComponent computer) {
+        EntityRef newEntity = event.getIntoEntity();
 
         ComputerComponent newEntityComponent = newEntity.getComponent(ComputerComponent.class);
         copyValues(computer, newEntityComponent, true);
@@ -194,7 +194,7 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
     }
 
     @ReceiveEvent
-    public void afterComputerMoveSetTransitionState(AfterComputerMoveEvent event, EntityRef entity, ComputerComponent computer) {
+    public void afterComputerMoveSetTransitionState(AfterBlockMovedEvent event, EntityRef entity, ComputerComponent computer) {
         computerInTransitionState = false;
     }
 
