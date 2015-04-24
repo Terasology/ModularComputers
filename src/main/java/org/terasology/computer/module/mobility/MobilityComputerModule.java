@@ -17,7 +17,7 @@ package org.terasology.computer.module.mobility;
 
 import org.terasology.computer.system.server.lang.ComputerModule;
 import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
-import org.terasology.world.block.move.server.BlockMoveManager;
+import org.terasology.mobileBlocks.server.BlockMoveManager;
 
 import java.util.Collection;
 

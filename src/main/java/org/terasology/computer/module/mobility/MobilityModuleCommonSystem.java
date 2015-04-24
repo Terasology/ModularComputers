@@ -19,7 +19,7 @@ import org.terasology.computer.system.common.ComputerModuleRegistry;
 import org.terasology.entitySystem.systems.BaseComponentSystem;
 import org.terasology.entitySystem.systems.RegisterMode;
 import org.terasology.entitySystem.systems.RegisterSystem;
-import org.terasology.world.block.move.server.BlockMoveManager;
+import org.terasology.mobileBlocks.server.BlockMoveManager;
 import org.terasology.registry.In;
 
 import java.util.HashMap;
