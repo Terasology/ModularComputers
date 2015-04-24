@@ -49,15 +49,20 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
 
     private DefaultDocumentationData documentationData;
     private BrowserWidget browser;
+    private CardLayout tabs;
+
+    private UIButton playerConsoleTabButton;
+    private UIButton computerConsoleTabButton;
+    private UIButton documentationTabButton;
 
     @Override
     protected void initialise() {
         computerTerminalWidget = find("computerTerminal", ComputerTerminalWidget.class);
 
-        UIButton playerConsole = find("playerConsole", UIButton.class);
-        UIButton computerConsole = find("computerConsole", UIButton.class);
-        UIButton documentation = find("documentation", UIButton.class);
-        final CardLayout tabs = find("tabs", CardLayout.class);
+        playerConsoleTabButton = find("playerConsole", UIButton.class);
+        computerConsoleTabButton = find("computerConsole", UIButton.class);
+        documentationTabButton = find("documentation", UIButton.class);
+        tabs = find("tabs", CardLayout.class);
         browser = find("browser", BrowserWidget.class);
         browser.addBrowserHyperlinkListener(
                 new BrowserHyperlinkListener() {
@@ -69,31 +74,36 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
                     }
                 });
 
-        playerConsole.subscribe(
+        playerConsoleTabButton.subscribe(
                 new ActivateEventListener() {
                     @Override
                     public void onActivated(UIWidget widget) {
+                        setTabButtonsState(false, true, true);
                         tabs.setDisplayedCard("computerTerminal");
                         computerTerminalWidget.setMode(ComputerTerminalWidget.TerminalMode.PLAYER_CONSOLE);
                         requestFocusToTerminal();
                     }
                 });
-        computerConsole.subscribe(
+        computerConsoleTabButton.subscribe(
                 new ActivateEventListener() {
                     @Override
                     public void onActivated(UIWidget widget) {
+                        setTabButtonsState(true, false, true);
                         tabs.setDisplayedCard("computerTerminal");
                         computerTerminalWidget.setMode(ComputerTerminalWidget.TerminalMode.COMPUTER_CONSOLE);
                         requestFocusToTerminal();
                     }
                 });
-        documentation.subscribe(
+        documentationTabButton.subscribe(
                 new ActivateEventListener() {
                     @Override
                     public void onActivated(UIWidget widget) {
+                        setTabButtonsState(true, true, false);
                         tabs.setDisplayedCard("browserTab");
                     }
                 });
+
+        playerConsoleTabButton.setEnabled(false);
 
         UIButton homeButton = find("homeButton", UIButton.class);
         backButton = find("backButton", UIButton.class);
@@ -127,6 +137,12 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
                         updateHistoryButtons();
                     }
                 });
+    }
+
+    private void setTabButtonsState(boolean playerConsole, boolean computerConsole, boolean documentation) {
+        playerConsoleTabButton.setEnabled(playerConsole);
+        computerConsoleTabButton.setEnabled(computerConsole);
+        documentationTabButton.setEnabled(documentation);
     }
 
     private void setupTableOfContents(TableOfContents tableOfContents) {

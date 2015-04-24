@@ -64,7 +64,7 @@ public class ComputerTerminalWidget extends CoreWidget {
     private static final int PADDING_HOR = 5;
     private static final int PADDING_VER = 5;
 
-    private TerminalMode mode;
+    private TerminalMode mode = TerminalMode.PLAYER_CONSOLE;
     private boolean editingProgram;
 
     private ComputerConsole computerConsole;
@@ -77,7 +77,6 @@ public class ComputerTerminalWidget extends CoreWidget {
     private ProgramEditingConsoleGui programEditingConsoleGui;
 
     public void setup(ComputerLanguageContextInitializer computerLanguageContextInitializer, Runnable closeRunnable, EntityRef clientEntity, int computerId) {
-        mode = TerminalMode.PLAYER_CONSOLE;
         editingProgram = false;
         computerConsole = new ComputerConsole();
 
