@@ -53,26 +53,13 @@ public class ModuleFunctionAdapter implements FunctionExecutable {
 
     @Override
     public Execution createExecution(final int line, ExecutionContext executionContext, CallContext callContext) {
+        final SimpleParameterExecution execution = new SimpleParameterExecution(line);
 
-        return new DelayedExecution(_moduleFunction.getCpuCycleDuration(), _moduleFunction.getMinimumExecutionTime(),
-                getModuleFunctionExecution(line)) {
+        return new DelayedExecution(_moduleFunction.getCpuCycleDuration(), _moduleFunction.getMinimumExecutionTime(), execution) {
             @Override
             protected void onExecutionStart(ExecutionContext executionContext) throws ExecutionException {
-                _moduleFunction.onFunctionStart(line, getComputerCallback(executionContext), getVariableMap(executionContext));
-            }
-        };
-    }
-
-    private SimpleExecution getModuleFunctionExecution(final int line) {
-        return new SimpleExecution() {
-            @Override
-            protected ExecutionProgress execute(ExecutionContext context, ExecutionCostConfiguration configuration) throws ExecutionException {
-                ComputerCallback computerCallback = getComputerCallback(context);
-
-                Map<String, Variable> parameters = getVariableMap(context);
-
-                context.setReturnValue(new Variable(_moduleFunction.onFunctionEnd(line, computerCallback, parameters)));
-                return new ExecutionProgress(configuration.getSetReturnValue());
+                Object result = _moduleFunction.onFunctionStart(line, getComputerCallback(executionContext), getVariableMap(executionContext));
+                execution.setParameter(result);
             }
         };
     }
@@ -89,5 +76,29 @@ public class ModuleFunctionAdapter implements FunctionExecutable {
     private ComputerCallback getComputerCallback(ExecutionContext context) {
         final TerasologyComputerExecutionContext terasologyExecutionContext = (TerasologyComputerExecutionContext) context;
         return terasologyExecutionContext.getComputerCallback();
+    }
+
+    private class SimpleParameterExecution extends SimpleExecution {
+        private int line;
+        private Object parameter;
+
+        private SimpleParameterExecution(int line) {
+            this.line = line;
+        }
+
+        public void setParameter(Object parameter) {
+            this.parameter = parameter;
+        }
+
+        @Override
+        protected ExecutionProgress execute(ExecutionContext context, ExecutionCostConfiguration configuration) throws ExecutionException {
+            ComputerCallback computerCallback = getComputerCallback(context);
+
+            Map<String, Variable> parameters = getVariableMap(context);
+
+            context.setReturnValue(new Variable(_moduleFunction.onFunctionEnd(line, computerCallback, parameters, parameter)));
+            return new ExecutionProgress(configuration.getSetReturnValue());
+        }
+
     }
 }

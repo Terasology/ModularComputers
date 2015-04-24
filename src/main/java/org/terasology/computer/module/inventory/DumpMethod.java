@@ -24,7 +24,7 @@ import org.terasology.logic.inventory.InventoryManager;
 
 import java.util.Map;
 
-public class DumpMethod implements ModuleMethodExecutable {
+public class DumpMethod implements ModuleMethodExecutable<Object> {
     private InventoryManager inventoryManager;
 
     public DumpMethod(InventoryManager inventoryManager) {
@@ -42,7 +42,7 @@ public class DumpMethod implements ModuleMethodExecutable {
     }
 
     @Override
-    public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
+    public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters, Object onFunctionStartResult) throws ExecutionException {
         InventoryBinding.InventoryWithSlots inventoryFrom = FunctionParamValidationUtil.validateInventoryBinding(line, computer,
                 parameters, "inventoryBindingFrom", "dump", false);
         InventoryBinding.InventoryWithSlots inventoryTo = FunctionParamValidationUtil.validateInventoryBinding(line, computer,

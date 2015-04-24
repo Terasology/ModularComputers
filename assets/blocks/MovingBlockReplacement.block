@@ -1,0 +1,11 @@
+{
+    "hardness" : 18,
+    "mass" : 100,
+    "translucent": true,
+    "inventory": {
+        "stackable": false
+    },
+    "entity": {
+            "prefab": "ModularComputers:MovingBlockReplacement"
+        }
+}

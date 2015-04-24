@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * Interface to define what a computer module method does.
  */
-public interface ModuleMethodExecutable {
+public interface ModuleMethodExecutable<T> {
     /**
      * Returns a number of the "virtual" CPU cycles consumed by execution of this method.
      * @return The number of CPU cycles consumed.
@@ -51,18 +51,20 @@ public interface ModuleMethodExecutable {
      * @param line Line of code where the method code is made - useful for signalizing errors for debug purposes.
      * @param computer ComputerCallback allowing to query information about the computer.
      * @param parameters Parameters passed to the method.
+     * @return The object that will be passed to the onFunctionEnd() method as a parameter;
      * @throws ExecutionException Used to signal a problem in the code or some other problem that should end the program.
      */
-    public default void onFunctionStart(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException { }
+    public default T onFunctionStart(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException { return null; }
 
     /**
      * Interface method called at the end of CPU cycles and/or the time allotted to this method.
      * @param line Line of code where the method code is made - useful for signalizing errors for debug purposes.
      * @param computer ComputerCallback allowing to query information about the computer.
      * @param parameters Parameters passed to the method.
+     * @param onFunctionStartResult
      * @return An object that should be placed in the variable that is a result of calling this method. Please note
      * only objects of types defined in Variable class should be returned.
      * @throws ExecutionException Used to signal a problem in the code or some other problem that should end the program.
      */
-    public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException;
+    public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters, T onFunctionStartResult) throws ExecutionException;
 }

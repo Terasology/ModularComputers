@@ -22,7 +22,7 @@ import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
 
 import java.util.Map;
 
-public class StorageInventoryBindingMethod implements ModuleMethodExecutable {
+public class StorageInventoryBindingMethod implements ModuleMethodExecutable<Object> {
     private boolean input;
 
     public StorageInventoryBindingMethod(boolean input) {
@@ -40,7 +40,7 @@ public class StorageInventoryBindingMethod implements ModuleMethodExecutable {
     }
 
     @Override
-    public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
+    public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters, Object onFunctionStartResult) throws ExecutionException {
         return new InternalInventoryBindingCustomObject(input);
     }
 }

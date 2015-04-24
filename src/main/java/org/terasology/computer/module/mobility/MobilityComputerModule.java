@@ -17,22 +17,34 @@ package org.terasology.computer.module.mobility;
 
 import org.terasology.computer.system.server.lang.ComputerModule;
 import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
+import org.terasology.engine.Time;
+import org.terasology.entitySystem.entity.EntityManager;
+import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.world.BlockEntityRegistry;
 import org.terasology.world.WorldProvider;
+import org.terasology.world.block.BlockManager;
 
 import java.util.Collection;
 
 public class MobilityComputerModule implements ComputerModule {
     private WorldProvider worldProvider;
+    private BlockManager blockManager;
+    private EntityRef replacingInstigator;
+    private EntityManager entityManager;
     private BlockEntityRegistry blockEntityRegistry;
+    private Time time;
 
     private String moduleType;
     private String moduleName;
 
-    public MobilityComputerModule(WorldProvider worldProvider, BlockEntityRegistry blockEntityRegistry,
-                                  String moduleType, String moduleName) {
+    public MobilityComputerModule(WorldProvider worldProvider, BlockManager blockManager, EntityRef replacingInstigator, EntityManager entityManager, BlockEntityRegistry blockEntityRegistry,
+                                  Time time, String moduleType, String moduleName) {
         this.worldProvider = worldProvider;
+        this.blockManager = blockManager;
+        this.replacingInstigator = replacingInstigator;
+        this.entityManager = entityManager;
         this.blockEntityRegistry = blockEntityRegistry;
+        this.time = time;
         this.moduleType = moduleType;
         this.moduleName = moduleName;
     }
@@ -60,7 +72,7 @@ public class MobilityComputerModule implements ComputerModule {
     @Override
     public ModuleMethodExecutable getFunctionByName(String name) {
         if (name.equals("move")) {
-            return new MoveMethod(worldProvider, blockEntityRegistry);
+            return new MoveMethod(worldProvider, entityManager, blockManager, blockEntityRegistry, replacingInstigator, time);
         }
         return null;
     }

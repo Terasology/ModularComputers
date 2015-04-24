@@ -13,17 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.terasology.computer.context;
+package org.terasology.movingBlock;
 
-import org.terasology.computer.system.server.lang.ComputerModule;
-import org.terasology.entitySystem.entity.EntityRef;
-import org.terasology.math.geom.Vector3f;
+import org.terasology.entitySystem.Component;
 
-public interface ComputerCallback {
-    public ComputerConsole getConsole();
-    public int getModuleSlotsCount();
-    public ComputerModule getModule(int slot);
-    public Vector3f getComputerLocation();
-    public void suspendWithCondition(AwaitingCondition condition);
-    public EntityRef getComputerEntity();
+public class MovingBlockReplacementComponent implements Component {
+
 }

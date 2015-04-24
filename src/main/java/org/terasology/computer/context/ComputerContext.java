@@ -40,6 +40,8 @@ import org.terasology.computer.system.common.ComputerModuleRegistry;
 import org.terasology.computer.system.server.lang.ComputerModule;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.logic.inventory.InventoryComponent;
+import org.terasology.logic.location.LocationComponent;
+import org.terasology.math.geom.Vector3f;
 import org.terasology.math.geom.Vector3i;
 import org.terasology.world.block.BlockComponent;
 
@@ -201,8 +203,12 @@ public class ComputerContext {
             }
 
             @Override
-            public Vector3i getComputerLocation() {
-                return entity.getComponent(BlockComponent.class).getPosition();
+            public Vector3f getComputerLocation() {
+                BlockComponent block = entity.getComponent(BlockComponent.class);
+                if (block != null) {
+                    return block.getPosition().toVector3f();
+                }
+                return entity.getComponent(LocationComponent.class).getWorldPosition();
             }
 
             @Override

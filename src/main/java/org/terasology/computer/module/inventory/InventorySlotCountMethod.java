@@ -23,7 +23,7 @@ import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
 
 import java.util.Map;
 
-public class InventorySlotCountMethod implements ModuleMethodExecutable {
+public class InventorySlotCountMethod implements ModuleMethodExecutable<Object> {
     @Override
     public int getCpuCycleDuration() {
         return 50;
@@ -35,7 +35,7 @@ public class InventorySlotCountMethod implements ModuleMethodExecutable {
     }
 
     @Override
-    public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
+    public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters, Object onFunctionStartResult) throws ExecutionException {
         InventoryBinding.InventoryWithSlots inventory = FunctionParamValidationUtil.validateInventoryBinding(line, computer,
                 parameters, "inventoryBinding", "getInventorySlotCount", null);
 

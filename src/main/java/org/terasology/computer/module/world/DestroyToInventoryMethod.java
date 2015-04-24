@@ -25,6 +25,7 @@ import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.logic.health.DestroyEvent;
 import org.terasology.math.Direction;
+import org.terasology.math.geom.Vector3f;
 import org.terasology.math.geom.Vector3i;
 import org.terasology.world.BlockEntityRegistry;
 import org.terasology.world.WorldProvider;
@@ -33,7 +34,7 @@ import org.terasology.world.block.BlockManager;
 
 import java.util.Map;
 
-public class DestroyToInventoryMethod implements ModuleMethodExecutable {
+public class DestroyToInventoryMethod implements ModuleMethodExecutable<Object> {
     private WorldProvider worldProvider;
     private BlockEntityRegistry blockEntityRegistry;
 
@@ -58,13 +59,13 @@ public class DestroyToInventoryMethod implements ModuleMethodExecutable {
     }
 
     @Override
-    public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
+    public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters, Object onFunctionStartResult) throws ExecutionException {
         Direction direction = FunctionParamValidationUtil.validateDirectionParameter(line, parameters, "direction", "harvestToInventory");
 
         InventoryBinding.InventoryWithSlots inventory = FunctionParamValidationUtil.validateInventoryBinding(line, computer, parameters,
                 "inventoryBinding", "harvestToInventory", true);
 
-        Vector3i computerLocation = computer.getComputerLocation();
+        Vector3f computerLocation = computer.getComputerLocation();
         Vector3i directionVector = direction.getVector3i();
         Vector3i harvestLocation = new Vector3i(
                 computerLocation.x + directionVector.x,

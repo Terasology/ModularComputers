@@ -48,14 +48,12 @@ import org.terasology.entitySystem.systems.BaseComponentSystem;
 import org.terasology.entitySystem.systems.RegisterMode;
 import org.terasology.entitySystem.systems.RegisterSystem;
 import org.terasology.entitySystem.systems.UpdateSubscriberSystem;
-import org.terasology.logic.characters.CharacterComponent;
 import org.terasology.logic.inventory.InventoryComponent;
 import org.terasology.logic.inventory.InventoryManager;
 import org.terasology.logic.inventory.InventoryUtils;
 import org.terasology.logic.inventory.events.BeforeItemPutInInventory;
 import org.terasology.logic.location.LocationComponent;
 import org.terasology.math.geom.Vector3f;
-import org.terasology.network.ClientComponent;
 import org.terasology.network.events.DisconnectedEvent;
 import org.terasology.registry.In;
 import org.terasology.world.block.BlockComponent;
@@ -106,7 +104,7 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
         for (ComputerContext computerContext : computerContextMap.values()) {
             computerContext.executeContext(delta);
 
-            Vector3f computerLocation = computerContext.getComputerCallback().getComputerLocation().toVector3f();
+            Vector3f computerLocation = computerContext.getComputerCallback().getComputerLocation();
 
             ComputerComponent computer = computerContext.getEntity().getComponent(ComputerComponent.class);
 
@@ -121,7 +119,7 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
     }
 
     private boolean validateComputerToCharacterDistance(EntityRef character, ComputerContext computerContext) {
-        Vector3f computerLocation = computerContext.getComputerCallback().getComputerLocation().toVector3f();
+        Vector3f computerLocation = computerContext.getComputerCallback().getComputerLocation();
         return validateComputerToCharacterDistance(character, computerLocation);
     }
 
