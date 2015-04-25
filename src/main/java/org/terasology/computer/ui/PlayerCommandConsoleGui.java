@@ -20,7 +20,10 @@ import org.terasology.computer.context.ComputerConsole;
 import org.terasology.rendering.nui.Canvas;
 import org.terasology.rendering.nui.Color;
 
-public class PlayerCommandConsoleGui{
+import java.util.LinkedList;
+import java.util.List;
+
+public class PlayerCommandConsoleGui {
     public static final Color PLAYER_CONSOLE_TEXT_COLOR = new Color(0xffffffff);
     public static final Color COMMAND_LINE_TEXT_COLOR = new Color(0xffff99ff);
     public static final Color PLAYER_CONSOLE_CURSOR_COLOR = new Color(0xff0000ff);
@@ -37,6 +40,9 @@ public class PlayerCommandConsoleGui{
 
     private ComputerTerminalWidget computerTerminalWidget;
 
+    private int historyIndex = 0;
+    private List<String> commandHistory = new LinkedList<>();
+
     public PlayerCommandConsoleGui(ComputerTerminalWidget ComputerConsoleWidget) {
         computerTerminalWidget = ComputerConsoleWidget;
     }
@@ -49,7 +55,7 @@ public class PlayerCommandConsoleGui{
         final String[] consoleLines = playerConsole.getLines();
         // Draw all lines but first (we need to fill current edited line at the bottom)
         for (int i = 1; i < consoleLines.length; i++)
-            computerTerminalWidget.drawMonospacedText(canvas, consoleLines[i], x, y+(i - 1) * fontHeight, PLAYER_CONSOLE_TEXT_COLOR);
+            computerTerminalWidget.drawMonospacedText(canvas, consoleLines[i], x, y + (i - 1) * fontHeight, PLAYER_CONSOLE_TEXT_COLOR);
 
         if (!readOnly) {
             String wholeCommandLine = ">" + currentCommand.toString();
@@ -85,11 +91,32 @@ public class PlayerCommandConsoleGui{
                 cursorPositionInPlayerCommand = currentCommand.length();
             } else if (keyboardCharId == Keyboard.KEY_RETURN) {
                 String command = currentCommand.toString().trim();
-                playerConsole.appendString(">" + command);
+                if (command.length() > 0) {
+                    appendToHistory(command);
+                    playerConsole.appendString(">" + command);
 
-                computerTerminalWidget.executeCommand(command);
-                currentCommand = new StringBuilder();
-                cursorPositionInPlayerCommand = 0;
+                    computerTerminalWidget.executeCommand(command);
+                    currentCommand = new StringBuilder();
+                    cursorPositionInPlayerCommand = 0;
+                }
+            } else if (keyboardCharId == Keyboard.KEY_UP) {
+                if (historyIndex < commandHistory.size()) {
+                    currentCommand = new StringBuilder();
+                    currentCommand.append(commandHistory.get(historyIndex));
+                    cursorPositionInPlayerCommand = currentCommand.length();
+                    historyIndex++;
+                }
+            } else if (keyboardCharId == Keyboard.KEY_DOWN) {
+                if (historyIndex > 1) {
+                    currentCommand = new StringBuilder();
+                    currentCommand.append(commandHistory.get(historyIndex-2));
+                    cursorPositionInPlayerCommand = currentCommand.length();
+                    historyIndex--;
+                } else if (historyIndex == 1) {
+                    currentCommand = new StringBuilder();
+                    cursorPositionInPlayerCommand = 0;
+                    historyIndex = 0;
+                }
             }
 
             // Adjust start position
@@ -105,6 +132,14 @@ public class PlayerCommandConsoleGui{
                 else if (cursorPositionInCommand - 1 < currentCommandDisplayStartIndex)
                     currentCommandDisplayStartIndex = cursorPositionInCommand - 1;
             }
+        }
+    }
+
+    private void appendToHistory(String command) {
+        commandHistory.add(0, command);
+        historyIndex = 0;
+        if (commandHistory.size() > 20) {
+            commandHistory.remove(20);
         }
     }
 
