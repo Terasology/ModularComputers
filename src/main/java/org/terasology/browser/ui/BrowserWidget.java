@@ -81,7 +81,7 @@ public class BrowserWidget extends CoreWidget {
                 int paragraphHeight = paragraphContents.getPreferredHeight(canvas, paragraphRenderStyle, paragraphWidth);
                 int paragraphBorderHeight = paragraphHeight + paragraphRenderStyle.getParagraphBackgroundIndentTop() + paragraphRenderStyle.getParagraphBackgroundIndentBottom();
 
-                Rect2i paragraphBorderRegion = Rect2i.createFromMinAndSize(x + paragraphRenderStyle.getParagraphIndentLeft(), y+paragraphRenderStyle.getParagraphIndentTop(first),
+                Rect2i paragraphBorderRegion = Rect2i.createFromMinAndSize(x + paragraphRenderStyle.getParagraphIndentLeft(), y + paragraphRenderStyle.getParagraphIndentTop(first),
                         paragraphBorderWidth, paragraphBorderHeight);
 
                 Color paragraphBackground = paragraphRenderStyle.getParagraphBackground();
@@ -146,7 +146,8 @@ public class BrowserWidget extends CoreWidget {
 
             for (ParagraphData paragraphData : displayedPage.getParagraphs()) {
                 ParagraphRenderStyle paragraphRenderStyle = getParagraphRenderStyle(documentRenderStyle, paragraphData);
-                int paragraphSideIndent = paragraphRenderStyle.getParagraphIndentLeft() + paragraphRenderStyle.getParagraphIndentRight();
+                int paragraphSideIndent = paragraphRenderStyle.getParagraphIndentLeft() + paragraphRenderStyle.getParagraphIndentRight()
+                        + paragraphRenderStyle.getParagraphBackgroundIndentLeft() + paragraphRenderStyle.getParagraphBackgroundIndentRight();
                 availableSpace = Math.max(availableSpace, paragraphSideIndent + paragraphData.getParagraphContents().getMinWidth(canvas, paragraphRenderStyle));
             }
 

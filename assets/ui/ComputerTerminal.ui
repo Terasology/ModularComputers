@@ -53,6 +53,7 @@
                                     {
                                         "type": "ScrollableArea",
                                         "id": "tableOfContentsScrollable",
+                                        "horizontalScrollbar": true,
                                         "content": {
                                             "id": "tableOfContents",
                                             "type": "UIList"
@@ -124,6 +125,7 @@
                                             {
                                                 "id": "browserScrollable",
                                                 "type": "ScrollableArea",
+                                                "horizontalScrollbar": true,
                                                 "content": {
                                                     "id": "browser",
                                                     "type": "BrowserWidget"
