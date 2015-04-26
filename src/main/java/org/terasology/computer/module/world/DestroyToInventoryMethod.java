@@ -60,10 +60,10 @@ public class DestroyToInventoryMethod implements ModuleMethodExecutable<Object> 
 
     @Override
     public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters, Object onFunctionStartResult) throws ExecutionException {
-        Direction direction = FunctionParamValidationUtil.validateDirectionParameter(line, parameters, "direction", "harvestToInventory");
+        Direction direction = FunctionParamValidationUtil.validateDirectionParameter(line, parameters, "direction", "destroyBlockToInventory");
 
         InventoryBinding.InventoryWithSlots inventory = FunctionParamValidationUtil.validateInventoryBinding(line, computer, parameters,
-                "inventoryBinding", "harvestToInventory", true);
+                "inventoryBinding", "destroyBlockToInventory", true);
 
         Vector3f computerLocation = computer.getComputerLocation();
         Vector3i directionVector = direction.getVector3i();

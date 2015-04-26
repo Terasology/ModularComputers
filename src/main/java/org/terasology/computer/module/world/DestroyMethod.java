@@ -59,7 +59,7 @@ public class DestroyMethod implements ModuleMethodExecutable<Object> {
 
     @Override
     public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters, Object onFunctionStartResult) throws ExecutionException {
-        Direction direction = FunctionParamValidationUtil.validateDirectionParameter(line, parameters, "direction", "harvest");
+        Direction direction = FunctionParamValidationUtil.validateDirectionParameter(line, parameters, "direction", "destroyBlock");
 
         Vector3f computerLocation = computer.getComputerLocation();
         Vector3i directionVector = direction.getVector3i();

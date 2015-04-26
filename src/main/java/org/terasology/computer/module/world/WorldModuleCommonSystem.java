@@ -19,6 +19,7 @@ import org.terasology.computer.system.common.ComputerModuleRegistry;
 import org.terasology.entitySystem.systems.BaseComponentSystem;
 import org.terasology.entitySystem.systems.RegisterMode;
 import org.terasology.entitySystem.systems.RegisterSystem;
+import org.terasology.logic.inventory.InventoryManager;
 import org.terasology.registry.In;
 import org.terasology.world.BlockEntityRegistry;
 import org.terasology.world.WorldProvider;
@@ -37,6 +38,8 @@ public class WorldModuleCommonSystem extends BaseComponentSystem {
     private WorldProvider worldProvider;
     @In
     private BlockEntityRegistry blockEntityRegistry;
+    @In
+    private InventoryManager inventoryManager;
 
     @Override
     public void preBegin() {
@@ -44,7 +47,7 @@ public class WorldModuleCommonSystem extends BaseComponentSystem {
                 WORLD_MODULE_TYPE,
                 new WorldComputerModule(
                         worldProvider, blockEntityRegistry,
-                        WORLD_MODULE_TYPE, "World interaction"),
+                        inventoryManager, WORLD_MODULE_TYPE, "World interaction"),
                 "This module allows to interact with objects in the world.",
                 null,
                 new TreeMap<String, String>() {{
@@ -53,6 +56,7 @@ public class WorldModuleCommonSystem extends BaseComponentSystem {
                     put("destroyBlockToInventory", "Destroys the block in the specified direction. The resulting items from " +
                             "destroying the block are added to the inventory specified. If inventory is unable to accept those " +
                             "items, the are scattered on the ground.");
+                    put("placeBlock", "Places block from inventory in the specified direction.");
                 }},
                 new HashMap<String, Map<String, String>>() {{
                     put("destroyBlock",
@@ -62,15 +66,24 @@ public class WorldModuleCommonSystem extends BaseComponentSystem {
                             }});
                     put("destroyBlockToInventory",
                             new LinkedHashMap<String, String>() {{
-                                put("direction", "[String] Direction in which to destroy the block.  For more information " +
+                                put("direction", "[String] Direction in which to destroy the block. For more information " +
                                         "about <h navigate:object-type-Direction>Direction</h> - read the link.");
                                 put("inventoryBinding", "[Inventory Binding] Inventory to which store the items, please note " +
                                         "that this Inventory Binding has to be of the input type.");
+                            }});
+                    put("placeBlock",
+                            new LinkedHashMap<String, String>() {{
+                                put("direction", "[String] Direction in which to place the block. For more information " +
+                                        "about <h navigate:object-type-Direction>Direction</h> - read the link.");
+                                put("inventoryBinding", "[Inventory Binding] Inventory from which to place the block, please " +
+                                        "note that this Inventory Binding has to be of the output type.");
+                                put("slot", "[Number] Slot number to take block from for placement.");
                             }});
                 }},
                 new HashMap<String, String>() {{
                     put("destroyBlock", "[Boolean] Whether destroying the specified block was successful.");
                     put("destroyBlockToInventory", "[Boolean] Whether destroying the specified block was successful.");
+                    put("placeBlock", "[Boolean] Whether placement of the block was successful.");
                 }}, null);
     }
 }

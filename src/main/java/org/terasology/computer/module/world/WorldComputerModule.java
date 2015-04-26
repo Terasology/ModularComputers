@@ -17,6 +17,7 @@ package org.terasology.computer.module.world;
 
 import org.terasology.computer.system.server.lang.ComputerModule;
 import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
+import org.terasology.logic.inventory.InventoryManager;
 import org.terasology.world.BlockEntityRegistry;
 import org.terasology.world.WorldProvider;
 
@@ -25,12 +26,14 @@ import java.util.Collection;
 public class WorldComputerModule implements ComputerModule {
     private WorldProvider worldProvider;
     private BlockEntityRegistry blockEntityRegistry;
+    private InventoryManager inventoryManager;
     private String moduleType;
     private String moduleName;
 
-    public WorldComputerModule(WorldProvider worldProvider, BlockEntityRegistry blockEntityRegistry, String moduleType, String moduleName) {
+    public WorldComputerModule(WorldProvider worldProvider, BlockEntityRegistry blockEntityRegistry, InventoryManager inventoryManager, String moduleType, String moduleName) {
         this.worldProvider = worldProvider;
         this.blockEntityRegistry = blockEntityRegistry;
+        this.inventoryManager = inventoryManager;
         this.moduleType = moduleType;
         this.moduleName = moduleName;
     }
@@ -61,6 +64,8 @@ public class WorldComputerModule implements ComputerModule {
             return new DestroyMethod(worldProvider, blockEntityRegistry);
         } else if (name.equals("destroyBlockToInventory")) {
             return new DestroyToInventoryMethod(worldProvider, blockEntityRegistry);
+        } else if (name.equals("placeBlock")) {
+            return new PlaceBlockMethod(worldProvider, blockEntityRegistry, inventoryManager);
         }
         return null;
     }
