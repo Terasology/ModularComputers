@@ -1,11 +1,11 @@
 // Inventory Manipulator module
-var invMod = computer.bindModule(0);
+var invMod = computer.bindModuleOfType("Inventory");
 // Internal Storage module
-var storeMod = computer.bindModule(1);
+var storeMod = computer.bindModuleOfType("Storage");
 // Mobility module
-var moveMod = computer.bindModule(2);
-// Harvest module
-var harvestMod = computer.bindModule(3);
+var moveMod = computer.bindModuleOfType("Mobility");
+// World Interaction module
+var harvestMod = computer.bindModuleOfType("World");
 
 // Bind access to inventory above computer
 // for input (adding items to it)
@@ -25,12 +25,41 @@ function move(direction) {
     moveMod.move(direction);
 }
 
+var sizeX = os.parseInt(args[0]);
+var sizeZ = os.parseInt(args[1]);
+
 var movementMap =
     ["east", "north", "west", "south"];
-var mapSize = movementMap.getSize();
-for (var i=0; i<mapSize; i++) {
+
+for (var i=0; i<sizeX-1; i++) {
     harvestToInventory("down");
-    move(movementMap[i]);
+    move(movementMap[0]);
+}
+for (var i=0; i<sizeZ-1; i++) {
+    harvestToInventory("down");
+    move(movementMap[1]);
+    for (var j=0; j<sizeX-2; j++) {
+        harvestToInventory("down");
+        var dir;
+        if (i%2 == 0)
+          dir = 2;
+        else
+          dir = 0;
+        move(movementMap[dir]);
+    }
+}
+harvestToInventory("down");
+if (sizeZ%2 == 1) {
+    for (var i=0; i<sizeX-1; i++) {
+        move(movementMap[2]);
+    }
+} else {
+    move(movementMap[2]);
+}
+
+for (var i=0; i<sizeZ-1; i++) {
+    harvestToInventory("down");
+    move(movementMap[3]);
 }
 
 // Dump everything from internal inventory
