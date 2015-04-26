@@ -17,7 +17,7 @@ var inInv = storeMod.getInputInventoryBinding();
 var outInv = storeMod.getOutputInventoryBinding();
 
 function harvestToInventory(direction) {
-    harvestMod.harvestToInventory(direction,
+    harvestMod.destroyBlockToInventory(direction,
         inInv);
 }
 

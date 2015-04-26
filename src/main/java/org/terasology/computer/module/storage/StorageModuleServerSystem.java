@@ -55,7 +55,7 @@ public class StorageModuleServerSystem extends BaseComponentSystem {
     private boolean doNotMoveInventory = false;
 
     @ReceiveEvent
-    public void computerModuleSlotChanged(InventorySlotChangedEvent event, EntityRef computerEntity, ComputerComponent computer, BlockComponent block) {
+    public void computerModuleSlotChanged(InventorySlotChangedEvent event, EntityRef computerEntity, ComputerComponent computer) {
         if (!doNotMoveInventory) {
             ComputerModuleComponent oldModule = event.getOldItem().getComponent(ComputerModuleComponent.class);
             if (oldModule != null && oldModule.moduleType.equals(StorageModuleCommonSystem.COMPUTER_STORAGE_MODULE_TYPE)) {

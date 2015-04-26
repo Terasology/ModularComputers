@@ -1,14 +1,14 @@
 {
     "DisplayName" : {
-        "name" : "Harvest Module"
+        "name" : "World Interaction Module"
     },
     "Item" : {
         "icon" : "engine:items.coal",
         "renderWithIcon" : true,
-        "stackId" : "harvestModule",
+        "stackId" : "worldInteractionModule",
         "maxStackSize": 1
     },
     "ComputerModule" : {
-        "moduleType": "Harvest"
+        "moduleType": "World"
     }
 }
