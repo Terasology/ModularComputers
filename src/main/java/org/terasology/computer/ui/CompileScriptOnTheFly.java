@@ -57,6 +57,7 @@ public class CompileScriptOnTheFly {
                     }
                 }
         );
+        _predefinedVariables.add("args");
     }
 
     public void startCompiler() {

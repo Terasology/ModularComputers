@@ -51,6 +51,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -123,7 +125,7 @@ public class ComputerContext {
         return context != null;
     }
 
-    public void startProgram(String name, String programText, ComputerLanguageContextInitializer computerLanguageContextInitializer, ExecutionCostConfiguration configuration) throws IllegalSyntaxException {
+    public void startProgram(String name, String programText, String[] params, ComputerLanguageContextInitializer computerLanguageContextInitializer, ExecutionCostConfiguration configuration) throws IllegalSyntaxException {
         try {
             logger.debug("starting program: " + name);
 
@@ -147,6 +149,7 @@ public class ComputerContext {
                             // Ignore
                         }
                     });
+            addParametersToProgram(params, variables, callContext);
 
             ScriptExecutable scriptExecutable = new ScriptParser().parseScript(new StringReader(programText), variables);
 
@@ -164,6 +167,20 @@ public class ComputerContext {
             logger.debug("started program: " + name);
         } catch (IOException exp) {
             // Can't happen - ignore
+        }
+    }
+
+    private void addParametersToProgram(String[] params, Set<String> variables, CallContext callContext) {
+        variables.add("args");
+        List<Variable> args = new LinkedList<>();
+        for (String param : params) {
+            args.add(new Variable(param));
+        }
+
+        try {
+            callContext.defineVariable("args").setValue(args);
+        } catch (ExecutionException exp) {
+            // Ignore - can't happen
         }
     }
 

@@ -248,13 +248,17 @@ public class ComputerTerminalWidget extends CoreWidget {
                     clientEntity.send(new GetProgramTextEvent(computerId, programName));
                 }
             } else if (commandParts[0].equals("execute")) {
-                if (commandParts.length != 2) {
+                if (commandParts.length < 2) {
                     playerCommandConsoleGui.appendToConsole("Usage:");
-                    playerCommandConsoleGui.appendToConsole("execute [programName] - executes specified program");
+                    playerCommandConsoleGui.appendToConsole("execute [programName] [argument] ... [argument]- executes specified program with specified arguments (if any)");
                 } else if (!isValidProgramName(commandParts[1]))
                     playerCommandConsoleGui.appendToConsole("Invalid program name - only letters and digits allowed and a maximum length of 10");
                 else {
-                    clientEntity.send(new ExecuteProgramEvent(computerId, commandParts[1]));
+                    String[] arguments = new String[commandParts.length-2];
+                    for (int i=0; i<commandParts.length-2; i++) {
+                        arguments[i] = commandParts[i+2];
+                    }
+                    clientEntity.send(new ExecuteProgramEvent(computerId, commandParts[1], arguments));
                 }
             } else if (commandParts[0].equals("list")) {
                 if (commandParts.length > 1) {

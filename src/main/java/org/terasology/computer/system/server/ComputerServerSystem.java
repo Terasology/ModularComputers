@@ -222,7 +222,7 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
                 String programText = computer.programs.get(programName);
                 if (programText != null) {
                     try {
-                        computerContext.startProgram(programName, programText, computerLanguageContextInitializer, executionCostConfiguration);
+                        computerContext.startProgram(programName, programText, event.getParams(), computerLanguageContextInitializer, executionCostConfiguration);
                         client.send(new ProgramExecutionResultEvent(computer.computerId, "Program started"));
                     } catch (IllegalSyntaxException exp) {
                         client.send(new ProgramExecutionResultEvent(computer.computerId, exp.getMessage()));

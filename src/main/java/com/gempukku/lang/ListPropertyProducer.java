@@ -7,7 +7,7 @@ public class ListPropertyProducer implements PropertyProducer {
     @Override
     public Variable exposePropertyFor(ExecutionContext context, Variable object, String property) throws ExecutionException {
         List<Variable> list = (List<Variable>) object.getValue();
-        if (property.equals("getSize"))
+        if (property.equals("size"))
             return new Variable(new SizeFunction(list));
         else if (property.equals("add"))
             return new Variable(new AddElementFunction(list));

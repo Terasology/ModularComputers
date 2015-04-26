@@ -15,7 +15,6 @@
  */
 package org.terasology.computer.event.server;
 
-import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.entitySystem.event.Event;
 import org.terasology.network.ServerEvent;
 
@@ -23,13 +22,15 @@ import org.terasology.network.ServerEvent;
 public class ExecuteProgramEvent implements Event {
     private int computerId;
     private String programName;
+    private String[] params;
 
     public ExecuteProgramEvent() {
     }
 
-    public ExecuteProgramEvent(int computerId, String programName) {
+    public ExecuteProgramEvent(int computerId, String programName, String[] params) {
         this.computerId = computerId;
         this.programName = programName;
+        this.params = params;
     }
 
     public int getComputerId() {
@@ -38,5 +39,9 @@ public class ExecuteProgramEvent implements Event {
 
     public String getProgramName() {
         return programName;
+    }
+
+    public String[] getParams() {
+        return params;
     }
 }
