@@ -47,7 +47,6 @@ public class ComputerTerminalWidget extends CoreWidget {
     public enum TerminalMode {
         PLAYER_CONSOLE, COMPUTER_CONSOLE
     }
-
     @LayoutConfig
     private String monospaceFont;
 
@@ -94,6 +93,10 @@ public class ComputerTerminalWidget extends CoreWidget {
         programEditingConsoleGui = new ProgramEditingConsoleGui(this, computerLanguageContextInitializer);
 
         this.clientEntity.send(new ConsoleListeningRegistrationEvent(this.computerId, true));
+    }
+
+    public void saveProgram(String programName, String code) {
+        clientEntity.send(new SaveProgramEvent(computerId, programName, code));
     }
 
     public int getComputerId() {

@@ -70,6 +70,9 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
                     public void hyperlinkClicked(String hyperlink) {
                         if (hyperlink.startsWith("navigate:")) {
                             navigateTo(hyperlink.substring(9));
+                        } else if (hyperlink.startsWith("saveAs:")) {
+                            String[] split = hyperlink.substring(7).split(":", 2);
+                            saveAs(split[0], split[1]);
                         }
                     }
                 });
@@ -204,6 +207,10 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
             browserFuture.clear();
             updateHistoryButtons();
         }
+    }
+
+    private void saveAs(String programName, String code) {
+        computerTerminalWidget.saveProgram(programName, code);
     }
 
     private void updateHistoryButtons() {

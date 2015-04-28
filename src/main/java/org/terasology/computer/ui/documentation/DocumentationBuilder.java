@@ -238,6 +238,7 @@ public class DocumentationBuilder {
     public static Collection<ParagraphData> createExampleParagraphs(String description, String code) {
         List<ParagraphData> result = new LinkedList<>();
         result.addAll(paragraphWithSpaceBefore("Example:"));
+        result.addAll(HTMLLikeParser.parseHTMLLike(null, "<h saveAs:example:"+HTMLLikeParser.encodeHTMLLike(code)+">Save as example</h>"));
         result.addAll(
                 HTMLLikeParser.parseHTMLLike(null, description));
 
