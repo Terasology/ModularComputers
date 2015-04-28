@@ -49,6 +49,12 @@ public class FunctionParamValidationUtil {
         return ((Number) var.getValue()).intValue();
     }
 
+    public static boolean validateBooleanParameter(int line, Map<String, Variable> parameters,
+                                                   String parameterName, String functionName) throws ExecutionException {
+        Variable var = validateParameter(line, parameters, parameterName, functionName, Variable.Type.BOOLEAN);
+        return ((Boolean) var.getValue());
+    }
+
     public static Direction validateDirectionParameter(
             int line, Map<String, Variable> parameters,
             String parameterName, String functionName) throws ExecutionException {
