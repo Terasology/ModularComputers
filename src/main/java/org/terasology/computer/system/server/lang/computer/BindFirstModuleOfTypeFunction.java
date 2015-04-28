@@ -46,6 +46,6 @@ public class BindFirstModuleOfTypeFunction extends TerasologyFunctionExecutable 
 			if (module != null && module.getModuleType().equals(moduleType))
 				return new SlotBindingObjectDefinition(i);
 		}
-		return null;
+		throw new ExecutionException(line, "Couldn't find module of the specified type.");
 	}
 }
