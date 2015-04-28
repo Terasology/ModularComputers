@@ -33,6 +33,7 @@ import org.terasology.computer.event.server.DeleteProgramEvent;
 import org.terasology.computer.event.server.ExecuteProgramEvent;
 import org.terasology.computer.event.server.GetProgramTextEvent;
 import org.terasology.computer.event.server.ListProgramsEvent;
+import org.terasology.computer.event.server.RenameProgramEvent;
 import org.terasology.computer.event.server.SaveProgramEvent;
 import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
 import org.terasology.computer.system.common.ComputerModuleRegistry;
@@ -272,14 +273,14 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
     }
 
     @ReceiveEvent
-    public void renameProgramRequested(CopyProgramEvent event, EntityRef client) {
+    public void renameProgramRequested(RenameProgramEvent event, EntityRef client) {
         ComputerContext computerContext = computerContextMap.get(event.getComputerId());
         if (computerContext != null && validateComputerToCharacterDistance(client, computerContext)) {
             EntityRef computerEntity = computerContext.getEntity();
             ComputerComponent computer = computerEntity.getComponent(ComputerComponent.class);
-            String programText = computer.programs.remove(event.getProgramNameSource());
+            String programText = computer.programs.remove(event.getProgramNameOld());
             if (programText != null) {
-                computer.programs.put(event.getProgramNameDestination(), programText);
+                computer.programs.put(event.getProgramNameNew(), programText);
             }
             computerEntity.saveComponent(computer);
         }
