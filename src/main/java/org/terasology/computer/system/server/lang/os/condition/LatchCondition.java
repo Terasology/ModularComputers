@@ -35,6 +35,11 @@ public class LatchCondition extends AbstractConditionCustomObject {
     }
 
     @Override
+    public int sizeOf() {
+        return 4;
+    }
+
+    @Override
     public int getCreationDelay() {
         return 0;
     }

@@ -18,10 +18,13 @@ package org.terasology.computer.system.server.lang.os.condition;
 
 import com.gempukku.lang.CustomObject;
 
+import java.util.Collection;
+import java.util.Collections;
+
 public abstract class AbstractConditionCustomObject implements CustomObject {
 	@Override
-	public String getType() {
-		return "CONDITION";
+	public Collection<String> getType() {
+		return Collections.singleton("CONDITION");
 	}
 
 	public abstract int getCreationDelay();

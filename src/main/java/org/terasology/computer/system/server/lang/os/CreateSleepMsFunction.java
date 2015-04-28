@@ -51,7 +51,12 @@ public class CreateSleepMsFunction extends TerasologyFunctionExecutable {
 				return 0;
 			}
 
-			@Override
+            @Override
+            public int sizeOf() {
+                return 4;
+            }
+
+            @Override
 			public ResultAwaitingCondition createAwaitingCondition() {
 				return new SystemTimeAwaitingCondition(System.currentTimeMillis() + time);
 			}

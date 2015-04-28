@@ -60,7 +60,7 @@ public class ExecutionContext {
         } else if (value instanceof ObjectDefinition) {
             return 4;
         } else if (value instanceof CustomObject) {
-            return 4;
+            return ((CustomObject) value).sizeOf();
         } else if (value.getClass().isArray()) {
             return 4;
         } else

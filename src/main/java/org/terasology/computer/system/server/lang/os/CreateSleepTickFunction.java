@@ -52,7 +52,12 @@ public class CreateSleepTickFunction extends TerasologyFunctionExecutable {
 				return 0;
 			}
 
-			@Override
+            @Override
+            public int sizeOf() {
+                return 4;
+            }
+
+            @Override
 			public ResultAwaitingCondition createAwaitingCondition() {
 				return new TicksAwaitingCondition(ticks);
 			}

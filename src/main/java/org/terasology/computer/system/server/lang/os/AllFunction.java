@@ -50,7 +50,7 @@ public class AllFunction extends TerasologyFunctionExecutable {
 		int delay = 0;
 		final List<AbstractConditionCustomObject> allConditions = new ArrayList<AbstractConditionCustomObject>();
 		for (Variable condition : conditions) {
-			if (condition.getType() != Variable.Type.CUSTOM_OBJECT || !((CustomObject) condition.getValue()).getType().equals("CONDITION"))
+			if (condition.getType() != Variable.Type.CUSTOM_OBJECT || !((CustomObject) condition.getValue()).getType().contains("CONDITION"))
 				throw new ExecutionException(line, "Expected a LIST of CONDITIONs in all()");
 			final AbstractConditionCustomObject conditionDefinition = (AbstractConditionCustomObject) condition.getValue();
 			delay = Math.max(delay, conditionDefinition.getCreationDelay());
@@ -65,7 +65,17 @@ public class AllFunction extends TerasologyFunctionExecutable {
 				return maxDelay;
 			}
 
-			@Override
+            @Override
+            public int sizeOf() {
+                int size = 4;
+                for (AbstractConditionCustomObject condition : allConditions) {
+                    size+=condition.sizeOf();
+                }
+
+                return size;
+            }
+
+            @Override
 			public ResultAwaitingCondition createAwaitingCondition() {
 				List<ResultAwaitingCondition> allConditionList = new ArrayList<ResultAwaitingCondition>();
 				for (AbstractConditionCustomObject allCondition : allConditions)

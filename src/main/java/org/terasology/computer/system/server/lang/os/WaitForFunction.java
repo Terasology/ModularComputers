@@ -56,7 +56,7 @@ public class WaitForFunction implements FunctionExecutable {
             public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration) throws ExecutionException {
                 if (!_suspended) {
                     final Variable conditionVar = executionContext.peekCallContext().getVariableValue("condition");
-                    if (conditionVar.getType() != Variable.Type.CUSTOM_OBJECT || !((CustomObject) conditionVar.getValue()).getType().equals("CONDITION"))
+                    if (conditionVar.getType() != Variable.Type.CUSTOM_OBJECT || !((CustomObject) conditionVar.getValue()).getType().contains("CONDITION"))
                         throw new ExecutionException(line, "Expected CONDITION in waitFor()");
 
                     final AbstractConditionCustomObject condition = (AbstractConditionCustomObject) conditionVar.getValue();

@@ -65,7 +65,7 @@ public class FunctionParamValidationUtil {
             String parameterName, String functionName, Boolean input) throws ExecutionException {
         Variable inventoryBinding = validateParameter(line, parameters, parameterName, functionName, Variable.Type.CUSTOM_OBJECT);
         CustomObject customObject = (CustomObject) inventoryBinding.getValue();
-        if (!customObject.getType().equals("INVENTORY_BINDING")
+        if (!customObject.getType().contains("INVENTORY_BINDING")
                 || (input != null && input != ((InventoryBinding) customObject).isInput()))
             throw new ExecutionException(line, "Invalid "+parameterName+" in "+functionName+"()");
 

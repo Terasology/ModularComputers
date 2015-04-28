@@ -21,6 +21,7 @@ import com.gempukku.lang.Variable;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.TerasologyFunctionExecutable;
 
+import java.util.Collections;
 import java.util.Map;
 
 public class TypeOfFunction extends TerasologyFunctionExecutable {
@@ -39,7 +40,7 @@ public class TypeOfFunction extends TerasologyFunctionExecutable {
 		final Variable value = parameters.get("value");
 		final Variable.Type type = value.getType();
 		if (type == Variable.Type.CUSTOM_OBJECT)
-			return ((CustomObject) value.getValue()).getType();
+			return ((CustomObject) value.getValue()).getType().toString();
 
 		return type.toString();
 	}

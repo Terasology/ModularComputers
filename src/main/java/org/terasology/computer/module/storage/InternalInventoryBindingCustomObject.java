@@ -22,6 +22,7 @@ import org.terasology.computer.module.inventory.InventoryBinding;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.logic.inventory.InventoryComponent;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,8 +35,8 @@ public class InternalInventoryBindingCustomObject implements CustomObject, Inven
     }
 
     @Override
-    public String getType() {
-        return "INVENTORY_BINDING";
+    public Collection<String> getType() {
+        return Collections.singleton("INVENTORY_BINDING");
     }
 
     @Override
@@ -44,6 +45,11 @@ public class InternalInventoryBindingCustomObject implements CustomObject, Inven
         int slotCount = inventoryEntity.getComponent(InventoryComponent.class).itemSlots.size();
         List<Integer> slots = getSlotList(slotCount);
         return new InventoryWithSlots(inventoryEntity, Collections.unmodifiableList(slots));
+    }
+
+    @Override
+    public int sizeOf() {
+        return 4;
     }
 
     @Override

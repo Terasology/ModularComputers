@@ -27,6 +27,7 @@ import org.terasology.math.geom.Vector3f;
 import org.terasology.math.geom.Vector3i;
 import org.terasology.world.BlockEntityRegistry;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -46,13 +47,18 @@ public class RelativeInventoryBindingCustomObject implements CustomObject, Inven
     }
 
     @Override
-    public String getType() {
-        return "INVENTORY_BINDING";
+    public Collection<String> getType() {
+        return Collections.singleton("INVENTORY_BINDING");
     }
 
     @Override
     public boolean isInput() {
         return input;
+    }
+
+    @Override
+    public int sizeOf() {
+        return 4;
     }
 
     @Override
