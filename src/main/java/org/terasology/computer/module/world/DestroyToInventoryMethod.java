@@ -35,12 +35,14 @@ import org.terasology.world.block.BlockManager;
 import java.util.Map;
 
 public class DestroyToInventoryMethod implements ModuleMethodExecutable<Object> {
+    private final String methodName;
     private WorldProvider worldProvider;
     private BlockEntityRegistry blockEntityRegistry;
 
-    public DestroyToInventoryMethod(WorldProvider worldProvider, BlockEntityRegistry blockEntityRegistry) {
+    public DestroyToInventoryMethod(String methodName, WorldProvider worldProvider, BlockEntityRegistry blockEntityRegistry) {
         this.worldProvider = worldProvider;
         this.blockEntityRegistry = blockEntityRegistry;
+        this.methodName = methodName;
     }
 
     @Override
@@ -60,10 +62,10 @@ public class DestroyToInventoryMethod implements ModuleMethodExecutable<Object> 
 
     @Override
     public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters, Object onFunctionStartResult) throws ExecutionException {
-        Direction direction = FunctionParamValidationUtil.validateDirectionParameter(line, parameters, "direction", "destroyBlockToInventory");
+        Direction direction = FunctionParamValidationUtil.validateDirectionParameter(line, parameters, "direction", methodName);
 
         InventoryBinding.InventoryWithSlots inventory = FunctionParamValidationUtil.validateInventoryBinding(line, computer, parameters,
-                "inventoryBinding", "destroyBlockToInventory", true);
+                "inventoryBinding", methodName, true);
 
         Vector3f computerLocation = computer.getComputerLocation();
         Vector3i directionVector = direction.getVector3i();

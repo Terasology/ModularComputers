@@ -62,21 +62,21 @@ public class InventoryComputerModule implements ComputerModule {
     @Override
     public ModuleMethodExecutable getFunctionByName(String name) {
         if (name.equals("getInputInventoryBinding"))
-            return new InventoryBindingMethod(blockEntityRegistry, true);
+            return new InventoryBindingMethod("getInputInventoryBinding", blockEntityRegistry, true);
         if (name.equals("getOutputInventoryBinding"))
-            return new InventoryBindingMethod(blockEntityRegistry, false);
+            return new InventoryBindingMethod("getOutputInventoryBinding", blockEntityRegistry, false);
         if (name.equals("getInventorySlotCount"))
-            return new InventorySlotCountMethod();
+            return new InventorySlotCountMethod("getInventorySlotCount");
         if (name.equals("getItemCount"))
-            return new ItemCountMethod();
+            return new ItemCountMethod("getItemCount");
         if (name.equals("getItemName"))
-            return new ItemNameMethod();
+            return new ItemNameMethod("getItemName");
         if (name.equals("getInventoryAndChangeCondition"))
-            return new InventoryAndChangeCondition(inventoryModuleConditionsRegister);
+            return new InventoryAndChangeConditionMethod("getInventoryAndChangeCondition", inventoryModuleConditionsRegister);
         if (name.equals("itemMove"))
-            return new ItemMoveMethod(inventoryManager);
+            return new ItemMoveMethod("itemMove", inventoryManager);
         if (name.equals("dump"))
-            return new DumpMethod(inventoryManager);
+            return new DumpMethod("dump", inventoryManager);
         return null;
     }
 }

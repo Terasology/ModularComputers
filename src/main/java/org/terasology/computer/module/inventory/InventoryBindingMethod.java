@@ -26,12 +26,14 @@ import org.terasology.world.BlockEntityRegistry;
 import java.util.Map;
 
 public class InventoryBindingMethod implements ModuleMethodExecutable<Object> {
+    private final String methodName;
     private BlockEntityRegistry blockEntityRegistry;
     private boolean input;
 
-    public InventoryBindingMethod(BlockEntityRegistry blockEntityRegistry, boolean input) {
+    public InventoryBindingMethod(String methodName, BlockEntityRegistry blockEntityRegistry, boolean input) {
         this.blockEntityRegistry = blockEntityRegistry;
         this.input = input;
+        this.methodName = methodName;
     }
 
     @Override
@@ -47,7 +49,7 @@ public class InventoryBindingMethod implements ModuleMethodExecutable<Object> {
     @Override
     public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters, Object onFunctionStartResult) throws ExecutionException {
         Direction direction = FunctionParamValidationUtil.validateDirectionParameter(line, parameters,
-                "direction", "getInventoryBinding");
+                "direction", methodName);
 
         return new RelativeInventoryBindingCustomObject(blockEntityRegistry, direction, input);
     }

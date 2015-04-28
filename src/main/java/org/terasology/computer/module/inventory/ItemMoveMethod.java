@@ -26,10 +26,12 @@ import org.terasology.logic.inventory.InventoryUtils;
 import java.util.Map;
 
 public class ItemMoveMethod implements ModuleMethodExecutable<Object> {
+    private final String methodName;
     private InventoryManager inventoryManager;
 
-    public ItemMoveMethod(InventoryManager inventoryManager) {
+    public ItemMoveMethod(String methodName, InventoryManager inventoryManager) {
         this.inventoryManager = inventoryManager;
+        this.methodName = methodName;
     }
 
     @Override
@@ -45,11 +47,11 @@ public class ItemMoveMethod implements ModuleMethodExecutable<Object> {
     @Override
     public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters, Object onFunctionStartResult) throws ExecutionException {
         InventoryBinding.InventoryWithSlots inventoryFrom = FunctionParamValidationUtil.validateInventoryBinding(line, computer,
-                parameters, "inventoryBindingFrom", "itemMove", false);
+                parameters, "inventoryBindingFrom", methodName, false);
         InventoryBinding.InventoryWithSlots inventoryTo = FunctionParamValidationUtil.validateInventoryBinding(line, computer,
-                parameters, "inventoryBindingTo", "itemMove", true);
+                parameters, "inventoryBindingTo", methodName, true);
 
-        int slotNo = FunctionParamValidationUtil.validateSlotNo(line, parameters, inventoryFrom, "slot", "itemMove");
+        int slotNo = FunctionParamValidationUtil.validateSlotNo(line, parameters, inventoryFrom, "slot", methodName);
 
         int itemCountBefore = InventoryModuleUtils.getItemCount(InventoryUtils.getItemAt(inventoryFrom.inventory, inventoryFrom.slots.get(slotNo)));
 

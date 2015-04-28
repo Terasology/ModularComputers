@@ -28,11 +28,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class InventoryAndChangeCondition implements ModuleMethodExecutable<Object> {
+public class InventoryAndChangeConditionMethod implements ModuleMethodExecutable<Object> {
+    private final String methodName;
     private InventoryModuleConditionsRegister inventoryModuleConditionsRegister;
 
-    public InventoryAndChangeCondition(InventoryModuleConditionsRegister inventoryModuleConditionsRegister) {
+    public InventoryAndChangeConditionMethod(String methodName, InventoryModuleConditionsRegister inventoryModuleConditionsRegister) {
         this.inventoryModuleConditionsRegister = inventoryModuleConditionsRegister;
+        this.methodName = methodName;
     }
 
     @Override
@@ -48,7 +50,7 @@ public class InventoryAndChangeCondition implements ModuleMethodExecutable<Objec
     @Override
     public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters, Object onFunctionStartResult) throws ExecutionException {
         InventoryBinding.InventoryWithSlots inventory = FunctionParamValidationUtil.validateInventoryBinding(line, computer,
-                parameters, "inventoryBinding", "dump", null);
+                parameters, "inventoryBinding", methodName, null);
 
         Map<String, Object> result = new HashMap<>();
 

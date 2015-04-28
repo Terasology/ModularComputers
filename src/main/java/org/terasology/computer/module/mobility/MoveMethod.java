@@ -32,11 +32,13 @@ import java.util.Map;
 public class MoveMethod implements ModuleMethodExecutable<Boolean> {
     private static final Logger logger = LoggerFactory.getLogger(MoveMethod.class);
     private static final int MOVE_TIME = 500;
+    private final String methodName;
 
     private BlockMoveManager blockMoveManager;
 
-    public MoveMethod(BlockMoveManager blockMoveManager) {
+    public MoveMethod(String methodName, BlockMoveManager blockMoveManager) {
         this.blockMoveManager = blockMoveManager;
+        this.methodName = methodName;
     }
 
     @Override
@@ -57,7 +59,7 @@ public class MoveMethod implements ModuleMethodExecutable<Boolean> {
     @Override
     public Boolean onFunctionStart(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
 
-        Direction direction = FunctionParamValidationUtil.validateDirectionParameter(line, parameters, "direction", "move");
+        Direction direction = FunctionParamValidationUtil.validateDirectionParameter(line, parameters, "direction", methodName);
 
         Vector3f computerLocation = computer.getComputerLocation();
 

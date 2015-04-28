@@ -34,12 +34,14 @@ import org.terasology.world.block.BlockManager;
 import java.util.Map;
 
 public class DestroyMethod implements ModuleMethodExecutable<Object> {
+    private final String methodName;
     private WorldProvider worldProvider;
     private BlockEntityRegistry blockEntityRegistry;
 
-    public DestroyMethod(WorldProvider worldProvider, BlockEntityRegistry blockEntityRegistry) {
+    public DestroyMethod(String methodName, WorldProvider worldProvider, BlockEntityRegistry blockEntityRegistry) {
         this.worldProvider = worldProvider;
         this.blockEntityRegistry = blockEntityRegistry;
+        this.methodName = methodName;
     }
 
     @Override
@@ -59,7 +61,7 @@ public class DestroyMethod implements ModuleMethodExecutable<Object> {
 
     @Override
     public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters, Object onFunctionStartResult) throws ExecutionException {
-        Direction direction = FunctionParamValidationUtil.validateDirectionParameter(line, parameters, "direction", "destroyBlock");
+        Direction direction = FunctionParamValidationUtil.validateDirectionParameter(line, parameters, "direction", methodName);
 
         Vector3f computerLocation = computer.getComputerLocation();
         Vector3i directionVector = direction.getVector3i();

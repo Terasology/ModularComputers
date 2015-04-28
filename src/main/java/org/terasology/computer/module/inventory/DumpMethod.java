@@ -25,10 +25,12 @@ import org.terasology.logic.inventory.InventoryManager;
 import java.util.Map;
 
 public class DumpMethod implements ModuleMethodExecutable<Object> {
+    private final String methodName;
     private InventoryManager inventoryManager;
 
-    public DumpMethod(InventoryManager inventoryManager) {
+    public DumpMethod(String methodName, InventoryManager inventoryManager) {
         this.inventoryManager = inventoryManager;
+        this.methodName = methodName;
     }
 
     @Override
@@ -44,9 +46,9 @@ public class DumpMethod implements ModuleMethodExecutable<Object> {
     @Override
     public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters, Object onFunctionStartResult) throws ExecutionException {
         InventoryBinding.InventoryWithSlots inventoryFrom = FunctionParamValidationUtil.validateInventoryBinding(line, computer,
-                parameters, "inventoryBindingFrom", "dump", false);
+                parameters, "inventoryBindingFrom", methodName, false);
         InventoryBinding.InventoryWithSlots inventoryTo = FunctionParamValidationUtil.validateInventoryBinding(line, computer,
-                parameters, "inventoryBindingTo", "dump", true);
+                parameters, "inventoryBindingTo", methodName, true);
 
         for (int slotNo : inventoryFrom.slots) {
             inventoryManager.moveItemToSlots(computer.getComputerEntity(), inventoryFrom.inventory, slotNo, inventoryTo.inventory, inventoryTo.slots);

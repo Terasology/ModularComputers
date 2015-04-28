@@ -61,11 +61,11 @@ public class WorldComputerModule implements ComputerModule {
     @Override
     public ModuleMethodExecutable getFunctionByName(String name) {
         if (name.equals("destroyBlock")) {
-            return new DestroyMethod(worldProvider, blockEntityRegistry);
+            return new DestroyMethod("destroyBlock", worldProvider, blockEntityRegistry);
         } else if (name.equals("destroyBlockToInventory")) {
-            return new DestroyToInventoryMethod(worldProvider, blockEntityRegistry);
+            return new DestroyToInventoryMethod("destroyBlockToInventory", worldProvider, blockEntityRegistry);
         } else if (name.equals("placeBlock")) {
-            return new PlaceBlockMethod(worldProvider, blockEntityRegistry, inventoryManager);
+            return new PlaceBlockMethod("placeBlock", worldProvider, blockEntityRegistry, inventoryManager);
         }
         return null;
     }

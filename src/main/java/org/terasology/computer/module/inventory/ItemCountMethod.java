@@ -26,6 +26,13 @@ import org.terasology.logic.inventory.InventoryUtils;
 import java.util.Map;
 
 public class ItemCountMethod implements ModuleMethodExecutable<Object> {
+
+    private final String methodName;
+
+    public ItemCountMethod(String methodName) {
+        this.methodName = methodName;
+    }
+
     @Override
     public int getCpuCycleDuration() {
         return 50;
@@ -39,9 +46,9 @@ public class ItemCountMethod implements ModuleMethodExecutable<Object> {
     @Override
     public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters, Object onFunctionStartResult) throws ExecutionException {
         InventoryBinding.InventoryWithSlots inventory = FunctionParamValidationUtil.validateInventoryBinding(line, computer,
-                parameters, "inventoryBinding", "getItemCount", null);
+                parameters, "inventoryBinding", methodName, null);
 
-        int slotNo = FunctionParamValidationUtil.validateSlotNo(line, parameters, inventory, "slot", "getItemCount");
+        int slotNo = FunctionParamValidationUtil.validateSlotNo(line, parameters, inventory, "slot", methodName);
 
         EntityRef itemEntity = InventoryUtils.getItemAt(inventory.inventory, inventory.slots.get(slotNo));
         return InventoryModuleUtils.getItemCount(itemEntity);

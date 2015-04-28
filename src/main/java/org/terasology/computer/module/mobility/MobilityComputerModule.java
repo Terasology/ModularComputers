@@ -56,7 +56,7 @@ public class MobilityComputerModule implements ComputerModule {
     @Override
     public ModuleMethodExecutable getFunctionByName(String name) {
         if (name.equals("move")) {
-            return new MoveMethod(blockMoveManager);
+            return new MoveMethod("move", blockMoveManager);
         }
         return null;
     }

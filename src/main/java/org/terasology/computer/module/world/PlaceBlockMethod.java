@@ -39,14 +39,16 @@ import org.terasology.world.block.items.OnBlockItemPlaced;
 import java.util.Map;
 
 public class PlaceBlockMethod implements ModuleMethodExecutable<Object> {
+    private final String methodName;
     private WorldProvider worldProvider;
     private BlockEntityRegistry blockEntityRegistry;
     private InventoryManager inventoryManager;
 
-    public PlaceBlockMethod(WorldProvider worldProvider, BlockEntityRegistry blockEntityRegistry, InventoryManager inventoryManager) {
+    public PlaceBlockMethod(String methodName, WorldProvider worldProvider, BlockEntityRegistry blockEntityRegistry, InventoryManager inventoryManager) {
         this.worldProvider = worldProvider;
         this.blockEntityRegistry = blockEntityRegistry;
         this.inventoryManager = inventoryManager;
+        this.methodName = methodName;
     }
 
     @Override
@@ -66,12 +68,12 @@ public class PlaceBlockMethod implements ModuleMethodExecutable<Object> {
 
     @Override
     public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters, Object onFunctionStartResult) throws ExecutionException {
-        Direction direction = FunctionParamValidationUtil.validateDirectionParameter(line, parameters, "direction", "placeBlock");
+        Direction direction = FunctionParamValidationUtil.validateDirectionParameter(line, parameters, "direction", methodName);
 
         InventoryBinding.InventoryWithSlots inventory = FunctionParamValidationUtil.validateInventoryBinding(line, computer, parameters,
-                "inventoryBinding", "placeBlock", false);
+                "inventoryBinding", methodName, false);
 
-        int slotNo = FunctionParamValidationUtil.validateSlotNo(line, parameters, inventory, "slot", "itemMove");
+        int slotNo = FunctionParamValidationUtil.validateSlotNo(line, parameters, inventory, "slot", methodName);
 
         Vector3f computerLocation = computer.getComputerLocation();
         Vector3i directionVector = direction.getVector3i();
