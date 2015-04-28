@@ -15,6 +15,7 @@
  */
 package org.terasology.computer.ui;
 
+import org.terasology.browser.data.basic.HTMLLikeParser;
 import org.terasology.browser.ui.BrowserHyperlinkListener;
 import org.terasology.browser.ui.BrowserWidget;
 import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
@@ -72,7 +73,7 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
                             navigateTo(hyperlink.substring(9));
                         } else if (hyperlink.startsWith("saveAs:")) {
                             String[] split = hyperlink.substring(7).split(":", 2);
-                            saveAs(split[0], split[1]);
+                            saveAs(HTMLLikeParser.unencodeHTMLLike(split[0]), HTMLLikeParser.unencodeHTMLLike(split[1]));
                         }
                     }
                 });

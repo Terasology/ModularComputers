@@ -46,6 +46,31 @@ public class HTMLLikeParser {
         return result.toString();
     }
 
+    public static String unencodeHTMLLike(String text) {
+        StringBuilder result = new StringBuilder();
+        char[] chars = text.toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            char c = chars[i];
+            if (c == '&') {
+                if (chars[i + 1] == 'a' && chars[i + 2] == 'm' && chars[i + 3] == 'p' && chars[i + 4] == ';') {
+                    result.append('&');
+                    i += 4;
+                } else if (chars[i + 1] == 'l' && chars[i + 2] == 't' && chars[i + 3] == ';') {
+                    result.append('<');
+                    i += 3;
+                } else if (chars[i + 1] == 'g' && chars[i + 3] == 't' && chars[i + 3] == ';') {
+                    result.append('>');
+                    i += 3;
+                } else {
+                    throw new IllegalArgumentException("Invalid entity definition.");
+                }
+            } else {
+                result.append(c);
+            }
+        }
+        return result.toString();
+    }
+
     // TODO: Quick and dirty - add something more solid and replaces uses of this one with it
     public static Collection<ParagraphData> parseHTMLLike(ParagraphRenderStyle paragraphRenderStyle, String text) {
         if (text == null) {
@@ -77,43 +102,43 @@ public class HTMLLikeParser {
                     if (nextChar == '/') {
                         char id = (char) reader.read();
                         if (id == 'f') {
-                            if (sb.length()>0) {
+                            if (sb.length() > 0) {
                                 hyperlinkParagraphData.append(sb.toString(), new DefaultTextRenderStyle(font, color, hyperlink), hyperlink);
                                 sb.setLength(0);
                             }
                             font = null;
                         } else if (id == 'c') {
-                            if (sb.length()>0) {
+                            if (sb.length() > 0) {
                                 hyperlinkParagraphData.append(sb.toString(), new DefaultTextRenderStyle(font, color, hyperlink), hyperlink);
                                 sb.setLength(0);
                             }
                             color = null;
                         } else if (id == 'h') {
-                            if (sb.length()>0) {
+                            if (sb.length() > 0) {
                                 hyperlinkParagraphData.append(sb.toString(), new DefaultTextRenderStyle(font, color, hyperlink), hyperlink);
                                 sb.setLength(0);
                             }
                             hyperlink = null;
                         } else {
-                            throw new IllegalArgumentException("Unable to parse text - "+text);
+                            throw new IllegalArgumentException("Unable to parse text - " + text);
                         }
                         reader.read();
-                    } else if (nextChar=='f') {
-                        if (sb.length()>0) {
+                    } else if (nextChar == 'f') {
+                        if (sb.length() > 0) {
                             hyperlinkParagraphData.append(sb.toString(), new DefaultTextRenderStyle(font, color, hyperlink), hyperlink);
                             sb.setLength(0);
                         }
                         reader.read();
                         font = Assets.getFont(readUntilCharacter(reader, '>'));
                     } else if (nextChar == 'c') {
-                        if (sb.length()>0) {
+                        if (sb.length() > 0) {
                             hyperlinkParagraphData.append(sb.toString(), new DefaultTextRenderStyle(font, color, hyperlink), hyperlink);
                             sb.setLength(0);
                         }
                         reader.read();
                         color = new Color(Integer.parseInt(readUntilCharacter(reader, '>'), 16));
                     } else if (nextChar == 'h') {
-                        if (sb.length()>0) {
+                        if (sb.length() > 0) {
                             hyperlinkParagraphData.append(sb.toString(), new DefaultTextRenderStyle(font, color, hyperlink), hyperlink);
                             sb.setLength(0);
                         }
@@ -132,14 +157,14 @@ public class HTMLLikeParser {
                     } else if (escape.equals("amp")) {
                         sb.append('&');
                     } else {
-                        throw new IllegalArgumentException("Unknown escape sequence - "+escape);
+                        throw new IllegalArgumentException("Unknown escape sequence - " + escape);
                     }
                 } else {
                     sb.append(c);
                 }
             }
 
-            if (sb.length()>0) {
+            if (sb.length() > 0) {
                 hyperlinkParagraphData.append(sb.toString(), new DefaultTextRenderStyle(font, color, hyperlink), hyperlink);
             }
             result.add(hyperlinkParagraphData);
