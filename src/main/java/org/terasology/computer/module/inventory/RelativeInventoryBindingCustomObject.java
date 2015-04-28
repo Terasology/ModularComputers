@@ -91,9 +91,8 @@ public class RelativeInventoryBindingCustomObject implements CustomObject, Inven
         } else {
             slots = new LinkedList<>();
 
-            Iterator<Integer> iterator = integerRange.createIterator();
-            while (iterator.hasNext()) {
-                slots.add(iterator.next());
+            for (int slot : integerRange) {
+                slots.add(slot);
             }
         }
         return slots;
