@@ -29,7 +29,7 @@ public class FunctionParamValidationUtil {
     private FunctionParamValidationUtil() {
     }
 
-    private static Variable validateParameter(int line, Map<String, Variable> parameters,
+    public static Variable validateParameter(int line, Map<String, Variable> parameters,
                                              String parameterName, String functionName, Variable.Type expectedType) throws ExecutionException {
         Variable var = parameters.get(parameterName);
         if (var.getType() != expectedType)
