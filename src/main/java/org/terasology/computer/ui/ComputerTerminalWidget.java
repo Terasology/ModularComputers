@@ -26,6 +26,7 @@ import org.terasology.computer.event.server.GetProgramTextEvent;
 import org.terasology.computer.event.server.ListProgramsEvent;
 import org.terasology.computer.event.server.RenameProgramEvent;
 import org.terasology.computer.event.server.SaveProgramEvent;
+import org.terasology.computer.event.server.StopProgramEvent;
 import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.input.Keyboard;
@@ -299,6 +300,13 @@ public class ComputerTerminalWidget extends CoreWidget {
                 } else {
                     clientEntity.send(new RenameProgramEvent(computerId, commandParts[1], commandParts[2]));
                 }
+            } else if (commandParts[0].equals("stop")) {
+                if (commandParts.length > 1) {
+                    playerCommandConsoleGui.appendToConsole("Usage:");
+                    playerCommandConsoleGui.appendToConsole("stop - stops currently running program");
+                } else {
+                    clientEntity.send(new StopProgramEvent(computerId));
+                }
             } else {
                 if (commandParts[0].length() > 0)
                     playerCommandConsoleGui.appendToConsole("Unknown command - " + commandParts[0]);
@@ -324,6 +332,7 @@ public class ComputerTerminalWidget extends CoreWidget {
         playerCommandConsoleGui.appendToConsole("execute [programName] - executes a program");
         playerCommandConsoleGui.appendToConsole("list - lists all programs on that computer");
         playerCommandConsoleGui.appendToConsole("rename [programNameOld] [programNameNew] - renames a program from old to new name");
+        playerCommandConsoleGui.appendToConsole("stop - stops currently running program");
         playerCommandConsoleGui.appendToConsole("exit - exits this console");
     }
 

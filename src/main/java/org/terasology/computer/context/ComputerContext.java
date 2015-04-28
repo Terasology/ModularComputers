@@ -42,7 +42,6 @@ import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.logic.inventory.InventoryComponent;
 import org.terasology.logic.location.LocationComponent;
 import org.terasology.math.geom.Vector3f;
-import org.terasology.math.geom.Vector3i;
 import org.terasology.world.block.BlockComponent;
 
 import java.io.IOException;
@@ -75,7 +74,7 @@ public class ComputerContext {
 
     private ComputerConsole console = new ComputerConsole();
 
-    private ExecutionContext context;
+    private ExecutionContext executionContext;
     private AwaitingCondition awaitingCondition;
 
     private Map<EntityRef, ComputerConsoleListener> consoleListenerMap = new HashMap<>();
@@ -101,7 +100,7 @@ public class ComputerContext {
     }
 
     public void executeContext(float delta) {
-        if (context != null) {
+        if (executionContext != null) {
             long executionTime = System.currentTimeMillis();
             logger.debug("Executing program - minTicksRemaining: " + minimumTimeRemaining + ", remainingWaitingCpuCycles: " + remainingWaitingCpuCycles);
             if (minimumTimeRemaining > 0) {
@@ -122,7 +121,12 @@ public class ComputerContext {
     }
 
     public boolean isRunningProgram() {
-        return context != null;
+        return executionContext != null;
+    }
+
+    public void stopProgram() {
+        executionContext = null;
+        awaitingCondition = null;
     }
 
     public void startProgram(String name, String programText, String[] params, ComputerLanguageContextInitializer computerLanguageContextInitializer, ExecutionCostConfiguration configuration) throws IllegalSyntaxException {
@@ -162,7 +166,10 @@ public class ComputerContext {
 
             executionContext.stackExecutionGroup(callContext, scriptExecutable.createExecution(callContext));
 
-            context = executionContext;
+            this.executionContext = executionContext;
+            this.awaitingCondition = null;
+            this.remainingWaitingCpuCycles = 0;
+            this.minimumTimeRemaining = 0;
 
             logger.debug("started program: " + name);
         } catch (IOException exp) {
@@ -236,7 +243,7 @@ public class ComputerContext {
     }
 
     private void executeNextProgramStepUntilRunsOutOfCycles(int freeCycles) {
-        while (!context.isFinished()) {
+        while (!executionContext.isFinished()) {
             logger.debug("Executing next step");
             try {
                 if (awaitingCondition != null) {
@@ -247,12 +254,12 @@ public class ComputerContext {
                     }
                 }
 
-                ExecutionProgress executionProgress = context.executeNext();
+                ExecutionProgress executionProgress = executionContext.executeNext();
 
-                if (context.getStackTraceSize() > stackSize)
+                if (executionContext.getStackTraceSize() > stackSize)
                     throw new ExecutionException(-1, "StackOverflow");
 
-                if (((++memoryConsumptionCheckCounter) % MEMORY_CHECK_INTERVAL == 0) && context.getMemoryUsage() > memory)
+                if (((++memoryConsumptionCheckCounter) % MEMORY_CHECK_INTERVAL == 0) && executionContext.getMemoryUsage() > memory)
                     throw new ExecutionException(-1, "OutOfMemory");
 
                 freeCycles -= executionProgress.getCost();
@@ -270,12 +277,12 @@ public class ComputerContext {
                     console.appendString("ExecutionException[unknown line] - " + exp.getMessage());
                 else
                     console.appendString("ExecutionException[line " + exp.getLine() + "] - " + exp.getMessage());
-                context = null;
+                executionContext = null;
                 break;
             }
         }
-        if (context != null && context.isFinished()) {
-            context = null;
+        if (executionContext != null && executionContext.isFinished()) {
+            executionContext = null;
         }
     }
 

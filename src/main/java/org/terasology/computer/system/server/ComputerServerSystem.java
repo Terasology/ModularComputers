@@ -35,6 +35,7 @@ import org.terasology.computer.event.server.GetProgramTextEvent;
 import org.terasology.computer.event.server.ListProgramsEvent;
 import org.terasology.computer.event.server.RenameProgramEvent;
 import org.terasology.computer.event.server.SaveProgramEvent;
+import org.terasology.computer.event.server.StopProgramEvent;
 import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
 import org.terasology.computer.system.common.ComputerModuleRegistry;
 import org.terasology.computer.system.server.lang.ComputerModule;
@@ -306,6 +307,14 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
             ComputerComponent computer = computerEntity.getComponent(ComputerComponent.class);
             TreeSet<String> programNames = new TreeSet<>(computer.programs.keySet());
             client.send(new ProgramListReceivedEvent(computer.computerId, programNames));
+        }
+    }
+
+    @ReceiveEvent
+    public void stopProgramRequested(StopProgramEvent event, EntityRef client) {
+        ComputerContext computerContext = computerContextMap.get(event.getComputerId());
+        if (computerContext != null && validateComputerToCharacterDistance(client, computerContext)) {
+            computerContext.stopProgram();
         }
     }
 
