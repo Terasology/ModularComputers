@@ -28,6 +28,7 @@ import org.terasology.computer.event.client.ProgramExecutionResultEvent;
 import org.terasology.computer.event.client.ProgramListReceivedEvent;
 import org.terasology.computer.event.client.ProgramTextReceivedEvent;
 import org.terasology.computer.event.server.ConsoleListeningRegistrationEvent;
+import org.terasology.computer.event.server.CopyProgramEvent;
 import org.terasology.computer.event.server.DeleteProgramEvent;
 import org.terasology.computer.event.server.ExecuteProgramEvent;
 import org.terasology.computer.event.server.GetProgramTextEvent;
@@ -252,6 +253,34 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
             EntityRef computerEntity = computerContext.getEntity();
             ComputerComponent computer = computerEntity.getComponent(ComputerComponent.class);
             computer.programs.remove(event.getProgramName());
+            computerEntity.saveComponent(computer);
+        }
+    }
+
+    @ReceiveEvent
+    public void copyProgramRequested(CopyProgramEvent event, EntityRef client) {
+        ComputerContext computerContext = computerContextMap.get(event.getComputerId());
+        if (computerContext != null && validateComputerToCharacterDistance(client, computerContext)) {
+            EntityRef computerEntity = computerContext.getEntity();
+            ComputerComponent computer = computerEntity.getComponent(ComputerComponent.class);
+            String programText = computer.programs.get(event.getProgramNameSource());
+            if (programText != null) {
+                computer.programs.put(event.getProgramNameDestination(), programText);
+            }
+            computerEntity.saveComponent(computer);
+        }
+    }
+
+    @ReceiveEvent
+    public void renameProgramRequested(CopyProgramEvent event, EntityRef client) {
+        ComputerContext computerContext = computerContextMap.get(event.getComputerId());
+        if (computerContext != null && validateComputerToCharacterDistance(client, computerContext)) {
+            EntityRef computerEntity = computerContext.getEntity();
+            ComputerComponent computer = computerEntity.getComponent(ComputerComponent.class);
+            String programText = computer.programs.remove(event.getProgramNameSource());
+            if (programText != null) {
+                computer.programs.put(event.getProgramNameDestination(), programText);
+            }
             computerEntity.saveComponent(computer);
         }
     }

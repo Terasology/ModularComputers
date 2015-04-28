@@ -19,10 +19,12 @@ import org.codehaus.plexus.util.StringUtils;
 import org.terasology.asset.Assets;
 import org.terasology.computer.context.ComputerConsole;
 import org.terasology.computer.event.server.ConsoleListeningRegistrationEvent;
+import org.terasology.computer.event.server.CopyProgramEvent;
 import org.terasology.computer.event.server.DeleteProgramEvent;
 import org.terasology.computer.event.server.ExecuteProgramEvent;
 import org.terasology.computer.event.server.GetProgramTextEvent;
 import org.terasology.computer.event.server.ListProgramsEvent;
+import org.terasology.computer.event.server.RenameProgramEvent;
 import org.terasology.computer.event.server.SaveProgramEvent;
 import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
 import org.terasology.entitySystem.entity.EntityRef;
@@ -279,6 +281,24 @@ public class ComputerTerminalWidget extends CoreWidget {
                 else {
                     clientEntity.send(new DeleteProgramEvent(computerId, commandParts[1]));
                 }
+            } else if (commandParts[0].equals("copy")) {
+                if (commandParts.length != 3) {
+                    playerCommandConsoleGui.appendToConsole("Usage:");
+                    playerCommandConsoleGui.appendToConsole("copy [programNameSource] [programNameDestination] - copies a program from source to destination");
+                } else if (!isValidProgramName(commandParts[1]) || !isValidProgramName(commandParts[2])) {
+                    playerCommandConsoleGui.appendToConsole("Invalid program name - only letters and digits allowed and a maximum length of 10");
+                } else {
+                    clientEntity.send(new CopyProgramEvent(computerId, commandParts[1], commandParts[2]));
+                }
+            } else if (commandParts[0].equals("rename")) {
+                if (commandParts.length != 3) {
+                    playerCommandConsoleGui.appendToConsole("Usage:");
+                    playerCommandConsoleGui.appendToConsole("rename [programNameOld] [programNameNew] - renames a program from old to new name");
+                } else if (!isValidProgramName(commandParts[1]) || !isValidProgramName(commandParts[2])) {
+                    playerCommandConsoleGui.appendToConsole("Invalid program name - only letters and digits allowed and a maximum length of 10");
+                } else {
+                    clientEntity.send(new RenameProgramEvent(computerId, commandParts[1], commandParts[2]));
+                }
             } else {
                 if (commandParts[0].length() > 0)
                     playerCommandConsoleGui.appendToConsole("Unknown command - " + commandParts[0]);
@@ -298,10 +318,12 @@ public class ComputerTerminalWidget extends CoreWidget {
 
     private void printHelp() {
         playerCommandConsoleGui.appendToConsole("help - prints this text");
+        playerCommandConsoleGui.appendToConsole("copy [programNameSource] [programNameDestination] - copies a program from source to destination");
+        playerCommandConsoleGui.appendToConsole("delete [programName] - deletes a program");
         playerCommandConsoleGui.appendToConsole("edit [programName] - edits a program in an editor");
         playerCommandConsoleGui.appendToConsole("execute [programName] - executes a program");
         playerCommandConsoleGui.appendToConsole("list - lists all programs on that computer");
-        playerCommandConsoleGui.appendToConsole("delete [programName] - deletes a program");
+        playerCommandConsoleGui.appendToConsole("rename [programNameOld] [programNameNew] - renames a program from old to new name");
         playerCommandConsoleGui.appendToConsole("exit - exits this console");
     }
 
