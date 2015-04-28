@@ -55,7 +55,7 @@ public class PlaceBlockMethod implements ModuleMethodExecutable<Object> {
     }
 
     @Override
-    public int getMinimumExecutionTime() {
+    public int getMinimumExecutionTime(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
         return 250;
     }
 

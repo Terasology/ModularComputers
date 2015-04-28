@@ -45,7 +45,7 @@ public class MoveMethod implements ModuleMethodExecutable<Boolean> {
     }
 
     @Override
-    public int getMinimumExecutionTime() {
+    public int getMinimumExecutionTime(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
         return MOVE_TIME;
     }
 

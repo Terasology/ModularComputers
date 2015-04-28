@@ -55,7 +55,13 @@ public class ModuleFunctionAdapter implements FunctionExecutable {
     public Execution createExecution(final int line, ExecutionContext executionContext, CallContext callContext) {
         final SimpleParameterExecution execution = new SimpleParameterExecution(line);
 
-        return new DelayedExecution(_moduleFunction.getCpuCycleDuration(), _moduleFunction.getMinimumExecutionTime(), execution) {
+        int minimumExecutionTime;
+        try {
+            minimumExecutionTime = _moduleFunction.getMinimumExecutionTime(line, getComputerCallback(executionContext), getVariableMap(executionContext));
+        } catch (ExecutionException e) {
+            minimumExecutionTime = 0;
+        }
+        return new DelayedExecution(_moduleFunction.getCpuCycleDuration(), minimumExecutionTime, execution) {
             @Override
             protected void onExecutionStart(ExecutionContext executionContext) throws ExecutionException {
                 Object result = _moduleFunction.onFunctionStart(line, getComputerCallback(executionContext), getVariableMap(executionContext));
@@ -64,12 +70,19 @@ public class ModuleFunctionAdapter implements FunctionExecutable {
         };
     }
 
-    private Map<String, Variable> getVariableMap(ExecutionContext context) throws ExecutionException {
+    private Map<String, Variable> getVariableMap(ExecutionContext context) {
         final String[] parameterNames = getParameterNames();
         Map<String, Variable> parameters = new HashMap<String, Variable>();
         final CallContext callContext = context.peekCallContext();
-        for (String parameterName : parameterNames)
-            parameters.put(parameterName, callContext.getVariableValue(parameterName));
+        for (String parameterName : parameterNames) {
+            Variable variableValue;
+            try {
+                variableValue = callContext.getVariableValue(parameterName);
+            } catch (ExecutionException exp) {
+                variableValue = new Variable(null);
+            }
+            parameters.put(parameterName, variableValue);
+        }
         return parameters;
     }
 

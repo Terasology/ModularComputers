@@ -36,8 +36,11 @@ public interface ModuleMethodExecutable<T> {
      * enough to steer it, however if a specific action should have a minimum duration, even on fastest computers, this
      * method is used. A good example would be a computer movement.
      * @return Time in ms of world time that this operation should take at the minimum (CPU cycles bound as well).
+     * @param line
+     * @param computer
+     * @param parameters
      */
-    public default int getMinimumExecutionTime() { return 0; }
+    public default int getMinimumExecutionTime(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException { return 0; }
 
     /**
      * Names of the parameters this method accepts. This parameter names are then passed to the onFunctionStart() and
