@@ -98,7 +98,7 @@ public class DocumentationBuilder {
                                 functionPageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, "None"));
                             } else {
                                 for (Map.Entry<String, String> parameterDescription : methodParameters.entrySet()) {
-                                    functionPageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, " * "+parameterDescription.getKey() + " - " + parameterDescription.getValue()));
+                                    functionPageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, " * " + parameterDescription.getKey() + " - " + parameterDescription.getValue()));
                                 }
                             }
 
@@ -238,14 +238,16 @@ public class DocumentationBuilder {
     public static Collection<ParagraphData> createExampleParagraphs(String description, String code) {
         List<ParagraphData> result = new LinkedList<>();
         result.addAll(paragraphWithSpaceBefore("Example:"));
-        result.addAll(HTMLLikeParser.parseHTMLLike(null, "<h saveAs:example:"+HTMLLikeParser.encodeHTMLLike(code)+">Save as example</h>"));
+        result.addAll(HTMLLikeParser.parseHTMLLike(null, "<h saveAs:example:" + HTMLLikeParser.encodeHTMLLike(code) + ">Save as example</h>"));
         result.addAll(
                 HTMLLikeParser.parseHTMLLike(null, description));
 
+        int maxCodeLineLength = 0;
         String[] lines = code.split("\n");
         StringBuilder codeEncoded = new StringBuilder();
         boolean first = true;
         for (String line : lines) {
+            maxCodeLineLength = Math.max(maxCodeLineLength, line.length());
             if (!first) {
                 codeEncoded.append("<l>");
             }
@@ -253,6 +255,7 @@ public class DocumentationBuilder {
             first = false;
         }
 
+        final int finalMaxCodeLineLength = maxCodeLineLength;
         result.addAll(
                 HTMLLikeParser.parseHTMLLike(
                         new ParagraphRenderStyle() {
@@ -303,10 +306,10 @@ public class DocumentationBuilder {
 
                             @Override
                             public Integer getParagraphMinimumWidth() {
-                                return 550;
+                                return finalMaxCodeLineLength * 10;
                             }
                         },
-                        "<f ModularComputers:november>"+codeEncoded.toString()+"</f>"));
+                        "<f ModularComputers:november>" + codeEncoded.toString() + "</f>"));
 
         return result;
     }
