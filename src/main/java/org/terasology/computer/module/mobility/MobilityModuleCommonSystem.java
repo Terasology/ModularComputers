@@ -15,13 +15,16 @@
  */
 package org.terasology.computer.module.mobility;
 
+import org.terasology.browser.data.ParagraphData;
 import org.terasology.computer.system.common.ComputerModuleRegistry;
+import org.terasology.computer.ui.documentation.DocumentationBuilder;
 import org.terasology.entitySystem.systems.BaseComponentSystem;
 import org.terasology.entitySystem.systems.RegisterMode;
 import org.terasology.entitySystem.systems.RegisterSystem;
 import org.terasology.mobileBlocks.server.BlockMoveManager;
 import org.terasology.registry.In;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -55,6 +58,13 @@ public class MobilityModuleCommonSystem extends BaseComponentSystem {
                 }},
                 new HashMap<String, String>() {{
                     put("move", "[Boolean] If the movement was successful.");
-                }}, null);
+                }},
+                new HashMap<String, Collection<ParagraphData>>() {{
+                    put("move", DocumentationBuilder.createExampleParagraphs(
+                            "This example makes the computer move up one block. Please make sure " +
+                                    "this computer has a module of Mobility type in any of its slots.",
+                            "var mobilityMod = computer.bindModuleOfType(\"" + MOBILITY_MODULE_TYPE + "\");\n" +
+                                    "mobilityMod.move(\"up\");"));
+                }});
     }
 }
