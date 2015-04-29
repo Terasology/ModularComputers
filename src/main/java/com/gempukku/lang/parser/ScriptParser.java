@@ -927,8 +927,10 @@ public class ScriptParser {
                         columnIncrement += close + 1;
                     } else {
                         String valueTrimmed = value.trim();
-                        int newColumn = columnIncrement + term.getColumn() + value.indexOf(valueTrimmed);
-                        appendProgramTerm(currentBlock, valueTrimmed, term.getLine(), newColumn);
+                        if (valueTrimmed.length()>0) {
+                            int newColumn = columnIncrement + term.getColumn() + value.indexOf(valueTrimmed);
+                            appendProgramTerm(currentBlock, valueTrimmed, term.getLine(), newColumn);
+                        }
                         value = "";
                     }
                 }
