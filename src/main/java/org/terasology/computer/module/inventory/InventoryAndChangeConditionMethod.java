@@ -52,26 +52,26 @@ public class InventoryAndChangeConditionMethod implements ModuleMethodExecutable
         InventoryBinding.InventoryWithSlots inventory = FunctionParamValidationUtil.validateInventoryBinding(line, computer,
                 parameters, "inventoryBinding", methodName, null);
 
-        Map<String, Object> result = new HashMap<>();
+        Map<String, Variable> result = new HashMap<>();
 
-        List<Map<String, Object>> inventoryResult = new ArrayList<>();
+        List<Variable> inventoryResult = new ArrayList<>();
 
         for (int slot : inventory.slots) {
             EntityRef item = InventoryUtils.getItemAt(inventory.inventory, slot);
-            Map<String, Object> itemMap = new HashMap<>();
+            Map<String, Variable> itemMap = new HashMap<>();
 
             int itemCount = InventoryModuleUtils.getItemCount(item);
             String itemName = InventoryModuleUtils.getItemName(item);
 
-            itemMap.put("name", itemName);
-            itemMap.put("count", itemCount);
+            itemMap.put("name", new Variable(itemName));
+            itemMap.put("count", new Variable(itemCount));
 
-            inventoryResult.add(itemMap);
+            inventoryResult.add(new Variable(itemMap));
         }
 
-        result.put("inventory", inventoryResult);
+        result.put("inventory", new Variable(inventoryResult));
 
-        result.put("condition", inventoryModuleConditionsRegister.registerInventoryChangeListener(inventory.inventory));
+        result.put("condition", new Variable(inventoryModuleConditionsRegister.registerInventoryChangeListener(inventory.inventory)));
 
         return result;
     }

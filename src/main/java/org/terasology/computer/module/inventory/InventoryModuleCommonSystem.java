@@ -124,12 +124,75 @@ public class InventoryModuleCommonSystem extends BaseComponentSystem {
                     put("itemMove", "[Number] Number of items that was successfully moved.");
                 }},
                 new HashMap<String, Collection<ParagraphData>>() {{
-                    put("dump", DocumentationBuilder.createExampleParagraphs(
-                            "To move all items from an inventory above the computer to inventory to the east of the computer, you could use the following script.",
+                    put("getInputInventoryBinding", DocumentationBuilder.createExampleParagraphs(
+                            "This example creates input inventory binding to an inventory above it and prints out the slot count for it. Please make sure " +
+                                    "this computer has a module of Inventory Manipulator type in any of its slots.",
                             "var invBind = computer.bindModuleOfType(\"" + COMPUTER_INVENTORY_MODULE_TYPE + "\");\n" +
-                                    "var topInv = invBind.getOutputInventoryBinding(\"top\");\n" +
+                                    "var topInv = invBind.getInputInventoryBinding(\"up\");\n" +
+                                    "console.append(\"Inventory above has \" + invBind.getInventorySlotCount(topInv) + \" number of slots available for input.\");"
+                    ));
+                    put("getOutputInventoryBinding", DocumentationBuilder.createExampleParagraphs(
+                            "This example creates output inventory binding to an inventory above it and prints out the slot count for it. Please make sure " +
+                                    "this computer has a module of Inventory Manipulator type in any of its slots.",
+                            "var invBind = computer.bindModuleOfType(\"" + COMPUTER_INVENTORY_MODULE_TYPE + "\");\n" +
+                                    "var topInv = invBind.getOutputInventoryBinding(\"up\");\n" +
+                                    "console.append(\"Inventory above has \" + invBind.getInventorySlotCount(topInv) + \" number of slots available for output.\");"
+                    ));
+                    put("getInventorySlotCount", DocumentationBuilder.createExampleParagraphs(
+                            "This example creates output inventory binding to an inventory above it and prints out the slot count for it. Please make sure " +
+                                    "this computer has a module of Inventory Manipulator type in any of its slots.",
+                            "var invBind = computer.bindModuleOfType(\"" + COMPUTER_INVENTORY_MODULE_TYPE + "\");\n" +
+                                    "var topInv = invBind.getOutputInventoryBinding(\"up\");\n" +
+                                    "console.append(\"Inventory above has \" + invBind.getInventorySlotCount(topInv) + \" number of slots available for output.\");"
+                    ));
+                    put("getItemCount", DocumentationBuilder.createExampleParagraphs(
+                            "This example creates output inventory binding to an inventory above it and prints out number of items in its first slot.  Please make sure " +
+                                    "this computer has a module of Inventory Manipulator type in any of its slots.",
+                            "var invBind = computer.bindModuleOfType(\"" + COMPUTER_INVENTORY_MODULE_TYPE + "\");\n" +
+                                    "var topInv = invBind.getOutputInventoryBinding(\"up\");\n" +
+                                    "console.append(\"Inventory above has \" + invBind.getItemCount(topInv, 0) + \" number of items in its first output slot.\");"
+                    ));
+                    put("getItemName", DocumentationBuilder.createExampleParagraphs(
+                            "This example creates output inventory binding to an inventory above it and prints out item name in its first slot.  Please make sure " +
+                                    "this computer has a module of Inventory Manipulator type in any of its slots.",
+                            "var invBind = computer.bindModuleOfType(\"" + COMPUTER_INVENTORY_MODULE_TYPE + "\");\n" +
+                                    "var topInv = invBind.getOutputInventoryBinding(\"up\");\n" +
+                                    "console.append(\"Inventory above has \" + invBind.getItemName(topInv, 0) + \" item in its first output slot.\");"
+                    ));
+                    put("itemMove", DocumentationBuilder.createExampleParagraphs(
+                            "This example moves item from the first slot of an inventory above the computer to inventory to the east of the computer.  Please make sure " +
+                                    "this computer has a module of Inventory Manipulator type in any of its slots.",
+                            "var invBind = computer.bindModuleOfType(\"" + COMPUTER_INVENTORY_MODULE_TYPE + "\");\n" +
+                                    "var topInv = invBind.getOutputInventoryBinding(\"up\");\n" +
+                                    "var eastInv = invBind.getInputInventoryBinding(\"east\");\n" +
+                                    "invBind.itemMove(topInv, eastInv, 0);"
+                    ));
+                    put("dump", DocumentationBuilder.createExampleParagraphs(
+                            "This example moves all items from an inventory above the computer to inventory to the east of the computer. Please make sure " +
+                                    "this computer has a module of Inventory Manipulator type in any of its slots.",
+                            "var invBind = computer.bindModuleOfType(\"" + COMPUTER_INVENTORY_MODULE_TYPE + "\");\n" +
+                                    "var topInv = invBind.getOutputInventoryBinding(\"up\");\n" +
                                     "var eastInv = invBind.getInputInventoryBinding(\"east\");\n" +
                                     "invBind.dump(topInv, eastInv);"));
+                    put("getInventoryAndChangeCondition", DocumentationBuilder.createExampleParagraphs(
+                            "This example prints out the contents of the output inventory above the computer to the console on each change of the inventory contents.  Please make sure " +
+                                    "this computer has a module of Inventory Manipulator type in any of its slots.",
+                            "var invBind = computer.bindModuleOfType(\"" + COMPUTER_INVENTORY_MODULE_TYPE + "\");\n" +
+                                    "var topInv = invBind.getOutputInventoryBinding(\"up\");\n" +
+                                    "while (true) {\n" +
+                                    "  var inventoryAndCondition = invBind.getInventoryAndChangeCondition(topInv);\n" +
+                                    "  var inventory = inventoryAndCondition[\"inventory\"];\n" +
+                                    "  var condition = inventoryAndCondition[\"condition\"];\n" +
+                                    "  var inventorySize = inventory.size();\n" +
+                                    "  for (var i=0; i<inventorySize; i++) {\n" +
+                                    "    var contents = inventory[i];\n" +
+                                    "    var name = contents[\"name\"];\n" +
+                                    "    var count = contents[\"count\"];\n" +
+                                    "    console.append(\"Slot \"+(i+1)+\" has \"+count+\" of \"+name);\n" +
+                                    "  }\n" +
+                                    "  os.waitFor(condition);\n" +
+                                    "}"
+                    ));
                 }});
     }
 
