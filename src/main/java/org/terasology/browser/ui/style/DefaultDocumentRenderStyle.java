@@ -87,6 +87,11 @@ public class DefaultDocumentRenderStyle implements DocumentRenderStyle {
     }
 
     @Override
+    public Integer getParagraphMinimumWidth() {
+        return 0;
+    }
+
+    @Override
     public Font getFont(boolean hyperlink) {
         return canvas.getCurrentStyle().getFont();
     }

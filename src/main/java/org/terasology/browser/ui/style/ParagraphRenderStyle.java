@@ -53,4 +53,6 @@ public interface ParagraphRenderStyle extends TextRenderStyle {
     public default Color getParagraphBackground() {
         return null;
     }
+
+    public default Integer getParagraphMinimumWidth() { return null; }
 }

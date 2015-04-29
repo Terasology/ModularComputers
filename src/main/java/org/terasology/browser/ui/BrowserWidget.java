@@ -148,7 +148,8 @@ public class BrowserWidget extends CoreWidget {
                 ParagraphRenderStyle paragraphRenderStyle = getParagraphRenderStyle(documentRenderStyle, paragraphData);
                 int paragraphSideIndent = paragraphRenderStyle.getParagraphIndentLeft() + paragraphRenderStyle.getParagraphIndentRight()
                         + paragraphRenderStyle.getParagraphBackgroundIndentLeft() + paragraphRenderStyle.getParagraphBackgroundIndentRight();
-                availableSpace = Math.max(availableSpace, paragraphSideIndent + paragraphData.getParagraphContents().getMinWidth(canvas, paragraphRenderStyle));
+                int paragraphMinWidth = Math.max(paragraphRenderStyle.getParagraphMinimumWidth(), paragraphData.getParagraphContents().getMinWidth(canvas, paragraphRenderStyle));
+                availableSpace = Math.max(availableSpace, paragraphSideIndent + paragraphMinWidth);
             }
 
             ParagraphRenderStyle lastRenderStyle = null;

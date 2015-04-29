@@ -300,6 +300,11 @@ public class DocumentationBuilder {
                             public Color getParagraphBackground() {
                                 return new Color(0.8f, 0.8f, 1f);
                             }
+
+                            @Override
+                            public Integer getParagraphMinimumWidth() {
+                                return 550;
+                            }
                         },
                         "<f ModularComputers:november>"+codeEncoded.toString()+"</f>"));
 

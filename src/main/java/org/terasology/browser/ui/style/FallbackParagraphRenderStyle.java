@@ -107,4 +107,13 @@ public class FallbackParagraphRenderStyle extends FallbackTextRenderStyle implem
         }
         return paragraphBackground;
     }
+
+    @Override
+    public Integer getParagraphMinimumWidth() {
+        Integer paragraphMinimumWidth = style.getParagraphMinimumWidth();
+        if (paragraphMinimumWidth == null) {
+            paragraphMinimumWidth = fallback.getParagraphMinimumWidth();
+        }
+        return paragraphMinimumWidth;
+    }
 }
