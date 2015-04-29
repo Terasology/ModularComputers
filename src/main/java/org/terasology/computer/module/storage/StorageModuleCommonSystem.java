@@ -64,7 +64,7 @@ public class StorageModuleCommonSystem extends BaseComponentSystem {
                             "This example creates input and output inventory binding for the internal storage and " +
                                     "an input and output inventory binding for storage above the computer, then dumps " +
                                     "the contents of the inventory above into the internal storage, waits for 5 seconds " +
-                                    "and dumps the items back into the inventory above.  Please make sure " +
+                                    "and dumps the items back into the inventory above. Please make sure " +
                                     "this computer has a module of Inventory Manipulator type in any of its slots, as well " +
                                     "as Internal Storage module.",
                             "var storageMod = computer.bindModuleOfType(\"" + COMPUTER_STORAGE_MODULE_TYPE + "\");\n" +
@@ -82,7 +82,7 @@ public class StorageModuleCommonSystem extends BaseComponentSystem {
                             "This example creates input and output inventory binding for the internal storage and " +
                                     "an input and output inventory binding for storage above the computer, then dumps " +
                                     "the contents of the inventory above into the internal storage, waits for 5 seconds " +
-                                    "and dumps the items back into the inventory above.  Please make sure " +
+                                    "and dumps the items back into the inventory above. Please make sure " +
                                     "this computer has a module of Inventory Manipulator type in any of its slots, as well " +
                                     "as Internal Storage module.",
                             "var storageMod = computer.bindModuleOfType(\"" + COMPUTER_STORAGE_MODULE_TYPE + "\");\n" +

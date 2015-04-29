@@ -15,7 +15,10 @@
  */
 package org.terasology.computer.module.world;
 
+import org.terasology.browser.data.ParagraphData;
+import org.terasology.computer.module.inventory.InventoryModuleCommonSystem;
 import org.terasology.computer.system.common.ComputerModuleRegistry;
+import org.terasology.computer.ui.documentation.DocumentationBuilder;
 import org.terasology.entitySystem.systems.BaseComponentSystem;
 import org.terasology.entitySystem.systems.RegisterMode;
 import org.terasology.entitySystem.systems.RegisterSystem;
@@ -24,6 +27,7 @@ import org.terasology.registry.In;
 import org.terasology.world.BlockEntityRegistry;
 import org.terasology.world.WorldProvider;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -84,6 +88,31 @@ public class WorldModuleCommonSystem extends BaseComponentSystem {
                     put("destroyBlock", "[Boolean] Whether destroying the specified block was successful.");
                     put("destroyBlockToInventory", "[Boolean] Whether destroying the specified block was successful.");
                     put("placeBlock", "[Boolean] Whether placement of the block was successful.");
-                }}, null);
+                }},
+                new HashMap<String, Collection<ParagraphData>>(){{
+                    put("destroyBlock", DocumentationBuilder.createExampleParagraphs(
+                            "This example destroys the block below the computer. Please make sure " +
+                                    "this computer has a module of World Interaction type in any of its slots.",
+                            "var worldMod = computer.bindModuleOfType(\"" + WORLD_MODULE_TYPE + "\");\n" +
+                                    "var worldMod.destroyBlock(\"down\");"
+                    ));
+                    put("destroyBlockToInventory", DocumentationBuilder.createExampleParagraphs(
+                            "This example destroys the block below the computer and places the resulting items in inventory " +
+                                    "above it. Please make sure this computer has a modules of World Interaction type " +
+                                    "and Inventory Manipulator in any of its slots.",
+                            "var worldMod = computer.bindModuleOfType(\"" + WORLD_MODULE_TYPE + "\");\n" +
+                                    "var inventoryMod = computer.bindModuleOfType(\"" + InventoryModuleCommonSystem.COMPUTER_INVENTORY_MODULE_TYPE + "\");\n" +
+                                    "var upBinding = inventoryMod.getInputInventoryBinding(\"up\");\n" +
+                                    "worldMod.destroyBlockToInventory(\"down\", upBinding);"
+                    ));
+                    put("placeBlock", DocumentationBuilder.createExampleParagraphs(
+                            "This example places a block below it, the block is coming from first slot of inventory above it. Please make sure " +
+                                    "this computer has a modules of World Interaction type and Inventory Manipulator in any of its slots.",
+                            "var worldMod = computer.bindModuleOfType(\"" + WORLD_MODULE_TYPE + "\");\n" +
+                                    "var inventoryMod = computer.bindModuleOfType(\"" + InventoryModuleCommonSystem.COMPUTER_INVENTORY_MODULE_TYPE + "\");\n" +
+                                    "var upBinding = inventoryMod.getOutputInventoryBinding(\"up\");\n" +
+                                    "worldMod.placeBlock(\"down\", upBinding, 0);"
+                    ));
+                }});
     }
 }
