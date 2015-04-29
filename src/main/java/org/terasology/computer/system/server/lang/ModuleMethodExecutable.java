@@ -66,7 +66,8 @@ public interface ModuleMethodExecutable<T> {
      * @param parameters Parameters passed to the method.
      * @param onFunctionStartResult
      * @return An object that should be placed in the variable that is a result of calling this method. Please note
-     * only objects of types defined in Variable class should be returned.
+     * only objects of types defined in Variable class should be returned. If you wish to return a Map, it has to be
+     * a Map&lt;String, Variable&gt;. For a List - you have to return List&lt;Variable&gt;.
      * @throws ExecutionException Used to signal a problem in the code or some other problem that should end the program.
      */
     public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters, T onFunctionStartResult) throws ExecutionException;

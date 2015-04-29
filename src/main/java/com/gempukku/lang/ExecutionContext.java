@@ -61,8 +61,6 @@ public class ExecutionContext {
             return 4;
         } else if (value instanceof CustomObject) {
             return ((CustomObject) value).sizeOf();
-        } else if (value.getClass().isArray()) {
-            return 4;
         } else
             throw new UnsupportedOperationException("Unknown type of variable value: " + value.getClass().getSimpleName());
     }
@@ -70,10 +68,10 @@ public class ExecutionContext {
     private int getVariablesSize(Set<Object> counted, Collection<Variable> variables) {
         int result = 4;
         for (Variable variable : variables) {
-            Object mapValue = variable.getValue();
-            if (!counted.contains(mapValue)) {
-                counted.add(mapValue);
-                result += sizeOf(counted, mapValue);
+            Object value = variable.getValue();
+            if (!counted.contains(value)) {
+                counted.add(value);
+                result += sizeOf(counted, value);
             }
         }
         return result;
