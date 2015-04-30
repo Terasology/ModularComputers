@@ -22,23 +22,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AnyResultAwaitingCondition implements ResultAwaitingCondition {
-    private List<ResultAwaitingCondition> _awaitingConditions;
-    private int _metConditionIndex = -1;
+    private List<ResultAwaitingCondition> awaitingConditions;
+    private int metConditionIndex = -1;
 
     public AnyResultAwaitingCondition(List<ResultAwaitingCondition> awaitingConditions) {
-        _awaitingConditions = awaitingConditions;
+        this.awaitingConditions = awaitingConditions;
     }
 
     @Override
     public boolean isMet() throws ExecutionException {
-        if (_metConditionIndex != -1)
+        if (metConditionIndex != -1) {
             return true;
+        }
 
-        final int size = _awaitingConditions.size();
+        final int size = awaitingConditions.size();
         for (int i = 0; i < size; i++) {
-            final ResultAwaitingCondition awaitingCondition = _awaitingConditions.get(i);
+            final ResultAwaitingCondition awaitingCondition = awaitingConditions.get(i);
             if (awaitingCondition.isMet()) {
-                _metConditionIndex = i;
+                metConditionIndex = i;
                 return true;
             }
         }
@@ -49,8 +50,8 @@ public class AnyResultAwaitingCondition implements ResultAwaitingCondition {
     @Override
     public Variable getReturnValue() {
         List<Variable> result = new ArrayList<Variable>();
-        result.add(new Variable(_metConditionIndex));
-        result.add(_awaitingConditions.get(_metConditionIndex).getReturnValue());
+        result.add(new Variable(metConditionIndex));
+        result.add(awaitingConditions.get(metConditionIndex).getReturnValue());
         return new Variable(result);
     }
 }

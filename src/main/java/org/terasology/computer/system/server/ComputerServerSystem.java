@@ -67,6 +67,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 
 @RegisterSystem(RegisterMode.AUTHORITY)
@@ -89,7 +90,7 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
 
     private ExecutionCostConfiguration executionCostConfiguration = new SampleExecutionCostConfiguration();
 
-    private boolean computerInTransitionState = false;
+    private boolean computerInTransitionState;
 
     @Override
     public void postBegin() {
@@ -105,7 +106,7 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
     @Override
     public void update(float delta) {
         for (ComputerContext computerContext : computerContextMap.values()) {
-            computerContext.executeContext(delta);
+            computerContext.executeContext();
 
             Vector3f computerLocation = computerContext.getComputerCallback().getComputerLocation();
 
@@ -148,7 +149,8 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
                 computerEntity.saveComponent(computer);
             }
             logger.debug("Creating computer context for computer: " + computer.computerId);
-            computerContextMap.put(computer.computerId, new ComputerContext(computerModuleRegistry, computerEntity, computer.cpuSpeed, computer.stackSize, computer.memorySize));
+            computerContextMap.put(computer.computerId, new ComputerContext(computerModuleRegistry, computerEntity, computer.cpuSpeed,
+                    computer.stackSize, computer.memorySize));
         }
     }
 
@@ -293,8 +295,9 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
         if (computerContext != null && validateComputerToCharacterDistance(client, computerContext)) {
             ComputerComponent computer = computerContext.getEntity().getComponent(ComputerComponent.class);
             String programText = computer.programs.get(event.getProgramName());
-            if (programText == null)
+            if (programText == null) {
                 programText = "";
+            }
             client.send(new ProgramTextReceivedEvent(computer.computerId, event.getProgramName(), programText));
         }
     }
@@ -305,7 +308,7 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
         if (computerContext != null && validateComputerToCharacterDistance(client, computerContext)) {
             EntityRef computerEntity = computerContext.getEntity();
             ComputerComponent computer = computerEntity.getComponent(ComputerComponent.class);
-            TreeSet<String> programNames = new TreeSet<>(computer.programs.keySet());
+            Set<String> programNames = new TreeSet<>(computer.programs.keySet());
             client.send(new ProgramListReceivedEvent(computer.computerId, programNames));
         }
     }

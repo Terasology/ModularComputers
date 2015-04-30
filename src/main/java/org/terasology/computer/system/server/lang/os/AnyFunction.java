@@ -43,16 +43,18 @@ public class AnyFunction extends TerasologyFunctionExecutable {
     @Override
     protected Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
         final Variable conditionsVar = parameters.get("conditions");
-        if (conditionsVar.getType() != Variable.Type.LIST)
+        if (conditionsVar.getType() != Variable.Type.LIST) {
             throw new ExecutionException(line, "Expected a LIST of CONDITIONs in any()");
+        }
 
         List<Variable> conditions = (List<Variable>) conditionsVar.getValue();
 
         int delay = 0;
         final List<AbstractConditionCustomObject> anyConditions = new ArrayList<AbstractConditionCustomObject>();
         for (Variable condition : conditions) {
-            if (condition.getType() != Variable.Type.CUSTOM_OBJECT || !((CustomObject) condition.getValue()).getType().contains("CONDITION"))
+            if (condition.getType() != Variable.Type.CUSTOM_OBJECT || !((CustomObject) condition.getValue()).getType().contains("CONDITION")) {
                 throw new ExecutionException(line, "Expected a LIST of CONDITIONs in any()");
+            }
             final AbstractConditionCustomObject conditionDefinition = (AbstractConditionCustomObject) condition.getValue();
             delay = Math.max(delay, conditionDefinition.getCreationDelay());
             anyConditions.add(conditionDefinition);
@@ -80,8 +82,9 @@ public class AnyFunction extends TerasologyFunctionExecutable {
             @Override
             public ResultAwaitingCondition createAwaitingCondition() {
                 List<ResultAwaitingCondition> anyConditionList = new ArrayList<ResultAwaitingCondition>();
-                for (AbstractConditionCustomObject anyCondition : anyConditions)
+                for (AbstractConditionCustomObject anyCondition : anyConditions) {
                     anyConditionList.add(anyCondition.createAwaitingCondition());
+                }
 
                 return new AnyResultAwaitingCondition(anyConditionList);
             }

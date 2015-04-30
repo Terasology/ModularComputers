@@ -44,9 +44,13 @@ import org.terasology.rendering.nui.VerticalAlign;
 import java.util.Collection;
 
 public class ComputerTerminalWidget extends CoreWidget {
-    public enum TerminalMode {
-        PLAYER_CONSOLE, COMPUTER_CONSOLE
-    }
+    public static final Color BACKGROUND_COLOR = new Color(0x111111ff);
+    public static final Color FRAME_COLOR = new Color(0xffffffff);
+
+    public static final Color COMPUTER_CONSOLE_TEXT_COLOR = new Color(0xffffffff);
+
+    private static final int PADDING_HOR = 5;
+    private static final int PADDING_VER = 5;
 
     @LayoutConfig
     private String monospaceFont;
@@ -58,14 +62,6 @@ public class ComputerTerminalWidget extends CoreWidget {
     private int fontHeight;
 
     private Font monospacedFont;
-
-    public static final Color BACKGROUND_COLOR = new Color(0x111111ff);
-    public static final Color FRAME_COLOR = new Color(0xffffffff);
-
-    public static final Color COMPUTER_CONSOLE_TEXT_COLOR = new Color(0xffffffff);
-
-    private static final int PADDING_HOR = 5;
-    private static final int PADDING_VER = 5;
 
     private TerminalMode mode = TerminalMode.PLAYER_CONSOLE;
     private boolean editingProgram;
@@ -141,10 +137,11 @@ public class ComputerTerminalWidget extends CoreWidget {
         drawVerticalLine(canvas, screenWidth, 0, screenHeight, FRAME_COLOR);
 
 
-        if (mode == TerminalMode.PLAYER_CONSOLE)
-            drawPlayerConsole(canvas, characterWidth, fontHeight);
-        else if (mode == TerminalMode.COMPUTER_CONSOLE)
+        if (mode == TerminalMode.PLAYER_CONSOLE) {
+            drawPlayerConsole(canvas);
+        } else if (mode == TerminalMode.COMPUTER_CONSOLE) {
             drawComputerConsole(canvas);
+        }
     }
 
     private Font getFont(Canvas canvas) {
@@ -165,7 +162,7 @@ public class ComputerTerminalWidget extends CoreWidget {
         clientEntity.send(new SaveProgramEvent(computerId, programName, programText));
     }
 
-    private void drawPlayerConsole(Canvas canvas, int characterWidth, int fontHeight) {
+    private void drawPlayerConsole(Canvas canvas) {
         if (editingProgram) {
             programEditingConsoleGui.drawEditProgramConsole(canvas, PADDING_HOR, PADDING_VER, characterWidth, fontHeight);
         } else {
@@ -175,8 +172,9 @@ public class ComputerTerminalWidget extends CoreWidget {
 
     private void drawComputerConsole(Canvas canvas) {
         final String[] consoleLines = computerConsole.getLines();
-        for (int i = 0; i < consoleLines.length; i++)
+        for (int i = 0; i < consoleLines.length; i++) {
             drawMonospacedText(canvas, consoleLines[i], PADDING_HOR, PADDING_VER + i * fontHeight, COMPUTER_CONSOLE_TEXT_COLOR);
+        }
     }
 
     public void drawVerticalLine(Canvas canvas, int x, int y1, int y2, Color color) {
@@ -201,8 +199,9 @@ public class ComputerTerminalWidget extends CoreWidget {
 
     protected void drawMonospacedText(Canvas canvas, String text, int x, int y, Color color) {
         char[] chars = text.toCharArray();
-        for (int i = 0; i < chars.length; i++)
+        for (int i = 0; i < chars.length; i++) {
             renderCharAt(canvas, chars[i], x + i * characterWidth, y, color);
+        }
     }
 
     private void renderCharAt(Canvas canvas, char ch, int x, int y, Color color) {
@@ -224,8 +223,9 @@ public class ComputerTerminalWidget extends CoreWidget {
                     }
                 }
             }
-            if (keyboardCharId != Keyboard.KeyId.ESCAPE)
+            if (keyboardCharId != Keyboard.KeyId.ESCAPE) {
                 event.consume();
+            }
         }
     }
 
@@ -258,9 +258,9 @@ public class ComputerTerminalWidget extends CoreWidget {
                 if (commandParts.length < 2) {
                     playerCommandConsoleGui.appendToConsole("Usage:");
                     playerCommandConsoleGui.appendToConsole("execute [programName] [argument] ... [argument]- executes specified program with specified arguments (if any)");
-                } else if (!isValidProgramName(commandParts[1]))
+                } else if (!isValidProgramName(commandParts[1])) {
                     playerCommandConsoleGui.appendToConsole("Invalid program name - only letters and digits allowed and a maximum length of 10");
-                else {
+                } else {
                     String[] arguments = new String[commandParts.length - 2];
                     for (int i = 0; i < commandParts.length - 2; i++) {
                         arguments[i] = commandParts[i + 2];
@@ -281,9 +281,9 @@ public class ComputerTerminalWidget extends CoreWidget {
                 if (commandParts.length != 2) {
                     playerCommandConsoleGui.appendToConsole("Usage:");
                     playerCommandConsoleGui.appendToConsole("delete [programName] - deletes specified program");
-                } else if (!isValidProgramName(commandParts[1]))
+                } else if (!isValidProgramName(commandParts[1])) {
                     playerCommandConsoleGui.appendToConsole("Invalid program name - only letters and digits allowed and a maximum length of 10");
-                else {
+                } else {
                     clientEntity.send(new DeleteProgramEvent(computerId, commandParts[1]));
                 }
             } else if (commandParts[0].equals("copy")) {
@@ -312,18 +312,21 @@ public class ComputerTerminalWidget extends CoreWidget {
                     clientEntity.send(new StopProgramEvent(computerId));
                 }
             } else {
-                if (commandParts[0].length() > 0)
+                if (commandParts[0].length() > 0) {
                     playerCommandConsoleGui.appendToConsole("Unknown command - " + commandParts[0]);
+                }
             }
         }
     }
 
     private boolean isValidProgramName(String programName) {
-        if (programName.length() > 10 || programName.length() == 0)
+        if (programName.length() > 10 || programName.length() == 0) {
             return false;
+        }
         for (char c : programName.toCharArray()) {
-            if (!Character.isDigit(c) && !Character.isLetter(c))
+            if (!Character.isDigit(c) && !Character.isLetter(c)) {
                 return false;
+            }
         }
         return true;
     }
@@ -355,8 +358,9 @@ public class ComputerTerminalWidget extends CoreWidget {
     public void appendComputerConsoleLines(String[] lines) {
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < lines.length; i++) {
-            if (i > 0)
+            if (i > 0) {
                 result.append('\n');
+            }
             result.append(lines[i]);
         }
 
@@ -367,6 +371,10 @@ public class ComputerTerminalWidget extends CoreWidget {
         playerCommandConsoleGui.setReadOnly(false);
         editingProgram = true;
         programEditingConsoleGui.setProgramText(programName, programText);
+    }
+
+    public enum TerminalMode {
+        PLAYER_CONSOLE, COMPUTER_CONSOLE
     }
 }
 

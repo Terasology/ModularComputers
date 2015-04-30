@@ -22,9 +22,9 @@ import java.util.Collection;
 import java.util.Map;
 
 public interface ComputerDefinedVariablesRegistry {
-    public void registerComputerDefinedVariable(String variable, String description, Collection<ParagraphData> additionalParagraphs);
+    void registerComputerDefinedVariable(String variable, String description, Collection<ParagraphData> additionalParagraphs);
 
-    public void registerComputerDefinedVariableFunction(String variable, String function, FunctionExecutable terasologyFunctionExecutable,
+    void registerComputerDefinedVariableFunction(String variable, String function, FunctionExecutable terasologyFunctionExecutable,
                                                         String description, Map<String, String> parametersDescription,
                                                         String returnValueDescription, Collection<ParagraphData> additionalParagraphs);
 }

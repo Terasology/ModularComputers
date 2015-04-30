@@ -23,12 +23,12 @@ import java.util.Collection;
 import java.util.Map;
 
 public interface ComputerLanguageContext {
-    public void addObject(String object, ObjectDefinition objectDefinition, String objectDescription,
+    void addObject(String object, ObjectDefinition objectDefinition, String objectDescription,
                           Collection<ParagraphData> additionalParagraphs, Map<String, String> functionDescriptions,
                           Map<String, Map<String, String>> functionParametersDescriptions,
                           Map<String, String> functionReturnDescriptions, Map<String, Collection<ParagraphData>> functionAdditionalParagraphs);
 
-    public void addComputerModule(ComputerModule computerModule, String description,
+    void addComputerModule(ComputerModule computerModule, String description,
                                   Collection<ParagraphData> additionalParagraphs, Map<String, String> methodDescriptions,
                                   Map<String, Map<String, String>> methodParametersDescriptions,
                                   Map<String, String> methodReturnDescriptions, Map<String, Collection<ParagraphData>> methodAdditionalParagraphs);

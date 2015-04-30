@@ -35,33 +35,37 @@ import java.util.Map;
 import java.util.Set;
 
 public class CompileScriptOnTheFly {
-    private volatile CompileStatus _compileStatus;
-    private volatile String _scriptText;
-    private volatile boolean _finishedEditing;
+    private volatile CompileStatus compileStatus;
+    private volatile String scriptText;
+    private volatile boolean finishedEditing;
 
-    private final Object _lockObject = new Object();
-    private ScriptParser _scriptParser = new ScriptParser();
-    private Set<String> _predefinedVariables = new HashSet<String>();
+    private final Object lockObject = new Object();
+    private ScriptParser scriptParser = new ScriptParser();
+    private Set<String> predefinedVariables = new HashSet<>();
 
     public CompileScriptOnTheFly(ComputerLanguageContextInitializer computerLanguageContextInitializer) {
         computerLanguageContextInitializer.initializeContext(
                 new ComputerLanguageContext() {
                     @Override
-                    public void addObject(String object, ObjectDefinition objectDefinition, String objectDescription, Collection<ParagraphData> additionalParagraphs, Map<String, String> functionDescriptions, Map<String, Map<String, String>> functionParametersDescriptions, Map<String, String> functionReturnDescriptions, Map<String, Collection<ParagraphData>> functionAdditionalParagraphs) {
-                        _predefinedVariables.add(object);
+                    public void addObject(String object, ObjectDefinition objectDefinition, String objectDescription,
+                                          Collection<ParagraphData> additionalParagraphs, Map<String, String> functionDescriptions, Map<String, Map<String, String>> functionParametersDescriptions,
+                                          Map<String, String> functionReturnDescriptions, Map<String, Collection<ParagraphData>> functionAdditionalParagraphs) {
+                        predefinedVariables.add(object);
                     }
 
                     @Override
-                    public void addComputerModule(ComputerModule computerModule, String description, Collection<ParagraphData> additionalParagraphs, Map<String, String> methodDescriptions, Map<String, Map<String, String>> methodParametersDescriptions, Map<String, String> methodReturnDescriptions, Map<String, Collection<ParagraphData>> methodAdditionalParagraphs) {
+                    public void addComputerModule(ComputerModule computerModule, String description, Collection<ParagraphData> additionalParagraphs,
+                                                  Map<String, String> methodDescriptions, Map<String, Map<String, String>> methodParametersDescriptions,
+                                                  Map<String, String> methodReturnDescriptions, Map<String, Collection<ParagraphData>> methodAdditionalParagraphs) {
                         // Ignore for now
                     }
                 }
         );
-        _predefinedVariables.add("args");
+        predefinedVariables.add("args");
     }
 
     public void startCompiler() {
-        _finishedEditing = false;
+        finishedEditing = false;
         Thread thr = new Thread(
                 new Runnable() {
                     public void run() {
@@ -72,38 +76,38 @@ public class CompileScriptOnTheFly {
         thr.start();
     }
 
-    public void submitCompileRequest(String scriptText) {
-        synchronized (_lockObject) {
-            _scriptText = scriptText;
-            _compileStatus = null;
-            _lockObject.notifyAll();
+    public void submitCompileRequest(String newScriptText) {
+        synchronized (lockObject) {
+            scriptText = newScriptText;
+            compileStatus = null;
+            lockObject.notifyAll();
         }
     }
 
     public CompileStatus getCompileStatus() {
-        return _compileStatus;
+        return compileStatus;
     }
 
     public void finishedEditing() {
-        _finishedEditing = true;
-        synchronized (_lockObject) {
-            _lockObject.notifyAll();
+        finishedEditing = true;
+        synchronized (lockObject) {
+            lockObject.notifyAll();
         }
     }
 
     private void keepCompilingUntilFinishedEditing() {
-        while (!_finishedEditing) {
-            String scriptText = null;
-            synchronized (_lockObject) {
-                scriptText = _scriptText;
-                _scriptText = null;
+        while (!finishedEditing) {
+            String scriptTextToCompile;
+            synchronized (lockObject) {
+                scriptTextToCompile = scriptText;
+                this.scriptText = null;
             }
 
             CompileStatus newCompileStatus = null;
-            if (scriptText != null) {
+            if (scriptTextToCompile != null) {
                 ParseInfoProducer parseInfoProducer = new ParseInfoProducer();
                 try {
-                    _scriptParser.parseScript(new StringReader(scriptText), _predefinedVariables, parseInfoProducer);
+                    scriptParser.parseScript(new StringReader(scriptTextToCompile), predefinedVariables, parseInfoProducer);
                     newCompileStatus = new CompileStatus(true, null, parseInfoProducer.result);
                 } catch (IllegalSyntaxException exp) {
                     newCompileStatus = new CompileStatus(false, exp, parseInfoProducer.result);
@@ -115,21 +119,22 @@ public class CompileScriptOnTheFly {
                 }
             }
 
-            synchronized (_lockObject) {
+            synchronized (lockObject) {
                 // If new request was not created in the meantime, wait for notify
-                if (_scriptText == null) {
-                    _compileStatus = newCompileStatus;
+                if (this.scriptText == null) {
+                    compileStatus = newCompileStatus;
                     try {
-                        _lockObject.wait();
+                        lockObject.wait();
                     } catch (InterruptedException exp) {
-
+                        // Ignore, CheckStyle made me add one statement
+                        exp.printStackTrace();
                     }
                 }
             }
         }
     }
 
-    public static class CompileStatus {
+    public static final class CompileStatus {
         public final boolean success;
         public final IllegalSyntaxException error;
         public final Collection<ParseInfo> parseInfo;

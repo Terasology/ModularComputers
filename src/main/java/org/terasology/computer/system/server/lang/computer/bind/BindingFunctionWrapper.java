@@ -28,14 +28,14 @@ import org.terasology.computer.context.TerasologyComputerExecutionContext;
 import org.terasology.computer.system.server.lang.ComputerModule;
 
 public class BindingFunctionWrapper implements FunctionExecutable {
-    private int _slotNo;
-    private ComputerModule _module;
-    private FunctionExecutable _function;
+    private int slotNo;
+    private ComputerModule module;
+    private FunctionExecutable function;
 
     public BindingFunctionWrapper(ComputerModule module, int slotNo, FunctionExecutable function) {
-        _module = module;
-        _slotNo = slotNo;
-        _function = function;
+        this.module = module;
+        this.slotNo = slotNo;
+        this.function = function;
     }
 
     @Override
@@ -45,7 +45,7 @@ public class BindingFunctionWrapper implements FunctionExecutable {
 
     @Override
     public String[] getParameterNames() {
-        return _function.getParameterNames();
+        return function.getParameterNames();
     }
 
     @Override
@@ -53,9 +53,9 @@ public class BindingFunctionWrapper implements FunctionExecutable {
         final TerasologyComputerExecutionContext terasologyExecutionContext = (TerasologyComputerExecutionContext) executionContext;
         final ComputerCallback computerCallback = terasologyExecutionContext.getComputerCallback();
 
-        final ComputerModule module = computerCallback.getModule(_slotNo);
-        if (module == _module) {
-            return _function.createExecution(line, executionContext, callContext);
+        final ComputerModule moduleAtSlot = computerCallback.getModule(slotNo);
+        if (moduleAtSlot == module) {
+            return function.createExecution(line, executionContext, callContext);
         } else {
             return getThrowingExceptionExecution(line);
         }

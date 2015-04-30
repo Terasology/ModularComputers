@@ -19,14 +19,14 @@ public interface ComputerConsoleListener {
     /**
      * Clears the screen.
      */
-    public void clearScreen();
+    void clearScreen();
 
     /**
      * Sets the state of the console screen to display the following lines.
      *
      * @param screen
      */
-    public void setScreenState(String[] screen);
+    void setScreenState(String[] screen);
 
     /**
      * Replaces characters at the specified x,y
@@ -35,7 +35,7 @@ public interface ComputerConsoleListener {
      * @param y
      * @param chars
      */
-    public void setCharactersStartingAt(int x, int y, String chars);
+    void setCharactersStartingAt(int x, int y, String chars);
 
     /**
      * Appends the following lines to the console, moving anything that is on screen already to the top as many lines,
@@ -43,5 +43,5 @@ public interface ComputerConsoleListener {
      *
      * @param lines
      */
-    public void appendLines(String[] lines);
+    void appendLines(String[] lines);
 }

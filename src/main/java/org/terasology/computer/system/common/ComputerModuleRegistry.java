@@ -22,12 +22,12 @@ import java.util.Collection;
 import java.util.Map;
 
 public interface ComputerModuleRegistry {
-    public void registerComputerModule(
+    void registerComputerModule(
             String type, ComputerModule computerModule,
             String description, Collection<ParagraphData> additionalParagraphs, Map<String, String> methodDescriptions,
             Map<String, Map<String, String>> methodParametersDescriptions,
             Map<String, String> returnValuesDescriptions,
             Map<String, Collection<ParagraphData>> additionalMethodParagraphs);
 
-    public ComputerModule getComputerModuleByType(String type);
+    ComputerModule getComputerModuleByType(String type);
 }

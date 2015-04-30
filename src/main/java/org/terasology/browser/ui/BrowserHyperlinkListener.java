@@ -16,5 +16,5 @@
 package org.terasology.browser.ui;
 
 public interface BrowserHyperlinkListener {
-    public void hyperlinkClicked(String hyperlink);
+    void hyperlinkClicked(String hyperlink);
 }

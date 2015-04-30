@@ -16,5 +16,5 @@
 package org.terasology.computer.system.common;
 
 public interface ComputerLanguageContextInitializer {
-    public void initializeContext(ComputerLanguageContext computerLanguageContext);
+    void initializeContext(ComputerLanguageContext computerLanguageContext);
 }

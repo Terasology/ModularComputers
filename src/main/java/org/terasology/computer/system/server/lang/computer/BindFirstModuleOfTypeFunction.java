@@ -43,8 +43,9 @@ public class BindFirstModuleOfTypeFunction extends TerasologyFunctionExecutable 
         final int moduleSlotsCount = computer.getModuleSlotsCount();
         for (int i = 0; i < moduleSlotsCount; i++) {
             final ComputerModule module = computer.getModule(i);
-            if (module != null && module.getModuleType().equals(moduleType))
+            if (module != null && module.getModuleType().equals(moduleType)) {
                 return new SlotBindingObjectDefinition(i);
+            }
         }
         throw new ExecutionException(line, "Couldn't find module of the specified type.");
     }

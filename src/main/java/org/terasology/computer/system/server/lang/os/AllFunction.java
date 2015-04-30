@@ -42,17 +42,19 @@ public class AllFunction extends TerasologyFunctionExecutable {
     @Override
     protected Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
         final Variable conditionsVar = parameters.get("conditions");
-        if (conditionsVar.getType() != Variable.Type.LIST)
+        if (conditionsVar.getType() != Variable.Type.LIST) {
             throw new ExecutionException(line, "Expected a LIST of CONDITIONs in all()");
+        }
 
         List<Variable> conditions = (List<Variable>) conditionsVar.getValue();
 
         int delay = 0;
-        final List<AbstractConditionCustomObject> allConditions = new ArrayList<AbstractConditionCustomObject>();
+        final List<AbstractConditionCustomObject> allConditions = new ArrayList<>();
         for (Variable condition : conditions) {
-            if (condition.getType() != Variable.Type.CUSTOM_OBJECT || !((CustomObject) condition.getValue()).getType().contains("CONDITION"))
+            if (condition.getType() != Variable.Type.CUSTOM_OBJECT || !((CustomObject) condition.getValue()).getType().contains("CONDITION")) {
                 throw new ExecutionException(line, "Expected a LIST of CONDITIONs in all()");
-            final AbstractConditionCustomObject conditionDefinition = (AbstractConditionCustomObject) condition.getValue();
+            }
+            AbstractConditionCustomObject conditionDefinition = (AbstractConditionCustomObject) condition.getValue();
             delay = Math.max(delay, conditionDefinition.getCreationDelay());
             allConditions.add(conditionDefinition);
         }
@@ -77,9 +79,10 @@ public class AllFunction extends TerasologyFunctionExecutable {
 
             @Override
             public ResultAwaitingCondition createAwaitingCondition() {
-                List<ResultAwaitingCondition> allConditionList = new ArrayList<ResultAwaitingCondition>();
-                for (AbstractConditionCustomObject allCondition : allConditions)
+                List<ResultAwaitingCondition> allConditionList = new ArrayList<>();
+                for (AbstractConditionCustomObject allCondition : allConditions) {
                     allConditionList.add(allCondition.createAwaitingCondition());
+                }
 
                 return new AllResultAwaitingCondition(allConditionList);
             }

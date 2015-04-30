@@ -20,15 +20,15 @@ import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.math.geom.Vector3f;
 
 public interface ComputerCallback {
-    public ComputerConsole getConsole();
+    ComputerConsole getConsole();
 
-    public int getModuleSlotsCount();
+    int getModuleSlotsCount();
 
-    public ComputerModule getModule(int slot);
+    ComputerModule getModule(int slot);
 
-    public Vector3f getComputerLocation();
+    Vector3f getComputerLocation();
 
-    public void suspendWithCondition(AwaitingCondition condition);
+    void suspendWithCondition(AwaitingCondition condition);
 
-    public EntityRef getComputerEntity();
+    EntityRef getComputerEntity();
 }

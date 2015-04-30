@@ -24,24 +24,24 @@ public interface ComputerModule {
      *
      * @return Module type.
      */
-    public String getModuleType();
+    String getModuleType();
 
     /**
      * Returns a module name, as displayed on tooltips.
      *
      * @return Module name for displaying on tooltips.
      */
-    public String getModuleName();
+    String getModuleName();
 
     /**
      * Checks if this module can be placed in an existing computer.
      * This method is for modules that should not be placed in multiples, or in combinations with other modules, as
      * it allows modules to control the configuration of a computer.
      *
-     * @param computerModulesInstalled
+     * @param computerModulesInstalled Already installed modules in the computer.
      * @return True, if it's ok to place this module in the computer passed as a parameter, false otherwise.
      */
-    public boolean canBePlacedInComputer(Collection<ComputerModule> computerModulesInstalled);
+    boolean canBePlacedInComputer(Collection<ComputerModule> computerModulesInstalled);
 
     /**
      * Checks if this module, that is already placed in the computer, is ok with adding a new module to the computer.
@@ -51,7 +51,7 @@ public interface ComputerModule {
      * @param computerModule New computer module that is being placed into the computer.
      * @return True, if it's ok to place the module in the computer passed as a parameter, false otherwise.
      */
-    public boolean acceptsNewModule(ComputerModule computerModule);
+    boolean acceptsNewModule(ComputerModule computerModule);
 
     /**
      * Returns a function with the specified name. To make the implementation easier, you can subclass
@@ -61,6 +61,5 @@ public interface ComputerModule {
      * @return Function that will be executed, when invoked by the program, or null if there is no function with this
      * name.
      */
-    public ModuleMethodExecutable getFunctionByName(String name);
-
+    ModuleMethodExecutable getFunctionByName(String name);
 }

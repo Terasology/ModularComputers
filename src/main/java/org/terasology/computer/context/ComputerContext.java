@@ -87,8 +87,8 @@ public class ComputerContext {
         this.memory = memory;
     }
 
-    public void updateComputerEntity(EntityRef entity) {
-        this.entity = entity;
+    public void updateComputerEntity(EntityRef computerEntity) {
+        entity = computerEntity;
     }
 
     public EntityRef getEntity() {
@@ -99,7 +99,7 @@ public class ComputerContext {
         return Collections.unmodifiableMap(consoleListenerMap);
     }
 
-    public void executeContext(float delta) {
+    public void executeContext() {
         if (executionContext != null) {
             long executionTime = System.currentTimeMillis();
             logger.debug("Executing program - minTicksRemaining: " + minimumTimeRemaining + ", remainingWaitingCpuCycles: " + remainingWaitingCpuCycles);
@@ -108,14 +108,9 @@ public class ComputerContext {
                 minimumTimeRemaining -= (executionTime - lastExecutionTime);
             }
             lastExecutionTime = executionTime;
-            if (remainingWaitingCpuCycles >= speed) {
-                remainingWaitingCpuCycles -= speed;
-            } else {
-                int freeCycles = speed - remainingWaitingCpuCycles;
-                remainingWaitingCpuCycles = 0;
-                if (minimumTimeRemaining <= 0) {
-                    executeNextProgramStepUntilRunsOutOfCycles(freeCycles);
-                }
+            remainingWaitingCpuCycles -= speed;
+            if (remainingWaitingCpuCycles <= 0 && minimumTimeRemaining <= 0) {
+                executeNextProgramStepUntilRunsOutOfCycles();
             }
         }
     }
@@ -129,7 +124,8 @@ public class ComputerContext {
         awaitingCondition = null;
     }
 
-    public void startProgram(String name, String programText, String[] params, ComputerLanguageContextInitializer computerLanguageContextInitializer, ExecutionCostConfiguration configuration) throws IllegalSyntaxException {
+    public void startProgram(String name, String programText, String[] params, ComputerLanguageContextInitializer computerLanguageContextInitializer,
+                             ExecutionCostConfiguration configuration) throws IllegalSyntaxException {
         try {
             logger.debug("starting program: " + name);
 
@@ -139,17 +135,22 @@ public class ComputerContext {
             computerLanguageContextInitializer.initializeContext(
                     new ComputerLanguageContext() {
                         @Override
-                        public void addObject(String object, ObjectDefinition objectDefinition, String objectDescription, Collection<ParagraphData> additionalParagraphs, Map<String, String> functionDescriptions, Map<String, Map<String, String>> functionParametersDescriptions, Map<String, String> functionReturnDescriptions, Map<String, Collection<ParagraphData>> functionAdditionalParagraphs) {
+                        public void addObject(String object, ObjectDefinition objectDefinition, String objectDescription, Collection<ParagraphData> additionalParagraphs,
+                                              Map<String, String> functionDescriptions, Map<String, Map<String, String>> functionParametersDescriptions,
+                                              Map<String, String> functionReturnDescriptions, Map<String, Collection<ParagraphData>> functionAdditionalParagraphs) {
                             variables.add(object);
                             try {
                                 callContext.defineVariable(object).setValue(objectDefinition);
                             } catch (ExecutionException exp) {
                                 // Ignore - can't happen
+                                exp.printStackTrace();
                             }
                         }
 
                         @Override
-                        public void addComputerModule(ComputerModule computerModule, String description, Collection<ParagraphData> additionalParagraphs, Map<String, String> methodDescriptions, Map<String, Map<String, String>> methodParametersDescriptions, Map<String, String> methodReturnDescriptions, Map<String, Collection<ParagraphData>> methodAdditionalParagraphs) {
+                        public void addComputerModule(ComputerModule computerModule, String description, Collection<ParagraphData> additionalParagraphs,
+                                                      Map<String, String> methodDescriptions, Map<String, Map<String, String>> methodParametersDescriptions,
+                                                      Map<String, String> methodReturnDescriptions, Map<String, Collection<ParagraphData>> methodAdditionalParagraphs) {
                             // Ignore
                         }
                     });
@@ -157,7 +158,7 @@ public class ComputerContext {
 
             ScriptExecutable scriptExecutable = new ScriptParser().parseScript(new StringReader(programText), variables);
 
-            ExecutionContext executionContext = new TerasologyComputerExecutionContext(configuration,
+            executionContext = new TerasologyComputerExecutionContext(configuration,
                     getComputerCallback());
             executionContext.addPropertyProducer(Variable.Type.MAP, new MapPropertyProducer());
             executionContext.addPropertyProducer(Variable.Type.OBJECT, new ObjectPropertyProducer());
@@ -166,7 +167,6 @@ public class ComputerContext {
 
             executionContext.stackExecutionGroup(callContext, scriptExecutable.createExecution(callContext));
 
-            this.executionContext = executionContext;
             this.awaitingCondition = null;
             this.remainingWaitingCpuCycles = 0;
             this.minimumTimeRemaining = 0;
@@ -174,6 +174,7 @@ public class ComputerContext {
             logger.debug("started program: " + name);
         } catch (IOException exp) {
             // Can't happen - ignore
+            exp.printStackTrace();
         }
     }
 
@@ -188,6 +189,7 @@ public class ComputerContext {
             callContext.defineVariable("args").setValue(args);
         } catch (ExecutionException exp) {
             // Ignore - can't happen
+            exp.printStackTrace();
         }
     }
 
@@ -208,8 +210,9 @@ public class ComputerContext {
                 ComputerComponent computerComponent = entity.getComponent(ComputerComponent.class);
 
                 int moduleSlotCount = computerComponent.moduleSlotCount;
-                if (slot < 0 || moduleSlotCount <= slot)
+                if (slot < 0 || moduleSlotCount <= slot) {
                     return null;
+                }
 
                 InventoryComponent inventory = entity.getComponent(InventoryComponent.class);
 
@@ -242,7 +245,7 @@ public class ComputerContext {
         };
     }
 
-    private void executeNextProgramStepUntilRunsOutOfCycles(int freeCycles) {
+    private void executeNextProgramStepUntilRunsOutOfCycles() {
         while (!executionContext.isFinished()) {
             logger.debug("Executing next step");
             try {
@@ -256,27 +259,27 @@ public class ComputerContext {
 
                 ExecutionProgress executionProgress = executionContext.executeNext();
 
-                if (executionContext.getStackTraceSize() > stackSize)
+                if (executionContext.getStackTraceSize() > stackSize) {
                     throw new ExecutionException(-1, "StackOverflow");
+                }
 
-                if (((++memoryConsumptionCheckCounter) % MEMORY_CHECK_INTERVAL == 0) && executionContext.getMemoryUsage() > memory)
+                if (((++memoryConsumptionCheckCounter) % MEMORY_CHECK_INTERVAL == 0) && executionContext.getMemoryUsage() > memory) {
                     throw new ExecutionException(-1, "OutOfMemory");
+                }
 
-                freeCycles -= executionProgress.getCost();
+                remainingWaitingCpuCycles += executionProgress.getCost();
                 minimumTimeRemaining = executionProgress.getMinExecutionTime();
 
-                if (freeCycles <= 0) {
-                    remainingWaitingCpuCycles = -freeCycles;
-                }
                 if (minimumTimeRemaining > 0 || remainingWaitingCpuCycles > 0) {
                     // Time to break execution, we've done enough in this computer for this tick
                     break;
                 }
             } catch (ExecutionException exp) {
-                if (exp.getLine() == -1)
+                if (exp.getLine() == -1) {
                     console.appendString("ExecutionException[unknown line] - " + exp.getMessage());
-                else
+                } else {
                     console.appendString("ExecutionException[line " + exp.getLine() + "] - " + exp.getMessage());
+                }
                 executionContext = null;
                 break;
             }

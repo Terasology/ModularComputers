@@ -25,31 +25,33 @@ import java.util.List;
 import java.util.Set;
 
 public class AllResultAwaitingCondition implements ResultAwaitingCondition {
-    private List<ResultAwaitingCondition> _awaitingConditions;
-    private Set<ResultAwaitingCondition> _notMetConditions;
+    private List<ResultAwaitingCondition> awaitingConditions;
+    private Set<ResultAwaitingCondition> notMetConditions;
 
     public AllResultAwaitingCondition(List<ResultAwaitingCondition> awaitingConditions) {
-        _awaitingConditions = awaitingConditions;
-        _notMetConditions = new LinkedHashSet<ResultAwaitingCondition>(_awaitingConditions);
+        this.awaitingConditions = awaitingConditions;
+        notMetConditions = new LinkedHashSet<ResultAwaitingCondition>(this.awaitingConditions);
     }
 
     @Override
     public boolean isMet() throws ExecutionException {
-        final Iterator<ResultAwaitingCondition> notMetIterator = _notMetConditions.iterator();
+        final Iterator<ResultAwaitingCondition> notMetIterator = notMetConditions.iterator();
         while (notMetIterator.hasNext()) {
             final ResultAwaitingCondition notMetCondition = notMetIterator.next();
-            if (notMetCondition.isMet())
+            if (notMetCondition.isMet()) {
                 notMetIterator.remove();
+            }
 
         }
-        return _notMetConditions.isEmpty();
+        return notMetConditions.isEmpty();
     }
 
     @Override
     public Variable getReturnValue() {
         List<Variable> result = new ArrayList<Variable>();
-        for (ResultAwaitingCondition awaitingCondition : _awaitingConditions)
+        for (ResultAwaitingCondition awaitingCondition : awaitingConditions) {
             result.add(awaitingCondition.getReturnValue());
+        }
 
         return new Variable(result);
     }

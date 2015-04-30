@@ -27,7 +27,7 @@ import java.util.Map;
 @AddToBlockBasedItem
 public class ComputerComponent implements Component {
     public Map<String, String> programs = new HashMap<>();
-    public int moduleSlotStart = 0;
+    public int moduleSlotStart;
     public int moduleSlotCount = 4;
     public int cpuSpeed = 10;
     public int stackSize = 10;

@@ -40,8 +40,9 @@ public class BindModuleFunction extends TerasologyFunctionExecutable {
     protected Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
         int slotNo = FunctionParamValidationUtil.validateIntParameter(line, parameters, "slot", "bindModule");
 
-        if (slotNo < 0 || slotNo >= computer.getModuleSlotsCount())
+        if (slotNo < 0 || slotNo >= computer.getModuleSlotsCount()) {
             throw new ExecutionException(line, "Slot number outside of permitted range in bindModule()");
+        }
 
         return new SlotBindingObjectDefinition(slotNo);
     }
