@@ -4,7 +4,7 @@
         "stackSize": 10,
         "memorySize": 1024,
         "moduleSlotStart": 0,
-        "moduleSlotCount": 4
+        "moduleSlotCount": 8
     },
     "Inventory": {
             "privateToOwner": false,
