@@ -109,7 +109,7 @@ public class PlayerCommandConsoleGui {
             } else if (keyboardCharId == Keyboard.KEY_DOWN) {
                 if (historyIndex > 1) {
                     currentCommand = new StringBuilder();
-                    currentCommand.append(commandHistory.get(historyIndex-2));
+                    currentCommand.append(commandHistory.get(historyIndex - 2));
                     cursorPositionInPlayerCommand = currentCommand.length();
                     historyIndex--;
                 } else if (historyIndex == 1) {

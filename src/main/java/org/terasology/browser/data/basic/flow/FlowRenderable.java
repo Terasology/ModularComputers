@@ -23,7 +23,9 @@ public interface FlowRenderable<T extends FlowRenderable<T>> {
     public void render(Canvas canvas, Rect2i bounds, TextRenderStyle defaultRenderStyle);
 
     public int getMinWidth(TextRenderStyle defaultRenderStyle);
+
     public int getWidth(TextRenderStyle defaultRenderStyle);
+
     public int getHeight(TextRenderStyle defaultRenderStyle);
 
     public SplitResult<T> splitAt(TextRenderStyle defaultRenderStyle, int width);

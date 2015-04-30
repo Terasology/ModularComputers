@@ -18,5 +18,5 @@ package org.terasology.computer.context;
 import com.gempukku.lang.ExecutionException;
 
 public interface AwaitingCondition {
-	public boolean isMet() throws ExecutionException;
+    public boolean isMet() throws ExecutionException;
 }

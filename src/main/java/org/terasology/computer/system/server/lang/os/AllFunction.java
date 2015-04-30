@@ -29,60 +29,60 @@ import java.util.List;
 import java.util.Map;
 
 public class AllFunction extends TerasologyFunctionExecutable {
-	@Override
-	protected int getDuration() {
-		return 10;
-	}
+    @Override
+    protected int getDuration() {
+        return 10;
+    }
 
-	@Override
-	public String[] getParameterNames() {
-		return new String[]{"conditions"};
-	}
+    @Override
+    public String[] getParameterNames() {
+        return new String[]{"conditions"};
+    }
 
-	@Override
-	protected Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
-		final Variable conditionsVar = parameters.get("conditions");
-		if (conditionsVar.getType() != Variable.Type.LIST)
-			throw new ExecutionException(line, "Expected a LIST of CONDITIONs in all()");
+    @Override
+    protected Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
+        final Variable conditionsVar = parameters.get("conditions");
+        if (conditionsVar.getType() != Variable.Type.LIST)
+            throw new ExecutionException(line, "Expected a LIST of CONDITIONs in all()");
 
-		List<Variable> conditions = (List<Variable>) conditionsVar.getValue();
+        List<Variable> conditions = (List<Variable>) conditionsVar.getValue();
 
-		int delay = 0;
-		final List<AbstractConditionCustomObject> allConditions = new ArrayList<AbstractConditionCustomObject>();
-		for (Variable condition : conditions) {
-			if (condition.getType() != Variable.Type.CUSTOM_OBJECT || !((CustomObject) condition.getValue()).getType().contains("CONDITION"))
-				throw new ExecutionException(line, "Expected a LIST of CONDITIONs in all()");
-			final AbstractConditionCustomObject conditionDefinition = (AbstractConditionCustomObject) condition.getValue();
-			delay = Math.max(delay, conditionDefinition.getCreationDelay());
-			allConditions.add(conditionDefinition);
-		}
+        int delay = 0;
+        final List<AbstractConditionCustomObject> allConditions = new ArrayList<AbstractConditionCustomObject>();
+        for (Variable condition : conditions) {
+            if (condition.getType() != Variable.Type.CUSTOM_OBJECT || !((CustomObject) condition.getValue()).getType().contains("CONDITION"))
+                throw new ExecutionException(line, "Expected a LIST of CONDITIONs in all()");
+            final AbstractConditionCustomObject conditionDefinition = (AbstractConditionCustomObject) condition.getValue();
+            delay = Math.max(delay, conditionDefinition.getCreationDelay());
+            allConditions.add(conditionDefinition);
+        }
 
-		final int maxDelay = delay;
+        final int maxDelay = delay;
 
-		return new AbstractConditionCustomObject() {
-			@Override
-			public int getCreationDelay() {
-				return maxDelay;
-			}
+        return new AbstractConditionCustomObject() {
+            @Override
+            public int getCreationDelay() {
+                return maxDelay;
+            }
 
             @Override
             public int sizeOf() {
                 int size = 4;
                 for (AbstractConditionCustomObject condition : allConditions) {
-                    size+=condition.sizeOf();
+                    size += condition.sizeOf();
                 }
 
                 return size;
             }
 
             @Override
-			public ResultAwaitingCondition createAwaitingCondition() {
-				List<ResultAwaitingCondition> allConditionList = new ArrayList<ResultAwaitingCondition>();
-				for (AbstractConditionCustomObject allCondition : allConditions)
-					allConditionList.add(allCondition.createAwaitingCondition());
+            public ResultAwaitingCondition createAwaitingCondition() {
+                List<ResultAwaitingCondition> allConditionList = new ArrayList<ResultAwaitingCondition>();
+                for (AbstractConditionCustomObject allCondition : allConditions)
+                    allConditionList.add(allCondition.createAwaitingCondition());
 
-				return new AllResultAwaitingCondition(allConditionList);
-			}
-		};
-	}
+                return new AllResultAwaitingCondition(allConditionList);
+            }
+        };
+    }
 }

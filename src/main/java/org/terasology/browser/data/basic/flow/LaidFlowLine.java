@@ -17,6 +17,8 @@ package org.terasology.browser.data.basic.flow;
 
 public interface LaidFlowLine<T extends FlowRenderable> {
     public int getWidth();
+
     public int getHeight();
+
     public Iterable<T> getFlowRenderables();
 }

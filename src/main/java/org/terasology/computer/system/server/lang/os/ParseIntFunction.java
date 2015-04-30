@@ -23,25 +23,25 @@ import org.terasology.computer.system.server.lang.TerasologyFunctionExecutable;
 import java.util.Map;
 
 public class ParseIntFunction extends TerasologyFunctionExecutable {
-	@Override
-	protected int getDuration() {
-		return 10;
-	}
+    @Override
+    protected int getDuration() {
+        return 10;
+    }
 
-	@Override
-	public String[] getParameterNames() {
-		return new String[]{"text"};
-	}
+    @Override
+    public String[] getParameterNames() {
+        return new String[]{"text"};
+    }
 
-	@Override
-	protected Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
-		final Variable text = parameters.get("text");
-		if (text.getType() != Variable.Type.STRING)
-			throw new ExecutionException(line, "Expected STRING in parseInt()");
-		try {
-			return Integer.parseInt((String) text.getValue());
-		} catch (NumberFormatException exp) {
-			throw new ExecutionException(line, "Number format exception: " + text.getValue() + " in parseInt()");
-		}
-	}
+    @Override
+    protected Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
+        final Variable text = parameters.get("text");
+        if (text.getType() != Variable.Type.STRING)
+            throw new ExecutionException(line, "Expected STRING in parseInt()");
+        try {
+            return Integer.parseInt((String) text.getValue());
+        } catch (NumberFormatException exp) {
+            throw new ExecutionException(line, "Number format exception: " + text.getValue() + " in parseInt()");
+        }
+    }
 }

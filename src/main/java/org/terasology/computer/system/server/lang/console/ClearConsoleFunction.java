@@ -24,19 +24,19 @@ import java.util.Map;
 
 
 public class ClearConsoleFunction extends TerasologyFunctionExecutable {
-	@Override
-	protected int getDuration() {
-		return 100;
-	}
+    @Override
+    protected int getDuration() {
+        return 100;
+    }
 
-	@Override
-	public String[] getParameterNames() {
-		return new String[0];
-	}
+    @Override
+    public String[] getParameterNames() {
+        return new String[0];
+    }
 
-	@Override
-	protected Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
-		computer.getConsole().clearConsole();
-		return null;
-	}
+    @Override
+    protected Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
+        computer.getConsole().clearConsole();
+        return null;
+    }
 }

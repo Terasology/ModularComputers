@@ -25,27 +25,27 @@ import org.terasology.computer.system.server.lang.ComputerModule;
 import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
 
 public class SlotBindingObjectDefinition implements ObjectDefinition {
-	private int _slotNo;
+    private int _slotNo;
 
-	public SlotBindingObjectDefinition(int slotNo) {
-		_slotNo = slotNo;
-	}
+    public SlotBindingObjectDefinition(int slotNo) {
+        _slotNo = slotNo;
+    }
 
-	@Override
-	public Variable getMember(ExecutionContext context, String name) {
-		final TerasologyComputerExecutionContext terasologyExecutionContext = (TerasologyComputerExecutionContext) context;
-		final ComputerCallback computerCallback = terasologyExecutionContext.getComputerCallback();
+    @Override
+    public Variable getMember(ExecutionContext context, String name) {
+        final TerasologyComputerExecutionContext terasologyExecutionContext = (TerasologyComputerExecutionContext) context;
+        final ComputerCallback computerCallback = terasologyExecutionContext.getComputerCallback();
 
-		final ComputerModule module = computerCallback.getModule(_slotNo);
-		if (module == null)
-			return new Variable(null);
+        final ComputerModule module = computerCallback.getModule(_slotNo);
+        if (module == null)
+            return new Variable(null);
 
-		final ModuleMethodExecutable moduleFunction = module.getFunctionByName(name);
+        final ModuleMethodExecutable moduleFunction = module.getFunctionByName(name);
 
-		if (moduleFunction != null) {
-			return new Variable(new BindingFunctionWrapper(module, _slotNo, new ModuleFunctionAdapter(_slotNo, moduleFunction)));
-		} else {
-			return new Variable(null);
-		}
-	}
+        if (moduleFunction != null) {
+            return new Variable(new BindingFunctionWrapper(module, _slotNo, new ModuleFunctionAdapter(_slotNo, moduleFunction)));
+        } else {
+            return new Variable(null);
+        }
+    }
 }

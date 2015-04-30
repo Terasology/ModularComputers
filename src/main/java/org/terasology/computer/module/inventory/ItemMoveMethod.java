@@ -41,7 +41,7 @@ public class ItemMoveMethod implements ModuleMethodExecutable<Object> {
 
     @Override
     public String[] getParameterNames() {
-        return new String[] {"inventoryBindingFrom", "inventoryBindingTo", "slot"};
+        return new String[]{"inventoryBindingFrom", "inventoryBindingTo", "slot"};
     }
 
     @Override
@@ -59,6 +59,6 @@ public class ItemMoveMethod implements ModuleMethodExecutable<Object> {
 
         int itemCountAfter = InventoryModuleUtils.getItemCount(InventoryUtils.getItemAt(inventoryFrom.inventory, inventoryFrom.slots.get(slotNo)));
 
-        return itemCountBefore-itemCountAfter;
+        return itemCountBefore - itemCountAfter;
     }
 }

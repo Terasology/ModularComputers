@@ -24,24 +24,24 @@ import org.terasology.computer.system.server.lang.TerasologyFunctionExecutable;
 import java.util.Map;
 
 public class WriteToConsoleFunction extends TerasologyFunctionExecutable {
-	@Override
-	protected int getDuration() {
-		return 100;
-	}
+    @Override
+    protected int getDuration() {
+        return 100;
+    }
 
-	@Override
-	public String[] getParameterNames() {
-		return new String[]{"x", "y", "text"};
-	}
+    @Override
+    public String[] getParameterNames() {
+        return new String[]{"x", "y", "text"};
+    }
 
-	@Override
-	protected Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
+    @Override
+    protected Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
         int x = FunctionParamValidationUtil.validateIntParameter(line, parameters, "x", "write");
         int y = FunctionParamValidationUtil.validateIntParameter(line, parameters, "y", "write");
         String text = FunctionParamValidationUtil.validateStringParameter(line, parameters, "text", "write");
 
         computer.getConsole().setCharacters(x, y, text);
 
-		return null;
-	}
+        return null;
+    }
 }

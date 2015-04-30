@@ -79,19 +79,22 @@ public class BrowserWidget extends CoreWidget {
 
                 ParagraphRenderable paragraphContents = paragraphData.getParagraphContents();
                 int paragraphHeight = paragraphContents.getPreferredHeight(canvas, paragraphRenderStyle, paragraphWidth);
-                int paragraphBorderHeight = paragraphHeight + paragraphRenderStyle.getParagraphBackgroundIndentTop() + paragraphRenderStyle.getParagraphBackgroundIndentBottom();
+                int paragraphBorderHeight = paragraphHeight + paragraphRenderStyle.getParagraphBackgroundIndentTop()
+                        + paragraphRenderStyle.getParagraphBackgroundIndentBottom();
 
-                Rect2i paragraphBorderRegion = Rect2i.createFromMinAndSize(x + paragraphRenderStyle.getParagraphIndentLeft(), y + paragraphRenderStyle.getParagraphIndentTop(first),
-                        paragraphBorderWidth, paragraphBorderHeight);
+                Rect2i paragraphBorderRegion =
+                        Rect2i.createFromMinAndSize(x + paragraphRenderStyle.getParagraphIndentLeft(), y + paragraphRenderStyle.getParagraphIndentTop(first),
+                                paragraphBorderWidth, paragraphBorderHeight);
 
                 Color paragraphBackground = paragraphRenderStyle.getParagraphBackground();
                 if (paragraphBackground != null) {
                     canvas.drawFilledRectangle(paragraphBorderRegion, paragraphBackground);
                 }
 
-                Rect2i paragraphRegion = Rect2i.createFromMinAndSize(x + paragraphRenderStyle.getParagraphIndentLeft() + paragraphRenderStyle.getParagraphBackgroundIndentLeft(),
-                        y + paragraphRenderStyle.getParagraphIndentTop(first) + paragraphRenderStyle.getParagraphBackgroundIndentTop(),
-                        paragraphWidth, paragraphHeight);
+                Rect2i paragraphRegion =
+                        Rect2i.createFromMinAndSize(x + paragraphRenderStyle.getParagraphIndentLeft() + paragraphRenderStyle.getParagraphBackgroundIndentLeft(),
+                                y + paragraphRenderStyle.getParagraphIndentTop(first) + paragraphRenderStyle.getParagraphBackgroundIndentTop(),
+                                paragraphWidth, paragraphHeight);
 
                 paragraphContents.render(canvas, paragraphRegion, paragraphRenderStyle, register);
 
@@ -196,7 +199,7 @@ public class BrowserWidget extends CoreWidget {
         this.displayedPage = page;
     }
 
-    private class HyperlinkBox {
+    private final class HyperlinkBox {
         private Rect2i box;
         private String hyperlink;
 

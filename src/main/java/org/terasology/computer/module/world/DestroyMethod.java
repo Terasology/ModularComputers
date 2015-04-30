@@ -56,7 +56,7 @@ public class DestroyMethod implements ModuleMethodExecutable<Object> {
 
     @Override
     public String[] getParameterNames() {
-        return new String[] {"direction"};
+        return new String[]{"direction"};
     }
 
     @Override

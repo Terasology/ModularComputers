@@ -33,5 +33,5 @@ public class ComputerComponent implements Component {
     public int stackSize = 10;
     public int memorySize = 1024;
     @Replicate
-    public int computerId=-1;
+    public int computerId = -1;
 }

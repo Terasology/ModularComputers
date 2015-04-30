@@ -57,7 +57,7 @@ public class DestroyToInventoryMethod implements ModuleMethodExecutable<Object> 
 
     @Override
     public String[] getParameterNames() {
-        return new String[] {"direction", "inventoryBinding"};
+        return new String[]{"direction", "inventoryBinding"};
     }
 
     @Override

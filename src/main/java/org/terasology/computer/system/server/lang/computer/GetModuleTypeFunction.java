@@ -26,24 +26,24 @@ import org.terasology.computer.system.server.lang.TerasologyFunctionExecutable;
 import java.util.Map;
 
 public class GetModuleTypeFunction extends TerasologyFunctionExecutable {
-	@Override
-	public String[] getParameterNames() {
-		return new String[]{"slot"};
-	}
+    @Override
+    public String[] getParameterNames() {
+        return new String[]{"slot"};
+    }
 
-	@Override
-	protected int getDuration() {
-		return 100;
-	}
+    @Override
+    protected int getDuration() {
+        return 100;
+    }
 
-	@Override
-	protected Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
+    @Override
+    protected Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
         int slotNo = FunctionParamValidationUtil.validateIntParameter(line, parameters, "slot", "getModuleType");
 
-		final ComputerModule module = computer.getModule(slotNo);
-		String moduleType = null;
-		if (module != null)
-			moduleType = module.getModuleType();
-		return moduleType;
-	}
+        final ComputerModule module = computer.getModule(slotNo);
+        String moduleType = null;
+        if (module != null)
+            moduleType = module.getModuleType();
+        return moduleType;
+    }
 }

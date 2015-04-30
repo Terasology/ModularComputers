@@ -40,7 +40,7 @@ public class ItemCountMethod implements ModuleMethodExecutable<Object> {
 
     @Override
     public String[] getParameterNames() {
-        return new String[] {"inventoryBinding", "slot"};
+        return new String[]{"inventoryBinding", "slot"};
     }
 
     @Override

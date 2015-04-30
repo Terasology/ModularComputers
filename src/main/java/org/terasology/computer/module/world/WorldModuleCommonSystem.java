@@ -89,7 +89,7 @@ public class WorldModuleCommonSystem extends BaseComponentSystem {
                     put("destroyBlockToInventory", "[Boolean] Whether destroying the specified block was successful.");
                     put("placeBlock", "[Boolean] Whether placement of the block was successful.");
                 }},
-                new HashMap<String, Collection<ParagraphData>>(){{
+                new HashMap<String, Collection<ParagraphData>>() {{
                     put("destroyBlock", DocumentationBuilder.createExampleParagraphs(
                             "This example destroys the block below the computer. Please make sure " +
                                     "this computer has a module of World Interaction type in any of its slots.",

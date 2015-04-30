@@ -22,12 +22,12 @@ import java.util.Collection;
 import java.util.Collections;
 
 public abstract class AbstractConditionCustomObject implements CustomObject {
-	@Override
-	public Collection<String> getType() {
-		return Collections.singleton("CONDITION");
-	}
+    @Override
+    public Collection<String> getType() {
+        return Collections.singleton("CONDITION");
+    }
 
-	public abstract int getCreationDelay();
+    public abstract int getCreationDelay();
 
-	public abstract ResultAwaitingCondition createAwaitingCondition();
+    public abstract ResultAwaitingCondition createAwaitingCondition();
 }

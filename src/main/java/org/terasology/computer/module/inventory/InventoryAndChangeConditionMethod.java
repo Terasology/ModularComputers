@@ -44,7 +44,7 @@ public class InventoryAndChangeConditionMethod implements ModuleMethodExecutable
 
     @Override
     public String[] getParameterNames() {
-        return new String[] {"inventoryBinding"};
+        return new String[]{"inventoryBinding"};
     }
 
     @Override

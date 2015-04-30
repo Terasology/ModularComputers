@@ -26,31 +26,31 @@ import org.terasology.computer.system.server.lang.os.condition.ResultAwaitingCon
 import java.util.Map;
 
 public class CreateSleepTickFunction extends TerasologyFunctionExecutable {
-	@Override
-	protected int getDuration() {
-		return 10;
-	}
+    @Override
+    protected int getDuration() {
+        return 10;
+    }
 
-	@Override
-	public String[] getParameterNames() {
-		return new String[]{"ticks"};
-	}
+    @Override
+    public String[] getParameterNames() {
+        return new String[]{"ticks"};
+    }
 
-	@Override
-	protected Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
-		final Variable ticksVar = parameters.get("ticks");
-		if (ticksVar.getType() != Variable.Type.NUMBER)
-			throw new ExecutionException(line, "Expected NUMBER in createSleepTick()");
+    @Override
+    protected Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
+        final Variable ticksVar = parameters.get("ticks");
+        if (ticksVar.getType() != Variable.Type.NUMBER)
+            throw new ExecutionException(line, "Expected NUMBER in createSleepTick()");
 
-		final int ticks = ((Number) ticksVar.getValue()).intValue();
-		if (ticks <= 0)
-			throw new ExecutionException(line, "Sleep ticks must be greater than 0");
+        final int ticks = ((Number) ticksVar.getValue()).intValue();
+        if (ticks <= 0)
+            throw new ExecutionException(line, "Sleep ticks must be greater than 0");
 
-		return new AbstractConditionCustomObject() {
-			@Override
-			public int getCreationDelay() {
-				return 0;
-			}
+        return new AbstractConditionCustomObject() {
+            @Override
+            public int getCreationDelay() {
+                return 0;
+            }
 
             @Override
             public int sizeOf() {
@@ -58,28 +58,28 @@ public class CreateSleepTickFunction extends TerasologyFunctionExecutable {
             }
 
             @Override
-			public ResultAwaitingCondition createAwaitingCondition() {
-				return new TicksAwaitingCondition(ticks);
-			}
-		};
-	}
+            public ResultAwaitingCondition createAwaitingCondition() {
+                return new TicksAwaitingCondition(ticks);
+            }
+        };
+    }
 
-	private static class TicksAwaitingCondition implements ResultAwaitingCondition {
-		private int _ticks;
+    private static class TicksAwaitingCondition implements ResultAwaitingCondition {
+        private int _ticks;
 
-		private TicksAwaitingCondition(int ticks) {
-			_ticks = ticks;
-		}
+        private TicksAwaitingCondition(int ticks) {
+            _ticks = ticks;
+        }
 
-		@Override
-		public boolean isMet() throws ExecutionException {
-			_ticks--;
-			return _ticks < 0;
-		}
+        @Override
+        public boolean isMet() throws ExecutionException {
+            _ticks--;
+            return _ticks < 0;
+        }
 
-		@Override
-		public Variable getReturnValue() {
-			return new Variable(null);
-		}
-	}
+        @Override
+        public Variable getReturnValue() {
+            return new Variable(null);
+        }
+    }
 }

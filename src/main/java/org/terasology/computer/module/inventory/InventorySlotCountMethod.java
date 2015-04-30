@@ -38,7 +38,7 @@ public class InventorySlotCountMethod implements ModuleMethodExecutable<Object> 
 
     @Override
     public String[] getParameterNames() {
-        return new String[] {"inventoryBinding"};
+        return new String[]{"inventoryBinding"};
     }
 
     @Override

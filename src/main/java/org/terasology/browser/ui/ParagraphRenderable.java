@@ -21,7 +21,9 @@ import org.terasology.rendering.nui.Canvas;
 
 public interface ParagraphRenderable {
     public void render(Canvas canvas, Rect2i region, TextRenderStyle defaultStyle, HyperlinkRegister hyperlinkRegister);
+
     public int getPreferredHeight(Canvas canvas, TextRenderStyle defaultStyle, int width);
+
     public int getMinWidth(Canvas canvas, TextRenderStyle defaultStyle);
 
     public interface HyperlinkRegister {

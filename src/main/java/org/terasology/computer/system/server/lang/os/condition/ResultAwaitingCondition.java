@@ -19,5 +19,5 @@ import com.gempukku.lang.Variable;
 import org.terasology.computer.context.AwaitingCondition;
 
 public interface ResultAwaitingCondition extends AwaitingCondition {
-	public Variable getReturnValue();
+    public Variable getReturnValue();
 }

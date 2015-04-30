@@ -23,18 +23,18 @@ import org.terasology.computer.system.server.lang.TerasologyFunctionExecutable;
 import java.util.Map;
 
 public class GetModuleSlotCountFunction extends TerasologyFunctionExecutable {
-	@Override
-	public String[] getParameterNames() {
-		return new String[0];
-	}
+    @Override
+    public String[] getParameterNames() {
+        return new String[0];
+    }
 
-	@Override
-	protected int getDuration() {
-		return 100;
-	}
+    @Override
+    protected int getDuration() {
+        return 100;
+    }
 
-	@Override
-	protected Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
-		return computer.getModuleSlotsCount();
-	}
+    @Override
+    protected Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
+        return computer.getModuleSlotsCount();
+    }
 }

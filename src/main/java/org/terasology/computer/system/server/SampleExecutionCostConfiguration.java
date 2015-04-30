@@ -17,7 +17,7 @@ package org.terasology.computer.system.server;
 
 import com.gempukku.lang.ExecutionCostConfiguration;
 
-public class SampleExecutionCostConfiguration  implements ExecutionCostConfiguration {
+public class SampleExecutionCostConfiguration implements ExecutionCostConfiguration {
     @Override
     public int getGetContextValue() {
         return 1;

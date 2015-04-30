@@ -26,26 +26,26 @@ import org.terasology.computer.system.server.lang.computer.bind.SlotBindingObjec
 import java.util.Map;
 
 public class BindFirstModuleOfTypeFunction extends TerasologyFunctionExecutable {
-	@Override
-	protected int getDuration() {
-		return 100;
-	}
+    @Override
+    protected int getDuration() {
+        return 100;
+    }
 
-	@Override
-	public String[] getParameterNames() {
-		return new String[]{"type"};
-	}
+    @Override
+    public String[] getParameterNames() {
+        return new String[]{"type"};
+    }
 
-	@Override
-	protected Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
-		String moduleType = FunctionParamValidationUtil.validateStringParameter(line, parameters, "type", "bindModuleOfType");
+    @Override
+    protected Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
+        String moduleType = FunctionParamValidationUtil.validateStringParameter(line, parameters, "type", "bindModuleOfType");
 
-		final int moduleSlotsCount = computer.getModuleSlotsCount();
-		for (int i = 0; i < moduleSlotsCount; i++) {
-			final ComputerModule module = computer.getModule(i);
-			if (module != null && module.getModuleType().equals(moduleType))
-				return new SlotBindingObjectDefinition(i);
-		}
-		throw new ExecutionException(line, "Couldn't find module of the specified type.");
-	}
+        final int moduleSlotsCount = computer.getModuleSlotsCount();
+        for (int i = 0; i < moduleSlotsCount; i++) {
+            final ComputerModule module = computer.getModule(i);
+            if (module != null && module.getModuleType().equals(moduleType))
+                return new SlotBindingObjectDefinition(i);
+        }
+        throw new ExecutionException(line, "Couldn't find module of the specified type.");
+    }
 }

@@ -28,45 +28,45 @@ import org.terasology.computer.context.TerasologyComputerExecutionContext;
 import org.terasology.computer.system.server.lang.ComputerModule;
 
 public class BindingFunctionWrapper implements FunctionExecutable {
-	private int _slotNo;
-	private ComputerModule _module;
-	private FunctionExecutable _function;
+    private int _slotNo;
+    private ComputerModule _module;
+    private FunctionExecutable _function;
 
-	public BindingFunctionWrapper(ComputerModule module, int slotNo, FunctionExecutable function) {
-		_module = module;
-		_slotNo = slotNo;
-		_function = function;
-	}
+    public BindingFunctionWrapper(ComputerModule module, int slotNo, FunctionExecutable function) {
+        _module = module;
+        _slotNo = slotNo;
+        _function = function;
+    }
 
-	@Override
-	public CallContext getCallContext() {
-		return new CallContext(null, false, false);
-	}
+    @Override
+    public CallContext getCallContext() {
+        return new CallContext(null, false, false);
+    }
 
-	@Override
-	public String[] getParameterNames() {
-		return _function.getParameterNames();
-	}
+    @Override
+    public String[] getParameterNames() {
+        return _function.getParameterNames();
+    }
 
-	@Override
-	public Execution createExecution(int line, ExecutionContext executionContext, final CallContext callContext) {
-		final TerasologyComputerExecutionContext terasologyExecutionContext = (TerasologyComputerExecutionContext) executionContext;
-		final ComputerCallback computerCallback = terasologyExecutionContext.getComputerCallback();
+    @Override
+    public Execution createExecution(int line, ExecutionContext executionContext, final CallContext callContext) {
+        final TerasologyComputerExecutionContext terasologyExecutionContext = (TerasologyComputerExecutionContext) executionContext;
+        final ComputerCallback computerCallback = terasologyExecutionContext.getComputerCallback();
 
-		final ComputerModule module = computerCallback.getModule(_slotNo);
-		if (module == _module) {
-			return _function.createExecution(line, executionContext, callContext);
-		} else {
-			return getThrowingExceptionExecution(line);
-		}
-	}
+        final ComputerModule module = computerCallback.getModule(_slotNo);
+        if (module == _module) {
+            return _function.createExecution(line, executionContext, callContext);
+        } else {
+            return getThrowingExceptionExecution(line);
+        }
+    }
 
-	private Execution getThrowingExceptionExecution(final int line) {
-		return new SimpleExecution() {
-			@Override
-			protected ExecutionProgress execute(ExecutionContext context, ExecutionCostConfiguration configuration) throws ExecutionException {
-				throw new ExecutionException(line, "Bound module has been removed or replaced");
-			}
-		};
-	}
+    private Execution getThrowingExceptionExecution(final int line) {
+        return new SimpleExecution() {
+            @Override
+            protected ExecutionProgress execute(ExecutionContext context, ExecutionCostConfiguration configuration) throws ExecutionException {
+                throw new ExecutionException(line, "Bound module has been removed or replaced");
+            }
+        };
+    }
 }

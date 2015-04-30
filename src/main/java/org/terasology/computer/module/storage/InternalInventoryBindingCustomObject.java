@@ -59,7 +59,7 @@ public class InternalInventoryBindingCustomObject implements CustomObject, Inven
 
     private List<Integer> getSlotList(int slotCount) {
         List<Integer> slots = new LinkedList<>();
-        for (int i=0; i<slotCount; i++) {
+        for (int i = 0; i < slotCount; i++) {
             slots.add(i);
         }
         return slots;

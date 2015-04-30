@@ -21,5 +21,6 @@ import java.util.Collection;
 
 public interface DocumentData {
     public DocumentRenderStyle getDocumentRenderStyle();
+
     public Collection<ParagraphData> getParagraphs();
 }

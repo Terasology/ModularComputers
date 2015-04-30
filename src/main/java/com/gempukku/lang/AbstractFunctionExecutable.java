@@ -16,8 +16,9 @@ public abstract class AbstractFunctionExecutable implements FunctionExecutable {
                         final String[] parameterNames = getParameterNames();
                         Map<String, Variable> parameters = new HashMap<String, Variable>();
                         final CallContext callContext = context.peekCallContext();
-                        for (String parameterName : parameterNames)
+                        for (String parameterName : parameterNames) {
                             parameters.put(parameterName, callContext.getVariableValue(parameterName));
+                        }
 
                         context.setReturnValue(new Variable(executeFunction(line, parameters)));
                         return new ExecutionProgress(configuration.getSetReturnValue());

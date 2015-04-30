@@ -21,27 +21,26 @@ import com.gempukku.lang.Variable;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.TerasologyFunctionExecutable;
 
-import java.util.Collections;
 import java.util.Map;
 
 public class TypeOfFunction extends TerasologyFunctionExecutable {
-	@Override
-	protected int getDuration() {
-		return 10;
-	}
+    @Override
+    protected int getDuration() {
+        return 10;
+    }
 
-	@Override
-	public String[] getParameterNames() {
-		return new String[]{"value"};
-	}
+    @Override
+    public String[] getParameterNames() {
+        return new String[]{"value"};
+    }
 
-	@Override
-	protected Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
-		final Variable value = parameters.get("value");
-		final Variable.Type type = value.getType();
-		if (type == Variable.Type.CUSTOM_OBJECT)
-			return ((CustomObject) value.getValue()).getType().toString();
+    @Override
+    protected Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
+        final Variable value = parameters.get("value");
+        final Variable.Type type = value.getType();
+        if (type == Variable.Type.CUSTOM_OBJECT)
+            return ((CustomObject) value.getValue()).getType().toString();
 
-		return type.toString();
-	}
+        return type.toString();
+    }
 }

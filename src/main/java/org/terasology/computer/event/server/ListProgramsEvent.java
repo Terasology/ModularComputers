@@ -15,7 +15,6 @@
  */
 package org.terasology.computer.event.server;
 
-import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.entitySystem.event.Event;
 import org.terasology.network.ServerEvent;
 

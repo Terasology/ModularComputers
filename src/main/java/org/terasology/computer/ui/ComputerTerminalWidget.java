@@ -47,6 +47,7 @@ public class ComputerTerminalWidget extends CoreWidget {
     public enum TerminalMode {
         PLAYER_CONSOLE, COMPUTER_CONSOLE
     }
+
     @LayoutConfig
     private String monospaceFont;
 
@@ -260,9 +261,9 @@ public class ComputerTerminalWidget extends CoreWidget {
                 } else if (!isValidProgramName(commandParts[1]))
                     playerCommandConsoleGui.appendToConsole("Invalid program name - only letters and digits allowed and a maximum length of 10");
                 else {
-                    String[] arguments = new String[commandParts.length-2];
-                    for (int i=0; i<commandParts.length-2; i++) {
-                        arguments[i] = commandParts[i+2];
+                    String[] arguments = new String[commandParts.length - 2];
+                    for (int i = 0; i < commandParts.length - 2; i++) {
+                        arguments[i] = commandParts[i + 2];
                     }
                     clientEntity.send(new ExecuteProgramEvent(computerId, commandParts[1], arguments));
                 }

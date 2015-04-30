@@ -21,5 +21,6 @@ import org.terasology.browser.ui.style.ParagraphRenderStyle;
 
 public interface ParagraphData {
     public ParagraphRenderStyle getParagraphRenderStyle();
+
     public ParagraphRenderable getParagraphContents();
 }

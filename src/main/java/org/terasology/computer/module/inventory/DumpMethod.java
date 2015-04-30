@@ -40,7 +40,7 @@ public class DumpMethod implements ModuleMethodExecutable<Object> {
 
     @Override
     public String[] getParameterNames() {
-        return new String[] {"inventoryBindingFrom", "inventoryBindingTo"};
+        return new String[]{"inventoryBindingFrom", "inventoryBindingTo"};
     }
 
     @Override

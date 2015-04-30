@@ -28,5 +28,6 @@ public interface ComputerModuleRegistry {
             Map<String, Map<String, String>> methodParametersDescriptions,
             Map<String, String> returnValuesDescriptions,
             Map<String, Collection<ParagraphData>> additionalMethodParagraphs);
+
     public ComputerModule getComputerModuleByType(String type);
 }

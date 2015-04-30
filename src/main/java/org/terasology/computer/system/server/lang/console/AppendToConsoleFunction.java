@@ -25,20 +25,20 @@ import org.terasology.computer.system.server.lang.TerasologyFunctionExecutable;
 import java.util.Map;
 
 public class AppendToConsoleFunction extends TerasologyFunctionExecutable {
-	@Override
-	protected int getDuration() {
-		return 100;
-	}
+    @Override
+    protected int getDuration() {
+        return 100;
+    }
 
-	@Override
-	public String[] getParameterNames() {
-		return new String[]{"text"};
-	}
+    @Override
+    public String[] getParameterNames() {
+        return new String[]{"text"};
+    }
 
-	@Override
-	protected Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
+    @Override
+    protected Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
         String text = FunctionParamValidationUtil.validateStringParameter(line, parameters, "text", "append");
         computer.getConsole().appendString(text);
-		return null;
-	}
+        return null;
+    }
 }

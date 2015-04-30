@@ -26,23 +26,23 @@ import org.terasology.computer.system.server.lang.computer.bind.SlotBindingObjec
 import java.util.Map;
 
 public class BindModuleFunction extends TerasologyFunctionExecutable {
-	@Override
-	public String[] getParameterNames() {
-		return new String[]{"slot"};
-	}
+    @Override
+    public String[] getParameterNames() {
+        return new String[]{"slot"};
+    }
 
-	@Override
-	protected int getDuration() {
-		return 100;
-	}
+    @Override
+    protected int getDuration() {
+        return 100;
+    }
 
-	@Override
-	protected Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
-		int slotNo = FunctionParamValidationUtil.validateIntParameter(line, parameters, "slot", "bindModule");
+    @Override
+    protected Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
+        int slotNo = FunctionParamValidationUtil.validateIntParameter(line, parameters, "slot", "bindModule");
 
-		if (slotNo < 0 || slotNo >= computer.getModuleSlotsCount())
-			throw new ExecutionException(line, "Slot number outside of permitted range in bindModule()");
+        if (slotNo < 0 || slotNo >= computer.getModuleSlotsCount())
+            throw new ExecutionException(line, "Slot number outside of permitted range in bindModule()");
 
-		return new SlotBindingObjectDefinition(slotNo);
-	}
+        return new SlotBindingObjectDefinition(slotNo);
+    }
 }

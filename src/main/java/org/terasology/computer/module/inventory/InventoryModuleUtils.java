@@ -20,7 +20,8 @@ import org.terasology.logic.common.DisplayNameComponent;
 import org.terasology.logic.inventory.ItemComponent;
 
 public class InventoryModuleUtils {
-    private InventoryModuleUtils() {}
+    private InventoryModuleUtils() {
+    }
 
     public static int getItemCount(EntityRef itemEntity) {
         ItemComponent item = itemEntity.getComponent(ItemComponent.class);

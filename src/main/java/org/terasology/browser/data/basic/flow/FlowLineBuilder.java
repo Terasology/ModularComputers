@@ -58,7 +58,7 @@ public class FlowLineBuilder {
                 if (splitResult.rest != null) {
                     result.add(new DefaultLaidFlowLine<T>(x, maxHeightInLine, renderablesInLine));
                     renderablesInLine = new LinkedList<>();
-                    x=0;
+                    x = 0;
                     maxHeightInLine = 0;
                     renderablesQueue.addFirst(splitResult.rest);
                 }

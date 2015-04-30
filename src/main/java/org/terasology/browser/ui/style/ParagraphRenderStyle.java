@@ -54,5 +54,7 @@ public interface ParagraphRenderStyle extends TextRenderStyle {
         return null;
     }
 
-    public default Integer getParagraphMinimumWidth() { return null; }
+    public default Integer getParagraphMinimumWidth() {
+        return null;
+    }
 }

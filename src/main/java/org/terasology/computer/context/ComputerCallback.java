@@ -21,9 +21,14 @@ import org.terasology.math.geom.Vector3f;
 
 public interface ComputerCallback {
     public ComputerConsole getConsole();
+
     public int getModuleSlotsCount();
+
     public ComputerModule getModule(int slot);
+
     public Vector3f getComputerLocation();
+
     public void suspendWithCondition(AwaitingCondition condition);
+
     public EntityRef getComputerEntity();
 }

@@ -31,7 +31,7 @@ public class InventoryComputerModule implements ComputerModule {
 
     public InventoryComputerModule(InventoryModuleConditionsRegister inventoryModuleConditionsRegister,
                                    InventoryManager inventoryManager,
-            BlockEntityRegistry blockEntityRegistry, String moduleType, String moduleName) {
+                                   BlockEntityRegistry blockEntityRegistry, String moduleType, String moduleName) {
         this.inventoryModuleConditionsRegister = inventoryModuleConditionsRegister;
         this.inventoryManager = inventoryManager;
         this.blockEntityRegistry = blockEntityRegistry;

@@ -73,7 +73,7 @@ public class FunctionParamValidationUtil {
         CustomObject customObject = (CustomObject) inventoryBinding.getValue();
         if (!customObject.getType().contains("INVENTORY_BINDING")
                 || (input != null && input != ((InventoryBinding) customObject).isInput()))
-            throw new ExecutionException(line, "Invalid "+parameterName+" in "+functionName+"()");
+            throw new ExecutionException(line, "Invalid " + parameterName + " in " + functionName + "()");
 
         InventoryBinding binding = (InventoryBinding) inventoryBinding.getValue();
         return binding.getInventoryEntity(line, computer);
@@ -86,8 +86,8 @@ public class FunctionParamValidationUtil {
 
         int slotCount = inventory.slots.size();
 
-        if (slotNo<0 || slotCount<=slotNo)
-            throw new ExecutionException(line, "Slot number out of range in "+functionName+"()");
+        if (slotNo < 0 || slotCount <= slotNo)
+            throw new ExecutionException(line, "Slot number out of range in " + functionName + "()");
         return slotNo;
     }
 }
