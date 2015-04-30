@@ -94,7 +94,7 @@ public class WorldModuleCommonSystem extends BaseComponentSystem {
                             "This example destroys the block below the computer. Please make sure " +
                                     "this computer has a module of World Interaction type in any of its slots.",
                             "var worldMod = computer.bindModuleOfType(\"" + WORLD_MODULE_TYPE + "\");\n" +
-                                    "var worldMod.destroyBlock(\"down\");"
+                                    "worldMod.destroyBlock(\"down\");"
                     ));
                     put("destroyBlockToInventory", DocumentationBuilder.createExampleParagraphs(
                             "This example destroys the block below the computer and places the resulting items in inventory " +

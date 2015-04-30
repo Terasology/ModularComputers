@@ -102,21 +102,23 @@ public class StorageModuleServerSystem extends BaseComponentSystem {
 
     private void dropItemsFromComputerInternalStorage(EntityRef computerEntity) {
         InternalStorageComponent internalStorage = computerEntity.getComponent(InternalStorageComponent.class);
-        Vector3i blockLocation = computerEntity.getComponent(BlockComponent.class).getPosition();
+        if (computerEntity.hasComponent(BlockComponent.class)) {
+            Vector3i blockLocation = computerEntity.getComponent(BlockComponent.class).getPosition();
 
-        EntityRef inventoryEntity = internalStorage.inventoryEntity;
-        InventoryComponent inventoryComponent = inventoryEntity.getComponent(InventoryComponent.class);
+            EntityRef inventoryEntity = internalStorage.inventoryEntity;
+            InventoryComponent inventoryComponent = inventoryEntity.getComponent(InventoryComponent.class);
 
-        FastRandom random = new FastRandom();
-        PickupBuilder pickupBuilder = new PickupBuilder(entityManager);
-        for (EntityRef itemSlot : inventoryComponent.itemSlots) {
-            if (itemSlot.exists()) {
-                EntityRef pickup = pickupBuilder.createPickupFor(itemSlot, blockLocation.toVector3f(), 60, true);
-                pickup.send(new ImpulseEvent(random.nextVector3f(30.0f)));
+            FastRandom random = new FastRandom();
+            PickupBuilder pickupBuilder = new PickupBuilder(entityManager);
+            for (EntityRef itemSlot : inventoryComponent.itemSlots) {
+                if (itemSlot.exists()) {
+                    EntityRef pickup = pickupBuilder.createPickupFor(itemSlot, blockLocation.toVector3f(), 60, true);
+                    pickup.send(new ImpulseEvent(random.nextVector3f(30.0f)));
+                }
             }
-        }
 
-        inventoryEntity.destroy();
+            inventoryEntity.destroy();
+        }
     }
 
     @ReceiveEvent(priority = EventPriority.PRIORITY_TRIVIAL)

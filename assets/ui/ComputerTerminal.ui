@@ -73,26 +73,11 @@
                                                 "type": "RelativeLayout",
                                                 "contents": [
                                                     {
-                                                        "id": "toggleToC",
-                                                        "type": "UIButton",
-                                                        "text": "+-",
-                                                        "layoutInfo": {
-                                                            "position-left": {},
-                                                            "use-content-width": true,
-                                                            "use-content-height": true,
-                                                            "position-top": {},
-                                                            "position-bottom": {}
-                                                        }
-                                                    },
-                                                    {
                                                         "id": "homeButton",
                                                         "type": "UIButton",
                                                         "text": "Home",
                                                         "layoutInfo": {
-                                                            "position-left": {
-                                                                "widget": "toggleToC",
-                                                                "target": "RIGHT"
-                                                            },
+                                                            "position-left": {},
                                                             "use-content-width": true,
                                                             "use-content-height": true,
                                                             "position-top": {},
