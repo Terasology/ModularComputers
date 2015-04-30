@@ -6,6 +6,6 @@
         "stackable": false
     },
     "entity": {
-            "prefab": "ModularComputers:SlowComputer"
+            "prefab": "ModularComputers:TestComputer"
         }
 }
