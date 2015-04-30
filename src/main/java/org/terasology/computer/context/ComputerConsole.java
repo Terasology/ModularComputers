@@ -22,7 +22,7 @@ import java.util.Set;
 
 public class ComputerConsole {
     private Set<ComputerConsoleListener> _consoleListeners = new HashSet<ComputerConsoleListener>();
-    public static final int CONSOLE_WIDTH = 70;
+    public static final int CONSOLE_WIDTH = 87;
     public static final int CONSOLE_HEIGHT = 35;
 
     // Please note, it's addressable by _chars[y][x] to allow easy creation of Strings based on line index

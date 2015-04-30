@@ -43,7 +43,7 @@
                                 "id": "computerTerminal",
                                 "type": "ModularComputers:ComputerTerminalWidget",
                                 "monospaceFont": "ModularComputers:november",
-                                "characterWidth": 10,
+                                "characterWidth": 8,
                                 "fontHeight": 16
                             },
                             {
@@ -73,11 +73,26 @@
                                                 "type": "RelativeLayout",
                                                 "contents": [
                                                     {
+                                                        "id": "toggleToC",
+                                                        "type": "UIButton",
+                                                        "text": "+-",
+                                                        "layoutInfo": {
+                                                            "position-left": {},
+                                                            "use-content-width": true,
+                                                            "use-content-height": true,
+                                                            "position-top": {},
+                                                            "position-bottom": {}
+                                                        }
+                                                    },
+                                                    {
                                                         "id": "homeButton",
                                                         "type": "UIButton",
                                                         "text": "Home",
                                                         "layoutInfo": {
-                                                            "position-left": {},
+                                                            "position-left": {
+                                                                "widget": "toggleToC",
+                                                                "target": "RIGHT"
+                                                            },
                                                             "use-content-width": true,
                                                             "use-content-height": true,
                                                             "position-top": {},
@@ -157,7 +172,7 @@
                     }
                 ],
                 "layoutInfo": {
-                    "width": 710,
+                    "width": 708,
                     "height": 597,
                     "position-horizontal-center": {},
                     "position-vertical-center": {}

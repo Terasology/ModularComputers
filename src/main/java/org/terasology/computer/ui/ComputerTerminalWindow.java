@@ -30,6 +30,7 @@ import org.terasology.rendering.nui.NUIManager;
 import org.terasology.rendering.nui.UIWidget;
 import org.terasology.rendering.nui.itemRendering.StringTextRenderer;
 import org.terasology.rendering.nui.layouts.CardLayout;
+import org.terasology.rendering.nui.layouts.ScrollableArea;
 import org.terasology.rendering.nui.widgets.ActivateEventListener;
 import org.terasology.rendering.nui.widgets.ItemSelectEventListener;
 import org.terasology.rendering.nui.widgets.UIButton;
@@ -55,6 +56,8 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
     private UIButton playerConsoleTabButton;
     private UIButton computerConsoleTabButton;
     private UIButton documentationTabButton;
+    private UIButton toggleTableOfContents;
+    private ScrollableArea tableOfContentsScrollable;
 
     @Override
     protected void initialise() {
@@ -63,6 +66,9 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
         playerConsoleTabButton = find("playerConsole", UIButton.class);
         computerConsoleTabButton = find("computerConsole", UIButton.class);
         documentationTabButton = find("documentation", UIButton.class);
+
+        tableOfContentsScrollable = find("tableOfContentsScrollable", ScrollableArea.class);
+
         tabs = find("tabs", CardLayout.class);
         browser = find("browser", BrowserWidget.class);
         browser.addBrowserHyperlinkListener(
@@ -112,6 +118,8 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
         UIButton homeButton = find("homeButton", UIButton.class);
         backButton = find("backButton", UIButton.class);
         forwardButton = find("forwardButton", UIButton.class);
+        toggleTableOfContents = find("toggleToC", UIButton.class);
+
         homeButton.subscribe(
                 new ActivateEventListener() {
                     @Override
@@ -139,6 +147,13 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
                         browserHistory.add(nextPage);
                         browser.navigateTo(documentationData.getDocument(nextPage));
                         updateHistoryButtons();
+                    }
+                });
+        toggleTableOfContents.subscribe(
+                new ActivateEventListener() {
+                    @Override
+                    public void onActivated(UIWidget widget) {
+                        tableOfContentsScrollable.setVisible(!tableOfContentsScrollable.isVisible());
                     }
                 });
     }

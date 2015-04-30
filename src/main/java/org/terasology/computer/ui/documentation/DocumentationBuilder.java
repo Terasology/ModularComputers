@@ -306,7 +306,7 @@ public class DocumentationBuilder {
 
                             @Override
                             public Integer getParagraphMinimumWidth() {
-                                return finalMaxCodeLineLength * 10;
+                                return finalMaxCodeLineLength * 8;
                             }
                         },
                         "<f ModularComputers:november>" + codeEncoded.toString() + "</f>"));
