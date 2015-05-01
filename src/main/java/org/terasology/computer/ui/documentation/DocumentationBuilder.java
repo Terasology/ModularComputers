@@ -16,12 +16,14 @@
 package org.terasology.computer.ui.documentation;
 
 import com.gempukku.lang.ObjectDefinition;
+import org.terasology.asset.Assets;
 import org.terasology.browser.data.ParagraphData;
 import org.terasology.browser.data.basic.HTMLLikeParser;
 import org.terasology.browser.ui.style.ParagraphRenderStyle;
 import org.terasology.computer.system.common.ComputerLanguageContext;
 import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
 import org.terasology.computer.system.server.lang.ComputerModule;
+import org.terasology.rendering.assets.font.Font;
 import org.terasology.rendering.nui.Color;
 
 import java.util.Collection;
@@ -72,7 +74,7 @@ public class DocumentationBuilder {
                         PageData pageData = new PageData(modulePageId, "Module - " + computerModule.getModuleName(), null);
                         pageData.addParagraphs(createTitleParagraph("Module - " + computerModule.getModuleName()));
                         pageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, description));
-                        pageData.addParagraphs(paragraphWithSpaceBefore("Methods:"));
+                        pageData.addParagraphs(emphasizedParagraphWithSpaceBefore("Methods:"));
                         for (String methodName : methodDescriptions.keySet()) {
                             pageData.addParagraphs(
                                     HTMLLikeParser.parseHTMLLike(null,
@@ -90,7 +92,7 @@ public class DocumentationBuilder {
                             functionPageData.addParagraphs(createTitleParagraph("Method - " + methodName));
                             functionPageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, methodEntry.getValue()));
 
-                            functionPageData.addParagraphs(paragraphWithSpaceBefore("Parameters:"));
+                            functionPageData.addParagraphs(emphasizedParagraphWithSpaceBefore("Parameters:"));
 
                             Map<String, String> methodParameters = methodParametersDescriptions.get(methodName);
 
@@ -104,7 +106,7 @@ public class DocumentationBuilder {
 
                             Collection<ParagraphData> returnDescription = HTMLLikeParser.parseHTMLLike(null, methodReturnDescriptions.get(methodName));
                             if (!returnDescription.isEmpty()) {
-                                functionPageData.addParagraphs(paragraphWithSpaceBefore("Returns:"));
+                                functionPageData.addParagraphs(emphasizedParagraphWithSpaceBefore("Returns:"));
                                 functionPageData.addParagraphs(returnDescription);
                             }
 
@@ -131,7 +133,7 @@ public class DocumentationBuilder {
                         PageData pageData = new PageData(objectPageId, "Variable - " + object, null);
                         pageData.addParagraphs(createTitleParagraph("Variable - " + object));
                         pageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, objectDescription));
-                        pageData.addParagraphs(paragraphWithSpaceBefore("Functions:"));
+                        pageData.addParagraphs(emphasizedParagraphWithSpaceBefore("Functions:"));
                         for (String functionName : functionDescriptions.keySet()) {
                             pageData.addParagraphs(
                                     HTMLLikeParser.parseHTMLLike(null,
@@ -149,7 +151,7 @@ public class DocumentationBuilder {
                             functionPageData.addParagraphs(createTitleParagraph("Function - " + functionName));
                             functionPageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, functionEntry.getValue()));
 
-                            functionPageData.addParagraphs(paragraphWithSpaceBefore("Parameters:"));
+                            functionPageData.addParagraphs(emphasizedParagraphWithSpaceBefore("Parameters:"));
 
                             Map<String, String> functionParameters = functionParametersDescriptions.get(functionName);
 
@@ -162,7 +164,7 @@ public class DocumentationBuilder {
 
                             Collection<ParagraphData> returnDescription = HTMLLikeParser.parseHTMLLike(null, functionReturnDescriptions.get(functionName));
                             if (!returnDescription.isEmpty()) {
-                                functionPageData.addParagraphs(paragraphWithSpaceBefore("Returns:"));
+                                functionPageData.addParagraphs(emphasizedParagraphWithSpaceBefore("Returns:"));
                                 functionPageData.addParagraphs(returnDescription);
                             }
 
@@ -184,7 +186,7 @@ public class DocumentationBuilder {
         pageData.addParagraphs(createTitleParagraph("Introduction"));
         pageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, "This is the first page of the documentation."));
 
-        pageData.addParagraphs(paragraphWithSpaceBefore("List of built-in objects:"));
+        pageData.addParagraphs(emphasizedParagraphWithSpaceBefore("List of built-in objects:"));
 
         computerLanguageContextInitializer.initializeContext(
                 new ComputerLanguageContext() {
@@ -201,7 +203,7 @@ public class DocumentationBuilder {
                     }
                 });
 
-        pageData.addParagraphs(paragraphWithSpaceBefore("List of registered computer modules:"));
+        pageData.addParagraphs(emphasizedParagraphWithSpaceBefore("List of registered computer modules:"));
 
         computerLanguageContextInitializer.initializeContext(
                 new ComputerLanguageContext() {
@@ -221,11 +223,16 @@ public class DocumentationBuilder {
         return pageData;
     }
 
-    private static Collection<ParagraphData> paragraphWithSpaceBefore(String text) {
+    private static Collection<ParagraphData> emphasizedParagraphWithSpaceBefore(String text) {
         ParagraphRenderStyle renderStyle = new ParagraphRenderStyle() {
             @Override
             public Integer getParagraphIndentTop(boolean firstParagraph) {
                 return 10;
+            }
+
+            @Override
+            public Font getFont(boolean hyperlink) {
+                return Assets.getFont("engine:NotoSans-Bold");
             }
         };
         return HTMLLikeParser.parseHTMLLike(renderStyle, text);
@@ -237,7 +244,7 @@ public class DocumentationBuilder {
 
     public static Collection<ParagraphData> createExampleParagraphs(String description, String code) {
         List<ParagraphData> result = new LinkedList<>();
-        result.addAll(paragraphWithSpaceBefore("Example:"));
+        result.addAll(emphasizedParagraphWithSpaceBefore("Example:"));
         result.addAll(HTMLLikeParser.parseHTMLLike(null, "<h saveAs:example:" + HTMLLikeParser.encodeHTMLLike(code) + ">Save as example</h>"));
         result.addAll(
                 HTMLLikeParser.parseHTMLLike(null, description));

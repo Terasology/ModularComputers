@@ -24,9 +24,6 @@ import org.terasology.rendering.nui.Canvas;
 import org.terasology.rendering.nui.Color;
 
 import java.awt.*;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,13 +62,13 @@ public class ProgramEditingConsoleGui {
     private CompileScriptOnTheFly onTheFlyCompiler;
     private StringBuilder gotoLineNumber;
 
-    private int _scale = 0;
+    private int scale = 0;
     private static final float[] SCALES = new float[]{1f, 0.833f, 0.667f, 0.5f};
     private static final int[] CHARACTER_COUNT_WIDTH = new int[]{ComputerConsole.CONSOLE_WIDTH, (int) (ComputerConsole.CONSOLE_WIDTH * 1.2f), (int) (ComputerConsole.CONSOLE_WIDTH * 1.5f), ComputerConsole.CONSOLE_WIDTH * 2};
     private static final int[] CHARACTER_COUNT_HEIGHT = new int[]{ComputerConsole.CONSOLE_HEIGHT, (int) (ComputerConsole.CONSOLE_HEIGHT * 1.2f), (int) (ComputerConsole.CONSOLE_HEIGHT * 1.5f), ComputerConsole.CONSOLE_HEIGHT * 2};
 
-    public ProgramEditingConsoleGui(ComputerTerminalWidget ComputerConsoleWidget, ComputerLanguageContextInitializer computerLanguageContextInitializer) {
-        computerTerminalWidget = ComputerConsoleWidget;
+    public ProgramEditingConsoleGui(ComputerTerminalWidget computerTerminalWidget, ComputerLanguageContextInitializer computerLanguageContextInitializer) {
+        this.computerTerminalWidget = computerTerminalWidget;
         onTheFlyCompiler = new CompileScriptOnTheFly(computerLanguageContextInitializer);
     }
 
@@ -116,16 +113,17 @@ public class ProgramEditingConsoleGui {
         drawStatusLine(canvas, x, y, characterWidth, fontHeight, compileStatusObj);
 
         blinkDrawTick = ((++blinkDrawTick) % BLINK_LENGTH);
-        if (blinkDrawTick * 2 > BLINK_LENGTH)
+        if (blinkDrawTick * 2 > BLINK_LENGTH) {
             computerTerminalWidget.drawVerticalLine(canvas, x + (editedProgramCursorX - editedDisplayStartX) * characterWidth - 1, y + (editedProgramCursorY - editedDisplayStartY) * fontHeight, y + 1 + (editedProgramCursorY - editedDisplayStartY + 1) * fontHeight, PROGRAM_CURSOR_COLOR);
+        }
     }
 
     private int getCharactersInColumn() {
-        return CHARACTER_COUNT_HEIGHT[_scale];
+        return CHARACTER_COUNT_HEIGHT[scale];
     }
 
     private int getCharactersInRow() {
-        return CHARACTER_COUNT_WIDTH[_scale];
+        return CHARACTER_COUNT_WIDTH[scale];
     }
 
     private void drawStatusLine(Canvas canvas, int x, int y, int characterWidth, int fontHeight, CompileScriptOnTheFly.CompileStatus compileStatusObj) {
@@ -144,8 +142,9 @@ public class ProgramEditingConsoleGui {
     private void displayNormalEditingInformation(Canvas canvas, int x, int y, int lastLineY, int characterWidth, int fontHeight, CompileScriptOnTheFly.CompileStatus compileStatusObj) {
         computerTerminalWidget.drawMonospacedText(canvas, "[S]ave E[x]it", x, lastLineY, PROGRAM_LAST_LINE_COLOR);
 
-        if (programSaveDirty)
+        if (programSaveDirty) {
             computerTerminalWidget.drawMonospacedText(canvas, "*", x + 15 * characterWidth, lastLineY, PROGRAM_LAST_LINE_COLOR);
+        }
 
         String compileStatus = "...";
         Color compileColor = COMPILE_PENDING_COLOR;
@@ -171,8 +170,9 @@ public class ProgramEditingConsoleGui {
             final int errorColumn = error.getColumn() - editedDisplayStartX;
 
             if (errorLine >= 0 && errorLine < getCharactersInColumn() - 1
-                    && errorColumn >= 0 && errorColumn < getCharactersInRow())
+                    && errorColumn >= 0 && errorColumn < getCharactersInRow()) {
                 computerTerminalWidget.drawHorizontalLine(canvas, x + errorColumn * characterWidth, y + (errorLine + 1) * fontHeight, x + (errorColumn + 1) * characterWidth, PROGRAM_ERROR_UNDERLINE_COLOR);
+            }
         }
     }
 
@@ -183,15 +183,16 @@ public class ProgramEditingConsoleGui {
         final int errorColumn = error.getColumn() - editedDisplayStartX;
 
         if (errorLine >= 0 && errorLine < getCharactersInColumn() - 1
-                && errorColumn >= 0 && errorColumn < getCharactersInRow())
+                && errorColumn >= 0 && errorColumn < getCharactersInRow()) {
             computerTerminalWidget.drawHorizontalLine(canvas, x + errorColumn * characterWidth, y + (errorLine + 1) * fontHeight, x + (errorColumn + 1) * characterWidth, PROGRAM_ERROR_UNDERLINE_COLOR);
+        }
     }
 
     public void keyTypedInEditingProgram(char character, int keyboardCharId, boolean controlDown) {
         if (waitingForExitConfirmation) {
-            if (keyboardCharId == Keyboard.KEY_N)
+            if (keyboardCharId == Keyboard.KEY_N) {
                 waitingForExitConfirmation = false;
-            else if (keyboardCharId == Keyboard.KEY_Y) {
+            } else if (keyboardCharId == Keyboard.KEY_Y) {
                 waitingForExitConfirmation = false;
                 computerTerminalWidget.exitProgramming();
             }
@@ -251,8 +252,9 @@ public class ProgramEditingConsoleGui {
         }
 
         // Adjust cursor X position to be within the program line
-        if (editedProgramCursorX > editedProgramLines.get(editedProgramCursorY).length())
+        if (editedProgramCursorX > editedProgramLines.get(editedProgramCursorY).length()) {
             editedProgramCursorX = editedProgramLines.get(editedProgramCursorY).length();
+        }
 
         final int editedLineLength = editedProgramLines.get(editedProgramCursorY).length();
         if (editedDisplayStartX + getCharactersInRow() > editedLineLength) {
@@ -279,26 +281,28 @@ public class ProgramEditingConsoleGui {
     }
 
     private void handleScaleDown() {
-        if (_scale > 0)
-            _scale--;
+        if (scale > 0) {
+            scale--;
+        }
     }
 
     private void handleScaleUp() {
-        if (_scale < SCALES.length - 1)
-            _scale++;
+        if (scale < SCALES.length - 1) {
+            scale++;
+        }
     }
 
 
     private String getClipboardContents() {
-        Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
-
-        try {
-            if (t != null && t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-                return (String) t.getTransferData(DataFlavor.stringFlavor);
-            }
-        } catch (UnsupportedFlavorException | IOException e) {
-            // TODO
-        }
+//        Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+//
+//        try {
+//            if (t != null && t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+//                return (String) t.getTransferData(DataFlavor.stringFlavor);
+//            }
+//        } catch (UnsupportedFlavorException | IOException e) {
+//            // TODO
+//        }
 
         return "";
     }
@@ -324,8 +328,9 @@ public class ProgramEditingConsoleGui {
                 editedProgramCursorX = (before + fixedLine).length();
             }
         }
-        if (clipboard.length() > 0)
+        if (clipboard.length() > 0) {
             programModified();
+        }
     }
 
     private void handleDisplayError() {
@@ -372,9 +377,11 @@ public class ProgramEditingConsoleGui {
 
     private int getSpaceCount(String s) {
         final char[] chars = s.toCharArray();
-        for (int i = 0; i < chars.length; i++)
-            if (chars[i] != ' ')
+        for (int i = 0; i < chars.length; i++) {
+            if (chars[i] != ' ') {
                 return i;
+            }
+        }
         return chars.length;
     }
 
@@ -439,8 +446,9 @@ public class ProgramEditingConsoleGui {
     private String getProgramText() {
         StringBuilder program = new StringBuilder();
         for (int i = 0; i < editedProgramLines.size(); i++) {
-            if (i > 0)
+            if (i > 0) {
                 program.append("\n");
+            }
             program.append(editedProgramLines.get(i));
         }
         return program.toString();
@@ -448,9 +456,10 @@ public class ProgramEditingConsoleGui {
 
     public void setProgramText(String programName, String programText) {
         editedProgramName = programName;
-        editedProgramLines = new ArrayList<StringBuilder>();
-        for (String line : programText.split("\n"))
+        editedProgramLines = new ArrayList<>();
+        for (String line : programText.split("\n")) {
             editedProgramLines.add(new StringBuilder(line));
+        }
 
         editedProgramCursorX = 0;
         editedProgramCursorY = 0;
