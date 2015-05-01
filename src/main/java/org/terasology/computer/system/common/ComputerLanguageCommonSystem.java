@@ -18,6 +18,7 @@ package org.terasology.computer.system.common;
 import com.gempukku.lang.FunctionExecutable;
 import org.terasology.browser.data.ParagraphData;
 import org.terasology.computer.system.server.lang.ComputerModule;
+import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
 import org.terasology.computer.system.server.lang.computer.BindFirstModuleOfTypeFunction;
 import org.terasology.computer.system.server.lang.computer.BindModuleFunction;
 import org.terasology.computer.system.server.lang.computer.GetModuleSlotCountFunction;
@@ -63,10 +64,6 @@ public class ComputerLanguageCommonSystem extends BaseComponentSystem implements
     private Map<String, ComputerModule> computerModuleRegistry = new HashMap<>();
     private Map<String, String> computerModuleDescriptions = new TreeMap<>();
     private Map<String, Collection<ParagraphData>> computerModuleAdditionalParagraphs = new HashMap<>();
-    private Map<String, Map<String, String>> computerModuleFunctions = new HashMap<>();
-    private Map<String, Map<String, Map<String, String>>> computerModuleFunctionParameters = new HashMap<>();
-    private Map<String, Map<String, String>> computerModuleFunctionReturnDescriptions = new HashMap<>();
-    private Map<String, Map<String, Collection<ParagraphData>>> computerModuleFunctionAdditionalParagraphs = new HashMap<>();
 
     @Override
     public void initialise() {
@@ -298,17 +295,11 @@ public class ComputerLanguageCommonSystem extends BaseComponentSystem implements
     }
 
     @Override
-    public void registerComputerModule(String type, ComputerModule computerModule, String description, Collection<ParagraphData> additionalParagraphs,
-                                       Map<String, String> methodDescriptions, Map<String, Map<String, String>> methodParametersDescriptions,
-                                       Map<String, String> returnValuesDescriptions, Map<String, Collection<ParagraphData>> additionalMethodParagraphs) {
+    public void registerComputerModule(String type, ComputerModule computerModule, String description, Collection<ParagraphData> additionalParagraphs) {
         computerModuleRegistry.put(type, computerModule);
         String moduleName = computerModule.getModuleName();
         computerModuleDescriptions.put(moduleName, description);
         computerModuleAdditionalParagraphs.put(moduleName, additionalParagraphs);
-        computerModuleFunctions.put(moduleName, new TreeMap<>(methodDescriptions));
-        computerModuleFunctionParameters.put(moduleName, methodParametersDescriptions);
-        computerModuleFunctionReturnDescriptions.put(moduleName, returnValuesDescriptions);
-        computerModuleFunctionAdditionalParagraphs.put(moduleName, (additionalMethodParagraphs != null) ? additionalMethodParagraphs : Collections.emptyMap());
     }
 
     @Override
@@ -352,10 +343,9 @@ public class ComputerLanguageCommonSystem extends BaseComponentSystem implements
 
         for (ComputerModule computerModule : computerModuleRegistry.values()) {
             String moduleName = computerModule.getModuleName();
+
             computerLanguageContext.addComputerModule(computerModule, computerModuleDescriptions.get(moduleName),
-                    computerModuleAdditionalParagraphs.get(moduleName), computerModuleFunctions.get(moduleName),
-                    computerModuleFunctionParameters.get(moduleName), computerModuleFunctionReturnDescriptions.get(moduleName),
-                    computerModuleFunctionAdditionalParagraphs.get(moduleName));
+                    computerModuleAdditionalParagraphs.get(moduleName));
         }
     }
 }

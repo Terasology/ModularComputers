@@ -16,6 +16,7 @@
 package org.terasology.computer.system.server.lang;
 
 import java.util.Collection;
+import java.util.Map;
 
 public interface ComputerModule {
     /**
@@ -61,5 +62,7 @@ public interface ComputerModule {
      * @return Function that will be executed, when invoked by the program, or null if there is no function with this
      * name.
      */
-    ModuleMethodExecutable getFunctionByName(String name);
+    ModuleMethodExecutable getMethodByName(String name);
+
+    Map<String, ModuleMethodExecutable<?>> getAllMethods();
 }

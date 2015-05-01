@@ -15,49 +15,17 @@
  */
 package org.terasology.computer.module.mobility;
 
+import org.terasology.computer.module.DefaultComputerModule;
 import org.terasology.computer.system.server.lang.ComputerModule;
 import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
 import org.terasology.mobileBlocks.server.BlockMoveManager;
 
 import java.util.Collection;
 
-public class MobilityComputerModule implements ComputerModule {
-    private BlockMoveManager blockMoveManager;
-
-    private String moduleType;
-    private String moduleName;
-
+public class MobilityComputerModule extends DefaultComputerModule {
     public MobilityComputerModule(BlockMoveManager blockMoveManager, String moduleType, String moduleName) {
-        this.blockMoveManager = blockMoveManager;
-        this.moduleType = moduleType;
-        this.moduleName = moduleName;
-    }
+        super(moduleType, moduleName);
 
-    @Override
-    public String getModuleType() {
-        return moduleType;
-    }
-
-    @Override
-    public String getModuleName() {
-        return moduleName;
-    }
-
-    @Override
-    public boolean canBePlacedInComputer(Collection<ComputerModule> computerModulesInstalled) {
-        return true;
-    }
-
-    @Override
-    public boolean acceptsNewModule(ComputerModule computerModule) {
-        return true;
-    }
-
-    @Override
-    public ModuleMethodExecutable getFunctionByName(String name) {
-        if (name.equals("move")) {
-            return new MoveMethod("move", blockMoveManager);
-        }
-        return null;
+        addMethod("move", new MoveMethod("move", blockMoveManager));
     }
 }

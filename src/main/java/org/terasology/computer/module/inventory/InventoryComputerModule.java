@@ -15,68 +15,23 @@
  */
 package org.terasology.computer.module.inventory;
 
-import org.terasology.computer.system.server.lang.ComputerModule;
-import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
+import org.terasology.computer.module.DefaultComputerModule;
 import org.terasology.logic.inventory.InventoryManager;
 import org.terasology.world.BlockEntityRegistry;
 
-import java.util.Collection;
-
-public class InventoryComputerModule implements ComputerModule {
-    private InventoryModuleConditionsRegister inventoryModuleConditionsRegister;
-    private InventoryManager inventoryManager;
-    private BlockEntityRegistry blockEntityRegistry;
-    private String moduleType;
-    private String moduleName;
-
+public class InventoryComputerModule extends DefaultComputerModule {
     public InventoryComputerModule(InventoryModuleConditionsRegister inventoryModuleConditionsRegister,
                                    InventoryManager inventoryManager,
                                    BlockEntityRegistry blockEntityRegistry, String moduleType, String moduleName) {
-        this.inventoryModuleConditionsRegister = inventoryModuleConditionsRegister;
-        this.inventoryManager = inventoryManager;
-        this.blockEntityRegistry = blockEntityRegistry;
-        this.moduleType = moduleType;
-        this.moduleName = moduleName;
-    }
+        super(moduleType, moduleName);
 
-    @Override
-    public String getModuleType() {
-        return moduleType;
-    }
-
-    @Override
-    public String getModuleName() {
-        return moduleName;
-    }
-
-    @Override
-    public boolean canBePlacedInComputer(Collection<ComputerModule> computerModulesInstalled) {
-        return true;
-    }
-
-    @Override
-    public boolean acceptsNewModule(ComputerModule computerModule) {
-        return true;
-    }
-
-    @Override
-    public ModuleMethodExecutable getFunctionByName(String name) {
-        if (name.equals("getInputInventoryBinding"))
-            return new InventoryBindingMethod("getInputInventoryBinding", blockEntityRegistry, true);
-        if (name.equals("getOutputInventoryBinding"))
-            return new InventoryBindingMethod("getOutputInventoryBinding", blockEntityRegistry, false);
-        if (name.equals("getInventorySlotCount"))
-            return new InventorySlotCountMethod("getInventorySlotCount");
-        if (name.equals("getItemCount"))
-            return new ItemCountMethod("getItemCount");
-        if (name.equals("getItemName"))
-            return new ItemNameMethod("getItemName");
-        if (name.equals("getInventoryAndChangeCondition"))
-            return new InventoryAndChangeConditionMethod("getInventoryAndChangeCondition", inventoryModuleConditionsRegister);
-        if (name.equals("itemMove"))
-            return new ItemMoveMethod("itemMove", inventoryManager);
-        if (name.equals("dump"))
-            return new DumpMethod("dump", inventoryManager);
-        return null;
+        addMethod("getInputInventoryBinding", new InventoryBindingMethod("getInputInventoryBinding", blockEntityRegistry, true));
+        addMethod("getOutputInventoryBinding", new InventoryBindingMethod("getOutputInventoryBinding", blockEntityRegistry, false));
+        addMethod("getInventorySlotCount", new InventorySlotCountMethod("getInventorySlotCount"));
+        addMethod("getItemCount", new ItemCountMethod("getItemCount"));
+        addMethod("getItemName", new ItemNameMethod("getItemName"));
+        addMethod("getInventoryAndChangeCondition", new InventoryAndChangeConditionMethod("getInventoryAndChangeCondition", inventoryModuleConditionsRegister));
+        addMethod("itemMode", new ItemMoveMethod("itemMove", inventoryManager));
+        addMethod("dump", new DumpMethod("dump", inventoryManager));
     }
 }

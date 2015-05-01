@@ -23,12 +23,14 @@ import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.TerasologyFunctionExecutable;
 import org.terasology.computer.system.server.lang.computer.bind.SlotBindingObjectDefinition;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 
 public class BindModuleFunction extends TerasologyFunctionExecutable {
     @Override
-    public String[] getParameterNames() {
-        return new String[]{"slot"};
+    public Collection<String> getParameterNames() {
+        return Arrays.asList("slot");
     }
 
     @Override

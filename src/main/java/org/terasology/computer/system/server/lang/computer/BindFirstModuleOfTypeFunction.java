@@ -23,6 +23,7 @@ import org.terasology.computer.system.server.lang.ComputerModule;
 import org.terasology.computer.system.server.lang.TerasologyFunctionExecutable;
 import org.terasology.computer.system.server.lang.computer.bind.SlotBindingObjectDefinition;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class BindFirstModuleOfTypeFunction extends TerasologyFunctionExecutable {
@@ -32,8 +33,8 @@ public class BindFirstModuleOfTypeFunction extends TerasologyFunctionExecutable 
     }
 
     @Override
-    public String[] getParameterNames() {
-        return new String[]{"type"};
+    public java.util.Collection<String> getParameterNames() {
+        return Arrays.asList("type");
     }
 
     @Override

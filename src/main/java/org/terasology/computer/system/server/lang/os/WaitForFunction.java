@@ -29,6 +29,9 @@ import org.terasology.computer.context.TerasologyComputerExecutionContext;
 import org.terasology.computer.system.server.lang.os.condition.AbstractConditionCustomObject;
 import org.terasology.computer.system.server.lang.os.condition.ResultAwaitingCondition;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 public class WaitForFunction implements FunctionExecutable {
     @Override
     public CallContext getCallContext() {
@@ -36,8 +39,8 @@ public class WaitForFunction implements FunctionExecutable {
     }
 
     @Override
-    public String[] getParameterNames() {
-        return new String[]{"condition"};
+    public Collection<String> getParameterNames() {
+        return Arrays.asList("condition");
     }
 
     @Override

@@ -19,29 +19,40 @@ import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.Variable;
 import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
+import org.terasology.computer.system.server.lang.AbstractModuleMethodExecutable;
 import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
 import org.terasology.logic.inventory.InventoryManager;
 import org.terasology.logic.inventory.InventoryUtils;
 
 import java.util.Map;
 
-public class ItemMoveMethod implements ModuleMethodExecutable<Object> {
+public class ItemMoveMethod extends AbstractModuleMethodExecutable<Object> {
     private final String methodName;
     private InventoryManager inventoryManager;
 
     public ItemMoveMethod(String methodName, InventoryManager inventoryManager) {
+        super("Moves item(s) at the specified slot in the \"from\" inventory to the \"to\" inventory.", "Number",
+                "Number of items that was successfully moved.");
         this.inventoryManager = inventoryManager;
         this.methodName = methodName;
+
+        addParameter("inventoryBindingFrom", "Inventory Binding", "Inventory it should extract the item from.");
+        addParameter("inventoryBindingTo", "Inventory Binding", "Inventory it should insert the item to.");
+        addParameter("slot", "Number", "Slot number of the \"from\" inventory it should extract item from.");
+
+        addExample(
+                "This example moves item from the first slot of an inventory above the computer to inventory to the east of the computer. Please make sure " +
+                        "this computer has a module of Inventory Manipulator type in any of its slots.",
+                "var invBind = computer.bindModuleOfType(\"" + InventoryModuleCommonSystem.COMPUTER_INVENTORY_MODULE_TYPE + "\");\n" +
+                        "var topInv = invBind.getOutputInventoryBinding(\"up\");\n" +
+                        "var eastInv = invBind.getInputInventoryBinding(\"east\");\n" +
+                        "invBind.itemMove(topInv, eastInv, 0);"
+        );
     }
 
     @Override
     public int getCpuCycleDuration() {
         return 50;
-    }
-
-    @Override
-    public String[] getParameterNames() {
-        return new String[]{"inventoryBindingFrom", "inventoryBindingTo", "slot"};
     }
 
     @Override

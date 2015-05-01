@@ -15,58 +15,17 @@
  */
 package org.terasology.computer.module.world;
 
-import org.terasology.computer.system.server.lang.ComputerModule;
-import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
+import org.terasology.computer.module.DefaultComputerModule;
 import org.terasology.logic.inventory.InventoryManager;
 import org.terasology.world.BlockEntityRegistry;
 import org.terasology.world.WorldProvider;
 
-import java.util.Collection;
-
-public class WorldComputerModule implements ComputerModule {
-    private WorldProvider worldProvider;
-    private BlockEntityRegistry blockEntityRegistry;
-    private InventoryManager inventoryManager;
-    private String moduleType;
-    private String moduleName;
-
+public class WorldComputerModule extends DefaultComputerModule {
     public WorldComputerModule(WorldProvider worldProvider, BlockEntityRegistry blockEntityRegistry, InventoryManager inventoryManager, String moduleType, String moduleName) {
-        this.worldProvider = worldProvider;
-        this.blockEntityRegistry = blockEntityRegistry;
-        this.inventoryManager = inventoryManager;
-        this.moduleType = moduleType;
-        this.moduleName = moduleName;
-    }
+        super(moduleType, moduleName);
 
-    @Override
-    public String getModuleType() {
-        return moduleType;
-    }
-
-    @Override
-    public String getModuleName() {
-        return moduleName;
-    }
-
-    @Override
-    public boolean canBePlacedInComputer(Collection<ComputerModule> computerModulesInstalled) {
-        return true;
-    }
-
-    @Override
-    public boolean acceptsNewModule(ComputerModule computerModule) {
-        return true;
-    }
-
-    @Override
-    public ModuleMethodExecutable getFunctionByName(String name) {
-        if (name.equals("destroyBlock")) {
-            return new DestroyMethod("destroyBlock", worldProvider, blockEntityRegistry);
-        } else if (name.equals("destroyBlockToInventory")) {
-            return new DestroyToInventoryMethod("destroyBlockToInventory", worldProvider, blockEntityRegistry);
-        } else if (name.equals("placeBlock")) {
-            return new PlaceBlockMethod("placeBlock", worldProvider, blockEntityRegistry, inventoryManager);
-        }
-        return null;
+        addMethod("destroyBlock", new DestroyMethod("destroyBlock", worldProvider, blockEntityRegistry));
+        addMethod("destroyBlockToInventory", new DestroyToInventoryMethod("destroyBlockToInventory", worldProvider, blockEntityRegistry));
+        addMethod("placeBlock", new PlaceBlockMethod("placeBlock", worldProvider, blockEntityRegistry, inventoryManager));
     }
 }

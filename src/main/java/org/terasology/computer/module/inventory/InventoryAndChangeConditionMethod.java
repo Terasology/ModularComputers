@@ -19,7 +19,7 @@ import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.Variable;
 import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
-import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
+import org.terasology.computer.system.server.lang.AbstractModuleMethodExecutable;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.logic.inventory.InventoryUtils;
 
@@ -28,23 +28,49 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class InventoryAndChangeConditionMethod implements ModuleMethodExecutable<Object> {
+public class InventoryAndChangeConditionMethod extends AbstractModuleMethodExecutable<Object> {
     private final String methodName;
     private InventoryModuleConditionsRegister inventoryModuleConditionsRegister;
 
     public InventoryAndChangeConditionMethod(String methodName, InventoryModuleConditionsRegister inventoryModuleConditionsRegister) {
+        super("Gets the information about items stored in the inventory as well as a Condition " +
+                        "that allows to wait for the inventory's contents to be changed.", "Map",
+                "Map containing to entries:\n" +
+                        "- \"inventory\" - containing a List of Maps, with each entry in the list corresponding to one slot " +
+                        "in the inventory, and each entry Map containing two keys - \"name\" with String value of name of items, " +
+                        "as specified in the getItemName() method, and \"count\" with Number value, specifying number of items in that slot\n" +
+                        "- \"condition\" - containing condition you could wait on to listen on a change of the inventory from " +
+                        "the state described in the \"inventory\" key. Please note, that the condition might be fulfilled event though " +
+                        "the inventory state has not changed.");
         this.inventoryModuleConditionsRegister = inventoryModuleConditionsRegister;
         this.methodName = methodName;
+
+        addParameter("inventoryBinding", "Inventory Binding", "Inventory it should get contents and change condition for.");
+
+        addExample(
+                "This example prints out the contents of the output inventory above the computer to the console on each change of the inventory contents. Please make sure " +
+                        "this computer has a module of Inventory Manipulator type in any of its slots.",
+                "var invBind = computer.bindModuleOfType(\"" + InventoryModuleCommonSystem.COMPUTER_INVENTORY_MODULE_TYPE + "\");\n" +
+                        "var topInv = invBind.getOutputInventoryBinding(\"up\");\n" +
+                        "while (true) {\n" +
+                        "  var inventoryAndCondition = invBind.getInventoryAndChangeCondition(topInv);\n" +
+                        "  var inventory = inventoryAndCondition[\"inventory\"];\n" +
+                        "  var condition = inventoryAndCondition[\"condition\"];\n" +
+                        "  var inventorySize = inventory.size();\n" +
+                        "  for (var i=0; i<inventorySize; i++) {\n" +
+                        "    var contents = inventory[i];\n" +
+                        "    var name = contents[\"name\"];\n" +
+                        "    var count = contents[\"count\"];\n" +
+                        "    console.append(\"Slot \"+(i+1)+\" has \"+count+\" of \"+name);\n" +
+                        "  }\n" +
+                        "  os.waitFor(condition);\n" +
+                        "}"
+        );
     }
 
     @Override
     public int getCpuCycleDuration() {
         return 200;
-    }
-
-    @Override
-    public String[] getParameterNames() {
-        return new String[]{"inventoryBinding"};
     }
 
     @Override

@@ -41,7 +41,7 @@ public abstract class TerasologyFunctionExecutable implements FunctionExecutable
                         final TerasologyComputerExecutionContext terasologyExecutionContext = (TerasologyComputerExecutionContext) context;
                         ComputerCallback computer = terasologyExecutionContext.getComputerCallback();
 
-                        final String[] parameterNames = getParameterNames();
+                        final Iterable<String> parameterNames = getParameterNames();
                         Map<String, Variable> parameters = new HashMap<String, Variable>();
                         final CallContext callContext = context.peekCallContext();
                         for (String parameterName : parameterNames)

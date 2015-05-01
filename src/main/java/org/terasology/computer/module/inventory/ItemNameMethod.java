@@ -19,28 +19,39 @@ import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.Variable;
 import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
+import org.terasology.computer.system.server.lang.AbstractModuleMethodExecutable;
 import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.logic.inventory.InventoryUtils;
 
 import java.util.Map;
 
-public class ItemNameMethod implements ModuleMethodExecutable<Object> {
+public class ItemNameMethod extends AbstractModuleMethodExecutable<Object> {
 
     private final String methodName;
 
     public ItemNameMethod(String methodName) {
+        super("Returns the name of the item in the specified inventory's slot (if any).", "String",
+                "Name of item in the specified slot. " +
+                "If there is an item, but the name is not known - \"Unknown\" is returned. " +
+                        "If there is no item at the specified slot, a null value is returned.");
         this.methodName = methodName;
+
+        addParameter("inventoryBinding", "Inventory Binding", "Inventory it should check for the name of item.");
+        addParameter("slot", "Number", "Slot it should check for name of item.");
+
+        addExample(
+                "This example creates output inventory binding to an inventory above it and prints out item name in its first slot. Please make sure " +
+                        "this computer has a module of Inventory Manipulator type in any of its slots.",
+                "var invBind = computer.bindModuleOfType(\"" + InventoryModuleCommonSystem.COMPUTER_INVENTORY_MODULE_TYPE + "\");\n" +
+                        "var topInv = invBind.getOutputInventoryBinding(\"up\");\n" +
+                        "console.append(\"Inventory above has \" + invBind.getItemName(topInv, 0) + \" item in its first output slot.\");"
+        );
     }
 
     @Override
     public int getCpuCycleDuration() {
         return 50;
-    }
-
-    @Override
-    public String[] getParameterNames() {
-        return new String[]{"inventoryBinding", "slot"};
     }
 
     @Override

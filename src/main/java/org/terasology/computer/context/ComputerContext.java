@@ -148,9 +148,7 @@ public class ComputerContext {
                         }
 
                         @Override
-                        public void addComputerModule(ComputerModule computerModule, String description, Collection<ParagraphData> additionalParagraphs,
-                                                      Map<String, String> methodDescriptions, Map<String, Map<String, String>> methodParametersDescriptions,
-                                                      Map<String, String> methodReturnDescriptions, Map<String, Collection<ParagraphData>> methodAdditionalParagraphs) {
+                        public void addComputerModule(ComputerModule computerModule, String description, Collection<ParagraphData> additionalParagraphs) {
                             // Ignore
                         }
                     });

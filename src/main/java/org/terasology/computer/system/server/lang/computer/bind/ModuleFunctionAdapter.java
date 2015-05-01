@@ -29,6 +29,7 @@ import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.context.TerasologyComputerExecutionContext;
 import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,7 +48,7 @@ public class ModuleFunctionAdapter implements FunctionExecutable {
     }
 
     @Override
-    public String[] getParameterNames() {
+    public Collection<String> getParameterNames() {
         return _moduleFunction.getParameterNames();
     }
 
@@ -71,7 +72,7 @@ public class ModuleFunctionAdapter implements FunctionExecutable {
     }
 
     private Map<String, Variable> getVariableMap(ExecutionContext context) {
-        final String[] parameterNames = getParameterNames();
+        final Collection<String> parameterNames = getParameterNames();
         Map<String, Variable> parameters = new HashMap<String, Variable>();
         final CallContext callContext = context.peekCallContext();
         for (String parameterName : parameterNames) {

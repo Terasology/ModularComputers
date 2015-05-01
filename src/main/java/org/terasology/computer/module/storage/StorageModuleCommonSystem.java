@@ -49,54 +49,6 @@ public class StorageModuleCommonSystem extends BaseComponentSystem {
                         "storage (i.e. chest) using the <h navigate:" + inventoryModuleDumpMethodPageId + ">dump</h> method.<l>" +
                         "For more information about usage of this module - refer to <h navigate:" + inventoryModulePageId + ">Inventory manipulator</h> " +
                         "module documentation.",
-                null,
-                new TreeMap<String, String>() {{
-                    put("getInputInventoryBinding", "Creates the input inventory binding for the Internal storage.");
-                    put("getOutputInventoryBinding", "Creates the output inventory binding for the Internal storage.");
-                }},
-                new HashMap<>(),
-                new HashMap<String, String>() {{
-                    put("getInputInventoryBinding", "[Inventory Binding] Returns inventory binding allowing to put items into this Internal storage.");
-                    put("getOutputInventoryBinding", "[Inventory Binding] Returns inventory binding allowing to extract items from this Internal storage.");
-                }},
-                new HashMap<String, Collection<ParagraphData>>() {{
-                    put("getInputInventoryBinding", DocumentationBuilder.createExampleParagraphs(
-                            "This example creates input and output inventory binding for the internal storage and " +
-                                    "an input and output inventory binding for storage above the computer, then dumps " +
-                                    "the contents of the inventory above into the internal storage, waits for 5 seconds " +
-                                    "and dumps the items back into the inventory above. Please make sure " +
-                                    "this computer has a module of Inventory Manipulator type in any of its slots, as well " +
-                                    "as Internal Storage module.",
-                            "var storageMod = computer.bindModuleOfType(\"" + COMPUTER_STORAGE_MODULE_TYPE + "\");\n" +
-                                    "var inventoryMod = computer.bindModuleOfType(\"" + InventoryModuleCommonSystem.COMPUTER_INVENTORY_MODULE_TYPE + "\");\n" +
-                                    "var inputInternal = storageMod.getInputInventoryBinding();\n" +
-                                    "var outputInternal = storageMod.getOutputInventoryBinding();\n" +
-                                    "var inputUp = inventoryMod.getInputInventoryBinding(\"up\");\n" +
-                                    "var outputUp = inventoryMod.getOutputInventoryBinding(\"up\");\n" +
-                                    "\n" +
-                                    "inventoryMod.dump(outputUp, inputInternal);\n" +
-                                    "os.waitFor(os.createSleepMs(5000));\n" +
-                                    "inventoryMod.dump(outputInternal, inputUp);"
-                    ));
-                    put("getOutputInventoryBinding", DocumentationBuilder.createExampleParagraphs(
-                            "This example creates input and output inventory binding for the internal storage and " +
-                                    "an input and output inventory binding for storage above the computer, then dumps " +
-                                    "the contents of the inventory above into the internal storage, waits for 5 seconds " +
-                                    "and dumps the items back into the inventory above. Please make sure " +
-                                    "this computer has a module of Inventory Manipulator type in any of its slots, as well " +
-                                    "as Internal Storage module.",
-                            "var storageMod = computer.bindModuleOfType(\"" + COMPUTER_STORAGE_MODULE_TYPE + "\");\n" +
-                                    "var inventoryMod = computer.bindModuleOfType(\"" + InventoryModuleCommonSystem.COMPUTER_INVENTORY_MODULE_TYPE + "\");\n" +
-                                    "var inputInternal = storageMod.getInputInventoryBinding();\n" +
-                                    "var outputInternal = storageMod.getOutputInventoryBinding();\n" +
-                                    "var inputUp = inventoryMod.getInputInventoryBinding(\"up\");\n" +
-                                    "var outputUp = inventoryMod.getOutputInventoryBinding(\"up\");\n" +
-                                    "\n" +
-                                    "inventoryMod.dump(outputUp, inputInternal);\n" +
-                                    "os.waitFor(os.createSleepMs(5000));\n" +
-                                    "inventoryMod.dump(outputInternal, inputUp);"
-                    ));
-                }}
-        );
+                null);
     }
 }

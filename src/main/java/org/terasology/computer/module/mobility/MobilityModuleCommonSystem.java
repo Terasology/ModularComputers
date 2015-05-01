@@ -45,26 +45,6 @@ public class MobilityModuleCommonSystem extends BaseComponentSystem {
                 MOBILITY_MODULE_TYPE,
                 new MobilityComputerModule(blockMoveManager, MOBILITY_MODULE_TYPE, "Mobility"),
                 "This module allows computer to move within the world.",
-                null,
-                new TreeMap<String, String>() {{
-                    put("move", "Moves the computer in the specified direction (if able).");
-                }},
-                new HashMap<String, Map<String, String>>() {{
-                    put("move",
-                            new LinkedHashMap<String, String>() {{
-                                put("direction", "[String] Specifies the direction in which the computer should move. For more information " +
-                                        "about <h navigate:object-type-Direction>Direction</h> - read the link.");
-                            }});
-                }},
-                new HashMap<String, String>() {{
-                    put("move", "[Boolean] If the movement was successful.");
-                }},
-                new HashMap<String, Collection<ParagraphData>>() {{
-                    put("move", DocumentationBuilder.createExampleParagraphs(
-                            "This example makes the computer move up one block. Please make sure " +
-                                    "this computer has a module of Mobility type in any of its slots.",
-                            "var mobilityMod = computer.bindModuleOfType(\"" + MOBILITY_MODULE_TYPE + "\");\n" +
-                                    "mobilityMod.move(\"up\");"));
-                }});
+                null);
     }
 }

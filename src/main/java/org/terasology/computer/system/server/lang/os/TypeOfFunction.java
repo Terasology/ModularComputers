@@ -21,6 +21,7 @@ import com.gempukku.lang.Variable;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.TerasologyFunctionExecutable;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class TypeOfFunction extends TerasologyFunctionExecutable {
@@ -30,8 +31,8 @@ public class TypeOfFunction extends TerasologyFunctionExecutable {
     }
 
     @Override
-    public String[] getParameterNames() {
-        return new String[]{"value"};
+    public java.util.Collection<String> getParameterNames() {
+        return Arrays.asList("value");
     }
 
     @Override

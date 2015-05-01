@@ -23,6 +23,8 @@ import org.terasology.computer.system.server.lang.TerasologyFunctionExecutable;
 import org.terasology.computer.system.server.lang.os.condition.AbstractConditionCustomObject;
 import org.terasology.computer.system.server.lang.os.condition.ResultAwaitingCondition;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 
 public class CreateSleepTickFunction extends TerasologyFunctionExecutable {
@@ -32,8 +34,8 @@ public class CreateSleepTickFunction extends TerasologyFunctionExecutable {
     }
 
     @Override
-    public String[] getParameterNames() {
-        return new String[]{"ticks"};
+    public Collection<String> getParameterNames() {
+        return Arrays.asList("ticks");
     }
 
     @Override

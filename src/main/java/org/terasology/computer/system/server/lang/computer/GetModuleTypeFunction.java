@@ -23,12 +23,14 @@ import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.ComputerModule;
 import org.terasology.computer.system.server.lang.TerasologyFunctionExecutable;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 
 public class GetModuleTypeFunction extends TerasologyFunctionExecutable {
     @Override
-    public String[] getParameterNames() {
-        return new String[]{"slot"};
+    public Collection<String> getParameterNames() {
+        return Arrays.asList("slot");
     }
 
     @Override
@@ -42,8 +44,9 @@ public class GetModuleTypeFunction extends TerasologyFunctionExecutable {
 
         final ComputerModule module = computer.getModule(slotNo);
         String moduleType = null;
-        if (module != null)
+        if (module != null) {
             moduleType = module.getModuleType();
+        }
         return moduleType;
     }
 }

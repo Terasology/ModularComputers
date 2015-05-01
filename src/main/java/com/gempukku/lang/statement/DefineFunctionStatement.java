@@ -36,7 +36,7 @@ public class DefineFunctionStatement implements DefiningExecutableStatement {
         return new SimpleExecution() {
             @Override
             protected ExecutionProgress execute(ExecutionContext context, ExecutionCostConfiguration configuration) throws ExecutionException {
-                final DefaultFunctionExecutable functionExecutable = new DefaultFunctionExecutable(context.peekCallContext(), _parameterNames.toArray(new String[_parameterNames.size()]));
+                final DefaultFunctionExecutable functionExecutable = new DefaultFunctionExecutable(context.peekCallContext(), _parameterNames);
                 functionExecutable.setStatement(
                         new BlockStatement(_statements, false, true));
                 final CallContext callContext = context.peekCallContext();

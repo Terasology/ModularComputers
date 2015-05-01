@@ -21,6 +21,8 @@ import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.TerasologyFunctionExecutable;
 
 import java.text.DecimalFormat;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 
 public class FormatFunction extends TerasologyFunctionExecutable {
@@ -30,8 +32,8 @@ public class FormatFunction extends TerasologyFunctionExecutable {
     }
 
     @Override
-    public String[] getParameterNames() {
-        return new String[]{"format", "number"};
+    public Collection<String> getParameterNames() {
+        return Arrays.asList("format", "number");
     }
 
     @Override

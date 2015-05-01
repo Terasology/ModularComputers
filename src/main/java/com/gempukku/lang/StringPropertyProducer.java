@@ -1,6 +1,7 @@
 package com.gempukku.lang;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -26,8 +27,8 @@ public class StringPropertyProducer implements PropertyProducer {
         }
 
         @Override
-        public String[] getParameterNames() {
-            return new String[]{"separator", "limit"};
+        public java.util.Collection<String> getParameterNames() {
+            return Arrays.asList("separator", "limit");
         }
 
         @Override

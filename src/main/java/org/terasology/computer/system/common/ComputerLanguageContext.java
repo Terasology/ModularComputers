@@ -29,7 +29,5 @@ public interface ComputerLanguageContext {
                           Map<String, String> functionReturnDescriptions, Map<String, Collection<ParagraphData>> functionAdditionalParagraphs);
 
     void addComputerModule(ComputerModule computerModule, String description,
-                                  Collection<ParagraphData> additionalParagraphs, Map<String, String> methodDescriptions,
-                                  Map<String, Map<String, String>> methodParametersDescriptions,
-                                  Map<String, String> methodReturnDescriptions, Map<String, Collection<ParagraphData>> methodAdditionalParagraphs);
+                                  Collection<ParagraphData> additionalParagraphs);
 }

@@ -44,7 +44,7 @@ public class BindingFunctionWrapper implements FunctionExecutable {
     }
 
     @Override
-    public String[] getParameterNames() {
+    public java.util.Collection<String> getParameterNames() {
         return function.getParameterNames();
     }
 

@@ -20,6 +20,8 @@ import com.gempukku.lang.Variable;
 import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.module.inventory.InventoryBinding;
+import org.terasology.computer.module.inventory.InventoryModuleCommonSystem;
+import org.terasology.computer.system.server.lang.AbstractModuleMethodExecutable;
 import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.logic.inventory.InventoryManager;
@@ -38,17 +40,32 @@ import org.terasology.world.block.items.OnBlockItemPlaced;
 
 import java.util.Map;
 
-public class PlaceBlockMethod implements ModuleMethodExecutable<Object> {
+public class PlaceBlockMethod extends AbstractModuleMethodExecutable<Object> {
     private final String methodName;
     private WorldProvider worldProvider;
     private BlockEntityRegistry blockEntityRegistry;
     private InventoryManager inventoryManager;
 
     public PlaceBlockMethod(String methodName, WorldProvider worldProvider, BlockEntityRegistry blockEntityRegistry, InventoryManager inventoryManager) {
+        super("Places block from inventory in the specified direction.", "Boolean", "Whether placement of the block was successful.");
         this.worldProvider = worldProvider;
         this.blockEntityRegistry = blockEntityRegistry;
         this.inventoryManager = inventoryManager;
         this.methodName = methodName;
+
+        addParameter("direction", "String", "Direction in which to place the block. For more information " +
+                "about <h navigate:object-type-Direction>Direction</h> - read the link.");
+        addParameter("inventoryBinding", "Inventory Binding", "Inventory from which to place the block, please " +
+                "note that this Inventory Binding has to be of the output type.");
+        addParameter("slot", "Number", "Slot number to take block from for placement.");
+
+        addExample(
+                "This example places a block below it, the block is coming from first slot of inventory above it. Please make sure " +
+                        "this computer has a modules of World Interaction type and Inventory Manipulator in any of its slots.",
+                "var worldMod = computer.bindModuleOfType(\"" + WorldModuleCommonSystem.WORLD_MODULE_TYPE + "\");\n" +
+                        "var inventoryMod = computer.bindModuleOfType(\"" + InventoryModuleCommonSystem.COMPUTER_INVENTORY_MODULE_TYPE + "\");\n" +
+                        "var upBinding = inventoryMod.getOutputInventoryBinding(\"up\");\n" +
+                        "worldMod.placeBlock(\"down\", upBinding, 0);");
     }
 
     @Override
@@ -59,11 +76,6 @@ public class PlaceBlockMethod implements ModuleMethodExecutable<Object> {
     @Override
     public int getMinimumExecutionTime(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
         return 250;
-    }
-
-    @Override
-    public String[] getParameterNames() {
-        return new String[]{"direction", "inventoryBinding", "slot"};
     }
 
     @Override

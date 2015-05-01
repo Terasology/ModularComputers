@@ -18,7 +18,9 @@ package org.terasology.computer.system.server.lang;
 import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.Variable;
 import org.terasology.computer.context.ComputerCallback;
+import org.terasology.computer.ui.documentation.MethodDocumentation;
 
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -26,23 +28,29 @@ import java.util.Map;
  */
 public interface ModuleMethodExecutable<T> {
     /**
+     * Returns method documentation to display in the browser widget.
+     * @return Method documentation.
+     */
+    MethodDocumentation getMethodDocumentation();
+
+    /**
      * Returns a number of the "virtual" CPU cycles consumed by execution of this method.
      *
      * @return The number of CPU cycles consumed.
      */
-    public int getCpuCycleDuration();
+    int getCpuCycleDuration();
 
     /**
      * Returns a time consumed by execution of this method. In most cases it will be 0, as the CPU cycle duration is
      * enough to steer it, however if a specific action should have a minimum duration, even on fastest computers, this
      * method is used. A good example would be a computer movement.
      *
-     * @param line
-     * @param computer
-     * @param parameters
+     * @param line       Line of code where the method code is made - useful for signalizing errors for debug purposes.
+     * @param computer   ComputerCallback allowing to query information about the computer.
+     * @param parameters Parameters passed to the method.
      * @return Time in ms of world time that this operation should take at the minimum (CPU cycles bound as well).
      */
-    public default int getMinimumExecutionTime(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
+    default int getMinimumExecutionTime(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
         return 0;
     }
 
@@ -50,9 +58,9 @@ public interface ModuleMethodExecutable<T> {
      * Names of the parameters this method accepts. This parameter names are then passed to the onFunctionStart() and
      * executeFunction() methods of this interface.
      *
-     * @return
+     * @return Array of parameter names.
      */
-    public String[] getParameterNames();
+    Collection<String> getParameterNames();
 
     /**
      * Method called at the beginning of the execution.
@@ -63,7 +71,7 @@ public interface ModuleMethodExecutable<T> {
      * @return The object that will be passed to the onFunctionEnd() method as a parameter;
      * @throws ExecutionException Used to signal a problem in the code or some other problem that should end the program.
      */
-    public default T onFunctionStart(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
+    default T onFunctionStart(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
         return null;
     }
 
@@ -73,11 +81,11 @@ public interface ModuleMethodExecutable<T> {
      * @param line                  Line of code where the method code is made - useful for signalizing errors for debug purposes.
      * @param computer              ComputerCallback allowing to query information about the computer.
      * @param parameters            Parameters passed to the method.
-     * @param onFunctionStartResult
+     * @param onFunctionStartResult Result of the onFunctionStart call, if any.
      * @return An object that should be placed in the variable that is a result of calling this method. Please note
      * only objects of types defined in Variable class should be returned. If you wish to return a Map, it has to be
      * a Map&lt;String, Variable&gt;. For a List - you have to return List&lt;Variable&gt;.
      * @throws ExecutionException Used to signal a problem in the code or some other problem that should end the program.
      */
-    public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters, T onFunctionStartResult) throws ExecutionException;
+    Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters, T onFunctionStartResult) throws ExecutionException;
 }

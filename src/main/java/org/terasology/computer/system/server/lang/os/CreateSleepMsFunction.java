@@ -22,6 +22,8 @@ import org.terasology.computer.system.server.lang.TerasologyFunctionExecutable;
 import org.terasology.computer.system.server.lang.os.condition.AbstractConditionCustomObject;
 import org.terasology.computer.system.server.lang.os.condition.ResultAwaitingCondition;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 
 public class CreateSleepMsFunction extends TerasologyFunctionExecutable {
@@ -31,19 +33,21 @@ public class CreateSleepMsFunction extends TerasologyFunctionExecutable {
     }
 
     @Override
-    public String[] getParameterNames() {
-        return new String[]{"time"};
+    public Collection<String> getParameterNames() {
+        return Arrays.asList("time");
     }
 
     @Override
     protected Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
         final Variable timeVar = parameters.get("time");
-        if (timeVar.getType() != Variable.Type.NUMBER)
+        if (timeVar.getType() != Variable.Type.NUMBER) {
             throw new ExecutionException(line, "Expected NUMBER in createSleepMs()");
+        }
 
         final long time = ((Number) timeVar.getValue()).longValue();
-        if (time <= 0)
+        if (time <= 0) {
             throw new ExecutionException(line, "Sleep time must be greater than 0");
+        }
 
         return new AbstractConditionCustomObject() {
             @Override

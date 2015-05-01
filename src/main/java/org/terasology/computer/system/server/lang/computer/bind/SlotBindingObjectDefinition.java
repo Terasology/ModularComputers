@@ -40,7 +40,7 @@ public class SlotBindingObjectDefinition implements ObjectDefinition {
         if (module == null)
             return new Variable(null);
 
-        final ModuleMethodExecutable moduleFunction = module.getFunctionByName(name);
+        final ModuleMethodExecutable moduleFunction = module.getMethodByName(name);
 
         if (moduleFunction != null) {
             return new Variable(new BindingFunctionWrapper(module, _slotNo, new ModuleFunctionAdapter(_slotNo, moduleFunction)));

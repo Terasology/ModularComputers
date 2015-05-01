@@ -20,7 +20,7 @@ import com.gempukku.lang.Variable;
 import org.terasology.asset.Assets;
 import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
-import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
+import org.terasology.computer.system.server.lang.AbstractModuleMethodExecutable;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.logic.health.DestroyEvent;
 import org.terasology.math.Direction;
@@ -33,15 +33,20 @@ import org.terasology.world.block.BlockManager;
 
 import java.util.Map;
 
-public class DestroyMethod implements ModuleMethodExecutable<Object> {
+public class DestroyMethod extends AbstractModuleMethodExecutable<Object> {
     private final String methodName;
     private WorldProvider worldProvider;
     private BlockEntityRegistry blockEntityRegistry;
 
     public DestroyMethod(String methodName, WorldProvider worldProvider, BlockEntityRegistry blockEntityRegistry) {
+        super("Destroys the block in the specified direction. The resulting items from destroying the " +
+                "block are scattered on the ground.", "Boolean", "Whether destroying the specified block was successful.");
         this.worldProvider = worldProvider;
         this.blockEntityRegistry = blockEntityRegistry;
         this.methodName = methodName;
+
+        addParameter("direction", "String", "Direction in which to destroy the block. For more information " +
+                "about <h navigate:object-type-Direction>Direction</h> - read the link.");
     }
 
     @Override
@@ -52,11 +57,6 @@ public class DestroyMethod implements ModuleMethodExecutable<Object> {
     @Override
     public int getMinimumExecutionTime(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
         return 250;
-    }
-
-    @Override
-    public String[] getParameterNames() {
-        return new String[]{"direction"};
     }
 
     @Override
@@ -80,6 +80,4 @@ public class DestroyMethod implements ModuleMethodExecutable<Object> {
             return true;
         }
     }
-
-
 }

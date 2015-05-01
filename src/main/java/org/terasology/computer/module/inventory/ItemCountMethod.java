@@ -19,28 +19,33 @@ import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.Variable;
 import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
-import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
+import org.terasology.computer.system.server.lang.AbstractModuleMethodExecutable;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.logic.inventory.InventoryUtils;
 
 import java.util.Map;
 
-public class ItemCountMethod implements ModuleMethodExecutable<Object> {
+public class ItemCountMethod extends AbstractModuleMethodExecutable<Object> {
 
     private final String methodName;
 
     public ItemCountMethod(String methodName) {
+        super("Checks how many items are in the specified inventory's slot.", "Number", "Number of items in the specified slot in the inventory.");
         this.methodName = methodName;
+
+        addParameter("inventoryBinding", "Inventory Binding", "Inventory it should check for the amount of items.");
+        addParameter("slot", "Number", "Slot it should check for number of items.");
+
+        addExample("This example creates output inventory binding to an inventory above it and prints out number of items in its first slot. Please make sure " +
+                        "this computer has a module of Inventory Manipulator type in any of its slots.",
+                "var invBind = computer.bindModuleOfType(\"" + InventoryModuleCommonSystem.COMPUTER_INVENTORY_MODULE_TYPE + "\");\n" +
+                        "var topInv = invBind.getOutputInventoryBinding(\"up\");\n" +
+                        "console.append(\"Inventory above has \" + invBind.getItemCount(topInv, 0) + \" number of items in its first output slot.\");");
     }
 
     @Override
     public int getCpuCycleDuration() {
         return 50;
-    }
-
-    @Override
-    public String[] getParameterNames() {
-        return new String[]{"inventoryBinding", "slot"};
     }
 
     @Override
@@ -53,5 +58,4 @@ public class ItemCountMethod implements ModuleMethodExecutable<Object> {
         EntityRef itemEntity = InventoryUtils.getItemAt(inventory.inventory, inventory.slots.get(slotNo));
         return InventoryModuleUtils.getItemCount(itemEntity);
     }
-
 }

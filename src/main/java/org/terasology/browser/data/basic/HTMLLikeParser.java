@@ -199,12 +199,12 @@ public class HTMLLikeParser {
         }
 
         @Override
-        public Font getFont(boolean hyperlink) {
+        public Font getFont(boolean isHyperlink) {
             return font;
         }
 
         @Override
-        public Color getColor(boolean hyperlink) {
+        public Color getColor(boolean isHyperlink) {
             return color;
         }
     }

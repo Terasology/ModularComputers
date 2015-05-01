@@ -13,18 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.terasology.computer.system.common;
+package org.terasology.computer.ui.documentation;
 
 import org.terasology.browser.data.ParagraphData;
-import org.terasology.computer.system.server.lang.ComputerModule;
+import org.terasology.browser.data.basic.HTMLLikeParser;
 
 import java.util.Collection;
-import java.util.Map;
 
-public interface ComputerModuleRegistry {
-    void registerComputerModule(
-            String type, ComputerModule computerModule,
-            String description, Collection<ParagraphData> additionalParagraphs);
+public interface MethodDocumentation {
+    String getHTMLLikeSimpleDocumentation();
 
-    ComputerModule getComputerModuleByType(String type);
+    default Collection<ParagraphData> getPageDocumentation() {
+        return HTMLLikeParser.parseHTMLLike(null, getHTMLLikeSimpleDocumentation());
+    }
+
+    String getReturnType();
+
+    String getParameterType(String parameterName);
+
+    String getHTMLLikeParameterDocumentation(String parameterName);
+
+    default String getHTMLLikeReturnDocumentation() {
+        return null;
+    }
+
+    Iterable<Collection<ParagraphData>> getExamples();
 }

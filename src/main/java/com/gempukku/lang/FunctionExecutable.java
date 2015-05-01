@@ -1,7 +1,9 @@
 package com.gempukku.lang;
 
+import java.util.Collection;
+
 public interface FunctionExecutable {
-    public String[] getParameterNames();
+    public Collection<String> getParameterNames();
 
     public CallContext getCallContext();
 

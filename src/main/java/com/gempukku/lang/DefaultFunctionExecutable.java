@@ -1,11 +1,13 @@
 package com.gempukku.lang;
 
+import java.util.Collection;
+
 public class DefaultFunctionExecutable implements FunctionExecutable {
     private CallContext _callContext;
     private ExecutableStatement _statement;
-    private String[] _parameterNames;
+    private Collection<String> _parameterNames;
 
-    public DefaultFunctionExecutable(CallContext callContext, String[] parameterNames) {
+    public DefaultFunctionExecutable(CallContext callContext, Collection<String> parameterNames) {
         _callContext = callContext;
         _parameterNames = parameterNames;
     }
@@ -15,7 +17,7 @@ public class DefaultFunctionExecutable implements FunctionExecutable {
     }
 
     @Override
-    public String[] getParameterNames() {
+    public Collection<String> getParameterNames() {
         return _parameterNames;
     }
 

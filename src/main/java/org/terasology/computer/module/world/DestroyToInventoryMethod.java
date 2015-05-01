@@ -21,7 +21,8 @@ import org.terasology.asset.Assets;
 import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.module.inventory.InventoryBinding;
-import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
+import org.terasology.computer.module.inventory.InventoryModuleCommonSystem;
+import org.terasology.computer.system.server.lang.AbstractModuleMethodExecutable;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.logic.health.DestroyEvent;
 import org.terasology.math.Direction;
@@ -34,15 +35,32 @@ import org.terasology.world.block.BlockManager;
 
 import java.util.Map;
 
-public class DestroyToInventoryMethod implements ModuleMethodExecutable<Object> {
+public class DestroyToInventoryMethod extends AbstractModuleMethodExecutable<Object> {
     private final String methodName;
     private WorldProvider worldProvider;
     private BlockEntityRegistry blockEntityRegistry;
 
     public DestroyToInventoryMethod(String methodName, WorldProvider worldProvider, BlockEntityRegistry blockEntityRegistry) {
+        super("Destroys the block in the specified direction. The resulting items from " +
+                "destroying the block are added to the inventory specified. If inventory is unable to accept those " +
+                "items, the are scattered on the ground.", "Boolean", "Whether destroying the specified block was successful.");
         this.worldProvider = worldProvider;
         this.blockEntityRegistry = blockEntityRegistry;
         this.methodName = methodName;
+
+        addParameter("direction", "String", "Direction in which to destroy the block. For more information " +
+                "about <h navigate:object-type-Direction>Direction</h> - read the link.");
+        addParameter("inventoryBinding", "Inventory Binding", "Inventory to which store the items, please note " +
+                "that this Inventory Binding has to be of the input type.");
+
+        addExample("This example destroys the block below the computer and places the resulting items in inventory " +
+                        "above it. Please make sure this computer has a modules of World Interaction type " +
+                        "and Inventory Manipulator in any of its slots.",
+                "var worldMod = computer.bindModuleOfType(\"" + WorldModuleCommonSystem.WORLD_MODULE_TYPE + "\");\n" +
+                        "var inventoryMod = computer.bindModuleOfType(\"" + InventoryModuleCommonSystem.COMPUTER_INVENTORY_MODULE_TYPE + "\");\n" +
+                        "var upBinding = inventoryMod.getInputInventoryBinding(\"up\");\n" +
+                        "worldMod.destroyBlockToInventory(\"down\", upBinding);"
+        );
     }
 
     @Override
@@ -53,11 +71,6 @@ public class DestroyToInventoryMethod implements ModuleMethodExecutable<Object> 
     @Override
     public int getMinimumExecutionTime(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
         return 250;
-    }
-
-    @Override
-    public String[] getParameterNames() {
-        return new String[]{"direction", "inventoryBinding"};
     }
 
     @Override

@@ -26,6 +26,7 @@ import org.terasology.computer.system.server.lang.os.condition.AnyResultAwaiting
 import org.terasology.computer.system.server.lang.os.condition.ResultAwaitingCondition;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -36,8 +37,8 @@ public class AnyFunction extends TerasologyFunctionExecutable {
     }
 
     @Override
-    public String[] getParameterNames() {
-        return new String[]{"conditions"};
+    public java.util.Collection<String> getParameterNames() {
+        return Arrays.asList("conditions");
     }
 
     @Override

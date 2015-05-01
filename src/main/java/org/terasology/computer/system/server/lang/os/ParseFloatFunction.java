@@ -20,6 +20,7 @@ import com.gempukku.lang.Variable;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.TerasologyFunctionExecutable;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class ParseFloatFunction extends TerasologyFunctionExecutable {
@@ -29,8 +30,8 @@ public class ParseFloatFunction extends TerasologyFunctionExecutable {
     }
 
     @Override
-    public String[] getParameterNames() {
-        return new String[]{"text"};
+    public java.util.Collection<String> getParameterNames() {
+        return Arrays.asList("text");
     }
 
     @Override

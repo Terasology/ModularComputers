@@ -1,5 +1,7 @@
 package com.gempukku.lang;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 public class MapPropertyProducer implements PropertyProducer {
@@ -29,8 +31,8 @@ public class MapPropertyProducer implements PropertyProducer {
         }
 
         @Override
-        public String[] getParameterNames() {
-            return new String[0];
+        public Collection<String> getParameterNames() {
+            return Collections.emptySet();
         }
     }
 }

@@ -11,6 +11,7 @@ import com.gempukku.lang.FunctionExecutable;
 import com.gempukku.lang.Variable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class FunctionCallExecution implements Execution {
@@ -78,15 +79,17 @@ public class FunctionCallExecution implements Execution {
                 throw new ExecutionException(_line, "Expected function");
             FunctionExecutable function = (FunctionExecutable) _functionVar.getValue();
             final CallContext functionContextParent = function.getCallContext();
-            final String[] parameterNames = function.getParameterNames();
-            if (_parameterValues.size() > parameterNames.length)
+            final Collection<String> parameterNames = function.getParameterNames();
+            if (_parameterValues.size() > parameterNames.size())
                 throw new ExecutionException(_line, "Function does not accept as many parameters");
 
             CallContext functionContext = new CallContext(functionContextParent, false, true);
-            for (int i = 0; i < parameterNames.length; i++) {
-                Variable var = functionContext.defineVariable(parameterNames[i]);
+            int i = 0;
+            for (String parameterName : parameterNames) {
+                Variable var = functionContext.defineVariable(parameterName);
                 if (i < _parameterValues.size())
                     executionContext.setVariableValue(var, _parameterValues.get(i).getValue());
+                i++;
             }
             executionContext.stackExecutionGroup(functionContext, function.createExecution(_line, executionContext, functionContext));
             _functionCalled = true;

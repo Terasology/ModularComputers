@@ -20,6 +20,7 @@ import com.gempukku.lang.Variable;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.TerasologyFunctionExecutable;
 
+import java.util.Collections;
 import java.util.Map;
 
 
@@ -30,8 +31,8 @@ public class ClearConsoleFunction extends TerasologyFunctionExecutable {
     }
 
     @Override
-    public String[] getParameterNames() {
-        return new String[0];
+    public java.util.Collection<String> getParameterNames() {
+        return Collections.emptySet();
     }
 
     @Override

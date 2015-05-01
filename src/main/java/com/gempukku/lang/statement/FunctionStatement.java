@@ -27,7 +27,7 @@ public class FunctionStatement implements ExecutableStatement {
             @Override
             protected ExecutionProgress execute(ExecutionContext context, ExecutionCostConfiguration configuration) throws ExecutionException {
                 final DefaultFunctionExecutable functionExecutable = new DefaultFunctionExecutable(context.peekCallContext(),
-                        _parameterNames.toArray(new String[_parameterNames.size()]));
+                        _parameterNames);
                 functionExecutable.setStatement(
                         new BlockStatement(_statements, false, true));
                 context.setContextValue(new Variable(functionExecutable));

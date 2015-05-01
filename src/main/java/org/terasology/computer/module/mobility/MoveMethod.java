@@ -17,11 +17,9 @@ package org.terasology.computer.module.mobility;
 
 import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.Variable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
-import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
+import org.terasology.computer.system.server.lang.AbstractModuleMethodExecutable;
 import org.terasology.math.Direction;
 import org.terasology.math.geom.Vector3f;
 import org.terasology.math.geom.Vector3i;
@@ -29,16 +27,24 @@ import org.terasology.mobileBlocks.server.BlockMoveManager;
 
 import java.util.Map;
 
-public class MoveMethod implements ModuleMethodExecutable<Boolean> {
-    private static final Logger logger = LoggerFactory.getLogger(MoveMethod.class);
+public class MoveMethod extends AbstractModuleMethodExecutable<Boolean> {
     private static final int MOVE_TIME = 500;
     private final String methodName;
 
     private BlockMoveManager blockMoveManager;
 
     public MoveMethod(String methodName, BlockMoveManager blockMoveManager) {
+        super("Moves the computer in the specified direction (if able).", "Boolean", "If the movement was successful.");
         this.blockMoveManager = blockMoveManager;
         this.methodName = methodName;
+
+        addParameter("direction", "String", "Specifies the direction in which the computer should move. For more information " +
+                "about <h navigate:object-type-Direction>Direction</h> - read the link.");
+
+        addExample("This example makes the computer move up one block. Please make sure " +
+                        "this computer has a module of Mobility type in any of its slots.",
+                "var mobilityMod = computer.bindModuleOfType(\"" + MobilityModuleCommonSystem.MOBILITY_MODULE_TYPE + "\");\n" +
+                        "mobilityMod.move(\"up\");");
     }
 
     @Override
@@ -49,11 +55,6 @@ public class MoveMethod implements ModuleMethodExecutable<Boolean> {
     @Override
     public int getMinimumExecutionTime(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
         return MOVE_TIME;
-    }
-
-    @Override
-    public String[] getParameterNames() {
-        return new String[]{"direction"};
     }
 
     @Override

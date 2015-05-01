@@ -16,6 +16,8 @@
 package org.terasology.computer.ui.documentation;
 
 import com.gempukku.lang.ObjectDefinition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.terasology.asset.Assets;
 import org.terasology.browser.data.ParagraphData;
 import org.terasology.browser.data.basic.HTMLLikeParser;
@@ -23,15 +25,21 @@ import org.terasology.browser.ui.style.ParagraphRenderStyle;
 import org.terasology.computer.system.common.ComputerLanguageContext;
 import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
 import org.terasology.computer.system.server.lang.ComputerModule;
+import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
 import org.terasology.rendering.assets.font.Font;
 import org.terasology.rendering.nui.Color;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class DocumentationBuilder {
+    private static final Logger logger = LoggerFactory.getLogger(DocumentationBuilder.class);
+
     private DocumentationBuilder() {
     }
 
@@ -66,8 +74,39 @@ public class DocumentationBuilder {
         computerLanguageContextInitializer.initializeContext(
                 new ComputerLanguageContext() {
                     @Override
-                    public void addComputerModule(ComputerModule computerModule, String description, Collection<ParagraphData> additionalParagraphs, Map<String, String> methodDescriptions,
-                                                  Map<String, Map<String, String>> methodParametersDescriptions, Map<String, String> methodReturnDescriptions, Map<String, Collection<ParagraphData>> methodAdditionalParagraphs) {
+                    public void addComputerModule(ComputerModule computerModule, String description, Collection<ParagraphData> additionalParagraphs) {
+                        Map<String, String> methodSimpleDescriptions = new TreeMap<>();
+                        Map<String, Collection<ParagraphData>> methodPageDescriptions = new TreeMap<>();
+                        Map<String, Map<String, String>> methodParametersDescriptions = new HashMap<>();
+                        Map<String, String> methodReturnDescriptions = new HashMap<>();
+                        Map<String, Iterable<Collection<ParagraphData>>> methodExamples = new HashMap<>();
+
+                        for (Map.Entry<String, ModuleMethodExecutable<?>> methodEntry : computerModule.getAllMethods().entrySet()) {
+                            String methodName = methodEntry.getKey();
+                            ModuleMethodExecutable<?> method = methodEntry.getValue();
+                            MethodDocumentation methodDocumentation = method.getMethodDocumentation();
+
+                            methodSimpleDescriptions.put(methodName, methodDocumentation.getHTMLLikeSimpleDocumentation());
+                            methodPageDescriptions.put(methodName, methodDocumentation.getPageDocumentation());
+
+                            Map<String, String> parameterDescriptions = new LinkedHashMap<>();
+                            for (String parameterName : method.getParameterNames()) {
+                                parameterDescriptions.put(parameterName, "[" + methodDocumentation.getParameterType(parameterName) + "] "
+                                        + methodDocumentation.getHTMLLikeParameterDocumentation(parameterName));
+                            }
+                            methodParametersDescriptions.put(methodName, parameterDescriptions);
+
+                            if (methodDocumentation.getReturnType() != null) {
+                                methodReturnDescriptions.put(methodName, "[" + methodDocumentation.getReturnType() + "] "
+                                        + methodDocumentation.getHTMLLikeReturnDocumentation());
+                            }
+
+                            if (methodDocumentation.getExamples() != null) {
+                                methodExamples.put(methodName, methodDocumentation.getExamples());
+                            }
+                        }
+
+
                         String moduleType = computerModule.getModuleType();
                         String modulePageId = getComputerModulePageId(moduleType);
 
@@ -75,17 +114,17 @@ public class DocumentationBuilder {
                         pageData.addParagraphs(createTitleParagraph("Module - " + computerModule.getModuleName()));
                         pageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, description));
                         pageData.addParagraphs(emphasizedParagraphWithSpaceBefore("Methods:"));
-                        for (String methodName : methodDescriptions.keySet()) {
+                        for (String methodName : methodSimpleDescriptions.keySet()) {
                             pageData.addParagraphs(
                                     HTMLLikeParser.parseHTMLLike(null,
-                                            " * <h navigate:" + getComputerModuleMethodPageId(moduleType, methodName) + ">" + methodName + "()</h> - " + methodDescriptions.get(methodName)));
+                                            " * <h navigate:" + getComputerModuleMethodPageId(moduleType, methodName) + ">" + methodName + "()</h> - " + methodSimpleDescriptions.get(methodName)));
                         }
 
                         pageData.addParagraphs(additionalParagraphs);
 
                         defaultBrowserData.addEntry(null, pageData);
 
-                        for (Map.Entry<String, String> methodEntry : methodDescriptions.entrySet()) {
+                        for (Map.Entry<String, String> methodEntry : methodSimpleDescriptions.entrySet()) {
                             String methodName = methodEntry.getKey();
 
                             PageData functionPageData = new PageData(getComputerModuleMethodPageId(moduleType, methodName), methodName + "()", null);
@@ -110,7 +149,11 @@ public class DocumentationBuilder {
                                 functionPageData.addParagraphs(returnDescription);
                             }
 
-                            functionPageData.addParagraphs(methodAdditionalParagraphs.get(methodName));
+
+                            functionPageData.addParagraphs(emphasizedParagraphWithSpaceBefore("Examples:"));
+                            for (Collection<ParagraphData> exampleData : methodExamples.get(methodName)) {
+                                functionPageData.addParagraphs(exampleData);
+                            }
 
                             defaultBrowserData.addEntry(modulePageId, functionPageData);
                         }
@@ -175,7 +218,7 @@ public class DocumentationBuilder {
                     }
 
                     @Override
-                    public void addComputerModule(ComputerModule computerModule, String description, Collection<ParagraphData> additionalParagraphs, Map<String, String> methodDescriptions, Map<String, Map<String, String>> methodParametersDescriptions, Map<String, String> methodReturnDescriptions, Map<String, Collection<ParagraphData>> methodAdditionalParagraphs) {
+                    public void addComputerModule(ComputerModule computerModule, String description, Collection<ParagraphData> additionalParagraphs) {
                         // Ignore
                     }
                 });
@@ -198,7 +241,7 @@ public class DocumentationBuilder {
                     }
 
                     @Override
-                    public void addComputerModule(ComputerModule computerModule, String description, Collection<ParagraphData> additionalParagraphs, Map<String, String> methodDescriptions, Map<String, Map<String, String>> methodParametersDescriptions, Map<String, String> methodReturnDescriptions, Map<String, Collection<ParagraphData>> methodAdditionalParagraphs) {
+                    public void addComputerModule(ComputerModule computerModule, String description, Collection<ParagraphData> additionalParagraphs) {
                         // Ignore
                     }
                 });
@@ -213,7 +256,7 @@ public class DocumentationBuilder {
                     }
 
                     @Override
-                    public void addComputerModule(ComputerModule computerModule, String description, Collection<ParagraphData> additionalParagraphs, Map<String, String> methodDescriptions, Map<String, Map<String, String>> methodParametersDescriptions, Map<String, String> methodReturnDescriptions, Map<String, Collection<ParagraphData>> methodAdditionalParagraphs) {
+                    public void addComputerModule(ComputerModule computerModule, String description, Collection<ParagraphData> additionalParagraphs) {
                         pageData.addParagraphs(
                                 HTMLLikeParser.parseHTMLLike(null,
                                         " * <h navigate:" + getComputerModulePageId(computerModule.getModuleType()) + ">" + computerModule.getModuleName() + "</h> - " + description));
@@ -244,7 +287,6 @@ public class DocumentationBuilder {
 
     public static Collection<ParagraphData> createExampleParagraphs(String description, String code) {
         List<ParagraphData> result = new LinkedList<>();
-        result.addAll(emphasizedParagraphWithSpaceBefore("Example:"));
         result.addAll(HTMLLikeParser.parseHTMLLike(null, "<h saveAs:example:" + HTMLLikeParser.encodeHTMLLike(code) + ">Save as example</h>"));
         result.addAll(
                 HTMLLikeParser.parseHTMLLike(null, description));

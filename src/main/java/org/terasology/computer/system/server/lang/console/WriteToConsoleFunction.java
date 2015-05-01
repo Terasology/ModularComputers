@@ -21,6 +21,7 @@ import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.TerasologyFunctionExecutable;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class WriteToConsoleFunction extends TerasologyFunctionExecutable {
@@ -30,8 +31,8 @@ public class WriteToConsoleFunction extends TerasologyFunctionExecutable {
     }
 
     @Override
-    public String[] getParameterNames() {
-        return new String[]{"x", "y", "text"};
+    public java.util.Collection<String> getParameterNames() {
+        return Arrays.asList("x", "y", "text");
     }
 
     @Override

@@ -13,42 +13,57 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.terasology.computer.module.storage;
+package org.terasology.computer.module;
 
-import org.terasology.computer.module.DefaultComputerModule;
 import org.terasology.computer.system.server.lang.ComputerModule;
 import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
-public class StorageComputerModule extends DefaultComputerModule {
+public class DefaultComputerModule implements ComputerModule {
     private String moduleType;
     private String moduleName;
-    private int slotCount;
+    private Map<String, ModuleMethodExecutable<?>> methods = new HashMap<>();
 
-    public StorageComputerModule(String moduleType, String moduleName, int slotCount) {
-        super(moduleType, moduleName);
+    public DefaultComputerModule(String moduleType, String moduleName) {
         this.moduleType = moduleType;
         this.moduleName = moduleName;
-        this.slotCount = slotCount;
-        addMethod("getInputInventoryBinding", new StorageInventoryBindingMethod(true));
-        addMethod("getOutputInventoryBinding", new StorageInventoryBindingMethod(false));
+    }
+
+    protected void addMethod(String name, ModuleMethodExecutable<?> method) {
+        methods.put(name, method);
+    }
+
+    @Override
+    public final String getModuleType() {
+        return moduleType;
+    }
+
+    @Override
+    public final String getModuleName() {
+        return moduleName;
     }
 
     @Override
     public boolean canBePlacedInComputer(Collection<ComputerModule> computerModulesInstalled) {
-        // Only one storage module can be stored in a computer
-        for (ComputerModule computerModule : computerModulesInstalled) {
-            if (computerModule.getModuleType().equals(moduleType)) {
-                return false;
-            }
-        }
-
         return true;
     }
 
     @Override
     public boolean acceptsNewModule(ComputerModule computerModule) {
         return true;
+    }
+
+    @Override
+    public final ModuleMethodExecutable getMethodByName(String name) {
+        return methods.get(name);
+    }
+
+    @Override
+    public final Map<String, ModuleMethodExecutable<?>> getAllMethods() {
+        return Collections.unmodifiableMap(methods);
     }
 }

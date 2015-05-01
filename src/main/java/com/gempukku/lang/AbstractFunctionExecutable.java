@@ -13,8 +13,8 @@ public abstract class AbstractFunctionExecutable implements FunctionExecutable {
                 new SimpleExecution() {
                     @Override
                     protected ExecutionProgress execute(ExecutionContext context, ExecutionCostConfiguration configuration) throws ExecutionException {
-                        final String[] parameterNames = getParameterNames();
-                        Map<String, Variable> parameters = new HashMap<String, Variable>();
+                        final Iterable<String> parameterNames = getParameterNames();
+                        Map<String, Variable> parameters = new HashMap<>();
                         final CallContext callContext = context.peekCallContext();
                         for (String parameterName : parameterNames) {
                             parameters.put(parameterName, callContext.getVariableValue(parameterName));

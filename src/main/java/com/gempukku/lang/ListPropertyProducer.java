@@ -1,5 +1,8 @@
 package com.gempukku.lang;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -29,8 +32,8 @@ public class ListPropertyProducer implements PropertyProducer {
         }
 
         @Override
-        public String[] getParameterNames() {
-            return new String[]{"index"};
+        public Collection<String> getParameterNames() {
+            return Arrays.asList("index");
         }
 
         @Override
@@ -60,8 +63,8 @@ public class ListPropertyProducer implements PropertyProducer {
         }
 
         @Override
-        public String[] getParameterNames() {
-            return new String[]{"element"};
+        public Collection<String> getParameterNames() {
+            return Arrays.asList("element");
         }
 
         @Override
@@ -85,8 +88,8 @@ public class ListPropertyProducer implements PropertyProducer {
         }
 
         @Override
-        public String[] getParameterNames() {
-            return new String[0];
+        public Collection<String> getParameterNames() {
+            return Collections.emptySet();
         }
 
         @Override
