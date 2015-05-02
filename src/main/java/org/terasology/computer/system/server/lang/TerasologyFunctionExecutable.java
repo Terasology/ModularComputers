@@ -22,16 +22,59 @@ import com.gempukku.lang.ExecutionContext;
 import com.gempukku.lang.ExecutionCostConfiguration;
 import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.ExecutionProgress;
-import com.gempukku.lang.FunctionExecutable;
 import com.gempukku.lang.Variable;
 import com.gempukku.lang.execution.SimpleExecution;
+import org.terasology.browser.data.ParagraphData;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.context.TerasologyComputerExecutionContext;
+import org.terasology.computer.system.common.DocumentedFunctionExecutable;
+import org.terasology.computer.ui.documentation.DefaultMethodDocumentation;
+import org.terasology.computer.ui.documentation.DocumentationBuilder;
+import org.terasology.computer.ui.documentation.MethodDocumentation;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
-public abstract class TerasologyFunctionExecutable implements FunctionExecutable {
+public abstract class TerasologyFunctionExecutable implements DocumentedFunctionExecutable {
+    private DefaultMethodDocumentation methodDocumentation;
+    private Set<String> parameterNames = new LinkedHashSet<>();
+
+    protected TerasologyFunctionExecutable(String simpleDocumentation) {
+        methodDocumentation = new DefaultMethodDocumentation(simpleDocumentation);
+    }
+
+    protected TerasologyFunctionExecutable(String simpleDocumentation, String returnType, String returnDocumentation) {
+        methodDocumentation = new DefaultMethodDocumentation(simpleDocumentation, returnType, returnDocumentation);
+    }
+
+    protected void addParameter(String name, String type, String documentation) {
+        parameterNames.add(name);
+        methodDocumentation.addParameterDocumentation(name, type, documentation);
+    }
+
+    protected void setPageDocumentation(Collection<ParagraphData> pageDocumentation) {
+        methodDocumentation.setPageDocumentation(pageDocumentation);
+    }
+
+    protected void addExample(String description, String code) {
+        methodDocumentation.addExample(
+                DocumentationBuilder.createExampleParagraphs(description, code));
+    }
+
+    @Override
+    public MethodDocumentation getMethodDocumentation() {
+        return methodDocumentation;
+    }
+
+    @Override
+    public final Collection<String> getParameterNames() {
+        return Collections.unmodifiableCollection(parameterNames);
+    }
+
     @Override
     public final Execution createExecution(final int line, ExecutionContext executionContext, CallContext callContext) {
         return new DelayedExecution(getDuration(), 0,
@@ -41,11 +84,11 @@ public abstract class TerasologyFunctionExecutable implements FunctionExecutable
                         final TerasologyComputerExecutionContext terasologyExecutionContext = (TerasologyComputerExecutionContext) context;
                         ComputerCallback computer = terasologyExecutionContext.getComputerCallback();
 
-                        final Iterable<String> parameterNames = getParameterNames();
                         Map<String, Variable> parameters = new HashMap<String, Variable>();
                         final CallContext callContext = context.peekCallContext();
-                        for (String parameterName : parameterNames)
+                        for (String parameterName : parameterNames) {
                             parameters.put(parameterName, callContext.getVariableValue(parameterName));
+                        }
 
                         context.setReturnValue(new Variable(executeFunction(line, computer, parameters)));
                         return new ExecutionProgress(configuration.getSetReturnValue());

@@ -15,19 +15,17 @@
  */
 package org.terasology.computer.system.common;
 
-import com.gempukku.lang.ObjectDefinition;
 import org.terasology.browser.data.ParagraphData;
 import org.terasology.computer.system.server.lang.ComputerModule;
 
 import java.util.Collection;
-import java.util.Map;
 
 public interface ComputerLanguageContext {
-    void addObject(String object, ObjectDefinition objectDefinition, String objectDescription,
-                          Collection<ParagraphData> additionalParagraphs, Map<String, String> functionDescriptions,
-                          Map<String, Map<String, String>> functionParametersDescriptions,
-                          Map<String, String> functionReturnDescriptions, Map<String, Collection<ParagraphData>> functionAdditionalParagraphs);
+    void addObjectType(String objectType, Collection<ParagraphData> documentation);
+
+    void addObject(String object, DocumentedObjectDefinition objectDefinition, String objectDescription,
+                   Collection<ParagraphData> additionalParagraphs);
 
     void addComputerModule(ComputerModule computerModule, String description,
-                                  Collection<ParagraphData> additionalParagraphs);
+                           Collection<ParagraphData> additionalParagraphs);
 }

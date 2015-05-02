@@ -22,19 +22,26 @@ import org.terasology.computer.system.server.lang.TerasologyFunctionExecutable;
 import org.terasology.computer.system.server.lang.os.condition.AbstractConditionCustomObject;
 import org.terasology.computer.system.server.lang.os.condition.ResultAwaitingCondition;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Map;
 
 public class CreateSleepMsFunction extends TerasologyFunctionExecutable {
-    @Override
-    protected int getDuration() {
-        return 10;
+    public CreateSleepMsFunction() {
+        super("Creates a condition that waits for the specified time in milliseconds.", "Condition",
+                "Condition that becomes true after specified number of milliseconds.");
+
+        addParameter("time", "Number", "Number of milliseconds this condition should wait to become true.");
+
+        addExample("This example creates a condition that waits for the specified number of milliseconds, waits " +
+                        "for it and then prints out text to console.",
+                "var sleepCondition = os.createSleepMs(3000);\n" +
+                        "os.waitFor(sleepCondition);\n" +
+                        "console.append(\"This text is printed after 3 seconds have passed.\");"
+        );
     }
 
     @Override
-    public Collection<String> getParameterNames() {
-        return Arrays.asList("time");
+    protected int getDuration() {
+        return 10;
     }
 
     @Override
@@ -50,11 +57,6 @@ public class CreateSleepMsFunction extends TerasologyFunctionExecutable {
         }
 
         return new AbstractConditionCustomObject() {
-            @Override
-            public int getCreationDelay() {
-                return 0;
-            }
-
             @Override
             public int sizeOf() {
                 return 4;

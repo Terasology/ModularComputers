@@ -48,9 +48,8 @@ public class DestroyToInventoryMethod extends AbstractModuleMethodExecutable<Obj
         this.blockEntityRegistry = blockEntityRegistry;
         this.methodName = methodName;
 
-        addParameter("direction", "String", "Direction in which to destroy the block. For more information " +
-                "about <h navigate:object-type-Direction>Direction</h> - read the link.");
-        addParameter("inventoryBinding", "Inventory Binding", "Inventory to which store the items, please note " +
+        addParameter("direction", "Direction", "Direction in which to destroy the block.");
+        addParameter("inventoryBinding", "InventoryBinding", "Inventory to which store the items, please note " +
                 "that this Inventory Binding has to be of the input type.");
 
         addExample("This example destroys the block below the computer and places the resulting items in inventory " +

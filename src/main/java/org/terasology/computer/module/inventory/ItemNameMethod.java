@@ -20,7 +20,6 @@ import com.gempukku.lang.Variable;
 import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.AbstractModuleMethodExecutable;
-import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.logic.inventory.InventoryUtils;
 
@@ -33,11 +32,11 @@ public class ItemNameMethod extends AbstractModuleMethodExecutable<Object> {
     public ItemNameMethod(String methodName) {
         super("Returns the name of the item in the specified inventory's slot (if any).", "String",
                 "Name of item in the specified slot. " +
-                "If there is an item, but the name is not known - \"Unknown\" is returned. " +
+                        "If there is an item, but the name is not known - \"Unknown\" is returned. " +
                         "If there is no item at the specified slot, a null value is returned.");
         this.methodName = methodName;
 
-        addParameter("inventoryBinding", "Inventory Binding", "Inventory it should check for the name of item.");
+        addParameter("inventoryBinding", "InventoryBinding", "Inventory it should check for the name of item.");
         addParameter("slot", "Number", "Slot it should check for name of item.");
 
         addExample(

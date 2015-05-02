@@ -21,18 +21,24 @@ import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.TerasologyFunctionExecutable;
 
-import java.util.Arrays;
 import java.util.Map;
 
 public class WriteToConsoleFunction extends TerasologyFunctionExecutable {
-    @Override
-    protected int getDuration() {
-        return 100;
+    public WriteToConsoleFunction() {
+        super("This method writes the specified text at the specified place in Computer console");
+
+        addParameter("x", "Number", "X position of the text start in the console (column).");
+        addParameter("y", "Number", "Y position of the text start in the console (row).");
+        addParameter("text", "String", "Text to display at the specified position in the console.");
+
+        addExample("This example program writes the specified text at the specified position in console.",
+                "console.write(0, 5, \"This text is written on 6th line.\");"
+        );
     }
 
     @Override
-    public java.util.Collection<String> getParameterNames() {
-        return Arrays.asList("x", "y", "text");
+    protected int getDuration() {
+        return 100;
     }
 
     @Override

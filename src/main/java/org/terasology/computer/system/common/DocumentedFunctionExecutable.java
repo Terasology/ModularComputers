@@ -13,13 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.terasology.computer.system.server.lang.os.condition;
+package org.terasology.computer.system.common;
 
-import com.gempukku.lang.ExecutionException;
-import com.gempukku.lang.Variable;
+import com.gempukku.lang.FunctionExecutable;
+import org.terasology.computer.ui.documentation.MethodDocumentation;
 
-public interface ResultAwaitingCondition {
-    boolean isMet() throws ExecutionException;
-
-    Variable getReturnValue();
+public interface DocumentedFunctionExecutable extends FunctionExecutable {
+    public MethodDocumentation getMethodDocumentation();
 }

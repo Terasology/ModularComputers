@@ -15,21 +15,15 @@
  */
 package org.terasology.computer.module.inventory;
 
-import org.terasology.browser.data.ParagraphData;
+import org.terasology.browser.data.basic.HTMLLikeParser;
+import org.terasology.computer.system.common.ComputerLanguageRegistry;
 import org.terasology.computer.system.common.ComputerModuleRegistry;
-import org.terasology.computer.ui.documentation.DocumentationBuilder;
 import org.terasology.entitySystem.systems.BaseComponentSystem;
 import org.terasology.entitySystem.systems.RegisterMode;
 import org.terasology.entitySystem.systems.RegisterSystem;
 import org.terasology.logic.inventory.InventoryManager;
 import org.terasology.registry.In;
 import org.terasology.world.BlockEntityRegistry;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.TreeMap;
 
 @RegisterSystem(RegisterMode.ALWAYS)
 public class InventoryModuleCommonSystem extends BaseComponentSystem {
@@ -43,9 +37,19 @@ public class InventoryModuleCommonSystem extends BaseComponentSystem {
     private InventoryManager inventoryManager;
     @In
     private InventoryModuleConditionsRegister inventoryModuleConditionsRegister;
+    @In
+    private ComputerLanguageRegistry computerLanguageRegistry;
 
     @Override
     public void preBegin() {
+        computerLanguageRegistry.registerObjectType(
+                "InventoryBinding",
+                HTMLLikeParser.parseHTMLLike(null, "An object that tells a method how to access an inventory. Usually used as a parameter " +
+                        "for methods in Inventory Manipulator computer module. This object comes in two types defined upon creation:<l>" +
+                        "* input - that allows to place items in the specified inventory," +
+                        "* output - that allows to extract items from the specified inventory.<l>" +
+                        "Attempting to use an incorrect type as a parameter of a method will result in an ExecutionException."));
+
         computerModuleRegistry.registerComputerModule(
                 COMPUTER_INVENTORY_MODULE_TYPE,
                 new InventoryComputerModule(inventoryModuleConditionsRegister, inventoryManager,

@@ -33,8 +33,8 @@ public class DumpMethod extends AbstractModuleMethodExecutable<Object> {
         this.inventoryManager = inventoryManager;
         this.methodName = methodName;
 
-        addParameter("inventoryBindingFrom", "Inventory Binding", "Inventory it should extract items from.");
-        addParameter("inventoryBindingTo", "Inventory Binding", "Inventory it should insert items to.");
+        addParameter("inventoryBindingFrom", "InventoryBinding", "Inventory it should extract items from.");
+        addParameter("inventoryBindingTo", "InventoryBinding", "Inventory it should insert items to.");
 
         addExample("This example moves all items from an inventory above the computer to inventory to the east of the computer. Please make sure " +
                         "this computer has a module of Inventory Manipulator type in any of its slots.",

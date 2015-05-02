@@ -23,14 +23,20 @@ import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.TerasologyFunctionExecutable;
 import org.terasology.computer.system.server.lang.computer.bind.SlotBindingObjectDefinition;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Map;
 
 public class BindModuleFunction extends TerasologyFunctionExecutable {
-    @Override
-    public Collection<String> getParameterNames() {
-        return Arrays.asList("slot");
+    public BindModuleFunction() {
+        super("Binds the module specified in the slot number.", "Object",
+                "Binding to the module. This object exposes all the methods, as described in documentation for the module.");
+
+        addParameter("slot", "Number", "Slot number of a module to bind.");
+
+        addExample("This example binds module in the first slot and executes \"move\" method on it with \"up\" parameter. " +
+                        "In order for successful execution - please place \"Mobility\" module in the first slot of the computer.",
+                "var moduleBinding = computer.bindModule(0);\n" +
+                        "moduleBinding.move(\"up\");"
+        );
     }
 
     @Override

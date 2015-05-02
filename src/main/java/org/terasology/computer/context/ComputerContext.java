@@ -23,7 +23,6 @@ import com.gempukku.lang.ExecutionProgress;
 import com.gempukku.lang.IllegalSyntaxException;
 import com.gempukku.lang.ListPropertyProducer;
 import com.gempukku.lang.MapPropertyProducer;
-import com.gempukku.lang.ObjectDefinition;
 import com.gempukku.lang.ObjectPropertyProducer;
 import com.gempukku.lang.ScriptExecutable;
 import com.gempukku.lang.StringPropertyProducer;
@@ -37,7 +36,9 @@ import org.terasology.computer.component.ComputerModuleComponent;
 import org.terasology.computer.system.common.ComputerLanguageContext;
 import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
 import org.terasology.computer.system.common.ComputerModuleRegistry;
+import org.terasology.computer.system.common.DocumentedObjectDefinition;
 import org.terasology.computer.system.server.lang.ComputerModule;
+import org.terasology.computer.system.server.lang.os.condition.ResultAwaitingCondition;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.logic.inventory.InventoryComponent;
 import org.terasology.logic.location.LocationComponent;
@@ -75,7 +76,7 @@ public class ComputerContext {
     private ComputerConsole console = new ComputerConsole();
 
     private ExecutionContext executionContext;
-    private AwaitingCondition awaitingCondition;
+    private ResultAwaitingCondition awaitingCondition;
 
     private Map<EntityRef, ComputerConsoleListener> consoleListenerMap = new HashMap<>();
 
@@ -135,9 +136,7 @@ public class ComputerContext {
             computerLanguageContextInitializer.initializeContext(
                     new ComputerLanguageContext() {
                         @Override
-                        public void addObject(String object, ObjectDefinition objectDefinition, String objectDescription, Collection<ParagraphData> additionalParagraphs,
-                                              Map<String, String> functionDescriptions, Map<String, Map<String, String>> functionParametersDescriptions,
-                                              Map<String, String> functionReturnDescriptions, Map<String, Collection<ParagraphData>> functionAdditionalParagraphs) {
+                        public void addObject(String object, DocumentedObjectDefinition objectDefinition, String objectDescription, Collection<ParagraphData> additionalParagraphs) {
                             variables.add(object);
                             try {
                                 callContext.defineVariable(object).setValue(objectDefinition);
@@ -145,6 +144,11 @@ public class ComputerContext {
                                 // Ignore - can't happen
                                 exp.printStackTrace();
                             }
+                        }
+
+                        @Override
+                        public void addObjectType(String objectType, Collection<ParagraphData> documentation) {
+                            // Ignore
                         }
 
                         @Override
@@ -223,7 +227,7 @@ public class ComputerContext {
             }
 
             @Override
-            public void suspendWithCondition(AwaitingCondition condition) {
+            public void suspendWithCondition(ResultAwaitingCondition condition) {
                 awaitingCondition = condition;
             }
 
@@ -249,6 +253,7 @@ public class ComputerContext {
             try {
                 if (awaitingCondition != null) {
                     if (awaitingCondition.isMet()) {
+                        executionContext.setContextValue(awaitingCondition.getReturnValue());
                         awaitingCondition = null;
                     } else {
                         break;

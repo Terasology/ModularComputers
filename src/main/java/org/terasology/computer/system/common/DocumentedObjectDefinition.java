@@ -13,10 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.terasology.computer.context;
+package org.terasology.computer.system.common;
 
-import com.gempukku.lang.ExecutionException;
+import com.gempukku.lang.ObjectDefinition;
 
-public interface AwaitingCondition {
-    boolean isMet() throws ExecutionException;
+import java.util.Collection;
+
+public interface DocumentedObjectDefinition extends ObjectDefinition {
+    public Collection<String> getMethodNames();
+
+    public DocumentedFunctionExecutable getMethod(String methodName);
 }

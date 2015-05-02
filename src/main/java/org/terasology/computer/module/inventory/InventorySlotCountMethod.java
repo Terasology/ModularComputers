@@ -32,7 +32,7 @@ public class InventorySlotCountMethod extends AbstractModuleMethodExecutable<Obj
                 "Number of slots in the inventory specified.");
         this.methodName = methodName;
 
-        addParameter("inventoryBinding", "Inventory Binding", "Inventory it should query for number of slots.");
+        addParameter("inventoryBinding", "InventoryBinding", "Inventory it should query for number of slots.");
 
         addExample("This example creates output inventory binding to an inventory above it and prints out the slot count for it. Please make sure " +
                         "this computer has a module of Inventory Manipulator type in any of its slots.",

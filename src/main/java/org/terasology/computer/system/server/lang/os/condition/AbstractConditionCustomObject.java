@@ -27,7 +27,5 @@ public abstract class AbstractConditionCustomObject implements CustomObject {
         return Collections.singleton("CONDITION");
     }
 
-    public abstract int getCreationDelay();
-
     public abstract ResultAwaitingCondition createAwaitingCondition();
 }

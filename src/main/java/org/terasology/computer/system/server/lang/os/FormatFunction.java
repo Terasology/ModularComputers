@@ -21,19 +21,25 @@ import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.TerasologyFunctionExecutable;
 
 import java.text.DecimalFormat;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Map;
 
 public class FormatFunction extends TerasologyFunctionExecutable {
-    @Override
-    protected int getDuration() {
-        return 10;
+    public FormatFunction() {
+        super("Formats the specified number using the format passed as a parameter. This behaves exactly like DecimalFormat " +
+                "in Java language.", "String", "Formatted number as specified by parameters.");
+
+        addParameter("format", "String", "Format to use to output the number, as specified in DecimalFormat class in Java language");
+        addParameter("number", "Number", "Number to format.");
+
+        addExample("This example prints out a floating-point number in a specified format.",
+                "var oneThird = 1/3;\n" +
+                        "console.append(os.format(\"0.00\", oneThird));"
+        );
     }
 
     @Override
-    public Collection<String> getParameterNames() {
-        return Arrays.asList("format", "number");
+    protected int getDuration() {
+        return 10;
     }
 
     @Override

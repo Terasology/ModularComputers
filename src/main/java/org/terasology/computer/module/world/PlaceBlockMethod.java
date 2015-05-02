@@ -22,7 +22,6 @@ import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.module.inventory.InventoryBinding;
 import org.terasology.computer.module.inventory.InventoryModuleCommonSystem;
 import org.terasology.computer.system.server.lang.AbstractModuleMethodExecutable;
-import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.logic.inventory.InventoryManager;
 import org.terasology.logic.inventory.InventoryUtils;
@@ -53,9 +52,8 @@ public class PlaceBlockMethod extends AbstractModuleMethodExecutable<Object> {
         this.inventoryManager = inventoryManager;
         this.methodName = methodName;
 
-        addParameter("direction", "String", "Direction in which to place the block. For more information " +
-                "about <h navigate:object-type-Direction>Direction</h> - read the link.");
-        addParameter("inventoryBinding", "Inventory Binding", "Inventory from which to place the block, please " +
+        addParameter("direction", "Direction", "Direction in which to place the block.");
+        addParameter("inventoryBinding", "InventoryBinding", "Inventory from which to place the block, please " +
                 "note that this Inventory Binding has to be of the output type.");
         addParameter("slot", "Number", "Slot number to take block from for placement.");
 

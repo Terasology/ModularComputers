@@ -29,6 +29,7 @@ import java.util.Map;
 public interface ModuleMethodExecutable<T> {
     /**
      * Returns method documentation to display in the browser widget.
+     *
      * @return Method documentation.
      */
     MethodDocumentation getMethodDocumentation();

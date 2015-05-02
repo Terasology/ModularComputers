@@ -23,18 +23,26 @@ import org.terasology.computer.system.server.lang.ComputerModule;
 import org.terasology.computer.system.server.lang.TerasologyFunctionExecutable;
 import org.terasology.computer.system.server.lang.computer.bind.SlotBindingObjectDefinition;
 
-import java.util.Arrays;
 import java.util.Map;
 
 public class BindFirstModuleOfTypeFunction extends TerasologyFunctionExecutable {
-    @Override
-    protected int getDuration() {
-        return 100;
+    public BindFirstModuleOfTypeFunction() {
+        super("Binds first module of the specified type in any of the slots.", "Object", "Binding to the module. This object exposes all the methods, as described in documentation for the module. " +
+                "If the module is not found in this computer, this function returns null.");
+
+        addParameter("type", "String", "Type of the module to bind.");
+
+        addExample("This example binds first module of the specified type that it finds in computer's module slots to the variable " +
+                        "and then executes \"move\" method on it with \"up\" parameter. " +
+                        "In order for successful execution - please place \"Mobility\" module in any slot of the computer.",
+                "var moduleBinding = computer.bindModuleOfType(\"Mobility\");\n" +
+                        "moduleBinding.move(\"up\");"
+        );
     }
 
     @Override
-    public java.util.Collection<String> getParameterNames() {
-        return Arrays.asList("type");
+    protected int getDuration() {
+        return 100;
     }
 
     @Override

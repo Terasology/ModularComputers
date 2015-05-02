@@ -16,6 +16,7 @@
 package org.terasology.computer.context;
 
 import org.terasology.computer.system.server.lang.ComputerModule;
+import org.terasology.computer.system.server.lang.os.condition.ResultAwaitingCondition;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.math.geom.Vector3f;
 
@@ -28,7 +29,7 @@ public interface ComputerCallback {
 
     Vector3f getComputerLocation();
 
-    void suspendWithCondition(AwaitingCondition condition);
+    void suspendWithCondition(ResultAwaitingCondition condition);
 
     EntityRef getComputerEntity();
 }

@@ -33,7 +33,7 @@ public class ItemCountMethod extends AbstractModuleMethodExecutable<Object> {
         super("Checks how many items are in the specified inventory's slot.", "Number", "Number of items in the specified slot in the inventory.");
         this.methodName = methodName;
 
-        addParameter("inventoryBinding", "Inventory Binding", "Inventory it should check for the amount of items.");
+        addParameter("inventoryBinding", "InventoryBinding", "Inventory it should check for the amount of items.");
         addParameter("slot", "Number", "Slot it should check for number of items.");
 
         addExample("This example creates output inventory binding to an inventory above it and prints out number of items in its first slot. Please make sure " +

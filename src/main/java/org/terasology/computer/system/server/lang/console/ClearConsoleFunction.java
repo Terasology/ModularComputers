@@ -20,19 +20,23 @@ import com.gempukku.lang.Variable;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.TerasologyFunctionExecutable;
 
-import java.util.Collections;
 import java.util.Map;
 
 
 public class ClearConsoleFunction extends TerasologyFunctionExecutable {
-    @Override
-    protected int getDuration() {
-        return 100;
+    public ClearConsoleFunction() {
+        super("This method clears everything int the Computer console.");
+
+        addExample("This example program clears the screen of the Computer Console. Please note, it first appends " +
+                        "a line of text to it, to show it actually works.",
+                "console.append(\"Line of text you won't see.\");\n" +
+                        "console.clear();"
+        );
     }
 
     @Override
-    public java.util.Collection<String> getParameterNames() {
-        return Collections.emptySet();
+    protected int getDuration() {
+        return 100;
     }
 
     @Override

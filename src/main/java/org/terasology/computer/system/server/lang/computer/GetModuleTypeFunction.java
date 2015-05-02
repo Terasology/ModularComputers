@@ -23,14 +23,26 @@ import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.ComputerModule;
 import org.terasology.computer.system.server.lang.TerasologyFunctionExecutable;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Map;
 
 public class GetModuleTypeFunction extends TerasologyFunctionExecutable {
-    @Override
-    public Collection<String> getParameterNames() {
-        return Arrays.asList("slot");
+    public GetModuleTypeFunction() {
+        super("Returns the module type at the specified slot.", "String",
+                "Module type at the slot specified, or null if no module at that slot is present.");
+
+        addParameter("slot", "Number", "Slot to check for module type.");
+
+        addExample("This example iterates over all module slots this computer has and prints out the type of the module " +
+                        "in that slot.",
+                "var moduleSlotCount = computer.getModuleSlotCount();\n" +
+                        "for (var i=0; i < moduleSlotCount; i++) {\n" +
+                        "  var moduleType = computer.getModuleType(i);\n" +
+                        "  if (moduleType == null)\n" +
+                        "    console.append(\"Slot \"+(i+1)+\" has no module.\");\n" +
+                        "  else\n" +
+                        "    console.append(\"Slot \"+(i+1)+\" has module of type - \" + moduleType);\n" +
+                        "}"
+        );
     }
 
     @Override

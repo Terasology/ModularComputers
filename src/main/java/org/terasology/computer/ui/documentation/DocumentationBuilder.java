@@ -15,7 +15,6 @@
  */
 package org.terasology.computer.ui.documentation;
 
-import com.gempukku.lang.ObjectDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terasology.asset.Assets;
@@ -24,6 +23,8 @@ import org.terasology.browser.data.basic.HTMLLikeParser;
 import org.terasology.browser.ui.style.ParagraphRenderStyle;
 import org.terasology.computer.system.common.ComputerLanguageContext;
 import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
+import org.terasology.computer.system.common.DocumentedFunctionExecutable;
+import org.terasology.computer.system.common.DocumentedObjectDefinition;
 import org.terasology.computer.system.server.lang.ComputerModule;
 import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
 import org.terasology.rendering.assets.font.Font;
@@ -59,16 +60,60 @@ public class DocumentationBuilder {
         return object + "-" + methodName;
     }
 
+    public static String getObjectTypePageId(String objectType) {
+        return "objectTypes-" + objectType;
+    }
+
     public static DefaultDocumentationData buildDocumentation(ComputerLanguageContextInitializer computerLanguageContextInitializer) {
         DefaultDocumentationData defaultBrowserData = new DefaultDocumentationData();
 
         defaultBrowserData.addEntry(null, buildIntroductionPage(computerLanguageContextInitializer));
+
+        buildObjectTypePages(defaultBrowserData, computerLanguageContextInitializer);
+
         buildBuiltinObjectPages(defaultBrowserData, computerLanguageContextInitializer);
         buildComputerModulePages(defaultBrowserData, computerLanguageContextInitializer);
 
         return defaultBrowserData;
     }
 
+
+    private static void buildObjectTypePages(DefaultDocumentationData defaultBrowserData, ComputerLanguageContextInitializer computerLanguageContextInitializer) {
+        PageData objectTypesPage = new PageData("objectTypes", "Object Types", null);
+        objectTypesPage.addParagraphs(createTitleParagraph("Object Types"));
+        objectTypesPage.addParagraphs(
+                HTMLLikeParser.parseHTMLLike(null, "There are multiple object types defined in the computer API. Some of them are built in, " +
+                        "some of them are added by different modules."));
+        objectTypesPage.addParagraphs(emphasizedParagraphWithSpaceBefore("Object types:"));
+
+        defaultBrowserData.addEntry(null, objectTypesPage);
+
+        computerLanguageContextInitializer.initializeContext(
+                new ComputerLanguageContext() {
+                    @Override
+                    public void addObjectType(String objectType, Collection<ParagraphData> documentation) {
+                        String objectTypePageId = getObjectTypePageId(objectType);
+                        objectTypesPage.addParagraphs(HTMLLikeParser.parseHTMLLike(null,
+                                " * <h navigate:" + objectTypePageId + ">" + objectType + "</h>"));
+
+                        PageData objectTypePage = new PageData(objectTypePageId, objectType, null);
+                        objectTypePage.addParagraphs(createTitleParagraph("Object Type - " + objectType));
+                        objectTypePage.addParagraphs(documentation);
+
+                        defaultBrowserData.addEntry("objectTypes", objectTypePage);
+                    }
+
+                    @Override
+                    public void addComputerModule(ComputerModule computerModule, String description, Collection<ParagraphData> additionalParagraphs) {
+                        // Ignore
+                    }
+
+                    @Override
+                    public void addObject(String object, DocumentedObjectDefinition objectDefinition, String objectDescription, Collection<ParagraphData> additionalParagraphs) {
+                        // Ignore
+                    }
+                });
+    }
 
     private static void buildComputerModulePages(DefaultDocumentationData defaultBrowserData, ComputerLanguageContextInitializer computerLanguageContextInitializer) {
         computerLanguageContextInitializer.initializeContext(
@@ -91,13 +136,18 @@ public class DocumentationBuilder {
 
                             Map<String, String> parameterDescriptions = new LinkedHashMap<>();
                             for (String parameterName : method.getParameterNames()) {
-                                parameterDescriptions.put(parameterName, "[" + methodDocumentation.getParameterType(parameterName) + "] "
+                                String parameterType = methodDocumentation.getParameterType(parameterName);
+                                parameterType = linkObjectTypeIfPageAvailable(parameterType, defaultBrowserData);
+                                parameterDescriptions.put(parameterName, "[" + parameterType + "] "
                                         + methodDocumentation.getHTMLLikeParameterDocumentation(parameterName));
                             }
                             methodParametersDescriptions.put(methodName, parameterDescriptions);
 
                             if (methodDocumentation.getReturnType() != null) {
-                                methodReturnDescriptions.put(methodName, "[" + methodDocumentation.getReturnType() + "] "
+                                String returnType = methodDocumentation.getReturnType();
+                                returnType = linkObjectTypeIfPageAvailable(returnType, defaultBrowserData);
+
+                                methodReturnDescriptions.put(methodName, "[" + returnType + "] "
                                         + methodDocumentation.getHTMLLikeReturnDocumentation());
                             }
 
@@ -160,43 +210,105 @@ public class DocumentationBuilder {
                     }
 
                     @Override
-                    public void addObject(String object, ObjectDefinition objectDefinition, String objectDescription, Collection<ParagraphData> additionalParagraphs, Map<String, String> functionDescriptions, Map<String, Map<String, String>> functionParametersDescriptions, Map<String, String> functionReturnDescriptions, Map<String, Collection<ParagraphData>> functionAdditionalParagraphs) {
+                    public void addObjectType(String objectType, Collection<ParagraphData> documentation) {
+                        // Ignore
+                    }
+
+                    @Override
+                    public void addObject(String object, DocumentedObjectDefinition objectDefinition, String objectDescription, Collection<ParagraphData> additionalParagraphs) {
                         // Ignore
                     }
                 });
+    }
+
+    private static String linkObjectTypeIfPageAvailable(String objectType, DefaultDocumentationData defaultBrowserData) {
+        if (objectType.startsWith("Array of ")) {
+            return linkObjectTypeIfPageAvailable("Array", defaultBrowserData) + " of " +
+                    linkObjectTypeIfPageAvailable(objectType.substring(9), defaultBrowserData);
+        } else {
+            String objectTypePageId = getObjectTypePageId(objectType);
+            if (defaultBrowserData.getDocument(objectTypePageId) != null) {
+                objectType = "<h navigate:" + objectTypePageId + ">" + objectType + "</h>";
+            } else {
+                logMissingObjectType(objectType);
+            }
+        }
+        return objectType;
+    }
+
+    private static void logMissingObjectType(String objectType) {
+        if (!objectType.equals("any")) {
+            logger.warn("Unable to find documentation for object type - " + objectType);
+        }
     }
 
     private static void buildBuiltinObjectPages(DefaultDocumentationData defaultBrowserData, ComputerLanguageContextInitializer computerLanguageContextInitializer) {
         computerLanguageContextInitializer.initializeContext(
                 new ComputerLanguageContext() {
                     @Override
-                    public void addObject(String object, ObjectDefinition objectDefinition, String objectDescription, Collection<ParagraphData> additionalParagraphs, Map<String, String> functionDescriptions, Map<String, Map<String, String>> functionParametersDescriptions, Map<String, String> functionReturnDescriptions, Map<String, Collection<ParagraphData>> functionAdditionalParagraphs) {
+                    public void addObject(String object, DocumentedObjectDefinition objectDefinition, String objectDescription, Collection<ParagraphData> additionalParagraphs) {
+                        Map<String, String> methodSimpleDescriptions = new TreeMap<>();
+                        Map<String, Collection<ParagraphData>> methodPageDescriptions = new TreeMap<>();
+                        Map<String, Map<String, String>> methodParametersDescriptions = new HashMap<>();
+                        Map<String, String> methodReturnDescriptions = new HashMap<>();
+                        Map<String, Iterable<Collection<ParagraphData>>> methodExamples = new HashMap<>();
+
+                        for (String methodName : objectDefinition.getMethodNames()) {
+                            DocumentedFunctionExecutable documentedFunctionExecutable = objectDefinition.getMethod(methodName);
+                            MethodDocumentation methodDocumentation = documentedFunctionExecutable.getMethodDocumentation();
+
+                            methodSimpleDescriptions.put(methodName, methodDocumentation.getHTMLLikeSimpleDocumentation());
+                            methodPageDescriptions.put(methodName, methodDocumentation.getPageDocumentation());
+
+                            Map<String, String> parameterDescriptions = new LinkedHashMap<>();
+                            for (String parameterName : documentedFunctionExecutable.getParameterNames()) {
+                                String parameterType = methodDocumentation.getParameterType(parameterName);
+                                parameterType = linkObjectTypeIfPageAvailable(parameterType, defaultBrowserData);
+                                parameterDescriptions.put(parameterName, "[" + parameterType + "] "
+                                        + methodDocumentation.getHTMLLikeParameterDocumentation(parameterName));
+                            }
+                            methodParametersDescriptions.put(methodName, parameterDescriptions);
+
+                            if (methodDocumentation.getReturnType() != null) {
+                                String returnType = methodDocumentation.getReturnType();
+                                returnType = linkObjectTypeIfPageAvailable(returnType, defaultBrowserData);
+
+                                methodReturnDescriptions.put(methodName, "[" + returnType + "] "
+                                        + methodDocumentation.getHTMLLikeReturnDocumentation());
+                            }
+
+                            if (methodDocumentation.getExamples() != null) {
+                                methodExamples.put(methodName, methodDocumentation.getExamples());
+                            }
+                        }
+
+
                         String objectPageId = getBuiltInObjectPageId(object);
 
                         PageData pageData = new PageData(objectPageId, "Variable - " + object, null);
                         pageData.addParagraphs(createTitleParagraph("Variable - " + object));
                         pageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, objectDescription));
                         pageData.addParagraphs(emphasizedParagraphWithSpaceBefore("Functions:"));
-                        for (String functionName : functionDescriptions.keySet()) {
+                        for (String functionName : methodSimpleDescriptions.keySet()) {
                             pageData.addParagraphs(
                                     HTMLLikeParser.parseHTMLLike(null,
-                                            " * <h navigate:" + getBuiltInObjectMethodPageId(object, functionName) + ">" + functionName + "()</h> - " + functionDescriptions.get(functionName)));
+                                            " * <h navigate:" + getBuiltInObjectMethodPageId(object, functionName) + ">" + functionName + "()</h> - " + methodSimpleDescriptions.get(functionName)));
                         }
 
                         pageData.addParagraphs(additionalParagraphs);
 
                         defaultBrowserData.addEntry(null, pageData);
 
-                        for (Map.Entry<String, String> functionEntry : functionDescriptions.entrySet()) {
-                            String functionName = functionEntry.getKey();
+                        for (Map.Entry<String, String> functionEntry : methodSimpleDescriptions.entrySet()) {
+                            String methodName = functionEntry.getKey();
 
-                            PageData functionPageData = new PageData(getBuiltInObjectMethodPageId(object, functionName), functionName + "()", null);
-                            functionPageData.addParagraphs(createTitleParagraph("Function - " + functionName));
-                            functionPageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, functionEntry.getValue()));
+                            PageData functionPageData = new PageData(getBuiltInObjectMethodPageId(object, methodName), methodName + "()", null);
+                            functionPageData.addParagraphs(createTitleParagraph("Function - " + methodName));
+                            functionPageData.addParagraphs(methodPageDescriptions.get(methodName));
 
                             functionPageData.addParagraphs(emphasizedParagraphWithSpaceBefore("Parameters:"));
 
-                            Map<String, String> functionParameters = functionParametersDescriptions.get(functionName);
+                            Map<String, String> functionParameters = methodParametersDescriptions.get(methodName);
 
                             if (functionParameters.isEmpty()) {
                                 functionPageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, "None"));
@@ -205,16 +317,24 @@ public class DocumentationBuilder {
                                 functionPageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, " * " + parameterDescription.getKey() + " - " + parameterDescription.getValue()));
                             }
 
-                            Collection<ParagraphData> returnDescription = HTMLLikeParser.parseHTMLLike(null, functionReturnDescriptions.get(functionName));
+                            Collection<ParagraphData> returnDescription = HTMLLikeParser.parseHTMLLike(null, methodReturnDescriptions.get(methodName));
                             if (!returnDescription.isEmpty()) {
                                 functionPageData.addParagraphs(emphasizedParagraphWithSpaceBefore("Returns:"));
                                 functionPageData.addParagraphs(returnDescription);
                             }
 
-                            functionPageData.addParagraphs(functionAdditionalParagraphs.get(functionName));
+                            functionPageData.addParagraphs(emphasizedParagraphWithSpaceBefore("Examples:"));
+                            for (Collection<ParagraphData> exampleData : methodExamples.get(methodName)) {
+                                functionPageData.addParagraphs(exampleData);
+                            }
 
                             defaultBrowserData.addEntry(objectPageId, functionPageData);
                         }
+                    }
+
+                    @Override
+                    public void addObjectType(String objectType, Collection<ParagraphData> documentation) {
+                        // Ignore
                     }
 
                     @Override
@@ -234,10 +354,15 @@ public class DocumentationBuilder {
         computerLanguageContextInitializer.initializeContext(
                 new ComputerLanguageContext() {
                     @Override
-                    public void addObject(String object, ObjectDefinition objectDefinition, String objectDescription, Collection<ParagraphData> additionalParagraphs, Map<String, String> functionDescriptions, Map<String, Map<String, String>> functionParametersDescriptions, Map<String, String> functionReturnDescriptions, Map<String, Collection<ParagraphData>> functionAdditionalParagraphs) {
+                    public void addObject(String object, DocumentedObjectDefinition objectDefinition, String objectDescription, Collection<ParagraphData> additionalParagraphs) {
                         pageData.addParagraphs(
                                 HTMLLikeParser.parseHTMLLike(null,
                                         " * <h navigate:" + getBuiltInObjectPageId(object) + ">" + object + "</h> - " + objectDescription));
+                    }
+
+                    @Override
+                    public void addObjectType(String objectType, Collection<ParagraphData> documentation) {
+                        // Ignore
                     }
 
                     @Override
@@ -251,7 +376,12 @@ public class DocumentationBuilder {
         computerLanguageContextInitializer.initializeContext(
                 new ComputerLanguageContext() {
                     @Override
-                    public void addObject(String object, ObjectDefinition objectDefinition, String objectDescription, Collection<ParagraphData> additionalParagraphs, Map<String, String> functionDescriptions, Map<String, Map<String, String>> functionParametersDescriptions, Map<String, String> functionReturnDescriptions, Map<String, Collection<ParagraphData>> functionAdditionalParagraphs) {
+                    public void addObject(String object, DocumentedObjectDefinition objectDefinition, String objectDescription, Collection<ParagraphData> additionalParagraphs) {
+                        // Ignore
+                    }
+
+                    @Override
+                    public void addObjectType(String objectType, Collection<ParagraphData> documentation) {
                         // Ignore
                     }
 

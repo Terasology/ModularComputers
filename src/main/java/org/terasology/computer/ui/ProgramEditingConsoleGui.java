@@ -23,8 +23,6 @@ import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
 import org.terasology.rendering.nui.Canvas;
 import org.terasology.rendering.nui.Color;
 
-import java.awt.*;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

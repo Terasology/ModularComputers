@@ -45,8 +45,7 @@ public class DestroyMethod extends AbstractModuleMethodExecutable<Object> {
         this.blockEntityRegistry = blockEntityRegistry;
         this.methodName = methodName;
 
-        addParameter("direction", "String", "Direction in which to destroy the block. For more information " +
-                "about <h navigate:object-type-Direction>Direction</h> - read the link.");
+        addParameter("direction", "Direction", "Direction in which to destroy the block.");
     }
 
     @Override

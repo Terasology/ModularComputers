@@ -17,7 +17,6 @@ package org.terasology.computer.module.storage;
 
 import org.terasology.computer.module.DefaultComputerModule;
 import org.terasology.computer.system.server.lang.ComputerModule;
-import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
 
 import java.util.Collection;
 

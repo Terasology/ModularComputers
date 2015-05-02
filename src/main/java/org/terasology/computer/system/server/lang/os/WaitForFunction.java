@@ -15,72 +15,46 @@
  */
 package org.terasology.computer.system.server.lang.os;
 
-import com.gempukku.lang.CallContext;
 import com.gempukku.lang.CustomObject;
-import com.gempukku.lang.Execution;
-import com.gempukku.lang.ExecutionContext;
-import com.gempukku.lang.ExecutionCostConfiguration;
 import com.gempukku.lang.ExecutionException;
-import com.gempukku.lang.ExecutionProgress;
-import com.gempukku.lang.FunctionExecutable;
 import com.gempukku.lang.Variable;
+import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
-import org.terasology.computer.context.TerasologyComputerExecutionContext;
+import org.terasology.computer.system.server.lang.TerasologyFunctionExecutable;
 import org.terasology.computer.system.server.lang.os.condition.AbstractConditionCustomObject;
-import org.terasology.computer.system.server.lang.os.condition.ResultAwaitingCondition;
 
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.Map;
 
-public class WaitForFunction implements FunctionExecutable {
-    @Override
-    public CallContext getCallContext() {
-        return new CallContext(null, false, false);
+public class WaitForFunction extends TerasologyFunctionExecutable {
+    public WaitForFunction() {
+        super("Waits for the specified condition to become true.", "any", "The result returned by the condition upon meeting its requirement.");
+
+        addParameter("condition", "Condition", "Condition to wait to become true.");
+
+        addExample("This example creates a condition that waits for the specified number of milliseconds, waits " +
+                        "for it and then prints out text to console.",
+                "var sleepCondition = os.createSleepMs(3000);\n" +
+                        "os.waitFor(sleepCondition);\n" +
+                        "console.append(\"This text is printed after 3 seconds have passed.\");"
+        );
     }
 
     @Override
-    public Collection<String> getParameterNames() {
-        return Arrays.asList("condition");
+    protected int getDuration() {
+        return 10;
     }
 
     @Override
-    public Execution createExecution(final int line, ExecutionContext executionContext, CallContext callContext) {
-        return new Execution() {
-            private boolean _suspended;
-            private boolean _retrievedResult;
-            private ResultAwaitingCondition _condition;
+    protected Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
+        Variable conditionVar = FunctionParamValidationUtil.validateParameter(line, parameters, "condition", "waitFor", Variable.Type.CUSTOM_OBJECT);
 
-            @Override
-            public boolean hasNextExecution(ExecutionContext executionContext) {
-                return !_retrievedResult;
-            }
+        if (!((CustomObject) conditionVar.getValue()).getType().contains("CONDITION")) {
+            throw new ExecutionException(line, "Expected CONDITION in waitFor()");
+        }
 
-            @Override
-            public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration) throws ExecutionException {
-                if (!_suspended) {
-                    final Variable conditionVar = executionContext.peekCallContext().getVariableValue("condition");
-                    if (conditionVar.getType() != Variable.Type.CUSTOM_OBJECT || !((CustomObject) conditionVar.getValue()).getType().contains("CONDITION"))
-                        throw new ExecutionException(line, "Expected CONDITION in waitFor()");
+        final AbstractConditionCustomObject condition = (AbstractConditionCustomObject) conditionVar.getValue();
+        computer.suspendWithCondition(condition.createAwaitingCondition());
 
-                    final AbstractConditionCustomObject condition = (AbstractConditionCustomObject) conditionVar.getValue();
-
-                    final TerasologyComputerExecutionContext terasologyExecutionContext = (TerasologyComputerExecutionContext) executionContext;
-                    final ComputerCallback computerData = terasologyExecutionContext.getComputerCallback();
-
-                    _condition = condition.createAwaitingCondition();
-
-                    computerData.suspendWithCondition(_condition);
-
-                    _suspended = true;
-                    return new ExecutionProgress(condition.getCreationDelay());
-                }
-                if (!_retrievedResult) {
-                    executionContext.setContextValue(_condition.getReturnValue());
-                    _retrievedResult = true;
-                    return new ExecutionProgress(configuration.getSetContextValue());
-                }
-                return null;
-            }
-        };
+        return null;
     }
 }

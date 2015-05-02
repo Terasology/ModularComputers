@@ -18,7 +18,8 @@ package org.terasology.computer.module;
 import org.terasology.math.Direction;
 
 public class ComputerDirection {
-    private ComputerDirection() { }
+    private ComputerDirection() {
+    }
 
     public static Direction getDirection(String directionString) {
         if (directionString == null) {

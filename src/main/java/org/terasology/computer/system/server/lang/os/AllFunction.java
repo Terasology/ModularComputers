@@ -23,21 +23,35 @@ import org.terasology.computer.system.server.lang.TerasologyFunctionExecutable;
 import org.terasology.computer.system.server.lang.os.condition.AbstractConditionCustomObject;
 import org.terasology.computer.system.server.lang.os.condition.AllResultAwaitingCondition;
 import org.terasology.computer.system.server.lang.os.condition.ResultAwaitingCondition;
+import org.terasology.computer.ui.documentation.DocumentationBuilder;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 public class AllFunction extends TerasologyFunctionExecutable {
-    @Override
-    protected int getDuration() {
-        return 10;
+    public AllFunction() {
+        super("Creates a condition that becomes true, when all the conditions passed become true.", "Condition", "Condition that becomes true, when all of the passed conditions become true.\n" +
+                "In addition when this condition is <h navigate:" + DocumentationBuilder.getBuiltInObjectMethodPageId("os", "waitFor") +
+                ">waitedFor</h> the waitFor for this " +
+                "condition will return an array containing all the objects returned by the conditions, in the " +
+                "order they appear in the original array passed as a parameter.");
+
+        addParameter("conditions", "Array of Condition", "Conditions that this condition will wait for to become true.");
+
+        addExample("This example creates two conditions, one waiting for 3 seconds, the other for 5 seconds, waits " +
+                        "for ALL of them and prints out text to console.",
+                "var sleepCondition1 = os.createSleepMs(3000);\n" +
+                        "var sleepCondition2 = os.createSleepMs(5000);\n" +
+                        "var sleepAny = os.all([sleepCondition1, sleepCondition2]);\n" +
+                        "os.waitFor(sleepAny);\n" +
+                        "console.append(\"This text is printed after 5 seconds have passed.\");"
+        );
     }
 
     @Override
-    public java.util.Collection<String> getParameterNames() {
-        return Arrays.asList("conditions");
+    protected int getDuration() {
+        return 10;
     }
 
     @Override
@@ -49,25 +63,16 @@ public class AllFunction extends TerasologyFunctionExecutable {
 
         List<Variable> conditions = (List<Variable>) conditionsVar.getValue();
 
-        int delay = 0;
         final List<AbstractConditionCustomObject> allConditions = new ArrayList<>();
         for (Variable condition : conditions) {
             if (condition.getType() != Variable.Type.CUSTOM_OBJECT || !((CustomObject) condition.getValue()).getType().contains("CONDITION")) {
                 throw new ExecutionException(line, "Expected a LIST of CONDITIONs in all()");
             }
             AbstractConditionCustomObject conditionDefinition = (AbstractConditionCustomObject) condition.getValue();
-            delay = Math.max(delay, conditionDefinition.getCreationDelay());
             allConditions.add(conditionDefinition);
         }
 
-        final int maxDelay = delay;
-
         return new AbstractConditionCustomObject() {
-            @Override
-            public int getCreationDelay() {
-                return maxDelay;
-            }
-
             @Override
             public int sizeOf() {
                 int size = 4;

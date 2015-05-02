@@ -40,11 +40,6 @@ public class LatchCondition extends AbstractConditionCustomObject {
     }
 
     @Override
-    public int getCreationDelay() {
-        return 0;
-    }
-
-    @Override
     public ResultAwaitingCondition createAwaitingCondition() {
         return new ResultAwaitingCondition() {
             @Override

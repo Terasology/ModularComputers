@@ -45,7 +45,7 @@ public class InventoryAndChangeConditionMethod extends AbstractModuleMethodExecu
         this.inventoryModuleConditionsRegister = inventoryModuleConditionsRegister;
         this.methodName = methodName;
 
-        addParameter("inventoryBinding", "Inventory Binding", "Inventory it should get contents and change condition for.");
+        addParameter("inventoryBinding", "InventoryBinding", "Inventory it should get contents and change condition for.");
 
         addExample(
                 "This example prints out the contents of the output inventory above the computer to the console on each change of the inventory contents. Please make sure " +

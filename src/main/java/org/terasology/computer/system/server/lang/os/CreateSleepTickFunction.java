@@ -23,19 +23,26 @@ import org.terasology.computer.system.server.lang.TerasologyFunctionExecutable;
 import org.terasology.computer.system.server.lang.os.condition.AbstractConditionCustomObject;
 import org.terasology.computer.system.server.lang.os.condition.ResultAwaitingCondition;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Map;
 
 public class CreateSleepTickFunction extends TerasologyFunctionExecutable {
-    @Override
-    protected int getDuration() {
-        return 10;
+    public CreateSleepTickFunction() {
+        super("Creates a condition that waits for the specified number of ticks.", "Condition",
+                "Condition that becomes true after specified number of ticks.");
+
+        addParameter("ticks", "Number", "Number of ticks this condition should wait to become true.");
+
+        addExample("This example creates a condition that waits for the specified number of ticks, waits " +
+                        "for it and then prints out text to console.",
+                "var sleepCondition = os.createSleepTick(10);\n" +
+                        "os.waitFor(sleepCondition);\n" +
+                        "console.append(\"This text is printed after 10 ticks have passed.\");"
+        );
     }
 
     @Override
-    public Collection<String> getParameterNames() {
-        return Arrays.asList("ticks");
+    protected int getDuration() {
+        return 10;
     }
 
     @Override
@@ -49,11 +56,6 @@ public class CreateSleepTickFunction extends TerasologyFunctionExecutable {
             throw new ExecutionException(line, "Sleep ticks must be greater than 0");
 
         return new AbstractConditionCustomObject() {
-            @Override
-            public int getCreationDelay() {
-                return 0;
-            }
-
             @Override
             public int sizeOf() {
                 return 4;

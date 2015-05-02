@@ -28,7 +28,7 @@ public class StorageInventoryBindingMethod extends AbstractModuleMethodExecutabl
 
     public StorageInventoryBindingMethod(boolean input) {
         super(input ? "Creates the input inventory binding for the Internal storage." : "Creates the output inventory binding for the Internal storage.",
-                "Inventory Binding",
+                "InventoryBinding",
                 input ? "Returns inventory binding allowing to put items into this Internal storage." : "Returns inventory binding allowing to extract items from this Internal storage.");
         this.input = input;
 

@@ -22,19 +22,23 @@ import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.TerasologyFunctionExecutable;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Map;
 
 public class AppendToConsoleFunction extends TerasologyFunctionExecutable {
-    @Override
-    protected int getDuration() {
-        return 100;
+    public AppendToConsoleFunction() {
+        super("This method appends the specified text as a new line in Computer console.");
+
+        addParameter("text", "String", "Text to display in the Computer console.");
+
+        addExample(
+                "This example program appends specified text to Computer Console.",
+                "console.append(\"Hello World!\");"
+        );
     }
 
     @Override
-    public Collection<String> getParameterNames() {
-        return Arrays.asList("text");
+    protected int getDuration() {
+        return 100;
     }
 
     @Override

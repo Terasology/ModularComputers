@@ -19,12 +19,10 @@ import org.terasology.browser.data.ParagraphData;
 import org.terasology.computer.system.server.lang.ComputerModule;
 
 import java.util.Collection;
-import java.util.Map;
 
 public interface ComputerModuleRegistry {
-    void registerComputerModule(
-            String type, ComputerModule computerModule,
-            String description, Collection<ParagraphData> additionalParagraphs);
+    void registerComputerModule(String type, ComputerModule computerModule, String description,
+                                Collection<ParagraphData> additionalParagraphs);
 
     ComputerModule getComputerModuleByType(String type);
 }

@@ -20,14 +20,16 @@ import com.gempukku.lang.Variable;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.TerasologyFunctionExecutable;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 
 public class GetModuleSlotCountFunction extends TerasologyFunctionExecutable {
-    @Override
-    public Collection<String> getParameterNames() {
-        return Collections.emptySet();
+    public GetModuleSlotCountFunction() {
+        super("Returns number of module slots in this computer.", "Number",
+                "Number of module slots in this computer.");
+
+        addExample("This example prints out the number of module slots this computer has.",
+                "console.append(\"This computer has \" + computer.getModuleSlotCount() + \" module slots.\");"
+        );
     }
 
     @Override

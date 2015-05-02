@@ -20,18 +20,25 @@ import com.gempukku.lang.Variable;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.TerasologyFunctionExecutable;
 
-import java.util.Arrays;
 import java.util.Map;
 
 public class ParseIntFunction extends TerasologyFunctionExecutable {
-    @Override
-    protected int getDuration() {
-        return 10;
+    public ParseIntFunction() {
+        super("Parses the specified text as a float number.", "Number", "The number it was able to parse.");
+
+        addParameter("text", "String", "Text to parse as a float number.");
+
+        addExample(
+                "This example program parses a specified text into a variable of type Number. Please note " +
+                        "the output has the \".0\" appended at the end as any whole number has, when printed " +
+                        "on the screen.",
+                "console.append(\"\"+os.parseFloat(\"123\"));"
+        );
     }
 
     @Override
-    public java.util.Collection<String> getParameterNames() {
-        return Arrays.asList("text");
+    protected int getDuration() {
+        return 10;
     }
 
     @Override

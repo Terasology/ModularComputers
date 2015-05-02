@@ -16,11 +16,7 @@
 package org.terasology.computer.module.mobility;
 
 import org.terasology.computer.module.DefaultComputerModule;
-import org.terasology.computer.system.server.lang.ComputerModule;
-import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
 import org.terasology.mobileBlocks.server.BlockMoveManager;
-
-import java.util.Collection;
 
 public class MobilityComputerModule extends DefaultComputerModule {
     public MobilityComputerModule(BlockMoveManager blockMoveManager, String moduleType, String moduleName) {

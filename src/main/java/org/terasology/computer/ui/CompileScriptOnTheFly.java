@@ -16,12 +16,12 @@
 package org.terasology.computer.ui;
 
 import com.gempukku.lang.IllegalSyntaxException;
-import com.gempukku.lang.ObjectDefinition;
 import com.gempukku.lang.parser.ScriptParser;
 import com.gempukku.lang.parser.ScriptParsingCallback;
 import org.terasology.browser.data.ParagraphData;
 import org.terasology.computer.system.common.ComputerLanguageContext;
 import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
+import org.terasology.computer.system.common.DocumentedObjectDefinition;
 import org.terasology.computer.system.server.lang.ComputerModule;
 
 import java.io.IOException;
@@ -31,7 +31,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public class CompileScriptOnTheFly {
@@ -47,10 +46,14 @@ public class CompileScriptOnTheFly {
         computerLanguageContextInitializer.initializeContext(
                 new ComputerLanguageContext() {
                     @Override
-                    public void addObject(String object, ObjectDefinition objectDefinition, String objectDescription,
-                                          Collection<ParagraphData> additionalParagraphs, Map<String, String> functionDescriptions, Map<String, Map<String, String>> functionParametersDescriptions,
-                                          Map<String, String> functionReturnDescriptions, Map<String, Collection<ParagraphData>> functionAdditionalParagraphs) {
+                    public void addObject(String object, DocumentedObjectDefinition objectDefinition, String objectDescription,
+                                          Collection<ParagraphData> additionalParagraphs) {
                         predefinedVariables.add(object);
+                    }
+
+                    @Override
+                    public void addObjectType(String objectType, Collection<ParagraphData> documentation) {
+                        // Ignore
                     }
 
                     @Override

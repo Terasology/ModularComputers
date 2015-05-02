@@ -33,14 +33,13 @@ public class InventoryBindingMethod extends AbstractModuleMethodExecutable<Objec
     public InventoryBindingMethod(String methodName, BlockEntityRegistry blockEntityRegistry, boolean input) {
         super(input ? "Creates the input inventory binding for the storage specified in the direction. " +
                         "This binding allows to insert items into the inventory only." : "Creates the output inventory binding for the storage specified in the direction. " +
-                        "This binding allows to remove items from the inventory only.", "Inventory Binding",
+                        "This binding allows to remove items from the inventory only.", "InventoryBinding",
                 input ? "Input binding for the direction specified." : "Output binding for the direction specified.");
         this.blockEntityRegistry = blockEntityRegistry;
         this.input = input;
         this.methodName = methodName;
 
-        addParameter("direction", "String", "Direction in which the inventory manipulator is bound to. For more information " +
-                "about <h navigate:object-type-Direction>Direction</h> - read the link.");
+        addParameter("direction", "Direction", "Direction in which the inventory manipulator is bound to.");
 
         if (input) {
             addExample("This example creates input inventory binding to an inventory above it and prints out the slot count for it. Please make sure " +

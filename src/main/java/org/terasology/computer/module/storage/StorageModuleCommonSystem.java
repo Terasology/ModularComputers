@@ -15,7 +15,6 @@
  */
 package org.terasology.computer.module.storage;
 
-import org.terasology.browser.data.ParagraphData;
 import org.terasology.computer.module.inventory.InventoryModuleCommonSystem;
 import org.terasology.computer.system.common.ComputerModuleRegistry;
 import org.terasology.computer.ui.documentation.DocumentationBuilder;
@@ -23,10 +22,6 @@ import org.terasology.entitySystem.systems.BaseComponentSystem;
 import org.terasology.entitySystem.systems.RegisterMode;
 import org.terasology.entitySystem.systems.RegisterSystem;
 import org.terasology.registry.In;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.TreeMap;
 
 @RegisterSystem(RegisterMode.ALWAYS)
 public class StorageModuleCommonSystem extends BaseComponentSystem {

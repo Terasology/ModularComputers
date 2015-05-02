@@ -20,7 +20,6 @@ import com.gempukku.lang.Variable;
 import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.AbstractModuleMethodExecutable;
-import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
 import org.terasology.logic.inventory.InventoryManager;
 import org.terasology.logic.inventory.InventoryUtils;
 
@@ -36,8 +35,8 @@ public class ItemMoveMethod extends AbstractModuleMethodExecutable<Object> {
         this.inventoryManager = inventoryManager;
         this.methodName = methodName;
 
-        addParameter("inventoryBindingFrom", "Inventory Binding", "Inventory it should extract the item from.");
-        addParameter("inventoryBindingTo", "Inventory Binding", "Inventory it should insert the item to.");
+        addParameter("inventoryBindingFrom", "InventoryBinding", "Inventory it should extract the item from.");
+        addParameter("inventoryBindingTo", "InventoryBinding", "Inventory it should insert the item to.");
         addParameter("slot", "Number", "Slot number of the \"from\" inventory it should extract item from.");
 
         addExample(

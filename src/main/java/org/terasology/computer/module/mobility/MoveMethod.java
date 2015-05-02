@@ -38,8 +38,7 @@ public class MoveMethod extends AbstractModuleMethodExecutable<Boolean> {
         this.blockMoveManager = blockMoveManager;
         this.methodName = methodName;
 
-        addParameter("direction", "String", "Specifies the direction in which the computer should move. For more information " +
-                "about <h navigate:object-type-Direction>Direction</h> - read the link.");
+        addParameter("direction", "Direction", "Specifies the direction in which the computer should move.");
 
         addExample("This example makes the computer move up one block. Please make sure " +
                         "this computer has a module of Mobility type in any of its slots.",
