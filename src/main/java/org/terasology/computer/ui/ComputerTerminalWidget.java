@@ -31,6 +31,7 @@ import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.input.Keyboard;
 import org.terasology.input.events.KeyEvent;
+import org.terasology.logic.clipboard.ClipboardManager;
 import org.terasology.math.Rect2i;
 import org.terasology.math.Vector2i;
 import org.terasology.rendering.assets.font.Font;
@@ -75,7 +76,8 @@ public class ComputerTerminalWidget extends CoreWidget {
     private PlayerCommandConsoleGui playerCommandConsoleGui;
     private ProgramEditingConsoleGui programEditingConsoleGui;
 
-    public void setup(ComputerLanguageContextInitializer computerLanguageContextInitializer, Runnable closeRunnable, EntityRef clientEntity, int computerId) {
+    public void setup(ComputerLanguageContextInitializer computerLanguageContextInitializer, ClipboardManager clipboardManager,
+                      Runnable closeRunnable, EntityRef clientEntity, int computerId) {
         editingProgram = false;
         computerConsole = new ComputerConsole();
 
@@ -87,7 +89,7 @@ public class ComputerTerminalWidget extends CoreWidget {
         playerCommandConsoleGui.appendToConsole("AutomationOS v. 0.0");
         String userName = "player";
         playerCommandConsoleGui.appendToConsole("You're logged in as " + userName + ", use \"exit\" command to exit the console, use \"help\" to list commands.");
-        programEditingConsoleGui = new ProgramEditingConsoleGui(this, computerLanguageContextInitializer);
+        programEditingConsoleGui = new ProgramEditingConsoleGui(this, computerLanguageContextInitializer, clipboardManager);
 
         this.clientEntity.send(new ConsoleListeningRegistrationEvent(this.computerId, true));
     }

@@ -20,6 +20,7 @@ import com.gempukku.lang.parser.ScriptParsingCallback;
 import org.lwjgl.input.Keyboard;
 import org.terasology.computer.context.ComputerConsole;
 import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
+import org.terasology.logic.clipboard.ClipboardManager;
 import org.terasology.rendering.nui.Canvas;
 import org.terasology.rendering.nui.Color;
 
@@ -57,6 +58,7 @@ public class ProgramEditingConsoleGui {
     private int blinkDrawTick;
 
     private ComputerTerminalWidget computerTerminalWidget;
+    private ClipboardManager clipboardManager;
     private CompileScriptOnTheFly onTheFlyCompiler;
     private StringBuilder gotoLineNumber;
 
@@ -65,8 +67,11 @@ public class ProgramEditingConsoleGui {
     private static final int[] CHARACTER_COUNT_WIDTH = new int[]{ComputerConsole.CONSOLE_WIDTH, (int) (ComputerConsole.CONSOLE_WIDTH * 1.2f), (int) (ComputerConsole.CONSOLE_WIDTH * 1.5f), ComputerConsole.CONSOLE_WIDTH * 2};
     private static final int[] CHARACTER_COUNT_HEIGHT = new int[]{ComputerConsole.CONSOLE_HEIGHT, (int) (ComputerConsole.CONSOLE_HEIGHT * 1.2f), (int) (ComputerConsole.CONSOLE_HEIGHT * 1.5f), ComputerConsole.CONSOLE_HEIGHT * 2};
 
-    public ProgramEditingConsoleGui(ComputerTerminalWidget computerTerminalWidget, ComputerLanguageContextInitializer computerLanguageContextInitializer) {
+    public ProgramEditingConsoleGui(ComputerTerminalWidget computerTerminalWidget,
+                                    ComputerLanguageContextInitializer computerLanguageContextInitializer,
+                                    ClipboardManager clipboardManager) {
         this.computerTerminalWidget = computerTerminalWidget;
+        this.clipboardManager = clipboardManager;
         onTheFlyCompiler = new CompileScriptOnTheFly(computerLanguageContextInitializer);
     }
 
@@ -292,42 +297,34 @@ public class ProgramEditingConsoleGui {
 
 
     private String getClipboardContents() {
-//        Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
-//
-//        try {
-//            if (t != null && t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-//                return (String) t.getTransferData(DataFlavor.stringFlavor);
-//            }
-//        } catch (UnsupportedFlavorException | IOException e) {
-//            // TODO
-//        }
-
-        return "";
+        return clipboardManager.getClipboardContentsAsString();
     }
 
 
     private void handlePaste() {
         final String clipboard = getClipboardContents();
-        final String[] lines = clipboard.split("\n");
-        for (int index = 0; index < lines.length; index++) {
-            String line = lines[index];
-            final String fixedLine = ComputerConsole.stripInvalidCharacters(line);
-            final StringBuilder currentLine = editedProgramLines.get(editedProgramCursorY);
-            String before = currentLine.substring(0, editedProgramCursorX);
-            String after = currentLine.substring(editedProgramCursorX);
-            if (index < lines.length - 1) {
-                editedProgramLines.set(editedProgramCursorY, new StringBuilder(before + fixedLine));
-                editedProgramLines.add(editedProgramCursorY + 1, new StringBuilder(after));
-                editedProgramCursorY++;
-                editedProgramCursorX = 0;
-            } else {
-                // Last line
-                editedProgramLines.set(editedProgramCursorY, new StringBuilder(before + fixedLine + after));
-                editedProgramCursorX = (before + fixedLine).length();
+        if (clipboard != null) {
+            final String[] lines = clipboard.split("\n");
+            for (int index = 0; index < lines.length; index++) {
+                String line = lines[index];
+                final String fixedLine = ComputerConsole.stripInvalidCharacters(line);
+                final StringBuilder currentLine = editedProgramLines.get(editedProgramCursorY);
+                String before = currentLine.substring(0, editedProgramCursorX);
+                String after = currentLine.substring(editedProgramCursorX);
+                if (index < lines.length - 1) {
+                    editedProgramLines.set(editedProgramCursorY, new StringBuilder(before + fixedLine));
+                    editedProgramLines.add(editedProgramCursorY + 1, new StringBuilder(after));
+                    editedProgramCursorY++;
+                    editedProgramCursorX = 0;
+                } else {
+                    // Last line
+                    editedProgramLines.set(editedProgramCursorY, new StringBuilder(before + fixedLine + after));
+                    editedProgramCursorX = (before + fixedLine).length();
+                }
             }
-        }
-        if (clipboard.length() > 0) {
-            programModified();
+            if (clipboard.length() > 0) {
+                programModified();
+            }
         }
     }
 

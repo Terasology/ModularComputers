@@ -33,6 +33,7 @@ import org.terasology.entitySystem.event.ReceiveEvent;
 import org.terasology.entitySystem.systems.BaseComponentSystem;
 import org.terasology.entitySystem.systems.RegisterMode;
 import org.terasology.entitySystem.systems.RegisterSystem;
+import org.terasology.logic.clipboard.ClipboardManager;
 import org.terasology.logic.common.ActivateEvent;
 import org.terasology.registry.In;
 import org.terasology.rendering.nui.NUIManager;
@@ -45,6 +46,8 @@ public class ComputerClientSystem extends BaseComponentSystem {
     private NUIManager nuiManager;
     @In
     private ComputerLanguageContextInitializer computerLanguageContextInitializer;
+    @In
+    private ClipboardManager clipboardManager;
 
     @ReceiveEvent
     public void terminalActivated(ActivateEvent event, EntityRef item, ComputerTerminalComponent component) {
@@ -57,7 +60,7 @@ public class ComputerClientSystem extends BaseComponentSystem {
             nuiManager.pushScreen(COMPUTER_TERMINAL_UI);
 
             ComputerTerminalWindow window = (ComputerTerminalWindow) nuiManager.getScreen(COMPUTER_TERMINAL_UI);
-            window.initializeTerminal(computerLanguageContextInitializer, client, computerComponent.computerId);
+            window.initializeTerminal(computerLanguageContextInitializer, clipboardManager, client, computerComponent.computerId);
 
             event.consume();
         }

@@ -24,6 +24,7 @@ import org.terasology.computer.ui.documentation.DocumentationBuilder;
 import org.terasology.computer.ui.documentation.DocumentationPageInfo;
 import org.terasology.computer.ui.documentation.TableOfContents;
 import org.terasology.entitySystem.entity.EntityRef;
+import org.terasology.logic.clipboard.ClipboardManager;
 import org.terasology.registry.CoreRegistry;
 import org.terasology.rendering.nui.CoreScreenLayer;
 import org.terasology.rendering.nui.NUIManager;
@@ -226,6 +227,7 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
     }
 
     public void initializeTerminal(ComputerLanguageContextInitializer computerLanguageContextInitializer,
+                                   ClipboardManager clipboardManager,
                                    EntityRef client, int computerId) {
         if (documentationData == null) {
             documentationData = DocumentationBuilder.buildDocumentation(computerLanguageContextInitializer);
@@ -236,7 +238,7 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
         }
 
         computerTerminalWidget.setup(
-                computerLanguageContextInitializer,
+                computerLanguageContextInitializer, clipboardManager,
                 new Runnable() {
                     public void run() {
                         CoreRegistry.get(NUIManager.class).closeScreen(ComputerTerminalWindow.this);
