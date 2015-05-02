@@ -68,8 +68,8 @@ public class ComputerLanguageCommonSystem extends BaseComponentSystem implements
                 "To access elements of a returned array, you have to use [n] notation, so to extract second (0-based) element from an array do the following:<l>" +
                 "var result = array[1];<l><l>" +
                 "Array has three built in methods:<l>" +
-                "* add(any) - adds the specified object to the end of the array," +
-                "* remove(Number) - removes an object at the specified index from an array," +
+                "* add(any) - adds the specified object to the end of the array,<l>" +
+                "* remove(Number) - removes an object at the specified index from an array,<l>" +
                 "* size() - returns the size (length) of the array, so number of elements it has."));
         registerObjectType("Map", HTMLLikeParser.parseHTMLLike(null, "An association map of Strings to objects of any type. To create an array, use the following syntax:<l>" +
                 "var map = {\"property1\": 1, \"property2\": \"a\", \"property3\": true };<l>" +

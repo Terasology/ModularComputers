@@ -46,7 +46,7 @@ public class InventoryModuleCommonSystem extends BaseComponentSystem {
                 "InventoryBinding",
                 HTMLLikeParser.parseHTMLLike(null, "An object that tells a method how to access an inventory. Usually used as a parameter " +
                         "for methods in Inventory Manipulator computer module. This object comes in two types defined upon creation:<l>" +
-                        "* input - that allows to place items in the specified inventory," +
+                        "* input - that allows to place items in the specified inventory,<l>" +
                         "* output - that allows to extract items from the specified inventory.<l>" +
                         "Attempting to use an incorrect type as a parameter of a method will result in an ExecutionException."));
 
