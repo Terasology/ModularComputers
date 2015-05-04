@@ -24,13 +24,9 @@ import org.terasology.computer.ui.documentation.DocumentationBuilder;
 import org.terasology.computer.ui.documentation.DocumentationPageInfo;
 import org.terasology.computer.ui.documentation.TableOfContents;
 import org.terasology.entitySystem.entity.EntityRef;
-import org.terasology.input.MouseInput;
 import org.terasology.logic.clipboard.ClipboardManager;
-import org.terasology.math.Vector2i;
 import org.terasology.registry.CoreRegistry;
-import org.terasology.rendering.nui.BaseInteractionListener;
 import org.terasology.rendering.nui.CoreScreenLayer;
-import org.terasology.rendering.nui.InteractionListener;
 import org.terasology.rendering.nui.NUIManager;
 import org.terasology.rendering.nui.UIWidget;
 import org.terasology.rendering.nui.itemRendering.StringTextRenderer;
@@ -170,16 +166,27 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
         documentationTabButton.setEnabled(documentation);
     }
 
-    private void setupTableOfContents(TableOfContents tableOfContents) {
-        resetTableOfContentsDisplay(tableOfContents);
+    private void setupTableOfContents() {
+        resetTableOfContentsDisplay();
 
         tocList.setItemRenderer(new StringTextRenderer<DocumentationPageInfo>(false) {
             @Override
             public String getString(DocumentationPageInfo value) {
-                if (tableOfContents.getContents(value.getPageId()).isEmpty()) {
-                    return value.getDisplayableTitle();
+                int level = 0;
+                DocumentationPageInfo lookingAt = value;
+                while (lookingAt.getParentPageId() != null) {
+                    lookingAt = documentationData.getPageInfo(lookingAt.getParentPageId());
+                    level++;
+                }
+                StringBuilder prefix = new StringBuilder();
+                for (int i = 0; i < level; i++) {
+                    prefix.append("    ");
+                }
+
+                if (documentationData.getContents(value.getPageId()).isEmpty()) {
+                    return prefix + value.getDisplayableTitle();
                 } else {
-                    return "+ " + value.getDisplayableTitle();
+                    return prefix + "+ " + value.getDisplayableTitle();
                 }
             }
 
@@ -206,40 +213,25 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
                         } else {
                             expandedPageIds.add(pageId);
                         }
-                        resetTableOfContentsDisplay(documentationData);
+                        resetTableOfContentsDisplay();
                     }
                 }
         );
     }
 
-    private void resetTableOfContentsDisplay(TableOfContents tableOfContents) {
+    private void resetTableOfContentsDisplay() {
         List<DocumentationPageInfo> items = new LinkedList<>();
         int level = 0;
         String parent = null;
-        populateChildrenOfParent(tableOfContents, items, level, parent);
+        populateChildrenOfParent(documentationData, items, level, parent);
         tocList.setList(items);
     }
 
     private void populateChildrenOfParent(TableOfContents tableOfContents, List<DocumentationPageInfo> items, int level, String parent) {
         if (parent == null || expandedPageIds.contains(parent)) {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < level; i++) {
-                sb.append("    ");
-            }
-            String prefix = sb.toString();
             Collection<DocumentationPageInfo> contents = tableOfContents.getContents(parent);
             for (DocumentationPageInfo content : contents) {
-                items.add(new DocumentationPageInfo() {
-                    @Override
-                    public String getPageId() {
-                        return content.getPageId();
-                    }
-
-                    @Override
-                    public String getDisplayableTitle() {
-                        return prefix + content.getDisplayableTitle();
-                    }
-                });
+                items.add(content);
                 populateChildrenOfParent(tableOfContents, items, level + 1, content.getPageId());
             }
         }
@@ -251,6 +243,17 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
             browser.navigateTo(documentationData.getDocument(page));
             browserFuture.clear();
             updateHistoryButtons();
+
+            DocumentationPageInfo pageInfo = documentationData.getPageInfo(page);
+
+            DocumentationPageInfo parent = documentationData.getPageInfo(pageInfo.getParentPageId());
+            while (parent != null) {
+                expandedPageIds.add(parent.getPageId());
+                parent = documentationData.getPageInfo(parent.getParentPageId());
+            }
+            resetTableOfContentsDisplay();
+
+            tocList.setSelection(pageInfo);
         }
     }
 
@@ -273,7 +276,7 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
         if (documentationData == null) {
             documentationData = DocumentationBuilder.buildDocumentation(computerLanguageContextInitializer);
 
-            setupTableOfContents(documentationData);
+            setupTableOfContents();
 
             navigateTo("introduction");
         }

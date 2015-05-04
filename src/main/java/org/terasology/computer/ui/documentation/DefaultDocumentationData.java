@@ -43,6 +43,11 @@ public class DefaultDocumentationData implements DocumentationData, TableOfConte
     }
 
     @Override
+    public DocumentationPageInfo getPageInfo(String pageId) {
+        return allPages.get(pageId);
+    }
+
+    @Override
     public Collection<DocumentationPageInfo> getContents(String parentPageId) {
         if (parentPageId == null)
             return Collections.unmodifiableCollection(rootPages);

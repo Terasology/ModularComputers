@@ -79,7 +79,8 @@ public class DocumentationBuilder {
 
 
     private static void buildObjectTypePages(DefaultDocumentationData defaultBrowserData, ComputerLanguageContextInitializer computerLanguageContextInitializer) {
-        PageData objectTypesPage = new PageData("objectTypes", "Object Types", null);
+        final String objectTypesPageId = "objectTypes";
+        PageData objectTypesPage = new PageData(objectTypesPageId, null, "Object Types", null);
         objectTypesPage.addParagraphs(createTitleParagraph("Object Types"));
         objectTypesPage.addParagraphs(
                 HTMLLikeParser.parseHTMLLike(null, "There are multiple object types defined in the computer API. Some of them are built in, " +
@@ -96,11 +97,11 @@ public class DocumentationBuilder {
                         objectTypesPage.addParagraphs(HTMLLikeParser.parseHTMLLike(null,
                                 " * <h navigate:" + objectTypePageId + ">" + objectType + "</h>"));
 
-                        PageData objectTypePage = new PageData(objectTypePageId, objectType, null);
+                        PageData objectTypePage = new PageData(objectTypePageId, objectTypesPageId, objectType, null);
                         objectTypePage.addParagraphs(createTitleParagraph("Object Type - " + objectType));
                         objectTypePage.addParagraphs(documentation);
 
-                        defaultBrowserData.addEntry("objectTypes", objectTypePage);
+                        defaultBrowserData.addEntry(objectTypesPageId, objectTypePage);
                     }
 
                     @Override
@@ -160,7 +161,7 @@ public class DocumentationBuilder {
                         String moduleType = computerModule.getModuleType();
                         String modulePageId = getComputerModulePageId(moduleType);
 
-                        PageData pageData = new PageData(modulePageId, "Module - " + computerModule.getModuleName(), null);
+                        PageData pageData = new PageData(modulePageId, null, "Module - " + computerModule.getModuleName(), null);
                         pageData.addParagraphs(createTitleParagraph("Module - " + computerModule.getModuleName()));
                         pageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, description));
                         pageData.addParagraphs(emphasizedParagraphWithSpaceBefore("Methods:"));
@@ -177,7 +178,7 @@ public class DocumentationBuilder {
                         for (Map.Entry<String, String> methodEntry : methodSimpleDescriptions.entrySet()) {
                             String methodName = methodEntry.getKey();
 
-                            PageData functionPageData = new PageData(getComputerModuleMethodPageId(moduleType, methodName), methodName + "()", null);
+                            PageData functionPageData = new PageData(getComputerModuleMethodPageId(moduleType, methodName), modulePageId, methodName + "()", null);
                             functionPageData.addParagraphs(createTitleParagraph("Method - " + methodName));
                             functionPageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, methodEntry.getValue()));
 
@@ -290,7 +291,7 @@ public class DocumentationBuilder {
 
                         String objectPageId = getBuiltInObjectPageId(object);
 
-                        PageData pageData = new PageData(objectPageId, "Variable - " + object, null);
+                        PageData pageData = new PageData(objectPageId, null, "Variable - " + object, null);
                         pageData.addParagraphs(createTitleParagraph("Variable - " + object));
                         pageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, objectDescription));
                         pageData.addParagraphs(emphasizedParagraphWithSpaceBefore("Functions:"));
@@ -307,7 +308,7 @@ public class DocumentationBuilder {
                         for (Map.Entry<String, String> functionEntry : methodSimpleDescriptions.entrySet()) {
                             String methodName = functionEntry.getKey();
 
-                            PageData functionPageData = new PageData(getBuiltInObjectMethodPageId(object, methodName), methodName + "()", null);
+                            PageData functionPageData = new PageData(getBuiltInObjectMethodPageId(object, methodName), objectPageId, methodName + "()", null);
                             functionPageData.addParagraphs(createTitleParagraph("Function - " + methodName));
                             functionPageData.addParagraphs(methodPageDescriptions.get(methodName));
 
@@ -355,7 +356,7 @@ public class DocumentationBuilder {
     }
 
     private static PageData buildIntroductionPage(ComputerLanguageContextInitializer computerLanguageContextInitializer) {
-        PageData pageData = new PageData("introduction", "Introduction", null);
+        PageData pageData = new PageData("introduction", null, "Introduction", null);
         pageData.addParagraphs(createTitleParagraph("Introduction"));
         pageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, "This is the first page of the documentation."));
 

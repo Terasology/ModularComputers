@@ -16,6 +16,8 @@
 package org.terasology.computer.ui.documentation;
 
 public interface DocumentationPageInfo {
+    public String getParentPageId();
+
     public String getPageId();
 
     public String getDisplayableTitle();

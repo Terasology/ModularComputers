@@ -18,5 +18,6 @@ package org.terasology.computer.ui.documentation;
 import java.util.Collection;
 
 public interface TableOfContents {
+    public DocumentationPageInfo getPageInfo(String pageId);
     public Collection<DocumentationPageInfo> getContents(String parentPageId);
 }

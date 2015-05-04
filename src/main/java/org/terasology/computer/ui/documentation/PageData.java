@@ -25,13 +25,15 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class PageData implements DocumentationPageInfo, DocumentData {
+    private String parentPageId;
     private String pageId;
     private String displayTitle;
     private DocumentRenderStyle documentRenderStyle;
     private List<ParagraphData> paragraphs = new LinkedList<>();
 
-    public PageData(String pageId, String displayTitle, DocumentRenderStyle documentRenderStyle) {
+    public PageData(String pageId, String parentPageId, String displayTitle, DocumentRenderStyle documentRenderStyle) {
         this.pageId = pageId;
+        this.parentPageId = parentPageId;
         this.displayTitle = displayTitle;
         this.documentRenderStyle = documentRenderStyle;
     }
@@ -44,6 +46,11 @@ public class PageData implements DocumentationPageInfo, DocumentData {
         if (paragraphs != null) {
             this.paragraphs.addAll(paragraphs);
         }
+    }
+
+    @Override
+    public String getParentPageId() {
+        return parentPageId;
     }
 
     @Override
