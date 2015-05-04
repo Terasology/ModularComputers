@@ -17,6 +17,8 @@ package org.terasology.computer.module.storage;
 
 import org.terasology.computer.component.ComputerComponent;
 import org.terasology.computer.component.ComputerModuleComponent;
+import org.terasology.computer.system.common.ComputerModuleRegistry;
+import org.terasology.computer.system.server.lang.ComputerModule;
 import org.terasology.entitySystem.entity.EntityManager;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.entitySystem.event.EventPriority;
@@ -44,6 +46,8 @@ import org.terasology.world.block.items.OnBlockToItem;
 @RegisterSystem(RegisterMode.AUTHORITY)
 public class StorageModuleServerSystem extends BaseComponentSystem {
     @In
+    private ComputerModuleRegistry computerModuleRegistry;
+    @In
     private EntityManager entityManager;
     @In
     private InventoryManager inventoryManager;
@@ -63,12 +67,14 @@ public class StorageModuleServerSystem extends BaseComponentSystem {
 
         ComputerModuleComponent newModule = event.getNewItem().getComponent(ComputerModuleComponent.class);
         if (newModule != null && newModule.moduleType.equals(StorageModuleCommonSystem.COMPUTER_STORAGE_MODULE_TYPE)) {
+            StorageComputerModule computerModuleByType = (StorageComputerModule) computerModuleRegistry.getComputerModuleByType(newModule.moduleType);
+
             EntityRef storageEntity = entityManager.create();
 
             InternalStorageComponent internalStorage = new InternalStorageComponent();
             internalStorage.inventoryEntity = storageEntity;
 
-            InventoryComponent inventoryComponent = new InventoryComponent(9);
+            InventoryComponent inventoryComponent = new InventoryComponent(computerModuleByType.getSlotCount());
             storageEntity.addComponent(inventoryComponent);
 
             computerEntity.addComponent(internalStorage);

@@ -48,4 +48,8 @@ public class StorageComputerModule extends DefaultComputerModule {
     public boolean acceptsNewModule(ComputerModule computerModule) {
         return true;
     }
+
+    public int getSlotCount() {
+        return slotCount;
+    }
 }
