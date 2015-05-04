@@ -2,10 +2,10 @@
     "inherit": "default",
     "elements": {
         "UIList" : {
+            "background" : "engine:color.FFFFFFFF",
             "parts" : {
                 "item" : {
                     "text-align-horizontal" : "left",
-                    "background" : "engine:color.FFFFFFFF",
                     "background-border" : {},
                     "margin" : {},
                     "texture-scale-mode" : "",
@@ -13,7 +13,7 @@
                     "text-shadowed" : false,
                     "modes" : {
                         "hover" : {
-                            "background": "engine:color.CCCCCCFF",
+                            "background": "engine:color.00000033",
                             "text-color" : "000000FF"
                         },
                         "active" : {
