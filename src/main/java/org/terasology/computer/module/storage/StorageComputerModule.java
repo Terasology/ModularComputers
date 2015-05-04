@@ -22,13 +22,11 @@ import java.util.Collection;
 
 public class StorageComputerModule extends DefaultComputerModule {
     private String moduleType;
-    private String moduleName;
     private int slotCount;
 
     public StorageComputerModule(String moduleType, String moduleName, int slotCount) {
         super(moduleType, moduleName);
         this.moduleType = moduleType;
-        this.moduleName = moduleName;
         this.slotCount = slotCount;
         addMethod("getInputInventoryBinding", new StorageInventoryBindingMethod(true));
         addMethod("getOutputInventoryBinding", new StorageInventoryBindingMethod(false));

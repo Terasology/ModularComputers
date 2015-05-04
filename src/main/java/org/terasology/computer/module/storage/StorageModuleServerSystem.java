@@ -34,13 +34,11 @@ import org.terasology.math.geom.Vector3i;
 import org.terasology.mobileBlocks.server.AfterBlockMovedEvent;
 import org.terasology.mobileBlocks.server.BeforeBlockMovesEvent;
 import org.terasology.mobileBlocks.server.BlockTransitionDuringMoveEvent;
-import org.terasology.mobileBlocks.server.MovingBlockReplacementComponent;
 import org.terasology.physics.events.ImpulseEvent;
 import org.terasology.registry.In;
 import org.terasology.utilities.random.FastRandom;
 import org.terasology.world.BlockEntityRegistry;
 import org.terasology.world.block.BlockComponent;
-import org.terasology.world.block.entity.placement.PlaceBlocks;
 import org.terasology.world.block.items.OnBlockToItem;
 
 @RegisterSystem(RegisterMode.AUTHORITY)
@@ -129,22 +127,5 @@ public class StorageModuleServerSystem extends BaseComponentSystem {
                 dropItemsFromComputerInternalStorage(computerEntity);
             }
         }
-    }
-
-    @ReceiveEvent
-    public void preventDestructionOfBlocksByOtherInstigators(PlaceBlocks placeBlocks, EntityRef world) {
-        if (placeBlocks.getInstigator() != world) {
-            for (Vector3i location : placeBlocks.getBlocks().keySet()) {
-                if (blockEntityRegistry.getBlockEntityAt(location).hasComponent(MovingBlockReplacementComponent.class)) {
-                    placeBlocks.consume();
-                    break;
-                }
-            }
-        }
-    }
-
-    @ReceiveEvent
-    public void preventDamagingOfBlocks(BeforeDamagedEvent event, EntityRef entity, MovingBlockReplacementComponent movingBlockReplacementComponent) {
-        event.consume();
     }
 }
