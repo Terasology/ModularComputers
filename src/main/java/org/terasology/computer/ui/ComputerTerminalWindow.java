@@ -32,14 +32,17 @@ import org.terasology.rendering.nui.UIWidget;
 import org.terasology.rendering.nui.itemRendering.StringTextRenderer;
 import org.terasology.rendering.nui.layouts.CardLayout;
 import org.terasology.rendering.nui.widgets.ActivateEventListener;
+import org.terasology.rendering.nui.widgets.ItemActivateEventListener;
 import org.terasology.rendering.nui.widgets.ItemSelectEventListener;
 import org.terasology.rendering.nui.widgets.UIButton;
 import org.terasology.rendering.nui.widgets.UIList;
 
 import java.util.Collection;
 import java.util.Deque;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 public class ComputerTerminalWindow extends CoreScreenLayer {
     private ComputerTerminalWidget computerTerminalWidget;
@@ -57,6 +60,9 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
     private UIButton computerConsoleTabButton;
     private UIButton documentationTabButton;
 
+    private Set<String> expandedPageIds = new HashSet<>();
+    private UIList<DocumentationPageInfo> tocList;
+
     @Override
     protected void initialise() {
         computerTerminalWidget = find("computerTerminal", ComputerTerminalWidget.class);
@@ -64,6 +70,7 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
         playerConsoleTabButton = find("playerConsole", UIButton.class);
         computerConsoleTabButton = find("computerConsole", UIButton.class);
         documentationTabButton = find("documentation", UIButton.class);
+        tocList = find("tableOfContents", UIList.class);
 
         tabs = find("tabs", CardLayout.class);
         browser = find("browser", BrowserWidget.class);
@@ -153,16 +160,16 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
     }
 
     private void setupTableOfContents(TableOfContents tableOfContents) {
-        UIList<DocumentationPageInfo> tocList = find("tableOfContents", UIList.class);
-        List<DocumentationPageInfo> items = new LinkedList<>();
-        int level = 0;
-        String parent = null;
-        populateChildrenOfParent(tableOfContents, items, level, parent);
+        resetTableOfContentsDisplay(tableOfContents);
 
         tocList.setItemRenderer(new StringTextRenderer<DocumentationPageInfo>(false) {
             @Override
             public String getString(DocumentationPageInfo value) {
-                return value.getDisplayableTitle();
+                if (tableOfContents.getContents(value.getPageId()).isEmpty()) {
+                    return value.getDisplayableTitle();
+                } else {
+                    return "+ " + value.getDisplayableTitle();
+                }
             }
 
             @Override
@@ -170,7 +177,6 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
                 return value.getDisplayableTitle().trim();
             }
         });
-        tocList.setList(items);
 
         tocList.subscribeSelection(
                 new ItemSelectEventListener<DocumentationPageInfo>() {
@@ -179,28 +185,52 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
                         navigateTo(item.getPageId());
                     }
                 });
+        tocList.subscribe(
+                new ItemActivateEventListener<DocumentationPageInfo>() {
+                    @Override
+                    public void onItemActivated(UIWidget widget, DocumentationPageInfo item) {
+                        String pageId = item.getPageId();
+                        if (expandedPageIds.contains(pageId)) {
+                            expandedPageIds.remove(pageId);
+                        } else {
+                            expandedPageIds.add(pageId);
+                        }
+                        resetTableOfContentsDisplay(documentationData);
+                    }
+                }
+        );
+    }
+
+    private void resetTableOfContentsDisplay(TableOfContents tableOfContents) {
+        List<DocumentationPageInfo> items = new LinkedList<>();
+        int level = 0;
+        String parent = null;
+        populateChildrenOfParent(tableOfContents, items, level, parent);
+        tocList.setList(items);
     }
 
     private void populateChildrenOfParent(TableOfContents tableOfContents, List<DocumentationPageInfo> items, int level, String parent) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < level; i++) {
-            sb.append("    ");
-        }
-        String prefix = sb.toString();
-        Collection<DocumentationPageInfo> contents = tableOfContents.getContents(parent);
-        for (DocumentationPageInfo content : contents) {
-            items.add(new DocumentationPageInfo() {
-                @Override
-                public String getPageId() {
-                    return content.getPageId();
-                }
+        if (parent == null || expandedPageIds.contains(parent)) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < level; i++) {
+                sb.append("    ");
+            }
+            String prefix = sb.toString();
+            Collection<DocumentationPageInfo> contents = tableOfContents.getContents(parent);
+            for (DocumentationPageInfo content : contents) {
+                items.add(new DocumentationPageInfo() {
+                    @Override
+                    public String getPageId() {
+                        return content.getPageId();
+                    }
 
-                @Override
-                public String getDisplayableTitle() {
-                    return prefix + content.getDisplayableTitle();
-                }
-            });
-            populateChildrenOfParent(tableOfContents, items, level + 1, content.getPageId());
+                    @Override
+                    public String getDisplayableTitle() {
+                        return prefix + content.getDisplayableTitle();
+                    }
+                });
+                populateChildrenOfParent(tableOfContents, items, level + 1, content.getPageId());
+            }
         }
     }
 
