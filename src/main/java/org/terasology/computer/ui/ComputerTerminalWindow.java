@@ -24,9 +24,13 @@ import org.terasology.computer.ui.documentation.DocumentationBuilder;
 import org.terasology.computer.ui.documentation.DocumentationPageInfo;
 import org.terasology.computer.ui.documentation.TableOfContents;
 import org.terasology.entitySystem.entity.EntityRef;
+import org.terasology.input.MouseInput;
 import org.terasology.logic.clipboard.ClipboardManager;
+import org.terasology.math.Vector2i;
 import org.terasology.registry.CoreRegistry;
+import org.terasology.rendering.nui.BaseInteractionListener;
 import org.terasology.rendering.nui.CoreScreenLayer;
+import org.terasology.rendering.nui.InteractionListener;
 import org.terasology.rendering.nui.NUIManager;
 import org.terasology.rendering.nui.UIWidget;
 import org.terasology.rendering.nui.itemRendering.StringTextRenderer;
@@ -151,6 +155,13 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
                         updateHistoryButtons();
                     }
                 });
+    }
+
+    @Override
+    public void onGainFocus() {
+        if (computerTerminalWidget != null) {
+            requestFocusToTerminal();
+        }
     }
 
     private void setTabButtonsState(boolean playerConsole, boolean computerConsole, boolean documentation) {

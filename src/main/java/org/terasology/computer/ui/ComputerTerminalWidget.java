@@ -140,7 +140,7 @@ public class ComputerTerminalWidget extends CoreWidget {
 
 
         if (mode == TerminalMode.PLAYER_CONSOLE) {
-            drawPlayerConsole(canvas);
+            drawPlayerConsole(canvas, isFocused());
         } else if (mode == TerminalMode.COMPUTER_CONSOLE) {
             drawComputerConsole(canvas);
         }
@@ -164,11 +164,11 @@ public class ComputerTerminalWidget extends CoreWidget {
         clientEntity.send(new SaveProgramEvent(computerId, programName, programText));
     }
 
-    private void drawPlayerConsole(Canvas canvas) {
+    private void drawPlayerConsole(Canvas canvas, boolean focused) {
         if (editingProgram) {
-            programEditingConsoleGui.drawEditProgramConsole(canvas, PADDING_HOR, PADDING_VER, characterWidth, fontHeight);
+            programEditingConsoleGui.drawEditProgramConsole(canvas, focused, PADDING_HOR, PADDING_VER, characterWidth, fontHeight);
         } else {
-            playerCommandConsoleGui.drawPlayerCommandConsole(canvas, PADDING_HOR, PADDING_VER, characterWidth, fontHeight);
+            playerCommandConsoleGui.drawPlayerCommandConsole(canvas, focused, PADDING_HOR, PADDING_VER, characterWidth, fontHeight);
         }
     }
 

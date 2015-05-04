@@ -43,15 +43,15 @@ public class PlayerCommandConsoleGui {
     private int historyIndex = 0;
     private List<String> commandHistory = new LinkedList<>();
 
-    public PlayerCommandConsoleGui(ComputerTerminalWidget ComputerConsoleWidget) {
-        computerTerminalWidget = ComputerConsoleWidget;
+    public PlayerCommandConsoleGui(ComputerTerminalWidget computerTerminalWidget) {
+        this.computerTerminalWidget = computerTerminalWidget;
     }
 
     public void setReadOnly(boolean readOnly) {
         this.readOnly = readOnly;
     }
 
-    public void drawPlayerCommandConsole(Canvas canvas, int x, int y, int characterWidth, int fontHeight) {
+    public void drawPlayerCommandConsole(Canvas canvas, boolean focused, int x, int y, int characterWidth, int fontHeight) {
         final String[] consoleLines = playerConsole.getLines();
         // Draw all lines but first (we need to fill current edited line at the bottom)
         for (int i = 1; i < consoleLines.length; i++)
@@ -65,9 +65,11 @@ public class PlayerCommandConsoleGui {
             final int lastLineY = y + fontHeight * (ComputerConsole.CONSOLE_HEIGHT - 1);
             computerTerminalWidget.drawMonospacedText(canvas, commandLine, x, lastLineY, COMMAND_LINE_TEXT_COLOR);
 
-            blinkDrawTick = ((++blinkDrawTick) % BLINK_LENGTH);
-            if (blinkDrawTick * 2 > BLINK_LENGTH)
-                computerTerminalWidget.drawVerticalLine(canvas, x + cursorPositionInDisplayedCommandLine * characterWidth - 1, 1 + lastLineY, lastLineY + fontHeight, PLAYER_CONSOLE_CURSOR_COLOR);
+            if (focused) {
+                blinkDrawTick = ((++blinkDrawTick) % BLINK_LENGTH);
+                if (blinkDrawTick * 2 > BLINK_LENGTH)
+                    computerTerminalWidget.drawVerticalLine(canvas, x + cursorPositionInDisplayedCommandLine * characterWidth - 1, 1 + lastLineY, lastLineY + fontHeight, PLAYER_CONSOLE_CURSOR_COLOR);
+            }
         }
     }
 

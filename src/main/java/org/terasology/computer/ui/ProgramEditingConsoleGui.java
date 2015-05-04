@@ -75,7 +75,7 @@ public class ProgramEditingConsoleGui {
         onTheFlyCompiler = new CompileScriptOnTheFly(computerLanguageContextInitializer);
     }
 
-    public void drawEditProgramConsole(Canvas canvas, int x, int y, int characterWidth, int fontHeight) {
+    public void drawEditProgramConsole(Canvas canvas, boolean focused, int x, int y, int characterWidth, int fontHeight) {
         final CompileScriptOnTheFly.CompileStatus compileStatusObj = onTheFlyCompiler.getCompileStatus();
 
         for (int line = editedDisplayStartY; line < Math.min(editedProgramLines.size(), editedDisplayStartY + getCharactersInColumn() - 1); line++) {
@@ -115,9 +115,11 @@ public class ProgramEditingConsoleGui {
         // Draw status line
         drawStatusLine(canvas, x, y, characterWidth, fontHeight, compileStatusObj);
 
-        blinkDrawTick = ((++blinkDrawTick) % BLINK_LENGTH);
-        if (blinkDrawTick * 2 > BLINK_LENGTH) {
-            computerTerminalWidget.drawVerticalLine(canvas, x + (editedProgramCursorX - editedDisplayStartX) * characterWidth - 1, y + (editedProgramCursorY - editedDisplayStartY) * fontHeight, y + 1 + (editedProgramCursorY - editedDisplayStartY + 1) * fontHeight, PROGRAM_CURSOR_COLOR);
+        if (focused) {
+            blinkDrawTick = ((++blinkDrawTick) % BLINK_LENGTH);
+            if (blinkDrawTick * 2 > BLINK_LENGTH) {
+                computerTerminalWidget.drawVerticalLine(canvas, x + (editedProgramCursorX - editedDisplayStartX) * characterWidth - 1, y + (editedProgramCursorY - editedDisplayStartY) * fontHeight, y + 1 + (editedProgramCursorY - editedDisplayStartY + 1) * fontHeight, PROGRAM_CURSOR_COLOR);
+            }
         }
     }
 
