@@ -37,5 +37,5 @@ public interface MethodDocumentation {
         return null;
     }
 
-    Iterable<Collection<ParagraphData>> getExamples();
+    Collection<Collection<ParagraphData>> getExamples();
 }

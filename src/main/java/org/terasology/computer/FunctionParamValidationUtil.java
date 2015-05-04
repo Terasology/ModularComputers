@@ -49,6 +49,12 @@ public class FunctionParamValidationUtil {
         return ((Number) var.getValue()).intValue();
     }
 
+    public static float validateFloatParameter(int line, Map<String, Variable> parameters,
+                                               String parameterName, String functionName) throws ExecutionException {
+        Variable var = validateParameter(line, parameters, parameterName, functionName, Variable.Type.NUMBER);
+        return ((Number) var.getValue()).floatValue();
+    }
+
     public static boolean validateBooleanParameter(int line, Map<String, Variable> parameters,
                                                    String parameterName, String functionName) throws ExecutionException {
         Variable var = validateParameter(line, parameters, parameterName, functionName, Variable.Type.BOOLEAN);

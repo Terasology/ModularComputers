@@ -124,7 +124,7 @@ public class DocumentationBuilder {
                         Map<String, Collection<ParagraphData>> methodPageDescriptions = new TreeMap<>();
                         Map<String, Map<String, String>> methodParametersDescriptions = new HashMap<>();
                         Map<String, String> methodReturnDescriptions = new HashMap<>();
-                        Map<String, Iterable<Collection<ParagraphData>>> methodExamples = new HashMap<>();
+                        Map<String, Collection<Collection<ParagraphData>>> methodExamples = new HashMap<>();
 
                         for (Map.Entry<String, ModuleMethodExecutable<?>> methodEntry : computerModule.getAllMethods().entrySet()) {
                             String methodName = methodEntry.getKey();
@@ -200,9 +200,14 @@ public class DocumentationBuilder {
                             }
 
 
-                            functionPageData.addParagraphs(emphasizedParagraphWithSpaceBefore("Examples:"));
-                            for (Collection<ParagraphData> exampleData : methodExamples.get(methodName)) {
-                                functionPageData.addParagraphs(exampleData);
+                            Collection<Collection<ParagraphData>> examples = methodExamples.get(methodName);
+                            if (!examples.isEmpty()) {
+                                functionPageData.addParagraphs(emphasizedParagraphWithSpaceBefore("Examples:"));
+                                for (Collection<ParagraphData> exampleData : examples) {
+                                    functionPageData.addParagraphs(exampleData);
+                                }
+                            } else {
+                                logger.warn("Unable to find any example for: module - " + moduleType + ", method - " + methodName);
                             }
 
                             defaultBrowserData.addEntry(modulePageId, functionPageData);
@@ -228,12 +233,12 @@ public class DocumentationBuilder {
         } else {
             String objectTypePageId = getObjectTypePageId(objectType);
             if (defaultBrowserData.getDocument(objectTypePageId) != null) {
-                objectType = "<h navigate:" + objectTypePageId + ">" + objectType + "</h>";
+                return "<h navigate:" + objectTypePageId + ">" + objectType + "</h>";
             } else {
                 logMissingObjectType(objectType);
+                return objectType;
             }
         }
-        return objectType;
     }
 
     private static void logMissingObjectType(String objectType) {
@@ -251,7 +256,7 @@ public class DocumentationBuilder {
                         Map<String, Collection<ParagraphData>> methodPageDescriptions = new TreeMap<>();
                         Map<String, Map<String, String>> methodParametersDescriptions = new HashMap<>();
                         Map<String, String> methodReturnDescriptions = new HashMap<>();
-                        Map<String, Iterable<Collection<ParagraphData>>> methodExamples = new HashMap<>();
+                        Map<String, Collection<Collection<ParagraphData>>> methodExamples = new HashMap<>();
 
                         for (String methodName : objectDefinition.getMethodNames()) {
                             DocumentedFunctionExecutable documentedFunctionExecutable = objectDefinition.getMethod(methodName);
@@ -323,9 +328,14 @@ public class DocumentationBuilder {
                                 functionPageData.addParagraphs(returnDescription);
                             }
 
-                            functionPageData.addParagraphs(emphasizedParagraphWithSpaceBefore("Examples:"));
-                            for (Collection<ParagraphData> exampleData : methodExamples.get(methodName)) {
-                                functionPageData.addParagraphs(exampleData);
+                            Collection<Collection<ParagraphData>> examples = methodExamples.get(methodName);
+                            if (!examples.isEmpty()) {
+                                functionPageData.addParagraphs(emphasizedParagraphWithSpaceBefore("Examples:"));
+                                for (Collection<ParagraphData> exampleData : examples) {
+                                    functionPageData.addParagraphs(exampleData);
+                                }
+                            } else {
+                                logger.warn("Unable to find any example for: built-in object - " + object + ", method - " + methodName);
                             }
 
                             defaultBrowserData.addEntry(objectPageId, functionPageData);

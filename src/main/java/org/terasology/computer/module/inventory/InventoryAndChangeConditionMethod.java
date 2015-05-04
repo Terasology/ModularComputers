@@ -40,7 +40,7 @@ public class InventoryAndChangeConditionMethod extends AbstractModuleMethodExecu
                         "in the inventory, and each entry Map containing two keys - \"name\" with String value of name of items, " +
                         "as specified in the getItemName() method, and \"count\" with Number value, specifying number of items in that slot\n" +
                         "- \"condition\" - containing condition you could wait on to listen on a change of the inventory from " +
-                        "the state described in the \"inventory\" key. Please note, that the condition might be fulfilled event though " +
+                        "the state described in the \"inventory\" key. Please note, that the condition might be fulfilled even though " +
                         "the inventory state has not changed.");
         this.inventoryModuleConditionsRegister = inventoryModuleConditionsRegister;
         this.methodName = methodName;

@@ -78,7 +78,7 @@ public class DefaultMethodDocumentation implements MethodDocumentation {
     }
 
     @Override
-    public Iterable<Collection<ParagraphData>> getExamples() {
+    public Collection<Collection<ParagraphData>> getExamples() {
         return examples;
     }
 

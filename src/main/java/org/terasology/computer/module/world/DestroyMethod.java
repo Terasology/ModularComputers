@@ -46,6 +46,12 @@ public class DestroyMethod extends AbstractModuleMethodExecutable<Object> {
         this.methodName = methodName;
 
         addParameter("direction", "Direction", "Direction in which to destroy the block.");
+
+        addExample(
+                "This example destroys the block below the computer. Please make sure " +
+                        "this computer has a module of World Interaction type in any of its slots.",
+                "var worldMod = computer.bindModuleOfType(\"" + WorldModuleCommonSystem.WORLD_MODULE_TYPE + "\");\n" +
+                        "var worldMod.destroyBlock(\"down\");");
     }
 
     @Override
