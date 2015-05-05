@@ -21,6 +21,8 @@ import org.terasology.computer.system.common.ComputerModuleRegistry;
 import org.terasology.entitySystem.systems.BaseComponentSystem;
 import org.terasology.entitySystem.systems.RegisterMode;
 import org.terasology.entitySystem.systems.RegisterSystem;
+import org.terasology.logic.config.ModuleConfigManager;
+import org.terasology.logic.config.ModuleConfigSystem;
 import org.terasology.logic.inventory.InventoryManager;
 import org.terasology.registry.In;
 import org.terasology.world.BlockEntityRegistry;
@@ -39,23 +41,26 @@ public class InventoryModuleCommonSystem extends BaseComponentSystem {
     private InventoryModuleConditionsRegister inventoryModuleConditionsRegister;
     @In
     private ComputerLanguageRegistry computerLanguageRegistry;
+    @In
+    private ModuleConfigManager moduleConfigManager;
 
     @Override
     public void preBegin() {
-        computerLanguageRegistry.registerObjectType(
-                "InventoryBinding",
-                HTMLLikeParser.parseHTMLLike(null, "An object that tells a method how to access an inventory. Usually used as a parameter " +
-                        "for methods in Inventory Manipulator computer module. This object comes in two types defined upon creation:<l>" +
-                        "* input - that allows to place items in the specified inventory,<l>" +
-                        "* output - that allows to extract items from the specified inventory.<l>" +
-                        "Attempting to use an incorrect type as a parameter of a method will result in an ExecutionException."));
+        if (moduleConfigManager.getBooleanVariable("ModularComputers", "registerModule.inventory", true)) {
+            computerLanguageRegistry.registerObjectType(
+                    "InventoryBinding",
+                    HTMLLikeParser.parseHTMLLike(null, "An object that tells a method how to access an inventory. Usually used as a parameter " +
+                            "for methods in Inventory Manipulator computer module. This object comes in two types defined upon creation:<l>" +
+                            "* input - that allows to place items in the specified inventory,<l>" +
+                            "* output - that allows to extract items from the specified inventory.<l>" +
+                            "Attempting to use an incorrect type as a parameter of a method will result in an ExecutionException."));
 
-        computerModuleRegistry.registerComputerModule(
-                COMPUTER_INVENTORY_MODULE_TYPE,
-                new InventoryComputerModule(inventoryModuleConditionsRegister, inventoryManager,
-                        blockEntityRegistry, COMPUTER_INVENTORY_MODULE_TYPE, "Inventory manipulator"),
-                "This module allows computer to manipulate inventories.",
-                null);
+            computerModuleRegistry.registerComputerModule(
+                    COMPUTER_INVENTORY_MODULE_TYPE,
+                    new InventoryComputerModule(inventoryModuleConditionsRegister, inventoryManager,
+                            blockEntityRegistry, COMPUTER_INVENTORY_MODULE_TYPE, "Inventory manipulator"),
+                    "This module allows computer to manipulate inventories.",
+                    null);
+        }
     }
-
 }

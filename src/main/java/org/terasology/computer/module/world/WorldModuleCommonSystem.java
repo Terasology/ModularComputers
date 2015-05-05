@@ -19,6 +19,7 @@ import org.terasology.computer.system.common.ComputerModuleRegistry;
 import org.terasology.entitySystem.systems.BaseComponentSystem;
 import org.terasology.entitySystem.systems.RegisterMode;
 import org.terasology.entitySystem.systems.RegisterSystem;
+import org.terasology.logic.config.ModuleConfigManager;
 import org.terasology.logic.inventory.InventoryManager;
 import org.terasology.registry.In;
 import org.terasology.world.BlockEntityRegistry;
@@ -35,15 +36,19 @@ public class WorldModuleCommonSystem extends BaseComponentSystem {
     private BlockEntityRegistry blockEntityRegistry;
     @In
     private InventoryManager inventoryManager;
+    @In
+    private ModuleConfigManager moduleConfigManager;
 
     @Override
     public void preBegin() {
-        computerModuleRegistry.registerComputerModule(
-                WORLD_MODULE_TYPE,
-                new WorldComputerModule(
-                        worldProvider, blockEntityRegistry,
-                        inventoryManager, WORLD_MODULE_TYPE, "World interaction"),
-                "This module allows to interact with objects in the world.",
-                null);
+        if (moduleConfigManager.getBooleanVariable("ModularComputers", "registerModule.world", true)) {
+            computerModuleRegistry.registerComputerModule(
+                    WORLD_MODULE_TYPE,
+                    new WorldComputerModule(
+                            worldProvider, blockEntityRegistry,
+                            inventoryManager, WORLD_MODULE_TYPE, "World interaction"),
+                    "This module allows to interact with objects in the world.",
+                    null);
+        }
     }
 }

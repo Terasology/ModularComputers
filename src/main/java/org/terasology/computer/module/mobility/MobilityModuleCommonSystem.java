@@ -19,6 +19,7 @@ import org.terasology.computer.system.common.ComputerModuleRegistry;
 import org.terasology.entitySystem.systems.BaseComponentSystem;
 import org.terasology.entitySystem.systems.RegisterMode;
 import org.terasology.entitySystem.systems.RegisterSystem;
+import org.terasology.logic.config.ModuleConfigManager;
 import org.terasology.mobileBlocks.server.BlockMoveManager;
 import org.terasology.registry.In;
 
@@ -30,13 +31,17 @@ public class MobilityModuleCommonSystem extends BaseComponentSystem {
     private ComputerModuleRegistry computerModuleRegistry;
     @In
     private BlockMoveManager blockMoveManager;
+    @In
+    private ModuleConfigManager moduleConfigManager;
 
     @Override
     public void preBegin() {
-        computerModuleRegistry.registerComputerModule(
-                MOBILITY_MODULE_TYPE,
-                new MobilityComputerModule(blockMoveManager, MOBILITY_MODULE_TYPE, "Mobility"),
-                "This module allows computer to move within the world.",
-                null);
+        if (moduleConfigManager.getBooleanVariable("ModularComputers", "registerModule.mobility", true)) {
+            computerModuleRegistry.registerComputerModule(
+                    MOBILITY_MODULE_TYPE,
+                    new MobilityComputerModule(blockMoveManager, MOBILITY_MODULE_TYPE, "Mobility"),
+                    "This module allows computer to move within the world.",
+                    null);
+        }
     }
 }
