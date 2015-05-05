@@ -79,7 +79,7 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
                     @Override
                     public void hyperlinkClicked(String hyperlink) {
                         if (hyperlink.startsWith("navigate:")) {
-                            navigateTo(hyperlink.substring(9));
+                            navigateTo(hyperlink.substring(9), true);
                         } else if (hyperlink.startsWith("saveAs:")) {
                             String[] split = hyperlink.substring(7).split(":", 2);
                             saveAs(HTMLLikeParser.unencodeHTMLLike(split[0]), HTMLLikeParser.unencodeHTMLLike(split[1]));
@@ -126,7 +126,7 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
                 new ActivateEventListener() {
                     @Override
                     public void onActivated(UIWidget widget) {
-                        navigateTo("introduction");
+                        navigateTo("introduction", true);
                     }
                 }
         );
@@ -137,8 +137,7 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
                         String currentPage = browserHistory.removeLast();
                         browserFuture.addFirst(currentPage);
                         String previousPage = browserHistory.peekLast();
-                        browser.navigateTo(documentationData.getDocument(previousPage));
-                        updateHistoryButtons();
+                        navigateTo(previousPage, false);
                     }
                 });
         forwardButton.subscribe(
@@ -147,8 +146,7 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
                     public void onActivated(UIWidget widget) {
                         String nextPage = browserFuture.removeFirst();
                         browserHistory.add(nextPage);
-                        browser.navigateTo(documentationData.getDocument(nextPage));
-                        updateHistoryButtons();
+                        navigateTo(nextPage, false);
                     }
                 });
     }
@@ -200,7 +198,7 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
                 new ItemSelectEventListener<DocumentationPageInfo>() {
                     @Override
                     public void onItemSelected(UIWidget widget, DocumentationPageInfo item) {
-                        navigateTo(item.getPageId());
+                        navigateTo(item.getPageId(), true);
                     }
                 });
         tocList.subscribe(
@@ -237,12 +235,14 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
         }
     }
 
-    private void navigateTo(String page) {
-        if (browserHistory.peekLast() == null || !browserHistory.peekLast().equals(page)) {
-            browserHistory.add(page);
-            browser.navigateTo(documentationData.getDocument(page));
-            browserFuture.clear();
+    private void navigateTo(String page, boolean modifyHistory) {
+        if (browserHistory.peekLast() == null || !browserHistory.peekLast().equals(page) || !modifyHistory) {
+            if (modifyHistory) {
+                browserHistory.add(page);
+                browserFuture.clear();
+            }
             updateHistoryButtons();
+            browser.navigateTo(documentationData.getDocument(page));
 
             DocumentationPageInfo pageInfo = documentationData.getPageInfo(page);
 
@@ -278,7 +278,7 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
 
             setupTableOfContents();
 
-            navigateTo("introduction");
+            navigateTo("introduction", true);
         }
 
         computerTerminalWidget.setup(

@@ -57,7 +57,8 @@ public class ComputerLanguageCommonSystem extends BaseComponentSystem implements
     private Map<String, Collection<ParagraphData>> objectAdditionalParagraphs = new HashMap<>();
 
     private Map<String, ComputerModule> computerModuleRegistry = new HashMap<>();
-    private Map<String, String> computerModuleDescriptions = new TreeMap<>();
+    private Map<String, ComputerModule> computerModulesByName = new TreeMap<>();
+    private Map<String, String> computerModuleDescriptions = new HashMap<>();
     private Map<String, Collection<ParagraphData>> computerModuleAdditionalParagraphs = new HashMap<>();
 
     @Override
@@ -129,6 +130,7 @@ public class ComputerLanguageCommonSystem extends BaseComponentSystem implements
     public void registerComputerModule(String type, ComputerModule computerModule, String description, Collection<ParagraphData> additionalParagraphs) {
         computerModuleRegistry.put(type, computerModule);
         String moduleName = computerModule.getModuleName();
+        computerModulesByName.put(moduleName, computerModule);
         computerModuleDescriptions.put(moduleName, description);
         computerModuleAdditionalParagraphs.put(moduleName, additionalParagraphs);
     }
@@ -167,7 +169,7 @@ public class ComputerLanguageCommonSystem extends BaseComponentSystem implements
                     objectDescriptions.get(variable), objectAdditionalParagraphs.get(variable));
         }
 
-        for (ComputerModule computerModule : computerModuleRegistry.values()) {
+        for (ComputerModule computerModule : computerModulesByName.values()) {
             String moduleName = computerModule.getModuleName();
 
             computerLanguageContext.addComputerModule(computerModule, computerModuleDescriptions.get(moduleName),

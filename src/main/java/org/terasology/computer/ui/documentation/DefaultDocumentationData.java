@@ -34,10 +34,16 @@ public class DefaultDocumentationData implements DocumentationData, TableOfConte
     private Map<String, PageData> allPages = new HashMap<>();
 
     public void addEntry(String parent, PageData pageData) {
-        if (parent != null) {
-            childPages.put(parent, pageData);
-        } else {
-            rootPages.add(pageData);
+        addEntry(parent, pageData, true);
+    }
+
+    public void addEntry(String parent, PageData pageData, boolean addToToC) {
+        if (addToToC) {
+            if (parent != null) {
+                childPages.put(parent, pageData);
+            } else {
+                rootPages.add(pageData);
+            }
         }
         allPages.put(pageData.getPageId(), pageData);
     }

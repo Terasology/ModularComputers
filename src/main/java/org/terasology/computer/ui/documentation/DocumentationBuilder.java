@@ -67,14 +67,60 @@ public class DocumentationBuilder {
     public static DefaultDocumentationData buildDocumentation(ComputerLanguageContextInitializer computerLanguageContextInitializer) {
         DefaultDocumentationData defaultBrowserData = new DefaultDocumentationData();
 
-        defaultBrowserData.addEntry(null, buildIntroductionPage(computerLanguageContextInitializer));
+        defaultBrowserData.addEntry(null, buildIntroductionPage(computerLanguageContextInitializer), false);
 
         buildObjectTypePages(defaultBrowserData, computerLanguageContextInitializer);
 
-        buildBuiltinObjectPages(defaultBrowserData, computerLanguageContextInitializer);
-        buildComputerModulePages(defaultBrowserData, computerLanguageContextInitializer);
+        buildTopPages(defaultBrowserData, computerLanguageContextInitializer);
+        buildBuiltinObjectPages(defaultBrowserData, "builtinObjects", computerLanguageContextInitializer);
+        buildComputerModulePages(defaultBrowserData, "modules", computerLanguageContextInitializer);
 
         return defaultBrowserData;
+    }
+
+    private static void buildTopPages(DefaultDocumentationData defaultBrowserData, ComputerLanguageContextInitializer computerLanguageContextInitializer) {
+        PageData modulesPage = new PageData("modules", null, "Modules", null);
+        modulesPage.addParagraphs(createTitleParagraph("Modules"));
+        modulesPage.addParagraphs(
+                HTMLLikeParser.parseHTMLLike(null, "Modules are special pieces of hardware that you could install in the computer " +
+                        "in order to perform some very specific operations that are permitted by a module.<l>" +
+                        "In order to use a module, after placing it in computer's inventory, you need to \"bind\" it in your code " +
+                        "to a variable. For specific instructions on how to do it, please refer to " +
+                        "<h navigate:" + getBuiltInObjectPageId("computer") + ">computer</h> built-in object documentation."));
+        modulesPage.addParagraphs(emphasizedParagraphWithSpaceBefore("List of available modules:"));
+
+        PageData builtinObjectsPage = new PageData("builtinObjects", null, "Built-in Objects", null);
+        builtinObjectsPage.addParagraphs(createTitleParagraph("Built-in Objects"));
+        builtinObjectsPage.addParagraphs(
+                HTMLLikeParser.parseHTMLLike(null, "Built-in objects are objects (variables) that are preset in your script. " +
+                        "These objects contain a set of valuable methods that allow you to do some basic things with your computer " +
+                        "in game, that you would not be able to do otherwise."));
+        builtinObjectsPage.addParagraphs(emphasizedParagraphWithSpaceBefore("List of built-in objects:"));
+
+        computerLanguageContextInitializer.initializeContext(
+                new ComputerLanguageContext() {
+                    @Override
+                    public void addObjectType(String objectType, Collection<ParagraphData> documentation) {
+
+                    }
+
+                    @Override
+                    public void addObject(String object, DocumentedObjectDefinition objectDefinition, String objectDescription, Collection<ParagraphData> additionalParagraphs) {
+                        builtinObjectsPage.addParagraphs(
+                                HTMLLikeParser.parseHTMLLike(null,
+                                        " * <h navigate:" + getBuiltInObjectPageId(object) + ">" + object + "</h> - " + objectDescription));
+                    }
+
+                    @Override
+                    public void addComputerModule(ComputerModule computerModule, String description, Collection<ParagraphData> additionalParagraphs) {
+                        modulesPage.addParagraphs(
+                                HTMLLikeParser.parseHTMLLike(null,
+                                        " * <h navigate:" + getComputerModulePageId(computerModule.getModuleType()) + ">" + computerModule.getModuleName() + "</h> - " + description));
+                    }
+                });
+
+        defaultBrowserData.addEntry(null, modulesPage);
+        defaultBrowserData.addEntry(null, builtinObjectsPage);
     }
 
 
@@ -116,7 +162,7 @@ public class DocumentationBuilder {
                 });
     }
 
-    private static void buildComputerModulePages(DefaultDocumentationData defaultBrowserData, ComputerLanguageContextInitializer computerLanguageContextInitializer) {
+    private static void buildComputerModulePages(DefaultDocumentationData defaultBrowserData, String parentId, ComputerLanguageContextInitializer computerLanguageContextInitializer) {
         computerLanguageContextInitializer.initializeContext(
                 new ComputerLanguageContext() {
                     @Override
@@ -161,7 +207,7 @@ public class DocumentationBuilder {
                         String moduleType = computerModule.getModuleType();
                         String modulePageId = getComputerModulePageId(moduleType);
 
-                        PageData pageData = new PageData(modulePageId, null, "Module - " + computerModule.getModuleName(), null);
+                        PageData pageData = new PageData(modulePageId, parentId, "Module - " + computerModule.getModuleName(), null);
                         pageData.addParagraphs(createTitleParagraph("Module - " + computerModule.getModuleName()));
                         pageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, description));
                         pageData.addParagraphs(emphasizedParagraphWithSpaceBefore("Methods:"));
@@ -173,7 +219,7 @@ public class DocumentationBuilder {
 
                         pageData.addParagraphs(additionalParagraphs);
 
-                        defaultBrowserData.addEntry(null, pageData);
+                        defaultBrowserData.addEntry(parentId, pageData);
 
                         for (Map.Entry<String, String> methodEntry : methodSimpleDescriptions.entrySet()) {
                             String methodName = methodEntry.getKey();
@@ -248,7 +294,7 @@ public class DocumentationBuilder {
         }
     }
 
-    private static void buildBuiltinObjectPages(DefaultDocumentationData defaultBrowserData, ComputerLanguageContextInitializer computerLanguageContextInitializer) {
+    private static void buildBuiltinObjectPages(DefaultDocumentationData defaultBrowserData, String parentId, ComputerLanguageContextInitializer computerLanguageContextInitializer) {
         computerLanguageContextInitializer.initializeContext(
                 new ComputerLanguageContext() {
                     @Override
@@ -291,7 +337,7 @@ public class DocumentationBuilder {
 
                         String objectPageId = getBuiltInObjectPageId(object);
 
-                        PageData pageData = new PageData(objectPageId, null, "Variable - " + object, null);
+                        PageData pageData = new PageData(objectPageId, parentId, "Variable - " + object, null);
                         pageData.addParagraphs(createTitleParagraph("Variable - " + object));
                         pageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, objectDescription));
                         pageData.addParagraphs(emphasizedParagraphWithSpaceBefore("Functions:"));
@@ -303,7 +349,7 @@ public class DocumentationBuilder {
 
                         pageData.addParagraphs(additionalParagraphs);
 
-                        defaultBrowserData.addEntry(null, pageData);
+                        defaultBrowserData.addEntry(parentId, pageData);
 
                         for (Map.Entry<String, String> functionEntry : methodSimpleDescriptions.entrySet()) {
                             String methodName = functionEntry.getKey();
@@ -359,50 +405,6 @@ public class DocumentationBuilder {
         PageData pageData = new PageData("introduction", null, "Introduction", null);
         pageData.addParagraphs(createTitleParagraph("Introduction"));
         pageData.addParagraphs(HTMLLikeParser.parseHTMLLike(null, "This is the first page of the documentation."));
-
-        pageData.addParagraphs(emphasizedParagraphWithSpaceBefore("List of built-in objects:"));
-
-        computerLanguageContextInitializer.initializeContext(
-                new ComputerLanguageContext() {
-                    @Override
-                    public void addObject(String object, DocumentedObjectDefinition objectDefinition, String objectDescription, Collection<ParagraphData> additionalParagraphs) {
-                        pageData.addParagraphs(
-                                HTMLLikeParser.parseHTMLLike(null,
-                                        " * <h navigate:" + getBuiltInObjectPageId(object) + ">" + object + "</h> - " + objectDescription));
-                    }
-
-                    @Override
-                    public void addObjectType(String objectType, Collection<ParagraphData> documentation) {
-                        // Ignore
-                    }
-
-                    @Override
-                    public void addComputerModule(ComputerModule computerModule, String description, Collection<ParagraphData> additionalParagraphs) {
-                        // Ignore
-                    }
-                });
-
-        pageData.addParagraphs(emphasizedParagraphWithSpaceBefore("List of registered computer modules:"));
-
-        computerLanguageContextInitializer.initializeContext(
-                new ComputerLanguageContext() {
-                    @Override
-                    public void addObject(String object, DocumentedObjectDefinition objectDefinition, String objectDescription, Collection<ParagraphData> additionalParagraphs) {
-                        // Ignore
-                    }
-
-                    @Override
-                    public void addObjectType(String objectType, Collection<ParagraphData> documentation) {
-                        // Ignore
-                    }
-
-                    @Override
-                    public void addComputerModule(ComputerModule computerModule, String description, Collection<ParagraphData> additionalParagraphs) {
-                        pageData.addParagraphs(
-                                HTMLLikeParser.parseHTMLLike(null,
-                                        " * <h navigate:" + getComputerModulePageId(computerModule.getModuleType()) + ">" + computerModule.getModuleName() + "</h> - " + description));
-                    }
-                });
 
         return pageData;
     }
