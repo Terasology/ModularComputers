@@ -48,6 +48,7 @@ import org.terasology.entitySystem.systems.BaseComponentSystem;
 import org.terasology.entitySystem.systems.RegisterMode;
 import org.terasology.entitySystem.systems.RegisterSystem;
 import org.terasology.entitySystem.systems.UpdateSubscriberSystem;
+import org.terasology.logic.config.ModuleConfigManager;
 import org.terasology.logic.inventory.InventoryComponent;
 import org.terasology.logic.inventory.InventoryManager;
 import org.terasology.logic.inventory.InventoryUtils;
@@ -83,12 +84,14 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
     private ComputerModuleRegistry computerModuleRegistry;
     @In
     private ComputerLanguageContextInitializer computerLanguageContextInitializer;
+    @In
+    private ModuleConfigManager moduleConfigManager;
 
     private EntityRef computerSystemEntity;
 
     private Map<Integer, ComputerContext> computerContextMap = new HashMap<>();
 
-    private ExecutionCostConfiguration executionCostConfiguration = new SampleExecutionCostConfiguration();
+    private ExecutionCostConfiguration executionCostConfiguration;
 
     private boolean computerInTransitionState;
 
@@ -101,6 +104,30 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
             computerSystemEntity = entityManager.create();
             computerSystemEntity.addComponent(new ComputerSystemComponent());
         }
+
+        executionCostConfiguration = createExecutionCostConfiguration();
+    }
+
+    private ExecutionCostConfiguration createExecutionCostConfiguration() {
+        ConfigurableExecutionCostConfiguration result = new ConfigurableExecutionCostConfiguration();
+        result.setGetContextValue(getConfigValue("getContextValue", 1));
+        result.setSetContextValue(getConfigValue("setContextValue", 1));
+        result.setGetReturnValue(getConfigValue("getReturnValue", 1));
+        result.setSetReturnValue(getConfigValue("setReturnValue", 1));
+        result.setBreakBlock(getConfigValue("breakBlock", 2));
+        result.setDefineVariable(getConfigValue("defineVariable", 2));
+        result.setSetVariable(getConfigValue("setVariable", 2));
+        result.setStackExecution(getConfigValue("stackExecution", 5));
+        result.setStackGroupExecution(getConfigValue("stackGroupExecution", 8));
+        result.setSumValues(getConfigValue("sumValues", 10));
+        result.setOtherMathOperation(getConfigValue("otherMathOperation", 10));
+        result.setCompareValues(getConfigValue("compareValues", 10));
+        result.setResolveMember(getConfigValue("resolveMember", 10));
+        return result;
+    }
+
+    private int getConfigValue(String name, int defaultValue) {
+        return moduleConfigManager.getIntVariable("ModularComputers", "executionCost." + name, defaultValue);
     }
 
     @Override
