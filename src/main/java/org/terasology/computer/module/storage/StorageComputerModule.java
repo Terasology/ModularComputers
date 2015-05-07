@@ -44,11 +44,6 @@ public class StorageComputerModule extends DefaultComputerModule {
         return true;
     }
 
-    @Override
-    public boolean acceptsNewModule(ComputerModule computerModule) {
-        return true;
-    }
-
     public int getSlotCount() {
         return slotCount;
     }

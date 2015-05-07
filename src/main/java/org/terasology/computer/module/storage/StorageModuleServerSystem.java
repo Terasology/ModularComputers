@@ -18,7 +18,6 @@ package org.terasology.computer.module.storage;
 import org.terasology.computer.component.ComputerComponent;
 import org.terasology.computer.component.ComputerModuleComponent;
 import org.terasology.computer.system.common.ComputerModuleRegistry;
-import org.terasology.computer.system.server.lang.ComputerModule;
 import org.terasology.entitySystem.entity.EntityManager;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.entitySystem.event.EventPriority;
@@ -26,7 +25,6 @@ import org.terasology.entitySystem.event.ReceiveEvent;
 import org.terasology.entitySystem.systems.BaseComponentSystem;
 import org.terasology.entitySystem.systems.RegisterMode;
 import org.terasology.entitySystem.systems.RegisterSystem;
-import org.terasology.logic.health.BeforeDamagedEvent;
 import org.terasology.logic.inventory.InventoryComponent;
 import org.terasology.logic.inventory.InventoryManager;
 import org.terasology.logic.inventory.InventoryUtils;
@@ -54,14 +52,21 @@ public class StorageModuleServerSystem extends BaseComponentSystem {
     @In
     private BlockEntityRegistry blockEntityRegistry;
 
-    private boolean doNotMoveInventory = false;
+    private boolean computerIsMoving;
 
     @ReceiveEvent
     public void computerModuleSlotChanged(InventorySlotChangedEvent event, EntityRef computerEntity, ComputerComponent computer) {
-        if (!doNotMoveInventory) {
+        // If computer is moving, we have to preserve the component to be able to copy it's data, so do not remove the
+        // component at this point, the entity will be destroyed upon movement finish anyway
+        if (!computerIsMoving) {
             ComputerModuleComponent oldModule = event.getOldItem().getComponent(ComputerModuleComponent.class);
             if (oldModule != null && oldModule.moduleType.equals(StorageModuleCommonSystem.COMPUTER_STORAGE_MODULE_TYPE)) {
-                dropItemsFromComputerInternalStorage(computerEntity);
+                EntityRef inventoryEntity = computerEntity.getComponent(InternalStorageComponent.class).inventoryEntity;
+
+                dropItemsFromComputerInternalStorage(computerEntity, inventoryEntity);
+                inventoryEntity.destroy();
+
+                computerEntity.removeComponent(InternalStorageComponent.class);
             }
         }
 
@@ -82,13 +87,13 @@ public class StorageModuleServerSystem extends BaseComponentSystem {
     }
 
     @ReceiveEvent
-    public void beforeComputerMoveStopDroppingInventory(BeforeBlockMovesEvent event, EntityRef entity, ComputerComponent component) {
-        doNotMoveInventory = true;
+    public void beforeComputerMoveSetFlag(BeforeBlockMovesEvent event, EntityRef entity, ComputerComponent component) {
+        computerIsMoving = true;
     }
 
     @ReceiveEvent
-    public void afterComputerMoveRestartDroppingInventory(AfterBlockMovedEvent event, EntityRef entity, ComputerComponent component) {
-        doNotMoveInventory = false;
+    public void afterComputerMoveResetFlag(AfterBlockMovedEvent event, EntityRef entity, ComputerComponent component) {
+        computerIsMoving = false;
     }
 
     @ReceiveEvent(priority = EventPriority.PRIORITY_TRIVIAL)
@@ -104,12 +109,10 @@ public class StorageModuleServerSystem extends BaseComponentSystem {
         }
     }
 
-    private void dropItemsFromComputerInternalStorage(EntityRef computerEntity) {
-        InternalStorageComponent internalStorage = computerEntity.getComponent(InternalStorageComponent.class);
+    private void dropItemsFromComputerInternalStorage(EntityRef computerEntity, EntityRef inventoryEntity) {
         if (computerEntity.hasComponent(BlockComponent.class)) {
             Vector3i blockLocation = computerEntity.getComponent(BlockComponent.class).getPosition();
 
-            EntityRef inventoryEntity = internalStorage.inventoryEntity;
             InventoryComponent inventoryComponent = inventoryEntity.getComponent(InventoryComponent.class);
 
             FastRandom random = new FastRandom();
@@ -120,8 +123,6 @@ public class StorageModuleServerSystem extends BaseComponentSystem {
                     pickup.send(new ImpulseEvent(random.nextVector3f(30.0f)));
                 }
             }
-
-            inventoryEntity.destroy();
         }
     }
 
@@ -130,7 +131,9 @@ public class StorageModuleServerSystem extends BaseComponentSystem {
         InventoryComponent component = computerEntity.getComponent(InventoryComponent.class);
         for (EntityRef module : component.itemSlots) {
             if (module.exists() && module.getComponent(ComputerModuleComponent.class).moduleType.equals(StorageModuleCommonSystem.COMPUTER_STORAGE_MODULE_TYPE)) {
-                dropItemsFromComputerInternalStorage(computerEntity);
+                EntityRef inventoryEntity = computerEntity.getComponent(InternalStorageComponent.class).inventoryEntity;
+                dropItemsFromComputerInternalStorage(computerEntity, inventoryEntity);
+                inventoryEntity.destroy();
             }
         }
     }
