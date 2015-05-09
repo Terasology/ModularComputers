@@ -30,7 +30,7 @@ import com.gempukku.lang.Variable;
 import com.gempukku.lang.parser.ScriptParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.terasology.browser.data.ParagraphData;
+import org.terasology.rendering.nui.widgets.browser.data.ParagraphData;
 import org.terasology.computer.component.ComputerComponent;
 import org.terasology.computer.component.ComputerModuleComponent;
 import org.terasology.computer.system.common.ComputerLanguageContext;
@@ -136,7 +136,8 @@ public class ComputerContext {
             computerLanguageContextInitializer.initializeContext(
                     new ComputerLanguageContext() {
                         @Override
-                        public void addObject(String object, DocumentedObjectDefinition objectDefinition, String objectDescription, Collection<ParagraphData> additionalParagraphs) {
+                        public void addObject(String object, DocumentedObjectDefinition objectDefinition, String objectDescription,
+                                              Collection<ParagraphData> additionalParagraphs) {
                             variables.add(object);
                             try {
                                 callContext.defineVariable(object).setValue(objectDefinition);

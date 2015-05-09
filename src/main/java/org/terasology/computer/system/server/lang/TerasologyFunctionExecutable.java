@@ -24,7 +24,7 @@ import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.ExecutionProgress;
 import com.gempukku.lang.Variable;
 import com.gempukku.lang.execution.SimpleExecution;
-import org.terasology.browser.data.ParagraphData;
+import org.terasology.rendering.nui.widgets.browser.data.ParagraphData;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.context.TerasologyComputerExecutionContext;
 import org.terasology.computer.system.common.DocumentedFunctionExecutable;

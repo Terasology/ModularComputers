@@ -18,7 +18,7 @@ package org.terasology.computer.ui.documentation;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.TreeMultimap;
-import org.terasology.browser.data.DocumentData;
+import org.terasology.rendering.nui.widgets.browser.data.DocumentData;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -55,11 +55,13 @@ public class DefaultDocumentationData implements DocumentationData, TableOfConte
 
     @Override
     public Collection<DocumentationPageInfo> getContents(String parentPageId) {
-        if (parentPageId == null)
+        if (parentPageId == null) {
             return Collections.unmodifiableCollection(rootPages);
+        }
         Collection<PageData> children = childPages.get(parentPageId);
-        if (children == null)
+        if (children == null) {
             return null;
+        }
         return Collections.unmodifiableCollection(children);
     }
 

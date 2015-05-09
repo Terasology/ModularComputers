@@ -15,9 +15,9 @@
  */
 package org.terasology.computer.ui;
 
-import org.terasology.browser.data.basic.HTMLLikeParser;
-import org.terasology.browser.ui.BrowserHyperlinkListener;
-import org.terasology.browser.ui.BrowserWidget;
+import org.terasology.rendering.nui.widgets.browser.data.basic.HTMLLikeParser;
+import org.terasology.rendering.nui.widgets.browser.ui.BrowserHyperlinkListener;
+import org.terasology.rendering.nui.widgets.browser.ui.BrowserWidget;
 import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
 import org.terasology.computer.ui.documentation.DefaultDocumentationData;
 import org.terasology.computer.ui.documentation.DocumentationBuilder;

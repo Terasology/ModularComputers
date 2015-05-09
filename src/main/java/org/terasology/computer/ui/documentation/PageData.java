@@ -15,9 +15,9 @@
  */
 package org.terasology.computer.ui.documentation;
 
-import org.terasology.browser.data.DocumentData;
-import org.terasology.browser.data.ParagraphData;
-import org.terasology.browser.ui.style.DocumentRenderStyle;
+import org.terasology.rendering.nui.widgets.browser.data.DocumentData;
+import org.terasology.rendering.nui.widgets.browser.data.ParagraphData;
+import org.terasology.rendering.nui.widgets.browser.ui.style.DocumentRenderStyle;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -42,9 +42,9 @@ public class PageData implements DocumentationPageInfo, DocumentData {
         paragraphs.add(paragraphData);
     }
 
-    public void addParagraphs(Collection<ParagraphData> paragraphs) {
-        if (paragraphs != null) {
-            this.paragraphs.addAll(paragraphs);
+    public void addParagraphs(Collection<ParagraphData> paragraphsToAdd) {
+        if (paragraphsToAdd != null) {
+            paragraphs.addAll(paragraphsToAdd);
         }
     }
 

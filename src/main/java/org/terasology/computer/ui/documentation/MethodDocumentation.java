@@ -15,8 +15,8 @@
  */
 package org.terasology.computer.ui.documentation;
 
-import org.terasology.browser.data.ParagraphData;
-import org.terasology.browser.data.basic.HTMLLikeParser;
+import org.terasology.rendering.nui.widgets.browser.data.ParagraphData;
+import org.terasology.rendering.nui.widgets.browser.data.basic.HTMLLikeParser;
 
 import java.util.Collection;
 

@@ -15,7 +15,7 @@
  */
 package org.terasology.computer.system.common;
 
-import org.terasology.browser.data.ParagraphData;
+import org.terasology.rendering.nui.widgets.browser.data.ParagraphData;
 
 import java.util.Collection;
 

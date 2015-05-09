@@ -15,8 +15,8 @@
  */
 package org.terasology.computer.system.common;
 
-import org.terasology.browser.data.ParagraphData;
-import org.terasology.browser.data.basic.HTMLLikeParser;
+import org.terasology.rendering.nui.widgets.browser.data.ParagraphData;
+import org.terasology.rendering.nui.widgets.browser.data.basic.HTMLLikeParser;
 import org.terasology.computer.system.server.lang.ComputerModule;
 import org.terasology.computer.system.server.lang.computer.BindFirstModuleOfTypeFunction;
 import org.terasology.computer.system.server.lang.computer.BindModuleFunction;
@@ -87,7 +87,8 @@ public class ComputerLanguageCommonSystem extends BaseComponentSystem implements
         registerObjectType("Object", HTMLLikeParser.parseHTMLLike(null, "Object is a special type of object, methods it has are defined in the documentation of the method " +
                 "that has returned it."));
 
-        registerObjectType("Direction", HTMLLikeParser.parseHTMLLike(null, "Direction is a special type of <h navigate:" + DocumentationBuilder.getObjectTypePageId("String") + ">String</h> " +
+        registerObjectType("Direction", HTMLLikeParser.parseHTMLLike(null, "Direction is a special type of <h navigate:" +
+                DocumentationBuilder.getObjectTypePageId("String") + ">String</h> " +
                 "that specifies a direction, usually in relation to computer. It can have 6 possible values:<l>" +
                 "* up - above the computer,<l>" +
                 "* down - below the computer,<l>" +
