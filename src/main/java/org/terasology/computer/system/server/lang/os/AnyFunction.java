@@ -33,7 +33,7 @@ import java.util.Map;
 public class AnyFunction extends TerasologyFunctionExecutable {
     public AnyFunction() {
         super("Creates a condition that becomes true, when any the conditions passed becomes true.", "Condition",
-                "Condition that becomes true, when any of the passed conditions becomes true.\n" +
+                "Condition that becomes true, when any of the passed conditions becomes true.<l>" +
                         "In addition when this condition is <h navigate:" + DocumentationBuilder.getBuiltInObjectMethodPageId("os", "waitFor") +
                         ">waitedFor</h> the waitFor for this " +
                         "condition will return an array containing two objects - index of the condition that became true, " +

@@ -41,6 +41,7 @@ import org.terasology.entitySystem.systems.RegisterSystem;
 import org.terasology.registry.Share;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -63,7 +64,7 @@ public class ComputerLanguageCommonSystem extends BaseComponentSystem implements
 
     @Override
     public void initialise() {
-        registerObjectType("Array", HTMLLikeParser.parseHTMLLike(null, "A list of objects. Objects in the array may be of any type, unless a method " +
+        registerObjectType("Array", Collections.singleton(HTMLLikeParser.parseHTMLLikeParagraph(null, "A list of objects. Objects in the array may be of any type, unless a method " +
                 "requires to pass array of objects of a specific type. To create an array you can use the following syntax:<l>" +
                 "var array = [1, \"a\", true, null];<l>" +
                 "To access elements of a returned array, you have to use [n] notation, so to extract second (0-based) element from an array do the following:<l>" +
@@ -71,23 +72,23 @@ public class ComputerLanguageCommonSystem extends BaseComponentSystem implements
                 "Array has three built in methods:<l>" +
                 "* add(any) - adds the specified object to the end of the array,<l>" +
                 "* remove(Number) - removes an object at the specified index from an array,<l>" +
-                "* size() - returns the size (length) of the array, so number of elements it has."));
-        registerObjectType("Map", HTMLLikeParser.parseHTMLLike(null, "An association map of Strings to objects of any type. To create an array, use the following syntax:<l>" +
+                "* size() - returns the size (length) of the array, so number of elements it has.")));
+        registerObjectType("Map", Collections.singleton(HTMLLikeParser.parseHTMLLikeParagraph(null, "An association map of Strings to objects of any type. To create an array, use the following syntax:<l>" +
                 "var map = {\"property1\": 1, \"property2\": \"a\", \"property3\": true };<l>" +
                 "To access elements of a map, use the [\"propertyName\"] notation, so for example to get value in a map for property \"p\" do the following:<l>" +
                 "var result = map[\"p\"];<l>" +
                 "Map has one built in method:<l>" +
-                "* size() - returns the size of the map, so number of properties it has defined."));
+                "* size() - returns the size of the map, so number of properties it has defined.")));
 
-        registerObjectType("String", HTMLLikeParser.parseHTMLLike(null, "Object representing a piece of text."));
-        registerObjectType("Number", HTMLLikeParser.parseHTMLLike(null, "Object representing a number, either fixed point or floating point. " +
+        registerObjectType("String", Collections.singleton(HTMLLikeParser.parseHTMLLikeParagraph(null, "Object representing a piece of text.")));
+        registerObjectType("Number", Collections.singleton(HTMLLikeParser.parseHTMLLikeParagraph(null, "Object representing a number, either fixed point or floating point. " +
                 "All variables of this type are always treated as if they were floating point, however if for some reason a whole number is " +
-                "needed, the value is rounded down."));
-        registerObjectType("Boolean", HTMLLikeParser.parseHTMLLike(null, "Object representing a boolean value, it may have two possible value - true and false."));
-        registerObjectType("Object", HTMLLikeParser.parseHTMLLike(null, "Object is a special type of object, methods it has are defined in the documentation of the method " +
-                "that has returned it."));
+                "needed, the value is rounded down.")));
+        registerObjectType("Boolean", Collections.singleton(HTMLLikeParser.parseHTMLLikeParagraph(null, "Object representing a boolean value, it may have two possible value - true and false.")));
+        registerObjectType("Object", Collections.singleton(HTMLLikeParser.parseHTMLLikeParagraph(null, "Object is a special type of object, methods it has are defined in the documentation of the method " +
+                "that has returned it.")));
 
-        registerObjectType("Direction", HTMLLikeParser.parseHTMLLike(null, "Direction is a special type of <h navigate:" +
+        registerObjectType("Direction", Collections.singleton(HTMLLikeParser.parseHTMLLikeParagraph(null, "Direction is a special type of <h navigate:" +
                 DocumentationBuilder.getObjectTypePageId("String") + ">String</h> " +
                 "that specifies a direction, usually in relation to computer. It can have 6 possible values:<l>" +
                 "* up - above the computer,<l>" +
@@ -95,13 +96,13 @@ public class ComputerLanguageCommonSystem extends BaseComponentSystem implements
                 "* east - towards negative x,<l>" +
                 "* west - towards positive x,<l>" +
                 "* north - towards negative z,<l>" +
-                "* south - towards positive z."));
-        registerObjectType("Condition", HTMLLikeParser.parseHTMLLike(null, "Condition defined within the game that might become true due to some effect, " +
+                "* south - towards positive z.")));
+        registerObjectType("Condition", Collections.singleton(HTMLLikeParser.parseHTMLLikeParagraph(null, "Condition defined within the game that might become true due to some effect, " +
                 "usually used in conjunction with " +
                 "<h navigate:" + DocumentationBuilder.getBuiltInObjectMethodPageId("os", "waitFor") + ">waitFor</h>, " +
                 "<h navigate:" + DocumentationBuilder.getBuiltInObjectMethodPageId("os", "all") + ">all</h>, or " +
                 "<h navigate:" + DocumentationBuilder.getBuiltInObjectMethodPageId("os", "any") + ">any</h> - methods of built in " +
-                "<h navigate:" + DocumentationBuilder.getBuiltInObjectPageId("os") + ">os</h> variable. "));
+                "<h navigate:" + DocumentationBuilder.getBuiltInObjectPageId("os") + ">os</h> variable. ")));
 
         registerComputerDefinedVariable("console", "Contains functions that allow to manipulate Computer console.", null);
         registerComputerDefinedVariableFunction("console", "append", new AppendToConsoleFunction());

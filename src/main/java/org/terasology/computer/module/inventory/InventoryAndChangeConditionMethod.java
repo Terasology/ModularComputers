@@ -35,10 +35,10 @@ public class InventoryAndChangeConditionMethod extends AbstractModuleMethodExecu
     public InventoryAndChangeConditionMethod(String methodName, InventoryModuleConditionsRegister inventoryModuleConditionsRegister) {
         super("Gets the information about items stored in the inventory as well as a Condition " +
                         "that allows to wait for the inventory's contents to be changed.", "Map",
-                "Map containing to entries:\n" +
+                "Map containing to entries:<l>" +
                         "- \"inventory\" - containing a List of Maps, with each entry in the list corresponding to one slot " +
                         "in the inventory, and each entry Map containing two keys - \"name\" with String value of name of items, " +
-                        "as specified in the getItemName() method, and \"count\" with Number value, specifying number of items in that slot\n" +
+                        "as specified in the getItemName() method, and \"count\" with Number value, specifying number of items in that slot<l>" +
                         "- \"condition\" - containing condition you could wait on to listen on a change of the inventory from " +
                         "the state described in the \"inventory\" key. Please note, that the condition might be fulfilled even though " +
                         "the inventory state has not changed.");

@@ -19,12 +19,13 @@ import org.terasology.rendering.nui.widgets.browser.data.ParagraphData;
 import org.terasology.rendering.nui.widgets.browser.data.basic.HTMLLikeParser;
 
 import java.util.Collection;
+import java.util.Collections;
 
 public interface MethodDocumentation {
     String getHTMLLikeSimpleDocumentation();
 
     default Collection<ParagraphData> getPageDocumentation() {
-        return HTMLLikeParser.parseHTMLLike(null, getHTMLLikeSimpleDocumentation());
+        return Collections.singleton(HTMLLikeParser.parseHTMLLikeParagraph(null, getHTMLLikeSimpleDocumentation()));
     }
 
     String getReturnType();

@@ -26,6 +26,8 @@ import org.terasology.logic.inventory.InventoryManager;
 import org.terasology.registry.In;
 import org.terasology.world.BlockEntityRegistry;
 
+import java.util.Collections;
+
 @RegisterSystem(RegisterMode.ALWAYS)
 public class InventoryModuleCommonSystem extends BaseComponentSystem {
     public static final String COMPUTER_INVENTORY_MODULE_TYPE = "Inventory";
@@ -48,11 +50,11 @@ public class InventoryModuleCommonSystem extends BaseComponentSystem {
         if (moduleConfigManager.getBooleanVariable("ModularComputers", "registerModule.inventory", true)) {
             computerLanguageRegistry.registerObjectType(
                     "InventoryBinding",
-                    HTMLLikeParser.parseHTMLLike(null, "An object that tells a method how to access an inventory. Usually used as a parameter " +
+                    Collections.singleton(HTMLLikeParser.parseHTMLLikeParagraph(null, "An object that tells a method how to access an inventory. Usually used as a parameter " +
                             "for methods in Inventory Manipulator computer module. This object comes in two types defined upon creation:<l>" +
                             "* input - that allows to place items in the specified inventory,<l>" +
                             "* output - that allows to extract items from the specified inventory.<l>" +
-                            "Attempting to use an incorrect type as a parameter of a method will result in an ExecutionException."));
+                            "Attempting to use an incorrect type as a parameter of a method will result in an ExecutionException.")));
 
             computerModuleRegistry.registerComputerModule(
                     COMPUTER_INVENTORY_MODULE_TYPE,

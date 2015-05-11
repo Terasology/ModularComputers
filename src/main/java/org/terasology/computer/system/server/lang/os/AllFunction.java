@@ -31,7 +31,7 @@ import java.util.Map;
 
 public class AllFunction extends TerasologyFunctionExecutable {
     public AllFunction() {
-        super("Creates a condition that becomes true, when all the conditions passed become true.", "Condition", "Condition that becomes true, when all of the passed conditions become true.\n" +
+        super("Creates a condition that becomes true, when all the conditions passed become true.", "Condition", "Condition that becomes true, when all of the passed conditions become true.<l>" +
                 "In addition when this condition is <h navigate:" + DocumentationBuilder.getBuiltInObjectMethodPageId("os", "waitFor") +
                 ">waitedFor</h> the waitFor for this " +
                 "condition will return an array containing all the objects returned by the conditions, in the " +
