@@ -68,7 +68,7 @@ public class FunctionParamValidationUtil {
         Variable directionVar = FunctionParamValidationUtil.validateParameter(line, parameters, parameterName, functionName, Variable.Type.STRING);
         Direction direction = ComputerDirection.getDirection((String) directionVar.getValue());
         if (direction == null) {
-            throw new ExecutionException(line, "Invalid " + direction + " in " + functionName + "()");
+            throw new ExecutionException(line, "Invalid " + parameterName + " in " + functionName + "()");
         }
         return direction;
     }
