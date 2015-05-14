@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.terasology.computer.system.server.lang.os.condition;
+package org.terasology.computer.module.wireless;
 
-import com.gempukku.lang.CustomObject;
-import com.gempukku.lang.ExecutionException;
+import org.terasology.math.geom.Vector3i;
 
-import java.util.Collection;
-import java.util.Collections;
+public abstract class SecureMessageAwaitingLatchCondition extends MessageAwaitingLatchCondition {
+    private String password;
 
-public abstract class AbstractConditionCustomObject implements CustomObject {
-    @Override
-    public Collection<String> getType() {
-        return Collections.singleton("CONDITION");
+    protected SecureMessageAwaitingLatchCondition(Vector3i locationTo, float rangeTo, String password) {
+        super(locationTo, rangeTo);
+        this.password = password;
     }
 
-    public abstract ResultAwaitingCondition createAwaitingCondition() throws ExecutionException;
+    public String getPassword() {
+        return password;
+    }
 }

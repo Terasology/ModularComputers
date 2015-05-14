@@ -48,6 +48,7 @@ import org.terasology.entitySystem.systems.BaseComponentSystem;
 import org.terasology.entitySystem.systems.RegisterMode;
 import org.terasology.entitySystem.systems.RegisterSystem;
 import org.terasology.entitySystem.systems.UpdateSubscriberSystem;
+import org.terasology.logic.characters.CharacterComponent;
 import org.terasology.logic.config.ModuleConfigManager;
 import org.terasology.logic.inventory.InventoryComponent;
 import org.terasology.logic.inventory.InventoryManager;
@@ -58,6 +59,7 @@ import org.terasology.math.geom.Vector3f;
 import org.terasology.mobileBlocks.server.AfterBlockMovedEvent;
 import org.terasology.mobileBlocks.server.BeforeBlockMovesEvent;
 import org.terasology.mobileBlocks.server.BlockTransitionDuringMoveEvent;
+import org.terasology.network.ClientComponent;
 import org.terasology.network.events.DisconnectedEvent;
 import org.terasology.registry.In;
 import org.terasology.world.block.BlockComponent;
@@ -246,6 +248,7 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
     public void executeProgramRequested(ExecuteProgramEvent event, EntityRef client) {
         ComputerContext computerContext = computerContextMap.get(event.getComputerId());
         if (computerContext != null && validateComputerToCharacterDistance(client, computerContext)) {
+            EntityRef clientInfo = client.getComponent(CharacterComponent.class).controller.getComponent(ClientComponent.class).clientInfo;
             ComputerComponent computer = computerContext.getEntity().getComponent(ComputerComponent.class);
             if (computerContext.isRunningProgram()) {
                 client.send(new ProgramExecutionResultEvent(computer.computerId, "There is a program already running on the computer"));
@@ -254,7 +257,7 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
                 String programText = computer.programs.get(programName);
                 if (programText != null) {
                     try {
-                        computerContext.startProgram(programName, programText, event.getParams(), computerLanguageContextInitializer, executionCostConfiguration);
+                        computerContext.startProgram(programName, clientInfo, programText, event.getParams(), computerLanguageContextInitializer, executionCostConfiguration);
                         client.send(new ProgramExecutionResultEvent(computer.computerId, "Program started"));
                     } catch (IllegalSyntaxException exp) {
                         client.send(new ProgramExecutionResultEvent(computer.computerId, exp.getMessage()));

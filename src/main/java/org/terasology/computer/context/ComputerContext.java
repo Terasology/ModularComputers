@@ -77,6 +77,7 @@ public class ComputerContext {
 
     private ExecutionContext executionContext;
     private ResultAwaitingCondition awaitingCondition;
+    private EntityRef executedBy;
 
     private Map<EntityRef, ComputerConsoleListener> consoleListenerMap = new HashMap<>();
 
@@ -122,10 +123,14 @@ public class ComputerContext {
 
     public void stopProgram() {
         executionContext = null;
+        if (awaitingCondition != null) {
+            awaitingCondition.dispose();
+        }
+        executedBy = null;
         awaitingCondition = null;
     }
 
-    public void startProgram(String name, String programText, String[] params, ComputerLanguageContextInitializer computerLanguageContextInitializer,
+    public void startProgram(String name, EntityRef executeIdentity, String programText, String[] params, ComputerLanguageContextInitializer computerLanguageContextInitializer,
                              ExecutionCostConfiguration configuration) throws IllegalSyntaxException {
         try {
             logger.debug("starting program: " + name);
@@ -169,6 +174,8 @@ public class ComputerContext {
             executionContext.addPropertyProducer(Variable.Type.STRING, new StringPropertyProducer());
 
             executionContext.stackExecutionGroup(callContext, scriptExecutable.createExecution(callContext));
+
+            executedBy = executeIdentity;
 
             this.awaitingCondition = null;
             this.remainingWaitingCpuCycles = 0;
@@ -245,6 +252,11 @@ public class ComputerContext {
             public EntityRef getComputerEntity() {
                 return entity;
             }
+
+            @Override
+            public EntityRef getExecutedBy() {
+                return executedBy;
+            }
         };
     }
 
@@ -255,6 +267,7 @@ public class ComputerContext {
                 if (awaitingCondition != null) {
                     if (awaitingCondition.isMet()) {
                         executionContext.setContextValue(awaitingCondition.getReturnValue());
+                        awaitingCondition.dispose();
                         awaitingCondition = null;
                     } else {
                         break;
@@ -284,12 +297,12 @@ public class ComputerContext {
                 } else {
                     console.appendString("ExecutionException[line " + exp.getLine() + "] - " + exp.getMessage());
                 }
-                executionContext = null;
+                stopProgram();
                 break;
             }
         }
         if (executionContext != null && executionContext.isFinished()) {
-            executionContext = null;
+            stopProgram();
         }
     }
 

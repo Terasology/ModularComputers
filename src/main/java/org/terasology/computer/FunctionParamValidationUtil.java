@@ -21,6 +21,7 @@ import com.gempukku.lang.Variable;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.module.ComputerDirection;
 import org.terasology.computer.module.inventory.InventoryBinding;
+import org.terasology.computer.module.wireless.CommunicationChannel;
 import org.terasology.math.Direction;
 
 import java.util.Map;
@@ -95,5 +96,15 @@ public class FunctionParamValidationUtil {
         if (slotNo < 0 || slotCount <= slotNo)
             throw new ExecutionException(line, "Slot number out of range in " + functionName + "()");
         return slotNo;
+    }
+
+    public static CommunicationChannel validateCommunicationChannelBinding(
+            int line, Map<String, Variable> parameters, String parameterName, String methodName) throws ExecutionException {
+        Variable channelBinding = validateParameter(line, parameters, parameterName, methodName, Variable.Type.CUSTOM_OBJECT);
+        CustomObject customObject = (CustomObject) channelBinding.getValue();
+        if (!customObject.getType().contains("COMMUNICATION_CHANNEL"))
+            throw new ExecutionException(line, "Invalid " + parameterName + " in " + methodName + "()");
+
+        return (CommunicationChannel) channelBinding.getValue();
     }
 }

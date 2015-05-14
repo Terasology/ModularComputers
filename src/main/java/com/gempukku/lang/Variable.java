@@ -44,4 +44,24 @@ public class Variable {
     public Object getValue() {
         return _value;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Variable variable = (Variable) o;
+
+        if (_type != variable._type) return false;
+        if (_value != null ? !_value.equals(variable._value) : variable._value != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = _value != null ? _value.hashCode() : 0;
+        result = 31 * result + (_type != null ? _type.hashCode() : 0);
+        return result;
+    }
 }

@@ -30,7 +30,7 @@ public class AllResultAwaitingCondition implements ResultAwaitingCondition {
 
     public AllResultAwaitingCondition(List<ResultAwaitingCondition> awaitingConditions) {
         this.awaitingConditions = awaitingConditions;
-        notMetConditions = new LinkedHashSet<ResultAwaitingCondition>(this.awaitingConditions);
+        notMetConditions = new LinkedHashSet<>(this.awaitingConditions);
     }
 
     @Override
@@ -54,5 +54,12 @@ public class AllResultAwaitingCondition implements ResultAwaitingCondition {
         }
 
         return new Variable(result);
+    }
+
+    @Override
+    public void dispose() {
+        for (ResultAwaitingCondition awaitingCondition : awaitingConditions) {
+            awaitingCondition.dispose();
+        }
     }
 }

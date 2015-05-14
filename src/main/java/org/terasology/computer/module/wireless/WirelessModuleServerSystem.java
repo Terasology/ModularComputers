@@ -13,19 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.terasology.computer.system.server.lang.os.condition;
+package org.terasology.computer.module.wireless;
 
-import com.gempukku.lang.CustomObject;
-import com.gempukku.lang.ExecutionException;
+import org.terasology.entitySystem.entity.EntityRef;
+import org.terasology.entitySystem.systems.BaseComponentSystem;
+import org.terasology.entitySystem.systems.RegisterMode;
+import org.terasology.entitySystem.systems.RegisterSystem;
+import org.terasology.logic.config.ModuleConfigManager;
+import org.terasology.registry.In;
 
-import java.util.Collection;
-import java.util.Collections;
+@RegisterSystem(RegisterMode.AUTHORITY)
+public class WirelessModuleServerSystem extends BaseComponentSystem {
+    @In
+    private ModuleConfigManager moduleConfigManager;
 
-public abstract class AbstractConditionCustomObject implements CustomObject {
     @Override
-    public Collection<String> getType() {
-        return Collections.singleton("CONDITION");
+    public void preBegin() {
     }
-
-    public abstract ResultAwaitingCondition createAwaitingCondition() throws ExecutionException;
 }

@@ -13,19 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.terasology.computer.module.inventory;
+package org.terasology.computer.module.wireless;
 
-import com.gempukku.lang.ExecutionException;
-import org.terasology.computer.system.server.lang.os.condition.AbstractConditionCustomObject;
-import org.terasology.computer.system.server.lang.os.condition.InventoryCondition;
+import com.gempukku.lang.Variable;
 import org.terasology.computer.system.server.lang.os.condition.LatchCondition;
-import org.terasology.entitySystem.entity.EntityRef;
+import org.terasology.math.geom.Vector3i;
 
-import java.util.function.Function;
-import java.util.function.Predicate;
+import java.util.Map;
 
-public interface InventoryModuleConditionsRegister {
-    void addInventoryChangeListener(EntityRef entity, InventoryCondition latchCondition);
+public abstract class MessageAwaitingLatchCondition extends LatchCondition<Map<String, Variable>> {
+    private Vector3i locationTo;
+    private float rangeTo;
 
-    void removeInventoryChangeListener(EntityRef entity, InventoryCondition latchCondition);
+    public MessageAwaitingLatchCondition(Vector3i locationTo, float rangeTo) {
+        this.locationTo = locationTo;
+        this.rangeTo = rangeTo;
+    }
+
+    public Vector3i getLocationTo() {
+        return locationTo;
+    }
+
+    public float getRangeTo() {
+        return rangeTo;
+    }
 }

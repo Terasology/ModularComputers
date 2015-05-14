@@ -84,7 +84,7 @@ public class AllFunction extends TerasologyFunctionExecutable {
             }
 
             @Override
-            public ResultAwaitingCondition createAwaitingCondition() {
+            public ResultAwaitingCondition createAwaitingCondition() throws ExecutionException {
                 List<ResultAwaitingCondition> allConditionList = new ArrayList<>();
                 for (AbstractConditionCustomObject allCondition : allConditions) {
                     allConditionList.add(allCondition.createAwaitingCondition());

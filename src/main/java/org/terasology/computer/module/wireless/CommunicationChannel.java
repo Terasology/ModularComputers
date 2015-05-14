@@ -13,19 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.terasology.computer.system.server.lang.os.condition;
+package org.terasology.computer.module.wireless;
 
-import com.gempukku.lang.CustomObject;
-import com.gempukku.lang.ExecutionException;
+import com.gempukku.lang.Variable;
+import org.terasology.computer.context.ComputerCallback;
+import org.terasology.computer.system.server.lang.os.condition.AbstractConditionCustomObject;
 
-import java.util.Collection;
-import java.util.Collections;
+import java.util.Map;
 
-public abstract class AbstractConditionCustomObject implements CustomObject {
-    @Override
-    public Collection<String> getType() {
-        return Collections.singleton("CONDITION");
-    }
-
-    public abstract ResultAwaitingCondition createAwaitingCondition() throws ExecutionException;
+public interface CommunicationChannel {
+    void sendMessage(String message, ComputerCallback computer, long expireOn);
+    Map<String, Variable> consumeMessage(long currentTime, ComputerCallback computer);
+    AbstractConditionCustomObject consumeMessageCondition(long currentTime, ComputerCallback computer);
 }

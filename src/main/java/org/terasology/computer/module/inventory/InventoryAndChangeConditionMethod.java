@@ -20,6 +20,8 @@ import com.gempukku.lang.Variable;
 import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.AbstractModuleMethodExecutable;
+import org.terasology.computer.system.server.lang.os.condition.InventoryCondition;
+import org.terasology.computer.system.server.lang.os.condition.LatchCondition;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.logic.inventory.InventoryUtils;
 
@@ -80,6 +82,57 @@ public class InventoryAndChangeConditionMethod extends AbstractModuleMethodExecu
 
         Map<String, Variable> result = new HashMap<>();
 
+        List<Variable> inventoryResult = getInventory(inventory);
+        final List<Variable> inventoryCopyResult = getInventory(inventory);
+
+        result.put("inventory", new Variable(inventoryResult));
+
+        result.put("condition", new Variable(
+                new InventoryCondition() {
+                    @Override
+                    public boolean checkRelease() {
+                        try {
+                            InventoryBinding.InventoryWithSlots inventory = FunctionParamValidationUtil.validateInventoryBinding(line, computer,
+                                    parameters, "inventoryBinding", methodName, null);
+                            List<Variable> currentInventory = getInventory(inventory);
+                            if (!currentInventory.equals(inventoryCopyResult)) {
+                                release(null);
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        } catch (ExecutionException exp) {
+                            releaseWithError(exp);
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void cancelCondition() {
+                        releaseWithError(new ExecutionException(line, "Observed inventory has been removed."));
+                    }
+
+                    @Override
+                    protected Runnable registerAwaitingCondition() throws ExecutionException {
+                        if (!checkRelease()) {
+                            inventoryModuleConditionsRegister.addInventoryChangeListener(inventory.inventory, this);
+                            final InventoryCondition condition = this;
+                            return new Runnable() {
+                                @Override
+                                public void run() {
+                                    inventoryModuleConditionsRegister.removeInventoryChangeListener(inventory.inventory, condition);
+                                }
+                            };
+                        } else {
+                            return null;
+                        }
+                    }
+                }));
+
+        return result;
+    }
+
+    private List<Variable> getInventory(InventoryBinding.InventoryWithSlots inventory) {
         List<Variable> inventoryResult = new ArrayList<>();
 
         for (int slot : inventory.slots) {
@@ -94,11 +147,6 @@ public class InventoryAndChangeConditionMethod extends AbstractModuleMethodExecu
 
             inventoryResult.add(new Variable(itemMap));
         }
-
-        result.put("inventory", new Variable(inventoryResult));
-
-        result.put("condition", new Variable(inventoryModuleConditionsRegister.registerInventoryChangeListener(inventory.inventory)));
-
-        return result;
+        return inventoryResult;
     }
 }

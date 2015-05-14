@@ -31,9 +31,12 @@ import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.input.Keyboard;
 import org.terasology.input.events.KeyEvent;
+import org.terasology.logic.characters.CharacterComponent;
 import org.terasology.logic.clipboard.ClipboardManager;
+import org.terasology.logic.common.DisplayNameComponent;
 import org.terasology.math.Rect2i;
 import org.terasology.math.Vector2i;
+import org.terasology.network.ClientComponent;
 import org.terasology.rendering.assets.font.Font;
 import org.terasology.rendering.nui.Canvas;
 import org.terasology.rendering.nui.Color;
@@ -87,7 +90,7 @@ public class ComputerTerminalWidget extends CoreWidget {
 
         playerCommandConsoleGui = new PlayerCommandConsoleGui(this);
         playerCommandConsoleGui.appendToConsole("AutomationOS v. 0.0");
-        String userName = "player";
+        String userName = clientEntity.getComponent(CharacterComponent.class).controller.getComponent(ClientComponent.class).clientInfo.getComponent(DisplayNameComponent.class).name;
         playerCommandConsoleGui.appendToConsole("You're logged in as " + userName + ", use \"exit\" command to exit the console, use \"help\" to list commands.");
         programEditingConsoleGui = new ProgramEditingConsoleGui(this, computerLanguageContextInitializer, clipboardManager);
 

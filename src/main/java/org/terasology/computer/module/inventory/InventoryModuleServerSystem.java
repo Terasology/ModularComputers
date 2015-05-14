@@ -15,7 +15,11 @@
  */
 package org.terasology.computer.module.inventory;
 
+import com.gempukku.lang.ExecutionException;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import org.terasology.computer.system.server.lang.os.condition.AbstractConditionCustomObject;
+import org.terasology.computer.system.server.lang.os.condition.InventoryCondition;
 import org.terasology.computer.system.server.lang.os.condition.LatchCondition;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.entitySystem.entity.lifecycleEvents.BeforeDeactivateComponent;
@@ -29,24 +33,21 @@ import org.terasology.logic.inventory.events.InventorySlotChangedEvent;
 import org.terasology.logic.inventory.events.InventorySlotStackSizeChangedEvent;
 import org.terasology.registry.Share;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Iterator;
 
 @RegisterSystem(RegisterMode.AUTHORITY)
 @Share(InventoryModuleConditionsRegister.class)
 public class InventoryModuleServerSystem extends BaseComponentSystem implements InventoryModuleConditionsRegister {
-    private Map<EntityRef, LatchCondition> inventoryChangeLatchConditions = new HashMap<>();
+    private Multimap<EntityRef, InventoryCondition> inventoryChangeLatchConditions = HashMultimap.create();
 
     @Override
-    public AbstractConditionCustomObject registerInventoryChangeListener(EntityRef entity) {
-        LatchCondition latchCondition = inventoryChangeLatchConditions.get(entity);
-        if (latchCondition != null)
-            return latchCondition;
-
-        latchCondition = new LatchCondition();
+    public void addInventoryChangeListener(EntityRef entity, InventoryCondition latchCondition) {
         inventoryChangeLatchConditions.put(entity, latchCondition);
+    }
 
-        return latchCondition;
+    @Override
+    public void removeInventoryChangeListener(EntityRef entity, InventoryCondition latchCondition) {
+        inventoryChangeLatchConditions.remove(entity, latchCondition);
     }
 
     @ReceiveEvent
@@ -61,18 +62,21 @@ public class InventoryModuleServerSystem extends BaseComponentSystem implements 
 
     @ReceiveEvent
     public void inventoryRemoved(BeforeDeactivateComponent event, EntityRef inventory, InventoryComponent inventoryComponent) {
-        processChangedInventory(inventory);
-    }
-
-    @ReceiveEvent
-    public void inventoryAdded(OnActivatedComponent event, EntityRef inventory, InventoryComponent inventoryComponent) {
-        processChangedInventory(inventory);
+        Iterator<InventoryCondition> latchIterator = inventoryChangeLatchConditions.get(inventory).iterator();
+        while (latchIterator.hasNext()) {
+            InventoryCondition latchCondition = latchIterator.next();
+            latchIterator.remove();
+            latchCondition.cancelCondition();
+        }
     }
 
     private void processChangedInventory(EntityRef inventory) {
-        LatchCondition latchCondition = inventoryChangeLatchConditions.remove(inventory);
-        if (latchCondition != null) {
-            latchCondition.release(null);
+        Iterator<InventoryCondition> latchIterator = inventoryChangeLatchConditions.get(inventory).iterator();
+        while (latchIterator.hasNext()) {
+            InventoryCondition latchCondition = latchIterator.next();
+            if (latchCondition.checkRelease()) {
+                latchIterator.remove();
+            }
         }
     }
 }

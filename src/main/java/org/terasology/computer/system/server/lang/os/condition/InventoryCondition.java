@@ -18,10 +18,23 @@ package org.terasology.computer.system.server.lang.os.condition;
 import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.Variable;
 
-public interface ResultAwaitingCondition {
-    boolean isMet() throws ExecutionException;
+public abstract class InventoryCondition extends LatchCondition<Object> {
+    private boolean released;
 
-    Variable getReturnValue();
+    private Object result;
+    private ExecutionException error;
 
-    void dispose();
+    /**
+     * Check the state of this latch, called by the outside code to notify it, that the state of this condition might
+     * have changed. If it returns true, it will be removed from the observed objects. Internally it should call release
+     * or releaseWithError.
+     * @return
+     */
+    public abstract boolean checkRelease();
+
+    /**
+     * Called by the outside code to notify it, that the state has permanently been affected in a way that will prevent
+     * this condition to ever be true.
+     */
+    public abstract void cancelCondition();
 }

@@ -24,6 +24,7 @@ import java.util.List;
 public class AnyResultAwaitingCondition implements ResultAwaitingCondition {
     private List<ResultAwaitingCondition> awaitingConditions;
     private int metConditionIndex = -1;
+    private boolean disposed;
 
     public AnyResultAwaitingCondition(List<ResultAwaitingCondition> awaitingConditions) {
         this.awaitingConditions = awaitingConditions;
@@ -40,6 +41,7 @@ public class AnyResultAwaitingCondition implements ResultAwaitingCondition {
             final ResultAwaitingCondition awaitingCondition = awaitingConditions.get(i);
             if (awaitingCondition.isMet()) {
                 metConditionIndex = i;
+                dispose();
                 return true;
             }
         }
@@ -53,5 +55,15 @@ public class AnyResultAwaitingCondition implements ResultAwaitingCondition {
         result.add(new Variable(metConditionIndex));
         result.add(awaitingConditions.get(metConditionIndex).getReturnValue());
         return new Variable(result);
+    }
+
+    @Override
+    public void dispose() {
+        if (!disposed) {
+            disposed = true;
+            for (ResultAwaitingCondition awaitingCondition : awaitingConditions) {
+                awaitingCondition.dispose();
+            }
+        }
     }
 }

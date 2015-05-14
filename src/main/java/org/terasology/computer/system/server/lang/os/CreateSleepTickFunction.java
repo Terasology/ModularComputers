@@ -85,5 +85,10 @@ public class CreateSleepTickFunction extends TerasologyFunctionExecutable {
         public Variable getReturnValue() {
             return new Variable(null);
         }
+
+        @Override
+        public void dispose() {
+
+        }
     }
 }

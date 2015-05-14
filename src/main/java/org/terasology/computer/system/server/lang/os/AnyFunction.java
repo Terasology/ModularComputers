@@ -37,7 +37,8 @@ public class AnyFunction extends TerasologyFunctionExecutable {
                         "In addition when this condition is <h navigate:" + DocumentationBuilder.getBuiltInObjectMethodPageId("os", "waitFor") +
                         ">waitedFor</h> the waitFor for this " +
                         "condition will return an array containing two objects - index of the condition that became true, " +
-                        "and the value returned by the condition.");
+                        "and the value returned by the condition.  If multiple conditions become true in the same " +
+                        "tick, the condition with the lowest index in the list is used.");
 
         addParameter("conditions", "Array of Condition", "Conditions that this condition will wait for to become true.");
 
@@ -87,7 +88,7 @@ public class AnyFunction extends TerasologyFunctionExecutable {
 
 
             @Override
-            public ResultAwaitingCondition createAwaitingCondition() {
+            public ResultAwaitingCondition createAwaitingCondition() throws ExecutionException {
                 List<ResultAwaitingCondition> anyConditionList = new ArrayList<ResultAwaitingCondition>();
                 for (AbstractConditionCustomObject anyCondition : anyConditions) {
                     anyConditionList.add(anyCondition.createAwaitingCondition());

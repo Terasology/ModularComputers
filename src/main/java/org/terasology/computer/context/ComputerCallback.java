@@ -32,4 +32,6 @@ public interface ComputerCallback {
     void suspendWithCondition(ResultAwaitingCondition condition);
 
     EntityRef getComputerEntity();
+
+    EntityRef getExecutedBy();
 }
