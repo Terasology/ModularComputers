@@ -16,8 +16,8 @@
 package org.terasology.computer.module.wireless;
 
 import com.gempukku.lang.Variable;
-import com.google.api.client.util.Maps;
 import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import org.terasology.math.geom.Vector3i;
 
