@@ -151,7 +151,7 @@ public class ComputerTerminalWidget extends CoreWidget {
 
     private Font getFont(Canvas canvas) {
         if (monospacedFont == null) {
-            monospacedFont = Assets.getFont(monospaceFont);
+            monospacedFont = Assets.getFont(monospaceFont).get();
         }
         return monospacedFont;
     }

@@ -28,6 +28,7 @@ import org.terasology.logic.health.DestroyEvent;
 import org.terasology.math.Direction;
 import org.terasology.math.geom.Vector3f;
 import org.terasology.math.geom.Vector3i;
+import org.terasology.registry.In;
 import org.terasology.world.BlockEntityRegistry;
 import org.terasology.world.WorldProvider;
 import org.terasology.world.block.Block;
@@ -39,6 +40,9 @@ public class DestroyToInventoryMethod extends AbstractModuleMethodExecutable<Obj
     private final String methodName;
     private WorldProvider worldProvider;
     private BlockEntityRegistry blockEntityRegistry;
+
+    @In
+    BlockManager blockManager;
 
     public DestroyToInventoryMethod(String methodName, WorldProvider worldProvider, BlockEntityRegistry blockEntityRegistry) {
         super("Destroys the block in the specified direction. The resulting items from " +
@@ -87,9 +91,9 @@ public class DestroyToInventoryMethod extends AbstractModuleMethodExecutable<Obj
                 computerLocation.z + directionVector.z);
 
         Block blockBeforeDestroy = worldProvider.getBlock(harvestLocation);
-        if (blockBeforeDestroy != BlockManager.getAir()) {
+        if (blockBeforeDestroy != blockManager.getBlock(BlockManager.AIR_ID)) {
             EntityRef harvestedEntity = blockEntityRegistry.getBlockEntityAt(harvestLocation);
-            harvestedEntity.send(new DestroyEvent(inventory.inventory, computer.getComputerEntity(), Assets.getPrefab("ModularComputers:harvestDamagePickup")));
+            harvestedEntity.send(new DestroyEvent(inventory.inventory, computer.getComputerEntity(), Assets.getPrefab("ModularComputers:harvestDamagePickup").get()));
 
             return worldProvider.getBlock(harvestLocation) != blockBeforeDestroy;
         } else {

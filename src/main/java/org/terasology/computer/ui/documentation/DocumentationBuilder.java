@@ -429,7 +429,7 @@ public final class DocumentationBuilder {
 
             @Override
             public Font getFont(boolean hyperlink) {
-                return Assets.getFont("engine:NotoSans-Bold");
+                return Assets.getFont("engine:NotoSans-Bold").get();
             }
         };
         return HTMLLikeParser.parseHTMLLikeParagraph(renderStyle, text);
