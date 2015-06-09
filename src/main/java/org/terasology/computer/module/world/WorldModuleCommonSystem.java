@@ -24,6 +24,7 @@ import org.terasology.logic.inventory.InventoryManager;
 import org.terasology.registry.In;
 import org.terasology.world.BlockEntityRegistry;
 import org.terasology.world.WorldProvider;
+import org.terasology.world.block.BlockManager;
 
 @RegisterSystem(RegisterMode.ALWAYS)
 public class WorldModuleCommonSystem extends BaseComponentSystem {
@@ -38,6 +39,8 @@ public class WorldModuleCommonSystem extends BaseComponentSystem {
     private InventoryManager inventoryManager;
     @In
     private ModuleConfigManager moduleConfigManager;
+    @In
+    private BlockManager blockManager;
 
     @Override
     public void preBegin() {
@@ -46,7 +49,8 @@ public class WorldModuleCommonSystem extends BaseComponentSystem {
                     WORLD_MODULE_TYPE,
                     new WorldComputerModule(
                             worldProvider, blockEntityRegistry,
-                            inventoryManager, WORLD_MODULE_TYPE, "World interaction"),
+                            inventoryManager, blockManager,
+                            WORLD_MODULE_TYPE, "World interaction"),
                     "This module allows to interact with objects in the world.",
                     null);
         }

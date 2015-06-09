@@ -19,13 +19,18 @@ import org.terasology.computer.module.DefaultComputerModule;
 import org.terasology.logic.inventory.InventoryManager;
 import org.terasology.world.BlockEntityRegistry;
 import org.terasology.world.WorldProvider;
+import org.terasology.world.block.Block;
+import org.terasology.world.block.BlockManager;
 
 public class WorldComputerModule extends DefaultComputerModule {
-    public WorldComputerModule(WorldProvider worldProvider, BlockEntityRegistry blockEntityRegistry, InventoryManager inventoryManager, String moduleType, String moduleName) {
+    public WorldComputerModule(WorldProvider worldProvider, BlockEntityRegistry blockEntityRegistry, InventoryManager inventoryManager,
+                               BlockManager blockManager,
+                               String moduleType, String moduleName) {
         super(moduleType, moduleName);
 
-        addMethod("destroyBlock", new DestroyMethod("destroyBlock", worldProvider, blockEntityRegistry));
-        addMethod("destroyBlockToInventory", new DestroyToInventoryMethod("destroyBlockToInventory", worldProvider, blockEntityRegistry));
+        Block air = blockManager.getBlock(BlockManager.AIR_ID);
+        addMethod("destroyBlock", new DestroyMethod("destroyBlock", worldProvider, blockEntityRegistry, air));
+        addMethod("destroyBlockToInventory", new DestroyToInventoryMethod("destroyBlockToInventory", worldProvider, blockEntityRegistry, air));
         addMethod("placeBlock", new PlaceBlockMethod("placeBlock", worldProvider, blockEntityRegistry, inventoryManager));
     }
 }
