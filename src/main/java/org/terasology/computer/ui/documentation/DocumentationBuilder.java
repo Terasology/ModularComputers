@@ -20,6 +20,8 @@ import org.slf4j.LoggerFactory;
 import org.terasology.asset.Assets;
 import org.terasology.rendering.nui.widgets.browser.data.ParagraphData;
 import org.terasology.rendering.nui.widgets.browser.data.basic.HTMLLikeParser;
+import org.terasology.rendering.nui.widgets.browser.ui.style.ContainerInteger;
+import org.terasology.rendering.nui.widgets.browser.ui.style.FixedContainerInteger;
 import org.terasology.rendering.nui.widgets.browser.ui.style.ParagraphRenderStyle;
 import org.terasology.computer.system.common.ComputerLanguageContext;
 import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
@@ -423,8 +425,8 @@ public final class DocumentationBuilder {
     private static ParagraphData emphasizedParagraphWithSpaceBefore(String text) {
         ParagraphRenderStyle renderStyle = new ParagraphRenderStyle() {
             @Override
-            public Integer getParagraphIndentTop(boolean firstParagraph) {
-                return 10;
+            public ContainerInteger getParagraphMarginTop() {
+                return new FixedContainerInteger(10);
             }
 
             @Override
@@ -463,43 +465,43 @@ public final class DocumentationBuilder {
                 HTMLLikeParser.parseHTMLLikeParagraph(
                         new ParagraphRenderStyle() {
                             @Override
-                            public Integer getParagraphIndentTop(boolean firstParagraph) {
-                                return 5;
+                            public ContainerInteger getParagraphMarginTop() {
+                                return new FixedContainerInteger(5);
                             }
 
                             @Override
-                            public Integer getParagraphIndentBottom(boolean lastParagraph) {
-                                return 5;
+                            public ContainerInteger getParagraphMarginBottom() {
+                                return new FixedContainerInteger(5);
                             }
 
                             @Override
-                            public Integer getParagraphIndentLeft() {
-                                return 5;
+                            public ContainerInteger getParagraphMarginLeft() {
+                                return new FixedContainerInteger(5);
                             }
 
                             @Override
-                            public Integer getParagraphIndentRight() {
-                                return 5;
+                            public ContainerInteger getParagraphMarginRight() {
+                                return new FixedContainerInteger(5);
                             }
 
                             @Override
-                            public Integer getParagraphBackgroundIndentTop() {
-                                return 3;
+                            public ContainerInteger getParagraphPaddingTop() {
+                                return new FixedContainerInteger(3);
                             }
 
                             @Override
-                            public Integer getParagraphBackgroundIndentBottom() {
-                                return 3;
+                            public ContainerInteger getParagraphPaddingBottom() {
+                                return new FixedContainerInteger(3);
                             }
 
                             @Override
-                            public Integer getParagraphBackgroundIndentLeft() {
-                                return 3;
+                            public ContainerInteger getParagraphPaddingLeft() {
+                                return new FixedContainerInteger(3);
                             }
 
                             @Override
-                            public Integer getParagraphBackgroundIndentRight() {
-                                return 3;
+                            public ContainerInteger getParagraphPaddingRight() {
+                                return new FixedContainerInteger(3);
                             }
 
                             @Override
@@ -508,8 +510,8 @@ public final class DocumentationBuilder {
                             }
 
                             @Override
-                            public Integer getParagraphMinimumWidth() {
-                                return finalMaxCodeLineLength * 8;
+                            public ContainerInteger getParagraphMinimumWidth() {
+                                return new FixedContainerInteger(finalMaxCodeLineLength * 8);
                             }
                         },
                         "<f ModularComputers:november>" + codeEncoded.toString() + "</f>"));
