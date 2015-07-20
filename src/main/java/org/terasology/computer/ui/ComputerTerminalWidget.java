@@ -30,7 +30,7 @@ import org.terasology.computer.event.server.StopProgramEvent;
 import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.input.Keyboard;
-import org.terasology.input.events.KeyEvent;
+import org.terasology.input.device.KeyboardDevice;
 import org.terasology.logic.characters.CharacterComponent;
 import org.terasology.logic.clipboard.ClipboardManager;
 import org.terasology.logic.common.DisplayNameComponent;
@@ -44,6 +44,7 @@ import org.terasology.rendering.nui.CoreWidget;
 import org.terasology.rendering.nui.HorizontalAlign;
 import org.terasology.rendering.nui.LayoutConfig;
 import org.terasology.rendering.nui.VerticalAlign;
+import org.terasology.rendering.nui.events.NUIKeyEvent;
 
 import java.util.Collection;
 
@@ -214,24 +215,26 @@ public class ComputerTerminalWidget extends CoreWidget {
     }
 
     @Override
-    public void onKeyEvent(KeyEvent event) {
+    public boolean onKeyEvent(NUIKeyEvent event) {
         if (isFocused()) {
             int keyboardCharId = event.getKey().getId();
             if (event.isDown()) {
                 char character = event.getKeyCharacter();
                 if (mode == TerminalMode.PLAYER_CONSOLE) {
                     if (editingProgram) {
+                        KeyboardDevice keyboard = event.getKeyboard();
                         programEditingConsoleGui.keyTypedInEditingProgram(character, keyboardCharId,
-                                Keyboard.isKeyDown(Keyboard.KeyId.LEFT_CTRL) || Keyboard.isKeyDown(Keyboard.KeyId.RIGHT_CTRL));
+                                keyboard.isKeyDown(Keyboard.KeyId.LEFT_CTRL) || keyboard.isKeyDown(Keyboard.KeyId.RIGHT_CTRL));
                     } else {
                         playerCommandConsoleGui.keyTypedInPlayerConsole(character, keyboardCharId);
                     }
                 }
             }
             if (keyboardCharId != Keyboard.KeyId.ESCAPE) {
-                event.consume();
+                return true;
             }
         }
+        return false;
     }
 
     protected void exitProgramming() {
