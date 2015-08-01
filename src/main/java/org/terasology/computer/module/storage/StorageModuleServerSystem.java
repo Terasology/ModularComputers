@@ -116,7 +116,7 @@ public class StorageModuleServerSystem extends BaseComponentSystem {
             InventoryComponent inventoryComponent = inventoryEntity.getComponent(InventoryComponent.class);
 
             FastRandom random = new FastRandom();
-            PickupBuilder pickupBuilder = new PickupBuilder(entityManager);
+            PickupBuilder pickupBuilder = new PickupBuilder(entityManager, inventoryManager);
             for (EntityRef itemSlot : inventoryComponent.itemSlots) {
                 if (itemSlot.exists()) {
                     EntityRef pickup = pickupBuilder.createPickupFor(itemSlot, blockLocation.toVector3f(), 60, true);
