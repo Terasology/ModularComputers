@@ -28,7 +28,7 @@ import org.terasology.entitySystem.systems.RegisterSystem;
 import org.terasology.logic.inventory.InventoryComponent;
 import org.terasology.logic.inventory.InventoryManager;
 import org.terasology.logic.inventory.InventoryUtils;
-import org.terasology.logic.inventory.PickupBuilder;
+import org.terasology.logic.inventory.events.DropItemEvent;
 import org.terasology.logic.inventory.events.InventorySlotChangedEvent;
 import org.terasology.math.geom.Vector3i;
 import org.terasology.mobileBlocks.server.AfterBlockMovedEvent;
@@ -116,11 +116,10 @@ public class StorageModuleServerSystem extends BaseComponentSystem {
             InventoryComponent inventoryComponent = inventoryEntity.getComponent(InventoryComponent.class);
 
             FastRandom random = new FastRandom();
-            PickupBuilder pickupBuilder = new PickupBuilder(entityManager, inventoryManager);
             for (EntityRef itemSlot : inventoryComponent.itemSlots) {
                 if (itemSlot.exists()) {
-                    EntityRef pickup = pickupBuilder.createPickupFor(itemSlot, blockLocation.toVector3f(), 60, true);
-                    pickup.send(new ImpulseEvent(random.nextVector3f(30.0f)));
+                    itemSlot.send(new DropItemEvent(blockLocation.toVector3f()));
+                    itemSlot.send(new ImpulseEvent(random.nextVector3f(30.0f)));
                 }
             }
         }
