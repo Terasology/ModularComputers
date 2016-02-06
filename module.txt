@@ -8,6 +8,11 @@
                 {
                      "id" : "MobileBlocks",
                      "minVersion" : "0.1.0"
-                }],
+                },
+                {
+                     "id" : "Core",
+                     "minVersion" : "1.0.0"
+                }
+     ],
      "isServerSideOnly" : false
  }
