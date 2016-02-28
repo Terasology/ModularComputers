@@ -17,7 +17,7 @@ package org.terasology.computer.module.world;
 
 import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.Variable;
-import org.terasology.asset.Assets;
+import org.terasology.utilities.Assets;
 import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.AbstractModuleMethodExecutable;
@@ -29,7 +29,6 @@ import org.terasology.math.geom.Vector3i;
 import org.terasology.world.BlockEntityRegistry;
 import org.terasology.world.WorldProvider;
 import org.terasology.world.block.Block;
-import org.terasology.world.block.BlockManager;
 
 import java.util.Map;
 

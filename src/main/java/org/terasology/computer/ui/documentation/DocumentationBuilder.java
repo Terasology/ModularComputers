@@ -17,7 +17,7 @@ package org.terasology.computer.ui.documentation;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.terasology.asset.Assets;
+import org.terasology.utilities.Assets;
 import org.terasology.rendering.nui.widgets.browser.data.ParagraphData;
 import org.terasology.rendering.nui.widgets.browser.data.basic.HTMLLikeParser;
 import org.terasology.rendering.nui.widgets.browser.ui.style.ContainerInteger;
