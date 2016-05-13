@@ -15,9 +15,6 @@
  */
 package org.terasology.computer.ui;
 
-import org.terasology.rendering.nui.widgets.browser.data.basic.HTMLLikeParser;
-import org.terasology.rendering.nui.widgets.browser.ui.BrowserHyperlinkListener;
-import org.terasology.rendering.nui.widgets.browser.ui.BrowserWidget;
 import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
 import org.terasology.computer.ui.documentation.DefaultDocumentationData;
 import org.terasology.computer.ui.documentation.DocumentationBuilder;
@@ -36,6 +33,9 @@ import org.terasology.rendering.nui.widgets.ItemActivateEventListener;
 import org.terasology.rendering.nui.widgets.ItemSelectEventListener;
 import org.terasology.rendering.nui.widgets.UIButton;
 import org.terasology.rendering.nui.widgets.UIList;
+import org.terasology.rendering.nui.widgets.browser.data.basic.HTMLLikeParser;
+import org.terasology.rendering.nui.widgets.browser.ui.BrowserHyperlinkListener;
+import org.terasology.rendering.nui.widgets.browser.ui.BrowserWidget;
 
 import java.util.Collection;
 import java.util.Deque;
@@ -64,7 +64,7 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
     private UIList<DocumentationPageInfo> tocList;
 
     @Override
-    protected void initialise() {
+    public void initialise() {
         computerTerminalWidget = find("computerTerminal", ComputerTerminalWidget.class);
 
         playerConsoleTabButton = find("playerConsole", UIButton.class);
