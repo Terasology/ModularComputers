@@ -104,7 +104,7 @@ public class PlaceBlockMethod extends AbstractModuleMethodExecutable<Object> {
                 if (removedItem != null) {
                     Side surfaceSide = Side.inDirection(direction.reverse().getVector3f());
 
-                    Block block = type.getBlockForPlacement(worldProvider, blockEntityRegistry, placementPos, surfaceSide, null);
+                    Block block = type.getBlockForPlacement(placementPos, surfaceSide, null);
 
                     PlaceBlocks placeBlocks = new PlaceBlocks(placementPos, block, computer.getComputerEntity());
                     worldProvider.getWorldEntity().send(placeBlocks);
