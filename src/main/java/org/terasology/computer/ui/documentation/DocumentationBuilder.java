@@ -438,7 +438,7 @@ public final class DocumentationBuilder {
     }
 
     private static ParagraphData createTitleParagraph(String title) {
-        return HTMLLikeParser.parseHTMLLikeParagraph(null, "<f engine:title>" + title + "</f>");
+        return HTMLLikeParser.parseHTMLLikeParagraph(null, "<f engine:NotoSans-Regular-Title>" + title + "</f>");
     }
 
     public static Collection<ParagraphData> createExampleParagraphs(String description, String code) {
