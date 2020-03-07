@@ -15,7 +15,6 @@
  */
 package org.terasology.computer.ui;
 
-import org.codehaus.plexus.util.StringUtils;
 import org.terasology.utilities.Assets;
 import org.terasology.computer.context.ComputerConsole;
 import org.terasology.computer.event.server.ConsoleListeningRegistrationEvent;
@@ -120,8 +119,11 @@ public class ComputerTerminalWidget extends CoreWidget {
 
     public void displayProgramList(Collection<String> programs) {
         if (!programs.isEmpty()) {
-            String programList = StringUtils.join(programs.iterator(), " ");
-            playerCommandConsoleGui.appendToConsole(programList);
+            StringBuilder allPrograms = new StringBuilder();
+            for (Object program : programs) {
+                allPrograms.append(program).append(" ");
+            }
+            playerCommandConsoleGui.appendToConsole(allPrograms.toString().trim());
         }
         playerCommandConsoleGui.setReadOnly(false);
     }
