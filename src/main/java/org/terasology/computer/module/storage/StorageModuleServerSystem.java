@@ -30,6 +30,7 @@ import org.terasology.logic.inventory.InventoryManager;
 import org.terasology.logic.inventory.InventoryUtils;
 import org.terasology.logic.inventory.events.DropItemEvent;
 import org.terasology.logic.inventory.events.InventorySlotChangedEvent;
+import org.terasology.math.JomlUtil;
 import org.terasology.math.geom.Vector3i;
 import org.terasology.mobileBlocks.server.AfterBlockMovedEvent;
 import org.terasology.mobileBlocks.server.BeforeBlockMovesEvent;
@@ -119,7 +120,7 @@ public class StorageModuleServerSystem extends BaseComponentSystem {
             for (EntityRef itemSlot : inventoryComponent.itemSlots) {
                 if (itemSlot.exists()) {
                     itemSlot.send(new DropItemEvent(blockLocation.toVector3f()));
-                    itemSlot.send(new ImpulseEvent(random.nextVector3f(30.0f)));
+                    itemSlot.send(new ImpulseEvent(JomlUtil.from(random.nextVector3f(30.0f))));
                 }
             }
         }
