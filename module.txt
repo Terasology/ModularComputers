@@ -6,7 +6,7 @@
     "description": "Computers in Terasology! Automate all the things with just a bit of programming.",
     "dependencies": [
         { "id": "Inventory", "minVersion": "1.1.0" },
-        { "id": "MobileBlocks", "minVersion": "0.1.0" }
+        { "id": "MobileBlocks", "minVersion": "1.0.0" }
     ],
     "isServerSideOnly": false,
     "isLibrary": true
