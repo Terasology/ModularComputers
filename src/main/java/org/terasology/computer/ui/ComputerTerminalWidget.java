@@ -1,20 +1,9 @@
-/*
- * Copyright 2015 MovingBlocks
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
 package org.terasology.computer.ui;
 
+import org.joml.Rectanglei;
+import org.terasology.math.JomlUtil;
 import org.terasology.utilities.Assets;
 import org.terasology.computer.context.ComputerConsole;
 import org.terasology.computer.event.server.ConsoleListeningRegistrationEvent;
@@ -33,17 +22,16 @@ import org.terasology.input.device.KeyboardDevice;
 import org.terasology.logic.characters.CharacterComponent;
 import org.terasology.logic.clipboard.ClipboardManager;
 import org.terasology.logic.common.DisplayNameComponent;
-import org.terasology.math.geom.Rect2i;
-import org.terasology.math.geom.Vector2i;
+import org.joml.Vector2i;
 import org.terasology.network.ClientComponent;
 import org.terasology.rendering.assets.font.Font;
-import org.terasology.rendering.nui.Canvas;
-import org.terasology.rendering.nui.Color;
-import org.terasology.rendering.nui.CoreWidget;
-import org.terasology.rendering.nui.HorizontalAlign;
-import org.terasology.rendering.nui.LayoutConfig;
-import org.terasology.rendering.nui.VerticalAlign;
-import org.terasology.rendering.nui.events.NUIKeyEvent;
+import org.terasology.nui.Canvas;
+import org.terasology.nui.Color;
+import org.terasology.nui.CoreWidget;
+import org.terasology.nui.HorizontalAlign;
+import org.terasology.nui.LayoutConfig;
+import org.terasology.nui.VerticalAlign;
+import org.terasology.nui.events.NUIKeyEvent;
 
 import java.util.Collection;
 
@@ -130,13 +118,13 @@ public class ComputerTerminalWidget extends CoreWidget {
 
     @Override
     public void onDraw(Canvas canvas) {
-        Rect2i region = canvas.getRegion();
+        Rectanglei region = canvas.getRegion();
 
-        int screenWidth = region.width();
-        int screenHeight = region.height();
+        int screenWidth = region.lengthX();
+        int screenHeight = region.lengthY();
 
         // Fill background with solid dark-grey
-        canvas.drawFilledRectangle(Rect2i.createFromMinAndSize(0, 0, screenWidth, screenHeight), BACKGROUND_COLOR);
+        canvas.drawFilledRectangle(JomlUtil.rectangleiFromMinAndSize(0, 0, screenWidth, screenHeight), BACKGROUND_COLOR);
 
         // Draw white rectangle around the screen
         drawHorizontalLine(canvas, 0, 0, screenWidth, FRAME_COLOR);
@@ -213,7 +201,7 @@ public class ComputerTerminalWidget extends CoreWidget {
     }
 
     private void renderCharAt(Canvas canvas, char ch, int x, int y, Color color) {
-        canvas.drawTextRaw(String.valueOf(ch), getFont(canvas), color, Rect2i.createFromMinAndSize(x, y, characterWidth, fontHeight), HorizontalAlign.CENTER, VerticalAlign.TOP);
+        canvas.drawTextRaw(String.valueOf(ch), getFont(canvas), color, JomlUtil.rectangleiFromMinAndSize(x, y, characterWidth, fontHeight), HorizontalAlign.CENTER, VerticalAlign.TOP);
     }
 
     @Override
