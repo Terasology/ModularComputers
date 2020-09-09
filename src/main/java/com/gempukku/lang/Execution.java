@@ -1,7 +1,11 @@
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang;
 
 public interface Execution {
-    public boolean hasNextExecution(ExecutionContext executionContext);
+    boolean hasNextExecution(ExecutionContext executionContext);
 
-    public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration) throws ExecutionException;
+    ExecutionProgress executeNextStatement(ExecutionContext executionContext,
+                                           ExecutionCostConfiguration configuration) throws ExecutionException;
 }

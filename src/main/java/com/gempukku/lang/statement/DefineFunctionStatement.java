@@ -1,3 +1,6 @@
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.statement;
 
 import com.gempukku.lang.CallContext;
@@ -16,9 +19,9 @@ import com.gempukku.lang.execution.SimpleExecution;
 import java.util.List;
 
 public class DefineFunctionStatement implements DefiningExecutableStatement {
-    private String _name;
-    private List<String> _parameterNames;
-    private List<ExecutableStatement> _statements;
+    private final String _name;
+    private final List<String> _parameterNames;
+    private final List<ExecutableStatement> _statements;
 
     public DefineFunctionStatement(String name, List<String> parameterNames, List<ExecutableStatement> statements) throws IllegalSyntaxException {
         _name = name;
@@ -36,7 +39,8 @@ public class DefineFunctionStatement implements DefiningExecutableStatement {
         return new SimpleExecution() {
             @Override
             protected ExecutionProgress execute(ExecutionContext context, ExecutionCostConfiguration configuration) throws ExecutionException {
-                final DefaultFunctionExecutable functionExecutable = new DefaultFunctionExecutable(context.peekCallContext(), _parameterNames);
+                final DefaultFunctionExecutable functionExecutable =
+                        new DefaultFunctionExecutable(context.peekCallContext(), _parameterNames);
                 functionExecutable.setStatement(
                         new BlockStatement(_statements, false, true));
                 final CallContext callContext = context.peekCallContext();

@@ -1,18 +1,5 @@
-/*
- * Copyright 2015 MovingBlocks
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
 package org.terasology.computer.system.server.lang.computer.bind;
 
 
@@ -25,7 +12,7 @@ import org.terasology.computer.system.server.lang.ComputerModule;
 import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
 
 public class SlotBindingObjectDefinition implements ObjectDefinition {
-    private int _slotNo;
+    private final int _slotNo;
 
     public SlotBindingObjectDefinition(int slotNo) {
         _slotNo = slotNo;
@@ -33,7 +20,8 @@ public class SlotBindingObjectDefinition implements ObjectDefinition {
 
     @Override
     public Variable getMember(ExecutionContext context, String name) {
-        final TerasologyComputerExecutionContext terasologyExecutionContext = (TerasologyComputerExecutionContext) context;
+        final TerasologyComputerExecutionContext terasologyExecutionContext =
+                (TerasologyComputerExecutionContext) context;
         final ComputerCallback computerCallback = terasologyExecutionContext.getComputerCallback();
 
         final ComputerModule module = computerCallback.getModule(_slotNo);
@@ -43,7 +31,8 @@ public class SlotBindingObjectDefinition implements ObjectDefinition {
         final ModuleMethodExecutable moduleFunction = module.getMethodByName(name);
 
         if (moduleFunction != null) {
-            return new Variable(new BindingFunctionWrapper(module, _slotNo, new ModuleFunctionAdapter(_slotNo, moduleFunction)));
+            return new Variable(new BindingFunctionWrapper(module, _slotNo, new ModuleFunctionAdapter(_slotNo,
+                    moduleFunction)));
         } else {
             return new Variable(null);
         }

@@ -7,11 +7,14 @@ import org.terasology.computer.ui.documentation.DefaultDocumentationData;
 import org.terasology.computer.ui.documentation.DocumentationBuilder;
 import org.terasology.computer.ui.documentation.DocumentationPageInfo;
 import org.terasology.computer.ui.documentation.TableOfContents;
-import org.terasology.entitySystem.entity.EntityRef;
-import org.terasology.logic.clipboard.ClipboardManager;
-import org.terasology.registry.CoreRegistry;
-import org.terasology.rendering.nui.CoreScreenLayer;
-import org.terasology.rendering.nui.NUIManager;
+import org.terasology.engine.entitySystem.entity.EntityRef;
+import org.terasology.engine.logic.clipboard.ClipboardManager;
+import org.terasology.engine.registry.CoreRegistry;
+import org.terasology.engine.rendering.nui.CoreScreenLayer;
+import org.terasology.engine.rendering.nui.NUIManager;
+import org.terasology.engine.rendering.nui.widgets.browser.data.basic.HTMLLikeParser;
+import org.terasology.engine.rendering.nui.widgets.browser.ui.BrowserHyperlinkListener;
+import org.terasology.engine.rendering.nui.widgets.browser.ui.BrowserWidget;
 import org.terasology.nui.UIWidget;
 import org.terasology.nui.itemRendering.StringTextRenderer;
 import org.terasology.nui.layouts.CardLayout;
@@ -20,9 +23,6 @@ import org.terasology.nui.widgets.ItemActivateEventListener;
 import org.terasology.nui.widgets.ItemSelectEventListener;
 import org.terasology.nui.widgets.UIButton;
 import org.terasology.nui.widgets.UIList;
-import org.terasology.rendering.nui.widgets.browser.data.basic.HTMLLikeParser;
-import org.terasology.rendering.nui.widgets.browser.ui.BrowserHyperlinkListener;
-import org.terasology.rendering.nui.widgets.browser.ui.BrowserWidget;
 
 import java.util.Collection;
 import java.util.Deque;
@@ -32,22 +32,18 @@ import java.util.List;
 import java.util.Set;
 
 public class ComputerTerminalWindow extends CoreScreenLayer {
+    private final Deque<String> browserHistory = new LinkedList<>();
+    private final Deque<String> browserFuture = new LinkedList<>();
+    private final Set<String> expandedPageIds = new HashSet<>();
     private ComputerTerminalWidget computerTerminalWidget;
-
-    private Deque<String> browserHistory = new LinkedList<>();
-    private Deque<String> browserFuture = new LinkedList<>();
     private UIButton backButton;
     private UIButton forwardButton;
-
     private DefaultDocumentationData documentationData;
     private BrowserWidget browser;
     private CardLayout tabs;
-
     private UIButton playerConsoleTabButton;
     private UIButton computerConsoleTabButton;
     private UIButton documentationTabButton;
-
-    private Set<String> expandedPageIds = new HashSet<>();
     private UIList<DocumentationPageInfo> tocList;
 
     @Override
@@ -69,7 +65,8 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
                             navigateTo(hyperlink.substring(9), true);
                         } else if (hyperlink.startsWith("saveAs:")) {
                             String[] split = hyperlink.substring(7).split(":", 2);
-                            saveAs(HTMLLikeParser.unencodeHTMLLike(split[0]), HTMLLikeParser.unencodeHTMLLike(split[1]));
+                            saveAs(HTMLLikeParser.unencodeHTMLLike(split[0]),
+                                    HTMLLikeParser.unencodeHTMLLike(split[1]));
                         }
                     }
                 });
@@ -212,7 +209,8 @@ public class ComputerTerminalWindow extends CoreScreenLayer {
         tocList.setList(items);
     }
 
-    private void populateChildrenOfParent(TableOfContents tableOfContents, List<DocumentationPageInfo> items, int level, String parent) {
+    private void populateChildrenOfParent(TableOfContents tableOfContents, List<DocumentationPageInfo> items,
+                                          int level, String parent) {
         if (parent == null || expandedPageIds.contains(parent)) {
             Collection<DocumentationPageInfo> contents = tableOfContents.getContents(parent);
             for (DocumentationPageInfo content : contents) {

@@ -1,13 +1,13 @@
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.parser;
 
 public class Term {
-    public enum Type {PROGRAM, STRING, COMMENT}
-
-    private Type _type;
+    private final Type _type;
     private String _value;
-    private int _line;
+    private final int _line;
     private int _column;
-
     public Term(Type type, String value, int line, int column) {
         _type = type;
         _value = value;
@@ -35,4 +35,6 @@ public class Term {
     public int getColumn() {
         return _column;
     }
+
+    public enum Type {PROGRAM, STRING, COMMENT}
 }

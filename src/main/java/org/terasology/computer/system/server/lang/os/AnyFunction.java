@@ -1,18 +1,5 @@
-/*
- * Copyright 2015 MovingBlocks
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
 package org.terasology.computer.system.server.lang.os;
 
 
@@ -36,11 +23,13 @@ public class AnyFunction extends TerasologyFunctionExecutable {
                 "Condition that becomes true, when any of the passed conditions becomes true.<l>" +
                         "In addition when this condition is <h navigate:" + DocumentationBuilder.getBuiltInObjectMethodPageId("os", "waitFor") +
                         ">waitedFor</h> the waitFor for this " +
-                        "condition will return an array containing two objects - index of the condition that became true, " +
+                        "condition will return an array containing two objects - index of the condition that became " +
+                        "true, " +
                         "and the value returned by the condition.  If multiple conditions become true in the same " +
                         "tick, the condition with the lowest index in the list is used.");
 
-        addParameter("conditions", "Array of Condition", "Conditions that this condition will wait for to become true.");
+        addParameter("conditions", "Array of Condition", "Conditions that this condition will wait for to become true" +
+                ".");
 
         addExample("This example creates two conditions, one waiting for 3 seconds, the other for 5 seconds, waits " +
                         "for ANY of them and prints out text to console.",
@@ -71,7 +60,8 @@ public class AnyFunction extends TerasologyFunctionExecutable {
             if (condition.getType() != Variable.Type.CUSTOM_OBJECT || !((CustomObject) condition.getValue()).getType().contains("CONDITION")) {
                 throw new ExecutionException(line, "Expected a LIST of CONDITIONs in any()");
             }
-            final AbstractConditionCustomObject conditionDefinition = (AbstractConditionCustomObject) condition.getValue();
+            final AbstractConditionCustomObject conditionDefinition =
+                    (AbstractConditionCustomObject) condition.getValue();
             anyConditions.add(conditionDefinition);
         }
 

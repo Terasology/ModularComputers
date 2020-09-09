@@ -1,3 +1,6 @@
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.statement;
 
 import com.gempukku.lang.CallContext;
@@ -12,9 +15,9 @@ import com.gempukku.lang.execution.MultiStatementExecution;
 import java.util.List;
 
 public class BlockStatement implements ExecutableStatement {
-    private List<ExecutableStatement> _statements;
-    private boolean _consumesBreak;
-    private boolean _consumesReturn;
+    private final List<ExecutableStatement> _statements;
+    private final boolean _consumesBreak;
+    private final boolean _consumesReturn;
 
     public BlockStatement(List<ExecutableStatement> statements, boolean consumesBreak, boolean consumesReturn) {
         _statements = statements;
@@ -32,8 +35,10 @@ public class BlockStatement implements ExecutableStatement {
             }
 
             @Override
-            public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration) throws ExecutionException {
-                CallContext blockContext = new CallContext(executionContext.peekCallContext(), _consumesBreak, _consumesReturn);
+            public ExecutionProgress executeNextStatement(ExecutionContext executionContext,
+                                                          ExecutionCostConfiguration configuration) throws ExecutionException {
+                CallContext blockContext = new CallContext(executionContext.peekCallContext(), _consumesBreak,
+                        _consumesReturn);
                 executionContext.stackExecutionGroup(blockContext, new MultiStatementExecution(_statements));
                 _stacked = true;
                 return new ExecutionProgress(configuration.getStackGroupExecution());

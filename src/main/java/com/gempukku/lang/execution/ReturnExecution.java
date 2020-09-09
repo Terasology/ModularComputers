@@ -1,3 +1,6 @@
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.execution;
 
 import com.gempukku.lang.ExecutableStatement;
@@ -8,7 +11,7 @@ import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.ExecutionProgress;
 
 public class ReturnExecution implements Execution {
-    private ExecutableStatement _result;
+    private final ExecutableStatement _result;
 
     private boolean _stackedExecution;
     private boolean _returnedResult;
@@ -21,13 +24,12 @@ public class ReturnExecution implements Execution {
     public boolean hasNextExecution(ExecutionContext executionContext) {
         if (!_stackedExecution)
             return true;
-        if (!_returnedResult)
-            return true;
-        return false;
+        return !_returnedResult;
     }
 
     @Override
-    public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration) throws ExecutionException {
+    public ExecutionProgress executeNextStatement(ExecutionContext executionContext,
+                                                  ExecutionCostConfiguration configuration) throws ExecutionException {
         if (!_stackedExecution) {
             executionContext.stackExecution(_result.createExecution());
             _stackedExecution = true;

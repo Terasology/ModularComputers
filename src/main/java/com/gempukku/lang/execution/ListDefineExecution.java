@@ -1,3 +1,6 @@
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.execution;
 
 import com.gempukku.lang.ExecutableStatement;
@@ -12,13 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ListDefineExecution implements Execution {
-    private List<ExecutableStatement> _executableStatements;
+    private final List<ExecutableStatement> _executableStatements;
     private int _nextStackIndex;
     private int _nextRetrieveIndex;
 
     private boolean _assignedResult;
 
-    private List<Variable> _result = new ArrayList<Variable>();
+    private final List<Variable> _result = new ArrayList<Variable>();
 
     public ListDefineExecution(List<ExecutableStatement> executableStatements) {
         _executableStatements = executableStatements;
@@ -30,7 +33,8 @@ public class ListDefineExecution implements Execution {
     }
 
     @Override
-    public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration) throws ExecutionException {
+    public ExecutionProgress executeNextStatement(ExecutionContext executionContext,
+                                                  ExecutionCostConfiguration configuration) throws ExecutionException {
         if (_nextRetrieveIndex < _nextStackIndex) {
             _result.add(new Variable(executionContext.getContextValue().getValue()));
             _nextRetrieveIndex++;

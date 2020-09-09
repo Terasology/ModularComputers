@@ -1,3 +1,6 @@
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.execution;
 
 import com.gempukku.lang.ExecutableStatement;
@@ -9,9 +12,9 @@ import com.gempukku.lang.ExecutionProgress;
 import com.gempukku.lang.Variable;
 
 public class MemberAccessExecution implements Execution {
-    private int _line;
-    private ExecutableStatement _object;
-    private String _propertyName;
+    private final int _line;
+    private final ExecutableStatement _object;
+    private final String _propertyName;
 
     private boolean _objectStacked;
     private boolean _objectResolved;
@@ -32,13 +35,12 @@ public class MemberAccessExecution implements Execution {
             return true;
         if (!_objectResolved)
             return true;
-        if (!_memberAccessStored)
-            return true;
-        return false;
+        return !_memberAccessStored;
     }
 
     @Override
-    public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration) throws ExecutionException {
+    public ExecutionProgress executeNextStatement(ExecutionContext executionContext,
+                                                  ExecutionCostConfiguration configuration) throws ExecutionException {
         if (!_objectStacked) {
             executionContext.stackExecution(_object.createExecution());
             _objectStacked = true;

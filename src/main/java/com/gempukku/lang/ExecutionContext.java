@@ -1,3 +1,6 @@
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang;
 
 import java.util.Collection;
@@ -9,19 +12,19 @@ import java.util.Map;
 import java.util.Set;
 
 public class ExecutionContext {
-    private LinkedList<LinkedList<Execution>> _executionGroups = new LinkedList<LinkedList<Execution>>();
+    private final LinkedList<LinkedList<Execution>> _executionGroups = new LinkedList<LinkedList<Execution>>();
     private Variable _contextValue;
     private Variable _returnValue;
 
     private boolean _returnFromFunction;
     private boolean _breakFromBlock;
 
-    private LinkedList<CallContext> _groupCallContexts = new LinkedList<CallContext>();
-    private Map<Variable.Type, PropertyProducer> _perTypeProperties = new HashMap<Variable.Type, PropertyProducer>();
+    private final LinkedList<CallContext> _groupCallContexts = new LinkedList<CallContext>();
+    private final Map<Variable.Type, PropertyProducer> _perTypeProperties = new HashMap<Variable.Type, PropertyProducer>();
 
     private int _stackTraceSize = 0;
     private boolean _suspended;
-    private ExecutionCostConfiguration _configuration;
+    private final ExecutionCostConfiguration _configuration;
 
     public ExecutionContext(ExecutionCostConfiguration configuration) {
         _configuration = configuration;
@@ -51,7 +54,7 @@ public class ExecutionContext {
             return 4 + getVariablesSize(counted, map.values());
         } else if (value instanceof List) {
             List<Variable> list = (List<Variable>) value;
-            return 4+ getVariablesSize(counted, list);
+            return 4 + getVariablesSize(counted, list);
         } else if (value instanceof Boolean) {
             return 1;
         } else if (value instanceof FunctionExecutable) {
@@ -175,12 +178,12 @@ public class ExecutionContext {
         return _executionGroups.isEmpty();
     }
 
-    public void setSuspended(boolean suspended) {
-        _suspended = suspended;
-    }
-
     public boolean isSuspended() {
         return _suspended;
+    }
+
+    public void setSuspended(boolean suspended) {
+        _suspended = suspended;
     }
 
     public void addPropertyProducer(Variable.Type type, PropertyProducer producer) {

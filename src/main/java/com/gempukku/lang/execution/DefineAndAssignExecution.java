@@ -1,3 +1,6 @@
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.execution;
 
 import com.gempukku.lang.ExecutableStatement;
@@ -9,8 +12,8 @@ import com.gempukku.lang.ExecutionProgress;
 import com.gempukku.lang.Variable;
 
 public class DefineAndAssignExecution implements Execution {
-    private String _name;
-    private ExecutableStatement _value;
+    private final String _name;
+    private final ExecutableStatement _value;
 
     private boolean _defined;
     private boolean _stackedValue;
@@ -29,13 +32,12 @@ public class DefineAndAssignExecution implements Execution {
             return true;
         if (!_stackedValue)
             return true;
-        if (!_assignedValue)
-            return true;
-        return false;
+        return !_assignedValue;
     }
 
     @Override
-    public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration) throws ExecutionException {
+    public ExecutionProgress executeNextStatement(ExecutionContext executionContext,
+                                                  ExecutionCostConfiguration configuration) throws ExecutionException {
         if (!_defined) {
             _variable = executionContext.peekCallContext().defineVariable(_name);
             _defined = true;

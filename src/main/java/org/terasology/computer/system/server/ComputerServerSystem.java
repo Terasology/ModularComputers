@@ -1,18 +1,5 @@
-/*
- * Copyright 2015 MovingBlocks
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
 package org.terasology.computer.system.server;
 
 import com.gempukku.lang.ExecutionCostConfiguration;
@@ -39,31 +26,31 @@ import org.terasology.computer.event.server.StopProgramEvent;
 import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
 import org.terasology.computer.system.common.ComputerModuleRegistry;
 import org.terasology.computer.system.server.lang.ComputerModule;
-import org.terasology.entitySystem.entity.EntityManager;
-import org.terasology.entitySystem.entity.EntityRef;
-import org.terasology.entitySystem.entity.lifecycleEvents.BeforeDeactivateComponent;
-import org.terasology.entitySystem.entity.lifecycleEvents.OnActivatedComponent;
-import org.terasology.entitySystem.event.ReceiveEvent;
-import org.terasology.entitySystem.systems.BaseComponentSystem;
-import org.terasology.entitySystem.systems.RegisterMode;
-import org.terasology.entitySystem.systems.RegisterSystem;
-import org.terasology.entitySystem.systems.UpdateSubscriberSystem;
-import org.terasology.logic.characters.CharacterComponent;
-import org.terasology.logic.config.ModuleConfigManager;
-import org.terasology.logic.inventory.InventoryComponent;
-import org.terasology.logic.inventory.InventoryManager;
-import org.terasology.logic.inventory.InventoryUtils;
-import org.terasology.logic.inventory.events.BeforeItemPutInInventory;
-import org.terasology.logic.location.LocationComponent;
+import org.terasology.engine.entitySystem.entity.EntityManager;
+import org.terasology.engine.entitySystem.entity.EntityRef;
+import org.terasology.engine.entitySystem.entity.lifecycleEvents.BeforeDeactivateComponent;
+import org.terasology.engine.entitySystem.entity.lifecycleEvents.OnActivatedComponent;
+import org.terasology.engine.entitySystem.event.ReceiveEvent;
+import org.terasology.engine.entitySystem.systems.BaseComponentSystem;
+import org.terasology.engine.entitySystem.systems.RegisterMode;
+import org.terasology.engine.entitySystem.systems.RegisterSystem;
+import org.terasology.engine.entitySystem.systems.UpdateSubscriberSystem;
+import org.terasology.engine.logic.characters.CharacterComponent;
+import org.terasology.engine.logic.config.ModuleConfigManager;
+import org.terasology.engine.logic.location.LocationComponent;
+import org.terasology.engine.network.ClientComponent;
+import org.terasology.engine.network.events.DisconnectedEvent;
+import org.terasology.engine.registry.In;
+import org.terasology.engine.world.block.BlockComponent;
+import org.terasology.engine.world.block.items.OnBlockItemPlaced;
+import org.terasology.inventory.logic.InventoryComponent;
+import org.terasology.inventory.logic.InventoryManager;
+import org.terasology.inventory.logic.InventoryUtils;
+import org.terasology.inventory.logic.events.BeforeItemPutInInventory;
 import org.terasology.math.geom.Vector3f;
 import org.terasology.mobileBlocks.server.AfterBlockMovedEvent;
 import org.terasology.mobileBlocks.server.BeforeBlockMovesEvent;
 import org.terasology.mobileBlocks.server.BlockTransitionDuringMoveEvent;
-import org.terasology.network.ClientComponent;
-import org.terasology.network.events.DisconnectedEvent;
-import org.terasology.registry.In;
-import org.terasology.world.block.BlockComponent;
-import org.terasology.world.block.items.OnBlockItemPlaced;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -77,7 +64,7 @@ import java.util.TreeSet;
 public class ComputerServerSystem extends BaseComponentSystem implements UpdateSubscriberSystem {
     private static final Logger logger = LoggerFactory.getLogger(ComputerServerSystem.class);
     private static final float TERMINAL_MAX_DISTANCE = 10;
-
+    private final Map<Integer, ComputerContext> computerContextMap = new HashMap<>();
     @In
     private EntityManager entityManager;
     @In
@@ -88,18 +75,15 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
     private ComputerLanguageContextInitializer computerLanguageContextInitializer;
     @In
     private ModuleConfigManager moduleConfigManager;
-
     private EntityRef computerSystemEntity;
-
-    private Map<Integer, ComputerContext> computerContextMap = new HashMap<>();
-
     private ExecutionCostConfiguration executionCostConfiguration;
 
     private boolean computerInTransitionState;
 
     @Override
     public void postBegin() {
-        Iterator<EntityRef> computerSystemEntities = entityManager.getEntitiesWith(ComputerSystemComponent.class).iterator();
+        Iterator<EntityRef> computerSystemEntities =
+                entityManager.getEntitiesWith(ComputerSystemComponent.class).iterator();
         if (computerSystemEntities.hasNext()) {
             computerSystemEntity = computerSystemEntities.next();
         } else {
@@ -170,7 +154,8 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
     }
 
     @ReceiveEvent
-    public void computerLoadedInWorld(OnActivatedComponent event, EntityRef computerEntity, BlockComponent block, ComputerComponent computer) {
+    public void computerLoadedInWorld(OnActivatedComponent event, EntityRef computerEntity, BlockComponent block,
+                                      ComputerComponent computer) {
         if (!computerInTransitionState) {
             if (computer.computerId == -1) {
                 computer.computerId = assignNextId();
@@ -178,13 +163,15 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
                 computerEntity.saveComponent(computer);
             }
             logger.debug("Creating computer context for computer: " + computer.computerId);
-            computerContextMap.put(computer.computerId, new ComputerContext(computerModuleRegistry, computerEntity, computer.cpuSpeed,
+            computerContextMap.put(computer.computerId, new ComputerContext(computerModuleRegistry, computerEntity,
+                    computer.cpuSpeed,
                     computer.stackSize, computer.memorySize));
         }
     }
 
     @ReceiveEvent
-    public void computerUnloadedFromWorld(BeforeDeactivateComponent event, EntityRef computerEntity, BlockComponent block, ComputerComponent computer) {
+    public void computerUnloadedFromWorld(BeforeDeactivateComponent event, EntityRef computerEntity,
+                                          BlockComponent block, ComputerComponent computer) {
         if (!computerInTransitionState) {
             logger.debug("Destroying computer context for computer: " + computer.computerId);
             computerContextMap.remove(computer.computerId);
@@ -203,12 +190,14 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
     }
 
     @ReceiveEvent
-    public void beforeComputerMoveSetTransitionState(BeforeBlockMovesEvent event, EntityRef entity, ComputerComponent computer) {
+    public void beforeComputerMoveSetTransitionState(BeforeBlockMovesEvent event, EntityRef entity,
+                                                     ComputerComponent computer) {
         computerInTransitionState = true;
     }
 
     @ReceiveEvent
-    public void computerMovedCopyInventory(BlockTransitionDuringMoveEvent event, EntityRef entity, ComputerComponent computer) {
+    public void computerMovedCopyInventory(BlockTransitionDuringMoveEvent event, EntityRef entity,
+                                           ComputerComponent computer) {
         EntityRef newEntity = event.getIntoEntity();
 
         ComputerComponent newEntityComponent = newEntity.getComponent(ComputerComponent.class);
@@ -228,7 +217,8 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
     }
 
     @ReceiveEvent
-    public void afterComputerMoveSetTransitionState(AfterBlockMovedEvent event, EntityRef entity, ComputerComponent computer) {
+    public void afterComputerMoveSetTransitionState(AfterBlockMovedEvent event, EntityRef entity,
+                                                    ComputerComponent computer) {
         computerInTransitionState = false;
     }
 
@@ -248,16 +238,19 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
     public void executeProgramRequested(ExecuteProgramEvent event, EntityRef client) {
         ComputerContext computerContext = computerContextMap.get(event.getComputerId());
         if (computerContext != null && validateComputerToCharacterDistance(client, computerContext)) {
-            EntityRef clientInfo = client.getComponent(CharacterComponent.class).controller.getComponent(ClientComponent.class).clientInfo;
+            EntityRef clientInfo =
+                    client.getComponent(CharacterComponent.class).controller.getComponent(ClientComponent.class).clientInfo;
             ComputerComponent computer = computerContext.getEntity().getComponent(ComputerComponent.class);
             if (computerContext.isRunningProgram()) {
-                client.send(new ProgramExecutionResultEvent(computer.computerId, "There is a program already running on the computer"));
+                client.send(new ProgramExecutionResultEvent(computer.computerId, "There is a program already running " +
+                        "on the computer"));
             } else {
                 String programName = event.getProgramName();
                 String programText = computer.programs.get(programName);
                 if (programText != null) {
                     try {
-                        computerContext.startProgram(programName, clientInfo, programText, event.getParams(), computerLanguageContextInitializer, executionCostConfiguration);
+                        computerContext.startProgram(programName, clientInfo, programText, event.getParams(),
+                                computerLanguageContextInitializer, executionCostConfiguration);
                         client.send(new ProgramExecutionResultEvent(computer.computerId, "Program started"));
                     } catch (IllegalSyntaxException exp) {
                         client.send(new ProgramExecutionResultEvent(computer.computerId, exp.getMessage()));
@@ -357,7 +350,8 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
         if (computerContext != null && validateComputerToCharacterDistance(client, computerContext)) {
             ComputerComponent computer = computerContext.getEntity().getComponent(ComputerComponent.class);
             if (event.isRegister()) {
-                computerContext.registerConsoleListener(client, new SendingEventsComputerConsoleListener(computer.computerId, client));
+                computerContext.registerConsoleListener(client,
+                        new SendingEventsComputerConsoleListener(computer.computerId, client));
             } else {
                 computerContext.deregisterConsoleListener(client);
             }
@@ -373,7 +367,8 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
     }
 
     @ReceiveEvent
-    public void validateModuleInsertion(BeforeItemPutInInventory event, EntityRef computerEntity, ComputerComponent computer) {
+    public void validateModuleInsertion(BeforeItemPutInInventory event, EntityRef computerEntity,
+                                        ComputerComponent computer) {
         int slotStart = computer.moduleSlotStart;
         int slotCount = computer.moduleSlotCount;
 
@@ -390,7 +385,8 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
                 Collection<ComputerModule> existingModules = new HashSet<>();
                 for (int i = 0; i < slotCount; i++) {
                     if (i != moduleSlotEntered) {
-                        ComputerModuleComponent existingModule = inventory.itemSlots.get(i).getComponent(ComputerModuleComponent.class);
+                        ComputerModuleComponent existingModule =
+                                inventory.itemSlots.get(i).getComponent(ComputerModuleComponent.class);
                         if (existingModule != null) {
                             existingModules.add(computerModuleRegistry.getComputerModuleByType(existingModule.moduleType));
                         }

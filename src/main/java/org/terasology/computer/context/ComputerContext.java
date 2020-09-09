@@ -1,18 +1,5 @@
-/*
- * Copyright 2015 MovingBlocks
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
 package org.terasology.computer.context;
 
 import com.gempukku.lang.CallContext;
@@ -30,7 +17,6 @@ import com.gempukku.lang.Variable;
 import com.gempukku.lang.parser.ScriptParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.terasology.rendering.nui.widgets.browser.data.ParagraphData;
 import org.terasology.computer.component.ComputerComponent;
 import org.terasology.computer.component.ComputerModuleComponent;
 import org.terasology.computer.system.common.ComputerLanguageContext;
@@ -39,11 +25,12 @@ import org.terasology.computer.system.common.ComputerModuleRegistry;
 import org.terasology.computer.system.common.DocumentedObjectDefinition;
 import org.terasology.computer.system.server.lang.ComputerModule;
 import org.terasology.computer.system.server.lang.os.condition.ResultAwaitingCondition;
-import org.terasology.entitySystem.entity.EntityRef;
-import org.terasology.logic.inventory.InventoryComponent;
-import org.terasology.logic.location.LocationComponent;
+import org.terasology.engine.entitySystem.entity.EntityRef;
+import org.terasology.engine.logic.location.LocationComponent;
+import org.terasology.engine.rendering.nui.widgets.browser.data.ParagraphData;
+import org.terasology.engine.world.block.BlockComponent;
+import org.terasology.inventory.logic.InventoryComponent;
 import org.terasology.math.geom.Vector3f;
-import org.terasology.world.block.BlockComponent;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -61,27 +48,23 @@ public class ComputerContext {
 
     private static final int MEMORY_CHECK_INTERVAL = 50;
 
-    private ComputerModuleRegistry computerModuleRegistry;
+    private final ComputerModuleRegistry computerModuleRegistry;
+    private final int speed;
+    private final int stackSize;
+    private final int memory;
+    private final ComputerConsole console = new ComputerConsole();
+    private final Map<EntityRef, ComputerConsoleListener> consoleListenerMap = new HashMap<>();
     private EntityRef entity;
-    private int speed;
-    private int stackSize;
-    private int memory;
-
     private int memoryConsumptionCheckCounter;
-
     private int remainingWaitingCpuCycles;
     private long lastExecutionTime;
     private long minimumTimeRemaining;
-
-    private ComputerConsole console = new ComputerConsole();
-
     private ExecutionContext executionContext;
     private ResultAwaitingCondition awaitingCondition;
     private EntityRef executedBy;
 
-    private Map<EntityRef, ComputerConsoleListener> consoleListenerMap = new HashMap<>();
-
-    public ComputerContext(ComputerModuleRegistry computerModuleRegistry, EntityRef entity, int speed, int stackSize, int memory) {
+    public ComputerContext(ComputerModuleRegistry computerModuleRegistry, EntityRef entity, int speed, int stackSize,
+                           int memory) {
         this.computerModuleRegistry = computerModuleRegistry;
         this.entity = entity;
         this.speed = speed;
@@ -104,7 +87,8 @@ public class ComputerContext {
     public void executeContext() {
         if (executionContext != null) {
             long executionTime = System.currentTimeMillis();
-            logger.debug("Executing program - minTicksRemaining: " + minimumTimeRemaining + ", remainingWaitingCpuCycles: " + remainingWaitingCpuCycles);
+            logger.debug("Executing program - minTicksRemaining: " + minimumTimeRemaining + ", " +
+                    "remainingWaitingCpuCycles: " + remainingWaitingCpuCycles);
             if (minimumTimeRemaining > 0) {
                 // Decrement by the time between calls
                 minimumTimeRemaining -= (executionTime - lastExecutionTime);
@@ -130,7 +114,8 @@ public class ComputerContext {
         awaitingCondition = null;
     }
 
-    public void startProgram(String name, EntityRef executeIdentity, String programText, String[] params, ComputerLanguageContextInitializer computerLanguageContextInitializer,
+    public void startProgram(String name, EntityRef executeIdentity, String programText, String[] params,
+                             ComputerLanguageContextInitializer computerLanguageContextInitializer,
                              ExecutionCostConfiguration configuration) throws IllegalSyntaxException {
         try {
             logger.debug("starting program: " + name);
@@ -141,7 +126,8 @@ public class ComputerContext {
             computerLanguageContextInitializer.initializeContext(
                     new ComputerLanguageContext() {
                         @Override
-                        public void addObject(String object, DocumentedObjectDefinition objectDefinition, String objectDescription,
+                        public void addObject(String object, DocumentedObjectDefinition objectDefinition,
+                                              String objectDescription,
                                               Collection<ParagraphData> additionalParagraphs) {
                             variables.add(object);
                             try {
@@ -158,13 +144,15 @@ public class ComputerContext {
                         }
 
                         @Override
-                        public void addComputerModule(ComputerModule computerModule, String description, Collection<ParagraphData> additionalParagraphs) {
+                        public void addComputerModule(ComputerModule computerModule, String description,
+                                                      Collection<ParagraphData> additionalParagraphs) {
                             // Ignore
                         }
                     });
             addParametersToProgram(params, variables, callContext);
 
-            ScriptExecutable scriptExecutable = new ScriptParser().parseScript(new StringReader(programText), variables);
+            ScriptExecutable scriptExecutable = new ScriptParser().parseScript(new StringReader(programText),
+                    variables);
 
             executionContext = new TerasologyComputerExecutionContext(configuration,
                     getComputerCallback());

@@ -1,18 +1,5 @@
-/*
- * Copyright 2015 MovingBlocks
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
 package org.terasology.computer.context;
 
 import java.util.ArrayList;
@@ -24,10 +11,22 @@ public class ComputerConsole {
     public static final int CONSOLE_WIDTH = 87;
     public static final int CONSOLE_HEIGHT = 35;
 
-    private Set<ComputerConsoleListener> consoleListeners = new HashSet<ComputerConsoleListener>();
+    private final Set<ComputerConsoleListener> consoleListeners = new HashSet<ComputerConsoleListener>();
 
     // Please note, it's addressable by chars[y][x] to allow easy creation of Strings based on line index
-    private char[][] chars = new char[CONSOLE_HEIGHT][CONSOLE_WIDTH];
+    private final char[][] chars = new char[CONSOLE_HEIGHT][CONSOLE_WIDTH];
+
+    public static String stripInvalidCharacters(String text) {
+        StringBuilder result = new StringBuilder();
+        final char[] chars = text.toCharArray();
+        for (char aChar : chars) {
+            if (aChar >= 32 && aChar <= 126) {
+                result.append(aChar);
+            }
+        }
+
+        return result.toString();
+    }
 
     public void addConsoleListener(ComputerConsoleListener listener) {
         consoleListeners.add(listener);
@@ -99,7 +98,8 @@ public class ComputerConsole {
         }
         // Strip all the lines that are overflowing the screen
         if (realLinesToAppend.size() > CONSOLE_HEIGHT) {
-            realLinesToAppend = realLinesToAppend.subList(realLinesToAppend.size() - CONSOLE_HEIGHT, realLinesToAppend.size());
+            realLinesToAppend = realLinesToAppend.subList(realLinesToAppend.size() - CONSOLE_HEIGHT,
+                    realLinesToAppend.size());
         }
 
         String[] realLines = realLinesToAppend.toArray(new String[realLinesToAppend.size()]);
@@ -137,18 +137,6 @@ public class ComputerConsole {
                 result.append(lineChars[i]);
             }
         }
-        return result.toString();
-    }
-
-    public static String stripInvalidCharacters(String text) {
-        StringBuilder result = new StringBuilder();
-        final char[] chars = text.toCharArray();
-        for (char aChar : chars) {
-            if (aChar >= 32 && aChar <= 126) {
-                result.append(aChar);
-            }
-        }
-
         return result.toString();
     }
 }

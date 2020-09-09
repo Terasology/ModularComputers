@@ -1,18 +1,5 @@
-/*
- * Copyright 2015 MovingBlocks
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
 package org.terasology.computer.system.server.lang;
 
 import com.gempukku.lang.CallContext;
@@ -24,13 +11,13 @@ import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.ExecutionProgress;
 import com.gempukku.lang.Variable;
 import com.gempukku.lang.execution.SimpleExecution;
-import org.terasology.rendering.nui.widgets.browser.data.ParagraphData;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.context.TerasologyComputerExecutionContext;
 import org.terasology.computer.system.common.DocumentedFunctionExecutable;
 import org.terasology.computer.ui.documentation.DefaultMethodDocumentation;
 import org.terasology.computer.ui.documentation.DocumentationBuilder;
 import org.terasology.computer.ui.documentation.MethodDocumentation;
+import org.terasology.engine.rendering.nui.widgets.browser.data.ParagraphData;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -40,8 +27,8 @@ import java.util.Map;
 import java.util.Set;
 
 public abstract class TerasologyFunctionExecutable implements DocumentedFunctionExecutable {
-    private DefaultMethodDocumentation methodDocumentation;
-    private Set<String> parameterNames = new LinkedHashSet<>();
+    private final DefaultMethodDocumentation methodDocumentation;
+    private final Set<String> parameterNames = new LinkedHashSet<>();
 
     protected TerasologyFunctionExecutable(String simpleDocumentation) {
         methodDocumentation = new DefaultMethodDocumentation(simpleDocumentation);
@@ -80,8 +67,10 @@ public abstract class TerasologyFunctionExecutable implements DocumentedFunction
         return new DelayedExecution(getDuration(), 0,
                 new SimpleExecution() {
                     @Override
-                    protected ExecutionProgress execute(ExecutionContext context, ExecutionCostConfiguration configuration) throws ExecutionException {
-                        final TerasologyComputerExecutionContext terasologyExecutionContext = (TerasologyComputerExecutionContext) context;
+                    protected ExecutionProgress execute(ExecutionContext context,
+                                                        ExecutionCostConfiguration configuration) throws ExecutionException {
+                        final TerasologyComputerExecutionContext terasologyExecutionContext =
+                                (TerasologyComputerExecutionContext) context;
                         ComputerCallback computer = terasologyExecutionContext.getComputerCallback();
 
                         Map<String, Variable> parameters = new HashMap<String, Variable>();
@@ -110,18 +99,17 @@ public abstract class TerasologyFunctionExecutable implements DocumentedFunction
 
     /**
      * Executes this function, gets passed an instance of the computer this function is executed on, as well as
-     * parameters passed to the function, as defined by getParameterNames method in this class. The returned object
-     * will be placed into context that called this function. It is advisable to use only basic objects as return values.
-     * Numbers (int, float), booleans, Strings and null.
-     * If an execution of the program should be stopped due to a fatal exception, ExecutionException should be thrown by
-     * the method.
+     * parameters passed to the function, as defined by getParameterNames method in this class. The returned object will
+     * be placed into context that called this function. It is advisable to use only basic objects as return values.
+     * Numbers (int, float), booleans, Strings and null. If an execution of the program should be stopped due to a fatal
+     * exception, ExecutionException should be thrown by the method.
      *
-     * @param line       Line where the call to the function was made.
-     * @param computer   Computer this function is executed on.
+     * @param line Line where the call to the function was made.
+     * @param computer Computer this function is executed on.
      * @param parameters Parameters that were sent to this function.
      * @return Object that has to be set in context of the caller (return value).
-     * @throws ExecutionException Fatal exception that will be communicated to the computer console. When thrown,
-     *                            the execution of the program will stop.
+     * @throws ExecutionException Fatal exception that will be communicated to the computer console. When
+     *         thrown, the execution of the program will stop.
      */
     protected abstract Object executeFunction(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException;
 }

@@ -1,16 +1,24 @@
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang;
 
 import java.util.List;
 import java.util.Map;
 
 public class Variable {
-    public enum Type {NULL, STRING, NUMBER, BOOLEAN, FUNCTION, LIST, MAP, OBJECT, CUSTOM_OBJECT}
-
     private Object _value;
     private Type _type;
-
     public Variable(Object value) {
         setValue(value);
+    }
+
+    public Type getType() {
+        return _type;
+    }
+
+    public Object getValue() {
+        return _value;
     }
 
     public void setValue(Object value) {
@@ -37,14 +45,6 @@ public class Variable {
             throw new UnsupportedOperationException("Unknown type of variable value: " + value.getClass().getSimpleName());
     }
 
-    public Type getType() {
-        return _type;
-    }
-
-    public Object getValue() {
-        return _value;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -53,9 +53,7 @@ public class Variable {
         Variable variable = (Variable) o;
 
         if (_type != variable._type) return false;
-        if (_value != null ? !_value.equals(variable._value) : variable._value != null) return false;
-
-        return true;
+        return _value != null ? _value.equals(variable._value) : variable._value == null;
     }
 
     @Override
@@ -64,4 +62,6 @@ public class Variable {
         result = 31 * result + (_type != null ? _type.hashCode() : 0);
         return result;
     }
+
+    public enum Type {NULL, STRING, NUMBER, BOOLEAN, FUNCTION, LIST, MAP, OBJECT, CUSTOM_OBJECT}
 }

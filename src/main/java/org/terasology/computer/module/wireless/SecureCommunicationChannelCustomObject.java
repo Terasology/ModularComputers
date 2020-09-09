@@ -1,18 +1,5 @@
-/*
- * Copyright 2015 MovingBlocks
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
 package org.terasology.computer.module.wireless;
 
 import com.gempukku.lang.CustomObject;
@@ -20,7 +7,7 @@ import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.Variable;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.os.condition.AbstractConditionCustomObject;
-import org.terasology.entitySystem.entity.EntityRef;
+import org.terasology.engine.entitySystem.entity.EntityRef;
 import org.terasology.math.geom.Vector3i;
 
 import java.util.Collection;
@@ -28,12 +15,13 @@ import java.util.Collections;
 import java.util.Map;
 
 public class SecureCommunicationChannelCustomObject implements CustomObject, CommunicationChannel {
-    private String channelName;
-    private String password;
-    private float range;
-    private CommunicationChannels<EntityRef> communicationChannels;
+    private final String channelName;
+    private final String password;
+    private final float range;
+    private final CommunicationChannels<EntityRef> communicationChannels;
 
-    public SecureCommunicationChannelCustomObject(String channelName, String password, float range, CommunicationChannels<EntityRef> communicationChannels) {
+    public SecureCommunicationChannelCustomObject(String channelName, String password, float range,
+                                                  CommunicationChannels<EntityRef> communicationChannels) {
         this.channelName = channelName;
         this.password = password;
         this.range = range;
@@ -42,12 +30,14 @@ public class SecureCommunicationChannelCustomObject implements CustomObject, Com
 
     @Override
     public void sendMessage(String message, ComputerCallback computer, long expireOn) {
-        communicationChannels.addSecureMessage(channelName, password, new Vector3i(computer.getComputerLocation()), range, message, expireOn);
+        communicationChannels.addSecureMessage(channelName, password, new Vector3i(computer.getComputerLocation()),
+                range, message, expireOn);
     }
 
     @Override
     public Map<String, Variable> consumeMessage(long currentTime, ComputerCallback computer) {
-        return communicationChannels.consumeNextSecureMessage(currentTime, channelName, password, new Vector3i(computer.getComputerLocation()), range);
+        return communicationChannels.consumeNextSecureMessage(currentTime, channelName, password,
+                new Vector3i(computer.getComputerLocation()), range);
     }
 
     @Override
@@ -69,7 +59,8 @@ public class SecureCommunicationChannelCustomObject implements CustomObject, Com
                         }
                     };
                 }
-            }};
+            }
+        };
     }
 
     @Override

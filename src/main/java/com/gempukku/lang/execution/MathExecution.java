@@ -1,3 +1,6 @@
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.execution;
 
 import com.gempukku.lang.ExecutableStatement;
@@ -10,11 +13,11 @@ import com.gempukku.lang.Operator;
 import com.gempukku.lang.Variable;
 
 public class MathExecution implements Execution {
-    private int _line;
-    private ExecutableStatement _left;
-    private Operator _operator;
-    private ExecutableStatement _right;
-    private boolean _assignToLeft;
+    private final int _line;
+    private final ExecutableStatement _left;
+    private final Operator _operator;
+    private final ExecutableStatement _right;
+    private final boolean _assignToLeft;
 
     private boolean _stackedLeft;
     private boolean _resolvedLeft;
@@ -23,7 +26,8 @@ public class MathExecution implements Execution {
 
     private Variable _leftValue;
 
-    public MathExecution(int line, ExecutableStatement left, Operator operator, ExecutableStatement right, boolean assignToLeft) {
+    public MathExecution(int line, ExecutableStatement left, Operator operator, ExecutableStatement right,
+                         boolean assignToLeft) {
         _line = line;
         _left = left;
         _operator = operator;
@@ -39,13 +43,12 @@ public class MathExecution implements Execution {
             return true;
         if (!_stackedRight)
             return true;
-        if (!_resolvedAndAssignedSum)
-            return true;
-        return false;
+        return !_resolvedAndAssignedSum;
     }
 
     @Override
-    public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration) throws ExecutionException {
+    public ExecutionProgress executeNextStatement(ExecutionContext executionContext,
+                                                  ExecutionCostConfiguration configuration) throws ExecutionException {
         if (!_stackedLeft) {
             executionContext.stackExecution(_left.createExecution());
             _stackedLeft = true;
@@ -90,7 +93,8 @@ public class MathExecution implements Execution {
                     _leftValue.setValue(result);
                 executionContext.setContextValue(new Variable(result));
             } else {
-                throw new ExecutionException(_line, "Unable to perform mathematical operation on two non-number values " + _leftValue.getType() + " and " + rightValue.getType());
+                throw new ExecutionException(_line, "Unable to perform mathematical operation on two non-number " +
+                        "values " + _leftValue.getType() + " and " + rightValue.getType());
             }
             _resolvedAndAssignedSum = true;
             return new ExecutionProgress(configuration.getGetContextValue() + configuration.getOtherMathOperation() + configuration.getSetContextValue());

@@ -1,3 +1,6 @@
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.execution;
 
 import com.gempukku.lang.ExecutableStatement;
@@ -12,16 +15,17 @@ import com.gempukku.lang.statement.IfStatement;
 import java.util.List;
 
 public class IfExecution implements Execution {
-    private int _line;
-    private List<IfStatement.ConditionStatement> _conditionStatements;
-    private ExecutableStatement _elseStatement;
+    private final int _line;
+    private final List<IfStatement.ConditionStatement> _conditionStatements;
+    private final ExecutableStatement _elseStatement;
 
     private boolean _foundCondition;
     private int _nextConditionStackedIndex = 0;
     private int _nextStatementStackedIfNeededIndex = 0;
     private boolean _elseStacked;
 
-    public IfExecution(int line, List<IfStatement.ConditionStatement> conditionStatements, ExecutableStatement elseStatement) {
+    public IfExecution(int line, List<IfStatement.ConditionStatement> conditionStatements,
+                       ExecutableStatement elseStatement) {
         _line = line;
         _conditionStatements = conditionStatements;
         _elseStatement = elseStatement;
@@ -36,13 +40,12 @@ public class IfExecution implements Execution {
             return true;
         if (_nextConditionStackedIndex < _conditionStatements.size())
             return true;
-        if (!_elseStacked && _elseStatement != null)
-            return true;
-        return false;
+        return !_elseStacked && _elseStatement != null;
     }
 
     @Override
-    public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration) throws ExecutionException {
+    public ExecutionProgress executeNextStatement(ExecutionContext executionContext,
+                                                  ExecutionCostConfiguration configuration) throws ExecutionException {
         if (_nextStatementStackedIfNeededIndex < _nextConditionStackedIndex) {
             final Variable value = executionContext.getContextValue();
             if (value.getType() != Variable.Type.BOOLEAN)
@@ -52,7 +55,8 @@ public class IfExecution implements Execution {
             boolean ifResult = (Boolean) value.getValue();
             if (ifResult) {
                 _foundCondition = true;
-                final ExecutableStatement statement = _conditionStatements.get(_nextStatementStackedIfNeededIndex - 1).getStatement();
+                final ExecutableStatement statement =
+                        _conditionStatements.get(_nextStatementStackedIfNeededIndex - 1).getStatement();
                 if (statement != null)
                     executionContext.stackExecution(statement.createExecution());
                 return new ExecutionProgress(configuration.getGetContextValue() + configuration.getStackExecution());

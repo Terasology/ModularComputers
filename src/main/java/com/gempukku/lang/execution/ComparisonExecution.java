@@ -1,3 +1,6 @@
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.execution;
 
 import com.gempukku.lang.ExecutableStatement;
@@ -10,9 +13,9 @@ import com.gempukku.lang.Operator;
 import com.gempukku.lang.Variable;
 
 public class ComparisonExecution implements Execution {
-    private ExecutableStatement _left;
-    private Operator _operator;
-    private ExecutableStatement _right;
+    private final ExecutableStatement _left;
+    private final Operator _operator;
+    private final ExecutableStatement _right;
 
     private boolean _stackedLeft;
     private boolean _resolvedLeft;
@@ -35,13 +38,12 @@ public class ComparisonExecution implements Execution {
             return true;
         if (!_stackedRight)
             return true;
-        if (!_resolvedAndAssignedSum)
-            return true;
-        return false;
+        return !_resolvedAndAssignedSum;
     }
 
     @Override
-    public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration) throws ExecutionException {
+    public ExecutionProgress executeNextStatement(ExecutionContext executionContext,
+                                                  ExecutionCostConfiguration configuration) throws ExecutionException {
         if (!_stackedLeft) {
             executionContext.stackExecution(_left.createExecution());
             _stackedLeft = true;
@@ -66,7 +68,8 @@ public class ComparisonExecution implements Execution {
                 if (_leftValue.getType() == Variable.Type.STRING)
                     equals = _leftValue.getValue().equals(rightValue.getValue());
                 else if (_leftValue.getType() == Variable.Type.NUMBER)
-                    equals = ((Number) _leftValue.getValue()).floatValue() == ((Number) rightValue.getValue()).floatValue();
+                    equals =
+                            ((Number) _leftValue.getValue()).floatValue() == ((Number) rightValue.getValue()).floatValue();
                 else
                     equals = _leftValue.getValue() == rightValue.getValue();
                 if (equals)

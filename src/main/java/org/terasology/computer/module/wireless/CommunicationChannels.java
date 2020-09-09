@@ -1,18 +1,5 @@
-/*
- * Copyright 2015 MovingBlocks
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
 package org.terasology.computer.module.wireless;
 
 import com.gempukku.lang.Variable;
@@ -26,14 +13,14 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class CommunicationChannels<T> {
-    private Multimap<String, Message> publicMessages = LinkedHashMultimap.create();
-    private Multimap<String, MessageAwaitingLatchCondition> publicConditions = LinkedHashMultimap.create();
+    private final Multimap<String, Message> publicMessages = LinkedHashMultimap.create();
+    private final Multimap<String, MessageAwaitingLatchCondition> publicConditions = LinkedHashMultimap.create();
 
-    private Map<T, Multimap<String, Message>> privateMessages = Maps.newHashMap();
-    private Map<T, Multimap<String, MessageAwaitingLatchCondition>> privateConditions = Maps.newHashMap();
+    private final Map<T, Multimap<String, Message>> privateMessages = Maps.newHashMap();
+    private final Map<T, Multimap<String, MessageAwaitingLatchCondition>> privateConditions = Maps.newHashMap();
 
-    private Multimap<String, SecureMessage> secureMessages = LinkedHashMultimap.create();
-    private Multimap<String, SecureMessageAwaitingLatchCondition> secureConditions = LinkedHashMultimap.create();
+    private final Multimap<String, SecureMessage> secureMessages = LinkedHashMultimap.create();
+    private final Multimap<String, SecureMessageAwaitingLatchCondition> secureConditions = LinkedHashMultimap.create();
 
     public void expireOldMessages(long currentTime) {
         expireMessagesFromMultimap(currentTime, publicMessages);
@@ -61,17 +48,20 @@ public class CommunicationChannels<T> {
         }
     }
 
-    public void addPublicMessage(String channelName, Vector3i locationFrom, float range, String message, long expireOn) {
+    public void addPublicMessage(String channelName, Vector3i locationFrom, float range, String message,
+                                 long expireOn) {
         Message messageObject = new Message(locationFrom, range, message, expireOn);
         boolean caughtByWaitingCondition = false;
         Iterator<MessageAwaitingLatchCondition> latchIterator = publicConditions.get(channelName).iterator();
         while (latchIterator.hasNext()) {
             MessageAwaitingLatchCondition messageAwaitingLatchCondition = latchIterator.next();
-            if (isInRange(messageObject, messageAwaitingLatchCondition.getLocationTo(), messageAwaitingLatchCondition.getRangeTo())) {
+            if (isInRange(messageObject, messageAwaitingLatchCondition.getLocationTo(),
+                    messageAwaitingLatchCondition.getRangeTo())) {
                 caughtByWaitingCondition = true;
 
                 latchIterator.remove();
-                messageAwaitingLatchCondition.release(constructMessageReturnObject(messageObject, messageAwaitingLatchCondition.getLocationTo()));
+                messageAwaitingLatchCondition.release(constructMessageReturnObject(messageObject,
+                        messageAwaitingLatchCondition.getLocationTo()));
 
                 // We only dispatch the message to first waiting program
                 break;
@@ -82,7 +72,8 @@ public class CommunicationChannels<T> {
         }
     }
 
-    public Map<String, Variable> consumeNextPublicMessage(long currentTime, String channelName, Vector3i locationTo, float range) {
+    public Map<String, Variable> consumeNextPublicMessage(long currentTime, String channelName, Vector3i locationTo,
+                                                          float range) {
         Multimap<String, Message> messageMultimap = publicMessages;
         Message message = consumeMessageFromMultimap(currentTime, channelName, locationTo, range, messageMultimap);
         return constructMessageReturnObject(message, locationTo);
@@ -96,7 +87,8 @@ public class CommunicationChannels<T> {
         publicConditions.remove(channelName, latchCondition);
     }
 
-    public void addPrivateMessage(String channelName, T identity, Vector3i locationFrom, float range, String message, long expireOn) {
+    public void addPrivateMessage(String channelName, T identity, Vector3i locationFrom, float range, String message,
+                                  long expireOn) {
         Message messageObject = new Message(locationFrom, range, message, expireOn);
         boolean caughtByWaitingCondition = false;
         Multimap<String, MessageAwaitingLatchCondition> conditionMap = privateConditions.get(identity);
@@ -104,11 +96,13 @@ public class CommunicationChannels<T> {
             Iterator<MessageAwaitingLatchCondition> latchIterator = conditionMap.values().iterator();
             while (latchIterator.hasNext()) {
                 MessageAwaitingLatchCondition messageAwaitingLatchCondition = latchIterator.next();
-                if (isInRange(messageObject, messageAwaitingLatchCondition.getLocationTo(), messageAwaitingLatchCondition.getRangeTo())) {
+                if (isInRange(messageObject, messageAwaitingLatchCondition.getLocationTo(),
+                        messageAwaitingLatchCondition.getRangeTo())) {
                     caughtByWaitingCondition = true;
 
                     latchIterator.remove();
-                    messageAwaitingLatchCondition.release(constructMessageReturnObject(messageObject, messageAwaitingLatchCondition.getLocationTo()));
+                    messageAwaitingLatchCondition.release(constructMessageReturnObject(messageObject,
+                            messageAwaitingLatchCondition.getLocationTo()));
                     // We only dispatch the message to first waiting program
                     break;
                 }
@@ -124,7 +118,8 @@ public class CommunicationChannels<T> {
         }
     }
 
-    public Map<String, Variable> consumeNextPrivateMessage(long currentTime, String channelName, T identity, Vector3i locationTo, float range) {
+    public Map<String, Variable> consumeNextPrivateMessage(long currentTime, String channelName, T identity,
+                                                           Vector3i locationTo, float range) {
         Multimap<String, Message> identityMap = privateMessages.get(identity);
         if (identityMap != null) {
             Message message = consumeMessageFromMultimap(currentTime, channelName, locationTo, range, identityMap);
@@ -133,7 +128,8 @@ public class CommunicationChannels<T> {
         return null;
     }
 
-    public void addPrivateMessageCondition(String channelName, T identity, MessageAwaitingLatchCondition latchCondition) {
+    public void addPrivateMessageCondition(String channelName, T identity,
+                                           MessageAwaitingLatchCondition latchCondition) {
         Multimap<String, MessageAwaitingLatchCondition> conditionMap = privateConditions.get(identity);
         if (conditionMap == null) {
             conditionMap = LinkedHashMultimap.create();
@@ -142,25 +138,29 @@ public class CommunicationChannels<T> {
         conditionMap.put(channelName, latchCondition);
     }
 
-    public void removePrivateMessageCondition(String channelName, T identity, MessageAwaitingLatchCondition latchCondition) {
+    public void removePrivateMessageCondition(String channelName, T identity,
+                                              MessageAwaitingLatchCondition latchCondition) {
         Multimap<String, MessageAwaitingLatchCondition> conditionMap = privateConditions.get(identity);
         if (conditionMap != null) {
             conditionMap.remove(channelName, latchCondition);
         }
     }
 
-    public void addSecureMessage(String channelName, String password, Vector3i locationFrom, float range, String message, long expireOn) {
+    public void addSecureMessage(String channelName, String password, Vector3i locationFrom, float range,
+                                 String message, long expireOn) {
         Message messageObject = new Message(locationFrom, range, message, expireOn);
         boolean caughtByWaitingCondition = false;
         Iterator<SecureMessageAwaitingLatchCondition> latchIterator = secureConditions.get(channelName).iterator();
         while (latchIterator.hasNext()) {
             SecureMessageAwaitingLatchCondition secureMessageAwaitingLatchCondition = latchIterator.next();
             if (secureMessageAwaitingLatchCondition.getPassword().equals(password)
-                    && isInRange(messageObject, secureMessageAwaitingLatchCondition.getLocationTo(), secureMessageAwaitingLatchCondition.getRangeTo())) {
+                    && isInRange(messageObject, secureMessageAwaitingLatchCondition.getLocationTo(),
+                    secureMessageAwaitingLatchCondition.getRangeTo())) {
                 caughtByWaitingCondition = true;
 
                 latchIterator.remove();
-                secureMessageAwaitingLatchCondition.release(constructMessageReturnObject(messageObject, secureMessageAwaitingLatchCondition.getLocationTo()));
+                secureMessageAwaitingLatchCondition.release(constructMessageReturnObject(messageObject,
+                        secureMessageAwaitingLatchCondition.getLocationTo()));
                 // We only dispatch the message to first waiting program
                 break;
             }
@@ -171,7 +171,8 @@ public class CommunicationChannels<T> {
         }
     }
 
-    public Map<String, Variable> consumeNextSecureMessage(long currentTime, String channelName, String password, Vector3i locationTo, float range) {
+    public Map<String, Variable> consumeNextSecureMessage(long currentTime, String channelName, String password,
+                                                          Vector3i locationTo, float range) {
         Iterator<SecureMessage> messageIterator = secureMessages.get(channelName).iterator();
         while (messageIterator.hasNext()) {
             SecureMessage message = messageIterator.next();
@@ -189,15 +190,18 @@ public class CommunicationChannels<T> {
         return null;
     }
 
-    public void addSecureMessageCondition(String channelName, SecureMessageAwaitingLatchCondition secureMessageAwaitingLatchCondition) {
+    public void addSecureMessageCondition(String channelName,
+                                          SecureMessageAwaitingLatchCondition secureMessageAwaitingLatchCondition) {
         secureConditions.put(channelName, secureMessageAwaitingLatchCondition);
     }
 
-    public void removeSecureMessageCondition(String channelName, SecureMessageAwaitingLatchCondition secureMessageAwaitingLatchCondition) {
+    public void removeSecureMessageCondition(String channelName,
+                                             SecureMessageAwaitingLatchCondition secureMessageAwaitingLatchCondition) {
         secureConditions.remove(channelName, secureMessageAwaitingLatchCondition);
     }
 
-    private Message consumeMessageFromMultimap(long currentTime, String channelName, Vector3i locationTo, float range, Multimap<String, Message> messageMultimap) {
+    private Message consumeMessageFromMultimap(long currentTime, String channelName, Vector3i locationTo, float range
+            , Multimap<String, Message> messageMultimap) {
         Iterator<Message> messageIterator = messageMultimap.get(channelName).iterator();
         while (messageIterator.hasNext()) {
             Message message = messageIterator.next();

@@ -1,18 +1,5 @@
-/*
- * Copyright 2015 MovingBlocks
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
 package org.terasology.computer.system.server.lang.os;
 
 import com.gempukku.lang.ExecutionException;
@@ -25,10 +12,12 @@ import java.util.Map;
 
 public class FormatFunction extends TerasologyFunctionExecutable {
     public FormatFunction() {
-        super("Formats the specified number using the format passed as a parameter. This behaves exactly like DecimalFormat " +
+        super("Formats the specified number using the format passed as a parameter. This behaves exactly like " +
+                "DecimalFormat " +
                 "in Java language.", "String", "Formatted number as specified by parameters.");
 
-        addParameter("format", "String", "Format to use to output the number, as specified in DecimalFormat class in Java language");
+        addParameter("format", "String", "Format to use to output the number, as specified in DecimalFormat class in " +
+                "Java language");
         addParameter("number", "Number", "Number to format.");
 
         addExample("This example prints out a floating-point number in a specified format.",

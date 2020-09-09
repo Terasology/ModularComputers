@@ -1,3 +1,6 @@
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.execution;
 
 import com.gempukku.lang.ExecutableStatement;
@@ -9,10 +12,10 @@ import com.gempukku.lang.ExecutionProgress;
 import com.gempukku.lang.Variable;
 
 public class IncrementDecrementExecution implements Execution {
-    private int _line;
-    private ExecutableStatement _expression;
-    private boolean _increment;
-    private boolean _pre;
+    private final int _line;
+    private final ExecutableStatement _expression;
+    private final boolean _increment;
+    private final boolean _pre;
 
     private boolean _stackedExecution;
     private boolean _finished;
@@ -30,7 +33,8 @@ public class IncrementDecrementExecution implements Execution {
     }
 
     @Override
-    public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration) throws ExecutionException {
+    public ExecutionProgress executeNextStatement(ExecutionContext executionContext,
+                                                  ExecutionCostConfiguration configuration) throws ExecutionException {
         if (!_stackedExecution) {
             executionContext.stackExecution(_expression.createExecution());
             _stackedExecution = true;

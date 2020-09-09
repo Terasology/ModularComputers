@@ -1,3 +1,6 @@
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang;
 
 public class Operator {
@@ -48,6 +51,19 @@ public class Operator {
     private boolean _namedOnRight;
     private boolean _pre;
 
+    public Operator() {
+    }
+
+    private Operator(int consumeLength, int priority, boolean leftAssociative, boolean binary, boolean hasParameters,
+                     boolean namedOnRight) {
+        _consumeLength = consumeLength;
+        _priority = priority;
+        _leftAssociative = leftAssociative;
+        _binary = binary;
+        _hasParameters = hasParameters;
+        _namedOnRight = namedOnRight;
+    }
+
     private static Operator createUnary(int consumeLength, int priority, boolean leftAssociative, boolean pre) {
         Operator operator = new Operator();
         operator._consumeLength = consumeLength;
@@ -57,7 +73,8 @@ public class Operator {
         return operator;
     }
 
-    private static Operator createParameterUnary(int consumeLength, int priority, boolean leftAssociative, boolean exactlyOneParameter, String parametersClosing) {
+    private static Operator createParameterUnary(int consumeLength, int priority, boolean leftAssociative,
+                                                 boolean exactlyOneParameter, String parametersClosing) {
         Operator operator = new Operator();
         operator._consumeLength = consumeLength;
         operator._priority = priority;
@@ -84,18 +101,6 @@ public class Operator {
         operator._leftAssociative = false;
         operator._binary = true;
         return operator;
-    }
-
-    public Operator() {
-    }
-
-    private Operator(int consumeLength, int priority, boolean leftAssociative, boolean binary, boolean hasParameters, boolean namedOnRight) {
-        _consumeLength = consumeLength;
-        _priority = priority;
-        _leftAssociative = leftAssociative;
-        _binary = binary;
-        _hasParameters = hasParameters;
-        _namedOnRight = namedOnRight;
     }
 
     public boolean isPre() {

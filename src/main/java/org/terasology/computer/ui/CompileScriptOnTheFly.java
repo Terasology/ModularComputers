@@ -1,28 +1,15 @@
-/*
- * Copyright 2015 MovingBlocks
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
 package org.terasology.computer.ui;
 
 import com.gempukku.lang.IllegalSyntaxException;
 import com.gempukku.lang.parser.ScriptParser;
 import com.gempukku.lang.parser.ScriptParsingCallback;
-import org.terasology.rendering.nui.widgets.browser.data.ParagraphData;
 import org.terasology.computer.system.common.ComputerLanguageContext;
 import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
 import org.terasology.computer.system.common.DocumentedObjectDefinition;
 import org.terasology.computer.system.server.lang.ComputerModule;
+import org.terasology.engine.rendering.nui.widgets.browser.data.ParagraphData;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -34,19 +21,19 @@ import java.util.List;
 import java.util.Set;
 
 public class CompileScriptOnTheFly {
+    private final Object lockObject = new Object();
+    private final ScriptParser scriptParser = new ScriptParser();
+    private final Set<String> predefinedVariables = new HashSet<>();
     private volatile CompileStatus compileStatus;
     private volatile String scriptText;
     private volatile boolean finishedEditing;
-
-    private final Object lockObject = new Object();
-    private ScriptParser scriptParser = new ScriptParser();
-    private Set<String> predefinedVariables = new HashSet<>();
 
     public CompileScriptOnTheFly(ComputerLanguageContextInitializer computerLanguageContextInitializer) {
         computerLanguageContextInitializer.initializeContext(
                 new ComputerLanguageContext() {
                     @Override
-                    public void addObject(String object, DocumentedObjectDefinition objectDefinition, String objectDescription,
+                    public void addObject(String object, DocumentedObjectDefinition objectDefinition,
+                                          String objectDescription,
                                           Collection<ParagraphData> additionalParagraphs) {
                         predefinedVariables.add(object);
                     }
@@ -57,7 +44,8 @@ public class CompileScriptOnTheFly {
                     }
 
                     @Override
-                    public void addComputerModule(ComputerModule computerModule, String description, Collection<ParagraphData> additionalParagraphs) {
+                    public void addComputerModule(ComputerModule computerModule, String description,
+                                                  Collection<ParagraphData> additionalParagraphs) {
                         // Ignore for now
                     }
                 }
@@ -108,7 +96,8 @@ public class CompileScriptOnTheFly {
             if (scriptTextToCompile != null) {
                 ParseInfoProducer parseInfoProducer = new ParseInfoProducer();
                 try {
-                    scriptParser.parseScript(new StringReader(scriptTextToCompile), predefinedVariables, parseInfoProducer);
+                    scriptParser.parseScript(new StringReader(scriptTextToCompile), predefinedVariables,
+                            parseInfoProducer);
                     newCompileStatus = new CompileStatus(true, null, parseInfoProducer.result);
                 } catch (IllegalSyntaxException exp) {
                     newCompileStatus = new CompileStatus(false, exp, parseInfoProducer.result);
@@ -162,7 +151,7 @@ public class CompileScriptOnTheFly {
     }
 
     private static class ParseInfoProducer implements ScriptParsingCallback {
-        private List<ParseInfo> result = new LinkedList<>();
+        private final List<ParseInfo> result = new LinkedList<>();
 
         @Override
         public void parsed(int line, int column, int length, Type type) {

@@ -1,3 +1,6 @@
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.execution;
 
 import com.gempukku.lang.ExecutableStatement;
@@ -10,10 +13,10 @@ import com.gempukku.lang.Operator;
 import com.gempukku.lang.Variable;
 
 public class LogicalOperatorExecution implements Execution {
-    private int _line;
-    private ExecutableStatement _left;
-    private Operator _operator;
-    private ExecutableStatement _right;
+    private final int _line;
+    private final ExecutableStatement _left;
+    private final Operator _operator;
+    private final ExecutableStatement _right;
 
     private boolean _terminated;
 
@@ -32,13 +35,12 @@ public class LogicalOperatorExecution implements Execution {
 
     @Override
     public boolean hasNextExecution(ExecutionContext executionContext) {
-        if (_terminated)
-            return false;
-        return true;
+        return !_terminated;
     }
 
     @Override
-    public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration) throws ExecutionException {
+    public ExecutionProgress executeNextStatement(ExecutionContext executionContext,
+                                                  ExecutionCostConfiguration configuration) throws ExecutionException {
         if (!_stackedLeft) {
             _stackedLeft = true;
             executionContext.stackExecution(_left.createExecution());

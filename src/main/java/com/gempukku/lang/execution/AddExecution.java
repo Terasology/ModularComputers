@@ -1,3 +1,6 @@
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.execution;
 
 import com.gempukku.lang.ExecutableStatement;
@@ -9,10 +12,10 @@ import com.gempukku.lang.ExecutionProgress;
 import com.gempukku.lang.Variable;
 
 public class AddExecution implements Execution {
-    private int _line;
-    private ExecutableStatement _left;
-    private ExecutableStatement _right;
-    private boolean _assignToLeft;
+    private final int _line;
+    private final ExecutableStatement _left;
+    private final ExecutableStatement _right;
+    private final boolean _assignToLeft;
 
     private boolean _stackedLeft;
     private boolean _resolvedLeft;
@@ -36,13 +39,12 @@ public class AddExecution implements Execution {
             return true;
         if (!_stackedRight)
             return true;
-        if (!_resolvedAndAssignedSum)
-            return true;
-        return false;
+        return !_resolvedAndAssignedSum;
     }
 
     @Override
-    public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration) throws ExecutionException {
+    public ExecutionProgress executeNextStatement(ExecutionContext executionContext,
+                                                  ExecutionCostConfiguration configuration) throws ExecutionException {
         if (!_stackedLeft) {
             executionContext.stackExecution(_left.createExecution());
             _stackedLeft = true;
@@ -66,7 +68,8 @@ public class AddExecution implements Execution {
             } else if (rightValue.getType() == Variable.Type.NUMBER && _leftValue.getType() == Variable.Type.NUMBER) {
                 result = ((Number) _leftValue.getValue()).floatValue() + ((Number) rightValue.getValue()).floatValue();
             } else {
-                throw new ExecutionException(_line, "Unable to add two values of types " + _leftValue.getType() + " and " + rightValue.getType());
+                throw new ExecutionException(_line, "Unable to add two values of types " + _leftValue.getType() + " " +
+                        "and " + rightValue.getType());
             }
             if (_assignToLeft)
                 _leftValue.setValue(result);

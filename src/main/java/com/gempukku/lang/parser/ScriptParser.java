@@ -1,3 +1,6 @@
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.parser;
 
 import com.gempukku.lang.DefiningExecutableStatement;
@@ -45,7 +48,9 @@ import java.util.List;
 import java.util.Set;
 
 public class ScriptParser {
-    public ScriptExecutable parseScript(Reader reader, Set<String> preDefinedVariables, ScriptParsingCallback scriptParsingCallback) throws IllegalSyntaxException, IOException {
+    public ScriptExecutable parseScript(Reader reader, Set<String> preDefinedVariables,
+                                        ScriptParsingCallback scriptParsingCallback) throws IllegalSyntaxException,
+            IOException {
         DefinedVariables definedVariables = new DefinedVariables();
         for (String preDefinedVariable : preDefinedVariables)
             definedVariables.addDefinedVariable(preDefinedVariable);
@@ -57,13 +62,15 @@ public class ScriptParser {
 
         TermBlock termBlockStructure = constructBlocks(terms);
 
-        List<ExecutableStatement> statements = seekStatementsInBlock(termBlockStructure, definedVariables, scriptParsingCallback);
+        List<ExecutableStatement> statements = seekStatementsInBlock(termBlockStructure, definedVariables,
+                scriptParsingCallback);
         result.setStatement(new BlockStatement(statements, false, true));
 
         return result;
     }
 
-    public ScriptExecutable parseScript(Reader reader, Set<String> preDefinedVariables) throws IllegalSyntaxException, IOException {
+    public ScriptExecutable parseScript(Reader reader, Set<String> preDefinedVariables) throws IllegalSyntaxException
+            , IOException {
         return parseScript(reader, preDefinedVariables, null);
     }
 
@@ -78,12 +85,14 @@ public class ScriptParser {
         } else {
             List<ExecutableStatement> result = new LinkedList<ExecutableStatement>();
             List<TermBlock> blocks = termBlock.getTermBlocks();
-            LastPeekingIterator<TermBlock> termBlockIter = new LastPeekingIterator<TermBlock>(Iterators.peekingIterator(blocks.iterator()));
+            LastPeekingIterator<TermBlock> termBlockIter =
+                    new LastPeekingIterator<TermBlock>(Iterators.peekingIterator(blocks.iterator()));
             while (termBlockIter.hasNext()) {
                 if (termBlockIter.peek().isTerm() && termBlockIter.peek().getTerm().getValue().length() == 0)
                     termBlockIter.next();
                 else {
-                    final ExecutableStatement resultStatement = produceStatementFromIterator(termBlockIter, definedVariables, scriptParsingCallback);
+                    final ExecutableStatement resultStatement = produceStatementFromIterator(termBlockIter,
+                            definedVariables, scriptParsingCallback);
                     result.add(resultStatement);
                     if (resultStatement.requiresSemicolon())
                         consumeSemicolon(termBlockIter);
@@ -93,7 +102,8 @@ public class ScriptParser {
         }
     }
 
-    private ExecutableStatement produceStatementFromIterator(LastPeekingIterator<TermBlock> termIterator, DefinedVariables definedVariables,
+    private ExecutableStatement produceStatementFromIterator(LastPeekingIterator<TermBlock> termIterator,
+                                                             DefinedVariables definedVariables,
                                                              ScriptParsingCallback scriptParsingCallback) throws IllegalSyntaxException {
         TermBlock firstTermBlock = peekNextTermBlockSafely(termIterator);
         if (firstTermBlock.isTerm()) {
@@ -136,19 +146,22 @@ public class ScriptParser {
         } else {
             definedVariables.pushNewContext();
             try {
-                return new BlockStatement(seekStatementsInBlock(firstTermBlock, definedVariables, scriptParsingCallback), true, false);
+                return new BlockStatement(seekStatementsInBlock(firstTermBlock, definedVariables,
+                        scriptParsingCallback), true, false);
             } finally {
                 definedVariables.popContext();
             }
         }
     }
 
-    private void makeCallback(ScriptParsingCallback scriptParsingCallback, Term firstTerm, ScriptParsingCallback.Type type, int length) {
+    private void makeCallback(ScriptParsingCallback scriptParsingCallback, Term firstTerm,
+                              ScriptParsingCallback.Type type, int length) {
         if (scriptParsingCallback != null)
             scriptParsingCallback.parsed(firstTerm.getLine(), firstTerm.getColumn(), length, type);
     }
 
-    private void makeCallback(ScriptParsingCallback scriptParsingCallback, int line, int column, int length, ScriptParsingCallback.Type type) {
+    private void makeCallback(ScriptParsingCallback scriptParsingCallback, int line, int column, int length,
+                              ScriptParsingCallback.Type type) {
         if (scriptParsingCallback != null)
             scriptParsingCallback.parsed(line, column, length, type);
     }
@@ -158,7 +171,8 @@ public class ScriptParser {
         return new BreakStatement();
     }
 
-    private ExecutableStatement produceWhileStatement(LastPeekingIterator<TermBlock> termIterator, DefinedVariables definedVariables,
+    private ExecutableStatement produceWhileStatement(LastPeekingIterator<TermBlock> termIterator,
+                                                      DefinedVariables definedVariables,
                                                       ScriptParsingCallback scriptParsingCallback) throws IllegalSyntaxException {
         int line = termIterator.peek().getTerm().getLine();
 
@@ -167,17 +181,20 @@ public class ScriptParser {
         validateNextTermStartingWith(termIterator, "(");
         consumeCharactersFromTerm(termIterator, 1);
 
-        ExecutableStatement condition = produceExpressionFromIterator(termIterator, definedVariables, true, scriptParsingCallback);
+        ExecutableStatement condition = produceExpressionFromIterator(termIterator, definedVariables, true,
+                scriptParsingCallback);
 
         validateNextTermStartingWith(termIterator, ")");
         consumeCharactersFromTerm(termIterator, 1);
 
-        ExecutableStatement statementInLoop = produceStatementFromGroupOrTerm(termIterator, definedVariables, scriptParsingCallback);
+        ExecutableStatement statementInLoop = produceStatementFromGroupOrTerm(termIterator, definedVariables,
+                scriptParsingCallback);
 
         return new WhileStatement(line, condition, statementInLoop);
     }
 
-    private ExecutableStatement produceForStatement(LastPeekingIterator<TermBlock> termIterator, DefinedVariables definedVariables,
+    private ExecutableStatement produceForStatement(LastPeekingIterator<TermBlock> termIterator,
+                                                    DefinedVariables definedVariables,
                                                     ScriptParsingCallback scriptParsingCallback) throws IllegalSyntaxException {
         int line = termIterator.peek().getTerm().getLine();
 
@@ -193,33 +210,40 @@ public class ScriptParser {
                 firstStatement = produceStatementFromIterator(termIterator, definedVariables, scriptParsingCallback);
             consumeSemicolon(termIterator);
 
-            final ExecutableStatement terminationCondition = produceExpressionFromIterator(termIterator, definedVariables, true, scriptParsingCallback);
+            final ExecutableStatement terminationCondition = produceExpressionFromIterator(termIterator,
+                    definedVariables, true, scriptParsingCallback);
             consumeSemicolon(termIterator);
 
             ExecutableStatement statementExecutedAfterEachLoop = null;
             if (!isNextTermStartingWith(termIterator, ")"))
-                statementExecutedAfterEachLoop = produceStatementFromIterator(termIterator, definedVariables, scriptParsingCallback);
+                statementExecutedAfterEachLoop = produceStatementFromIterator(termIterator, definedVariables,
+                        scriptParsingCallback);
 
             validateNextTermStartingWith(termIterator, ")");
             consumeCharactersFromTerm(termIterator, 1);
 
-            final ExecutableStatement statementInLoop = produceStatementFromGroupOrTerm(termIterator, definedVariables, scriptParsingCallback);
+            final ExecutableStatement statementInLoop = produceStatementFromGroupOrTerm(termIterator,
+                    definedVariables, scriptParsingCallback);
 
-            return new ForStatement(line, firstStatement, terminationCondition, statementExecutedAfterEachLoop, statementInLoop);
+            return new ForStatement(line, firstStatement, terminationCondition, statementExecutedAfterEachLoop,
+                    statementInLoop);
         } finally {
             definedVariables.popContext();
         }
     }
 
-    private ExecutableStatement produceIfStatement(LastPeekingIterator<TermBlock> termIterator, DefinedVariables definedVariables,
+    private ExecutableStatement produceIfStatement(LastPeekingIterator<TermBlock> termIterator,
+                                                   DefinedVariables definedVariables,
                                                    ScriptParsingCallback scriptParsingCallback) throws IllegalSyntaxException {
         int line = termIterator.peek().getTerm().getLine();
 
         consumeCharactersFromTerm(termIterator, 2);
 
-        ExecutableStatement condition = produceConditionInBrackets(termIterator, definedVariables, scriptParsingCallback);
+        ExecutableStatement condition = produceConditionInBrackets(termIterator, definedVariables,
+                scriptParsingCallback);
 
-        ExecutableStatement statement = produceStatementFromGroupOrTerm(termIterator, definedVariables, scriptParsingCallback);
+        ExecutableStatement statement = produceStatementFromGroupOrTerm(termIterator, definedVariables,
+                scriptParsingCallback);
         IfStatement ifStatement = new IfStatement(line, condition, statement);
 
         boolean hasElse = false;
@@ -228,10 +252,13 @@ public class ScriptParser {
             consumeCharactersFromTerm(termIterator, 4);
             if (isNextLiteral(termIterator, "if")) {
                 consumeCharactersFromTerm(termIterator, 2);
-                ExecutableStatement elseIfCondition = produceConditionInBrackets(termIterator, definedVariables, scriptParsingCallback);
-                ifStatement.addElseIf(elseIfCondition, produceStatementFromGroupOrTerm(termIterator, definedVariables, scriptParsingCallback));
+                ExecutableStatement elseIfCondition = produceConditionInBrackets(termIterator, definedVariables,
+                        scriptParsingCallback);
+                ifStatement.addElseIf(elseIfCondition, produceStatementFromGroupOrTerm(termIterator, definedVariables
+                        , scriptParsingCallback));
             } else {
-                ifStatement.addElse(produceStatementFromGroupOrTerm(termIterator, definedVariables, scriptParsingCallback));
+                ifStatement.addElse(produceStatementFromGroupOrTerm(termIterator, definedVariables,
+                        scriptParsingCallback));
                 hasElse = true;
             }
         }
@@ -239,7 +266,8 @@ public class ScriptParser {
         return ifStatement;
     }
 
-    private ExecutableStatement produceStatementFromGroupOrTerm(LastPeekingIterator<TermBlock> termIterator, DefinedVariables definedVariables,
+    private ExecutableStatement produceStatementFromGroupOrTerm(LastPeekingIterator<TermBlock> termIterator,
+                                                                DefinedVariables definedVariables,
                                                                 ScriptParsingCallback scriptParsingCallback) throws IllegalSyntaxException {
         ExecutableStatement statement;
         final TermBlock termBlock = peekNextTermBlockSafely(termIterator);
@@ -254,7 +282,8 @@ public class ScriptParser {
             definedVariables.pushNewContext();
             try {
                 termIterator.next();
-                final List<ExecutableStatement> statements = seekStatementsInBlock(termBlock, definedVariables, scriptParsingCallback);
+                final List<ExecutableStatement> statements = seekStatementsInBlock(termBlock, definedVariables,
+                        scriptParsingCallback);
                 statement = new BlockStatement(statements, false, false);
             } finally {
                 definedVariables.popContext();
@@ -263,12 +292,14 @@ public class ScriptParser {
         return statement;
     }
 
-    private ExecutableStatement produceConditionInBrackets(LastPeekingIterator<TermBlock> termIterator, DefinedVariables definedVariables,
+    private ExecutableStatement produceConditionInBrackets(LastPeekingIterator<TermBlock> termIterator,
+                                                           DefinedVariables definedVariables,
                                                            ScriptParsingCallback scriptParsingCallback) throws IllegalSyntaxException {
         validateNextTermStartingWith(termIterator, "(");
         consumeCharactersFromTerm(termIterator, 1);
 
-        ExecutableStatement condition = produceExpressionFromIterator(termIterator, definedVariables, true, scriptParsingCallback);
+        ExecutableStatement condition = produceExpressionFromIterator(termIterator, definedVariables, true,
+                scriptParsingCallback);
 
         validateNextTermStartingWith(termIterator, ")");
         consumeCharactersFromTerm(termIterator, 1);
@@ -278,13 +309,13 @@ public class ScriptParser {
     private boolean isNextLiteral(LastPeekingIterator<TermBlock> termIterator, String literal) throws IllegalSyntaxException {
         if (isNextTermStartingWith(termIterator, literal)) {
             final Term term = peekNextProgramTermSafely(termIterator);
-            if (getFirstLiteral(term).equals(literal))
-                return true;
+            return getFirstLiteral(term).equals(literal);
         }
         return false;
     }
 
-    private DefiningExecutableStatement produceDefineFunctionStatement(LastPeekingIterator<TermBlock> termIterator, DefinedVariables definedVariables,
+    private DefiningExecutableStatement produceDefineFunctionStatement(LastPeekingIterator<TermBlock> termIterator,
+                                                                       DefinedVariables definedVariables,
                                                                        ScriptParsingCallback scriptParsingCallback) throws IllegalSyntaxException {
         consumeCharactersFromTerm(termIterator, 8);
         Term functionDefTerm = peekNextProgramTermSafely(termIterator);
@@ -322,14 +353,16 @@ public class ScriptParser {
             for (String parameterName : parameterNames)
                 definedVariables.addDefinedVariable(parameterName);
 
-            final List<ExecutableStatement> functionBody = seekStatementsInBlock(functionBodyBlock, definedVariables, scriptParsingCallback);
+            final List<ExecutableStatement> functionBody = seekStatementsInBlock(functionBodyBlock, definedVariables,
+                    scriptParsingCallback);
             return new DefineFunctionStatement(functionName, parameterNames, functionBody);
         } finally {
             definedVariables.popContext();
         }
     }
 
-    private DefiningExecutableStatement produceVarStatement(LastPeekingIterator<TermBlock> termIterator, DefinedVariables definedVariables,
+    private DefiningExecutableStatement produceVarStatement(LastPeekingIterator<TermBlock> termIterator,
+                                                            DefinedVariables definedVariables,
                                                             ScriptParsingCallback scriptParsingCallback) throws IllegalSyntaxException {
         consumeCharactersFromTerm(termIterator, 3);
         final Term variableTerm = peekNextProgramTermSafely(termIterator);
@@ -346,7 +379,8 @@ public class ScriptParser {
         definedVariables.addDefinedVariable(variableName);
 
         if (isNextTermStartingWith(termIterator, ";")) {
-            makeCallback(scriptParsingCallback, line, column, variableName.length(), ScriptParsingCallback.Type.VARIABLE);
+            makeCallback(scriptParsingCallback, line, column, variableName.length(),
+                    ScriptParsingCallback.Type.VARIABLE);
             return new DefineStatement(variableName);
         }
 
@@ -356,16 +390,19 @@ public class ScriptParser {
 
         makeCallback(scriptParsingCallback, line, column, variableName.length(), ScriptParsingCallback.Type.VARIABLE);
 
-        final ExecutableStatement value = produceExpressionFromIterator(termIterator, definedVariables, true, scriptParsingCallback);
+        final ExecutableStatement value = produceExpressionFromIterator(termIterator, definedVariables, true,
+                scriptParsingCallback);
         return new DefineAndAssignStatement(variableName, value);
     }
 
-    private ExecutableStatement produceReturnStatement(LastPeekingIterator<TermBlock> termIterator, DefinedVariables definedVariables,
+    private ExecutableStatement produceReturnStatement(LastPeekingIterator<TermBlock> termIterator,
+                                                       DefinedVariables definedVariables,
                                                        ScriptParsingCallback scriptParsingCallback) throws IllegalSyntaxException {
         consumeCharactersFromTerm(termIterator, 6);
         if (isNextTermStartingWith(termIterator, ";"))
             return new ReturnStatement(new ConstantStatement(new Variable(null)));
-        return new ReturnStatement(produceExpressionFromIterator(termIterator, definedVariables, true, scriptParsingCallback));
+        return new ReturnStatement(produceExpressionFromIterator(termIterator, definedVariables, true,
+                scriptParsingCallback));
     }
 
     private void consumeCharactersFromTerm(LastPeekingIterator<TermBlock> termIterator, int charCount) {
@@ -387,8 +424,10 @@ public class ScriptParser {
         consumeCharactersFromTerm(termIterator, 1);
     }
 
-    private ExecutableStatement produceExpressionFromIterator(LastPeekingIterator<TermBlock> termIterator, DefinedVariables definedVariables,
-                                                              boolean acceptsVariable, ScriptParsingCallback scriptParsingCallback) throws IllegalSyntaxException {
+    private ExecutableStatement produceExpressionFromIterator(LastPeekingIterator<TermBlock> termIterator,
+                                                              DefinedVariables definedVariables,
+                                                              boolean acceptsVariable,
+                                                              ScriptParsingCallback scriptParsingCallback) throws IllegalSyntaxException {
         if (isNextTermStartingWith(termIterator, "[") && acceptsVariable) {
             consumeCharactersFromTerm(termIterator, 1);
             return produceListDefinitionFromIterator(termIterator, definedVariables, scriptParsingCallback);
@@ -396,7 +435,9 @@ public class ScriptParser {
 
         int line = getLine(termIterator);
 
-        final ExecutableStatement executableStatement = parseExpression(line, termIterator, definedVariables, parseNextOperationToken(termIterator, definedVariables, scriptParsingCallback), Integer.MAX_VALUE, scriptParsingCallback);
+        final ExecutableStatement executableStatement = parseExpression(line, termIterator, definedVariables,
+                parseNextOperationToken(termIterator, definedVariables, scriptParsingCallback), Integer.MAX_VALUE,
+                scriptParsingCallback);
         if (!acceptsVariable && executableStatement instanceof VariableStatement)
             throw new IllegalSyntaxException(termIterator, "Expression expected");
         return executableStatement;
@@ -422,13 +463,16 @@ public class ScriptParser {
         }
     }
 
-    private ExecutableStatement produceListDefinitionFromIterator(LastPeekingIterator<TermBlock> termIterator, DefinedVariables definedVariables,
+    private ExecutableStatement produceListDefinitionFromIterator(LastPeekingIterator<TermBlock> termIterator,
+                                                                  DefinedVariables definedVariables,
                                                                   ScriptParsingCallback scriptParsingCallback) throws IllegalSyntaxException {
-        final List<ExecutableStatement> values = parseParameters(termIterator, definedVariables, false, "]", scriptParsingCallback);
+        final List<ExecutableStatement> values = parseParameters(termIterator, definedVariables, false, "]",
+                scriptParsingCallback);
         return new ListDefineStatement(values);
     }
 
-    private ExecutableStatement parseExpression(int line, LastPeekingIterator<TermBlock> termIterator, DefinedVariables definedVariables,
+    private ExecutableStatement parseExpression(int line, LastPeekingIterator<TermBlock> termIterator,
+                                                DefinedVariables definedVariables,
                                                 ExecutableStatement left, int maxPriority,
                                                 ScriptParsingCallback scriptParsingCallback) throws IllegalSyntaxException {
         // Based on algorithm from http://en.wikipedia.org/wiki/Operator-precedence_parser on March 28, 2013
@@ -436,21 +480,25 @@ public class ScriptParser {
         while ((operator = peekNextOperator(termIterator, left != null)) != null &&
                 operator.getPriority() <= maxPriority) {
             if (operator.isBinary())
-                left = produceBinaryExpression(line, termIterator, definedVariables, left, operator, scriptParsingCallback);
+                left = produceBinaryExpression(line, termIterator, definedVariables, left, operator,
+                        scriptParsingCallback);
             else
-                left = produceUnaryExpression(line, termIterator, definedVariables, left, operator, scriptParsingCallback);
+                left = produceUnaryExpression(line, termIterator, definedVariables, left, operator,
+                        scriptParsingCallback);
         }
 
         return left;
     }
 
-    private ExecutableStatement produceUnaryExpression(int line, LastPeekingIterator<TermBlock> termIterator, DefinedVariables definedVariables,
+    private ExecutableStatement produceUnaryExpression(int line, LastPeekingIterator<TermBlock> termIterator,
+                                                       DefinedVariables definedVariables,
                                                        ExecutableStatement left, Operator operator,
                                                        ScriptParsingCallback scriptParsingCallback) throws IllegalSyntaxException {
         consumeCharactersFromTerm(termIterator, operator.getConsumeLength());
         List<ExecutableStatement> parameters = null;
         if (operator.isHasParameters())
-            parameters = parseParameters(termIterator, definedVariables, operator.exactlyOneParameter(), operator.getParametersClosing(), scriptParsingCallback);
+            parameters = parseParameters(termIterator, definedVariables, operator.exactlyOneParameter(),
+                    operator.getParametersClosing(), scriptParsingCallback);
 
         if (operator.isLeftAssociative())
             left = produceOperation(line, left, operator, null, parameters);
@@ -462,7 +510,9 @@ public class ScriptParser {
                 consumeCharactersFromTerm(termIterator, literal.length());
                 operatorExpression = new NamedStatement(literal);
             } else
-                operatorExpression = parseExpression(line, termIterator, definedVariables, parseNextOperationToken(termIterator, definedVariables, scriptParsingCallback), operator.getPriority(), scriptParsingCallback);
+                operatorExpression = parseExpression(line, termIterator, definedVariables,
+                        parseNextOperationToken(termIterator, definedVariables, scriptParsingCallback),
+                        operator.getPriority(), scriptParsingCallback);
             if (operator.isPre()) {
                 if (operatorExpression == null)
                     throw new IllegalSyntaxException(termIterator, "Expression expected");
@@ -476,7 +526,8 @@ public class ScriptParser {
         return left;
     }
 
-    private ExecutableStatement produceBinaryExpression(int line, LastPeekingIterator<TermBlock> termIterator, DefinedVariables definedVariables,
+    private ExecutableStatement produceBinaryExpression(int line, LastPeekingIterator<TermBlock> termIterator,
+                                                        DefinedVariables definedVariables,
                                                         ExecutableStatement left, Operator operator,
                                                         ScriptParsingCallback scriptParsingCallback) throws IllegalSyntaxException {
         final Term operatorTerm = termIterator.peek().getTerm();
@@ -486,7 +537,8 @@ public class ScriptParser {
 
         List<ExecutableStatement> parameters = null;
         if (operator.isHasParameters())
-            parameters = parseParameters(termIterator, definedVariables, operator.exactlyOneParameter(), operator.getParametersClosing(), scriptParsingCallback);
+            parameters = parseParameters(termIterator, definedVariables, operator.exactlyOneParameter(),
+                    operator.getParametersClosing(), scriptParsingCallback);
 
         ExecutableStatement right;
         if (operator.isNamedOnRight()) {
@@ -498,42 +550,52 @@ public class ScriptParser {
             right = parseNextOperationToken(termIterator, definedVariables, scriptParsingCallback);
         if (right == null)
             throw new IllegalSyntaxException(termIterator, "Expression expected");
-        right = produceExpressionOnRightSide(line, termIterator, definedVariables, left, operator, right, scriptParsingCallback);
+        right = produceExpressionOnRightSide(line, termIterator, definedVariables, left, operator, right,
+                scriptParsingCallback);
 
         if (left == null)
             throw new IllegalSyntaxException(operatorLine, operatorColumn, "Expression expected");
         if (right == null)
-            throw new IllegalSyntaxException(operatorLine, operatorColumn + operator.getConsumeLength(), "Expression expected");
+            throw new IllegalSyntaxException(operatorLine, operatorColumn + operator.getConsumeLength(), "Expression " +
+                    "expected");
         left = produceOperation(line, left, operator, right, parameters);
         return left;
     }
 
-    private ExecutableStatement produceExpressionOnRightSide(int line, LastPeekingIterator<TermBlock> termIterator, DefinedVariables definedVariables,
-                                                             ExecutableStatement left, Operator operator, ExecutableStatement right,
+    private ExecutableStatement produceExpressionOnRightSide(int line, LastPeekingIterator<TermBlock> termIterator,
+                                                             DefinedVariables definedVariables,
+                                                             ExecutableStatement left, Operator operator,
+                                                             ExecutableStatement right,
                                                              ScriptParsingCallback scriptParsingCallback) throws IllegalSyntaxException {
         Operator nextOperator;
         while ((nextOperator = peekNextOperator(termIterator, left != null)) != null &&
                 (nextOperator.getPriority() < operator.getPriority() ||
                         (nextOperator.getPriority() == operator.getPriority() && !nextOperator.isLeftAssociative()))) {
             if (operator.isBinary())
-                right = parseExpression(line, termIterator, definedVariables, right, nextOperator.getPriority(), scriptParsingCallback);
+                right = parseExpression(line, termIterator, definedVariables, right, nextOperator.getPriority(),
+                        scriptParsingCallback);
             else {
                 consumeCharactersFromTerm(termIterator, operator.getConsumeLength());
                 if (operator.isPre()) {
                     if (right == null)
                         throw new IllegalSyntaxException(termIterator, "Expression expected");
-                    right = produceOperation(line, null, nextOperator, right, parseParameters(termIterator, definedVariables, nextOperator.exactlyOneParameter(), nextOperator.getParametersClosing(), scriptParsingCallback));
+                    right = produceOperation(line, null, nextOperator, right, parseParameters(termIterator,
+                            definedVariables, nextOperator.exactlyOneParameter(), nextOperator.getParametersClosing()
+                            , scriptParsingCallback));
                 } else {
                     if (left == null)
                         throw new IllegalSyntaxException(termIterator, "Expression expected");
-                    right = produceOperation(line, left, nextOperator, null, parseParameters(termIterator, definedVariables, nextOperator.exactlyOneParameter(), nextOperator.getParametersClosing(), scriptParsingCallback));
+                    right = produceOperation(line, left, nextOperator, null, parseParameters(termIterator,
+                            definedVariables, nextOperator.exactlyOneParameter(), nextOperator.getParametersClosing()
+                            , scriptParsingCallback));
                 }
             }
         }
         return right;
     }
 
-    private List<ExecutableStatement> parseParameters(LastPeekingIterator<TermBlock> termIterator, DefinedVariables definedVariables,
+    private List<ExecutableStatement> parseParameters(LastPeekingIterator<TermBlock> termIterator,
+                                                      DefinedVariables definedVariables,
                                                       boolean exactlyOneParameter, String parametersClosing,
                                                       ScriptParsingCallback scriptParsingCallback) throws IllegalSyntaxException {
         boolean first = true;
@@ -625,7 +687,8 @@ public class ScriptParser {
         return operator;
     }
 
-    private ExecutableStatement produceOperation(int line, ExecutableStatement left, Operator operator, ExecutableStatement right, List<ExecutableStatement> parameters) throws IllegalSyntaxException {
+    private ExecutableStatement produceOperation(int line, ExecutableStatement left, Operator operator,
+                                                 ExecutableStatement right, List<ExecutableStatement> parameters) throws IllegalSyntaxException {
         if (operator == Operator.ASSIGNMENT)
             return new AssignStatement(left, right);
         else if (operator == Operator.FUNCTION_CALL)
@@ -658,7 +721,8 @@ public class ScriptParser {
         }
     }
 
-    private ExecutableStatement parseNextOperationToken(LastPeekingIterator<TermBlock> termIterator, DefinedVariables definedVariables,
+    private ExecutableStatement parseNextOperationToken(LastPeekingIterator<TermBlock> termIterator,
+                                                        DefinedVariables definedVariables,
                                                         ScriptParsingCallback scriptParsingCallback) throws IllegalSyntaxException {
         ExecutableStatement result;
         TermBlock termBlock = peekNextTermBlockSafely(termIterator);
@@ -682,7 +746,8 @@ public class ScriptParser {
                 } else if (Character.isDigit(termValue.charAt(0))) {
                     String numberInStr = getNumber(termValue);
                     consumeCharactersFromTerm(termIterator, numberInStr.length());
-                    makeCallback(scriptParsingCallback, line, column, numberInStr.length(), ScriptParsingCallback.Type.CONSTANT);
+                    makeCallback(scriptParsingCallback, line, column, numberInStr.length(),
+                            ScriptParsingCallback.Type.CONSTANT);
                     result = new ConstantStatement(new Variable(Float.parseFloat(numberInStr)));
                 } else {
                     if (Character.isLetter(termValue.charAt(0))) {
@@ -700,13 +765,16 @@ public class ScriptParser {
                             makeCallback(scriptParsingCallback, line, column, 4, ScriptParsingCallback.Type.CONSTANT);
                             result = new ConstantStatement(new Variable(null));
                         } else if (literal.equals("function")) {
-                            result = produceFunctionFromIterator(termIterator, definedVariables, term, scriptParsingCallback);
+                            result = produceFunctionFromIterator(termIterator, definedVariables, term,
+                                    scriptParsingCallback);
                         } else {
                             if (LangDefinition.isReservedWord(literal))
                                 throw new IllegalSyntaxException(line, column, "Invalid variable name");
                             if (!definedVariables.isVariableDefined(literal))
-                                throw new IllegalSyntaxException(line, column, "Variable " + literal + " not defined in scope");
-                            makeCallback(scriptParsingCallback, line, column, literal.length(), ScriptParsingCallback.Type.VARIABLE);
+                                throw new IllegalSyntaxException(line, column, "Variable " + literal + " not defined " +
+                                        "in scope");
+                            makeCallback(scriptParsingCallback, line, column, literal.length(),
+                                    ScriptParsingCallback.Type.VARIABLE);
                             result = new VariableStatement(literal);
                         }
                     } else {
@@ -724,7 +792,8 @@ public class ScriptParser {
         return result;
     }
 
-    private ExecutableStatement produceFunctionFromIterator(LastPeekingIterator<TermBlock> termIterator, DefinedVariables definedVariables, Term term,
+    private ExecutableStatement produceFunctionFromIterator(LastPeekingIterator<TermBlock> termIterator,
+                                                            DefinedVariables definedVariables, Term term,
                                                             ScriptParsingCallback scriptParsingCallback) throws IllegalSyntaxException {
         ExecutableStatement result;
         validateNextTermStartingWith(termIterator, "(");
@@ -751,7 +820,8 @@ public class ScriptParser {
             for (String parameterName : parameterNames)
                 definedVariables.addDefinedVariable(parameterName);
 
-            final List<ExecutableStatement> functionBody = seekStatementsInBlock(functionBodyBlock, definedVariables, scriptParsingCallback);
+            final List<ExecutableStatement> functionBody = seekStatementsInBlock(functionBodyBlock, definedVariables,
+                    scriptParsingCallback);
             result = new FunctionStatement(parameterNames, functionBody);
         } finally {
             definedVariables.popContext();
@@ -762,7 +832,8 @@ public class ScriptParser {
     private ExecutableStatement produceMapDefinitionFromBlock(TermBlock termBlock, DefinedVariables definedVariables,
                                                               ScriptParsingCallback scriptParsingCallback) throws IllegalSyntaxException {
         MapDefineStatement mapStatement = new MapDefineStatement();
-        final LastPeekingIterator<TermBlock> iterator = new LastPeekingIterator<TermBlock>(Iterators.peekingIterator(termBlock.getTermBlocks().iterator()));
+        final LastPeekingIterator<TermBlock> iterator =
+                new LastPeekingIterator<TermBlock>(Iterators.peekingIterator(termBlock.getTermBlocks().iterator()));
         boolean first = true;
         while (iterator.hasNext()) {
             if (!first) {
@@ -771,7 +842,8 @@ public class ScriptParser {
             }
             final TermBlock property = iterator.peek();
             if (!property.isTerm())
-                throw new IllegalSyntaxException(property.getBlockStartLine(), property.getBlockStartColumn(), "Property name expected");
+                throw new IllegalSyntaxException(property.getBlockStartLine(), property.getBlockStartColumn(), 
+                        "Property name expected");
             String propertyName;
             int propertyLine;
             int propertyColumn;
@@ -791,7 +863,8 @@ public class ScriptParser {
             validateNextTermStartingWith(iterator, ":");
             consumeCharactersFromTerm(iterator, 1);
 
-            mapStatement.addProperty(propertyLine, propertyColumn, propertyName, produceExpressionFromIterator(iterator, definedVariables, true, scriptParsingCallback));
+            mapStatement.addProperty(propertyLine, propertyColumn, propertyName,
+                    produceExpressionFromIterator(iterator, definedVariables, true, scriptParsingCallback));
 
             first = false;
         }
@@ -920,14 +993,15 @@ public class ScriptParser {
                             appendProgramTerm(currentBlock, beforeTrimmed, term.getLine(), newColumn);
                         }
                         if (termBlocksStack.size() == 0)
-                            throw new IllegalSyntaxException(term.getLine(), close, "Found closing bracket for no block");
+                            throw new IllegalSyntaxException(term.getLine(), close, "Found closing bracket for no " +
+                                    "block");
                         currentBlock.terminateTermBlock(term.getLine(), close);
                         currentBlock = termBlocksStack.removeLast();
                         value = after;
                         columnIncrement += close + 1;
                     } else {
                         String valueTrimmed = value.trim();
-                        if (valueTrimmed.length()>0) {
+                        if (valueTrimmed.length() > 0) {
                             int newColumn = columnIncrement + term.getColumn() + value.indexOf(valueTrimmed);
                             appendProgramTerm(currentBlock, valueTrimmed, term.getLine(), newColumn);
                         }
@@ -941,7 +1015,8 @@ public class ScriptParser {
 
         if (termBlocksStack.size() > 0) {
             final Term lastTerm = terms.get(terms.size() - 1);
-            throw new IllegalSyntaxException(lastTerm.getLine(), lastTerm.getColumn() + lastTerm.getValue().length(), "Unclosed bracket - }");
+            throw new IllegalSyntaxException(lastTerm.getLine(), lastTerm.getColumn() + lastTerm.getValue().length(),
+                    "Unclosed bracket - }");
         }
 
         return result;
@@ -962,7 +1037,8 @@ public class ScriptParser {
         return terms;
     }
 
-    private void termAndValidateLine(String line, int lineNumber, List<Term> resultTerms, ScriptParsingCallback scriptParsingCallback) throws IllegalSyntaxException {
+    private void termAndValidateLine(String line, int lineNumber, List<Term> resultTerms,
+                                     ScriptParsingCallback scriptParsingCallback) throws IllegalSyntaxException {
         // Remove all not needed white-space characters
         Term.Type type = Term.Type.PROGRAM;
         StringBuilder valueSoFar = new StringBuilder();
@@ -988,7 +1064,8 @@ public class ScriptParser {
                 }
             } else if (type == Term.Type.STRING) {
                 if (lineChars[i] == '\"') {
-                    makeCallback(scriptParsingCallback, lineNumber, termStartColumn-1, valueSoFar.length()+2, ScriptParsingCallback.Type.LITERAL);
+                    makeCallback(scriptParsingCallback, lineNumber, termStartColumn - 1, valueSoFar.length() + 2,
+                            ScriptParsingCallback.Type.LITERAL);
                     resultTerms.add(new Term(type, valueSoFar.toString(), lineNumber, termStartColumn));
                     type = Term.Type.PROGRAM;
                     valueSoFar = new StringBuilder();
@@ -999,7 +1076,8 @@ public class ScriptParser {
                         if (lineChars[i] == '\"' || lineChars[i] == '\\')
                             valueSoFar.append(lineChars[i]);
                         else
-                            throw new IllegalSyntaxException(lineNumber, i, "Illegal escape sequence in String \\" + lineChars[i]);
+                            throw new IllegalSyntaxException(lineNumber, i,
+                                    "Illegal escape sequence in String \\" + lineChars[i]);
                     } else {
                         throw new IllegalSyntaxException(lineNumber, i, "Unfinished escape sequence in String");
                     }
@@ -1013,7 +1091,8 @@ public class ScriptParser {
 
         if (valueSoFar.length() > 0) {
             if (type == Term.Type.COMMENT) {
-                makeCallback(scriptParsingCallback, lineNumber, termStartColumn, valueSoFar.length()+1, ScriptParsingCallback.Type.COMMENT);
+                makeCallback(scriptParsingCallback, lineNumber, termStartColumn, valueSoFar.length() + 1,
+                        ScriptParsingCallback.Type.COMMENT);
             }
 
             resultTerms.add(new Term(type, valueSoFar.toString(), lineNumber, termStartColumn));

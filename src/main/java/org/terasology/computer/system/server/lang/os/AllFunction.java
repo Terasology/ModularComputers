@@ -1,18 +1,5 @@
-/*
- * Copyright 2015 MovingBlocks
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
 package org.terasology.computer.system.server.lang.os;
 
 import com.gempukku.lang.CustomObject;
@@ -31,13 +18,15 @@ import java.util.Map;
 
 public class AllFunction extends TerasologyFunctionExecutable {
     public AllFunction() {
-        super("Creates a condition that becomes true, when all the conditions passed become true.", "Condition", "Condition that becomes true, when all of the passed conditions become true.<l>" +
+        super("Creates a condition that becomes true, when all the conditions passed become true.", "Condition", 
+                "Condition that becomes true, when all of the passed conditions become true.<l>" +
                 "In addition when this condition is <h navigate:" + DocumentationBuilder.getBuiltInObjectMethodPageId("os", "waitFor") +
                 ">waitedFor</h> the waitFor for this " +
                 "condition will return an array containing all the objects returned by the conditions, in the " +
                 "order they appear in the original array passed as a parameter.");
 
-        addParameter("conditions", "Array of Condition", "Conditions that this condition will wait for to become true.");
+        addParameter("conditions", "Array of Condition", "Conditions that this condition will wait for to become true" +
+                ".");
 
         addExample("This example creates two conditions, one waiting for 3 seconds, the other for 5 seconds, waits " +
                         "for ALL of them and prints out text to console.",

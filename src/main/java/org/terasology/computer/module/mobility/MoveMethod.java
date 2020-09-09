@@ -1,18 +1,5 @@
-/*
- * Copyright 2015 MovingBlocks
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
 package org.terasology.computer.module.mobility;
 
 import com.gempukku.lang.ExecutionException;
@@ -20,7 +7,7 @@ import com.gempukku.lang.Variable;
 import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.AbstractModuleMethodExecutable;
-import org.terasology.math.Direction;
+import org.terasology.engine.math.Direction;
 import org.terasology.math.geom.Vector3f;
 import org.terasology.math.geom.Vector3i;
 import org.terasology.mobileBlocks.server.BlockMoveManager;
@@ -31,7 +18,7 @@ public class MoveMethod extends AbstractModuleMethodExecutable<Boolean> {
     private static final int MOVE_TIME = 500;
     private final String methodName;
 
-    private BlockMoveManager blockMoveManager;
+    private final BlockMoveManager blockMoveManager;
 
     public MoveMethod(String methodName, BlockMoveManager blockMoveManager) {
         super("Moves the computer in the specified direction (if able).", "Boolean", "If the movement was successful.");
@@ -42,7 +29,8 @@ public class MoveMethod extends AbstractModuleMethodExecutable<Boolean> {
 
         addExample("This example makes the computer move up one block. Please make sure " +
                         "this computer has a module of Mobility type in any of its slots.",
-                "var mobilityMod = computer.bindModuleOfType(\"" + MobilityModuleCommonSystem.MOBILITY_MODULE_TYPE + "\");\n" +
+                "var mobilityMod = computer.bindModuleOfType(\"" + MobilityModuleCommonSystem.MOBILITY_MODULE_TYPE + 
+                        "\");\n" +
                         "mobilityMod.move(\"up\");");
     }
 
@@ -59,7 +47,8 @@ public class MoveMethod extends AbstractModuleMethodExecutable<Boolean> {
     @Override
     public Boolean onFunctionStart(int line, ComputerCallback computer, Map<String, Variable> parameters) throws ExecutionException {
 
-        Direction direction = FunctionParamValidationUtil.validateDirectionParameter(line, parameters, "direction", methodName);
+        Direction direction = FunctionParamValidationUtil.validateDirectionParameter(line, parameters, "direction",
+                methodName);
 
         Vector3f computerLocation = computer.getComputerLocation();
 
@@ -67,7 +56,8 @@ public class MoveMethod extends AbstractModuleMethodExecutable<Boolean> {
     }
 
     @Override
-    public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters, Boolean moveResult) throws ExecutionException {
+    public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters,
+                                Boolean moveResult) throws ExecutionException {
         return moveResult;
     }
 

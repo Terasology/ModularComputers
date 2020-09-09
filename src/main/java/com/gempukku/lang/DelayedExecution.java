@@ -1,11 +1,14 @@
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang;
 
 public class DelayedExecution implements Execution {
     private boolean _delayed;
     private boolean _startExecuted;
-    private int _delay;
-    private int _minExecutionTicks;
-    private Execution _execution;
+    private final int _delay;
+    private final int _minExecutionTicks;
+    private final Execution _execution;
 
     public DelayedExecution(int delay, int minExecutionTicks, Execution execution) {
         _delay = delay;
@@ -19,7 +22,8 @@ public class DelayedExecution implements Execution {
     }
 
     @Override
-    public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration) throws ExecutionException {
+    public ExecutionProgress executeNextStatement(ExecutionContext executionContext,
+                                                  ExecutionCostConfiguration configuration) throws ExecutionException {
         if (!_startExecuted) {
             _startExecuted = true;
             onExecutionStart(executionContext);
@@ -31,5 +35,6 @@ public class DelayedExecution implements Execution {
         return _execution.executeNextStatement(executionContext, configuration);
     }
 
-    protected void onExecutionStart(ExecutionContext executionContext) throws ExecutionException { }
+    protected void onExecutionStart(ExecutionContext executionContext) throws ExecutionException {
+    }
 }

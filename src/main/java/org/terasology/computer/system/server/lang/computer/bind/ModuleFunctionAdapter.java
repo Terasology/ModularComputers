@@ -1,18 +1,5 @@
-/*
- * Copyright 2015 MovingBlocks
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
 package org.terasology.computer.system.server.lang.computer.bind;
 
 import com.gempukku.lang.CallContext;
@@ -34,8 +21,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ModuleFunctionAdapter implements FunctionExecutable {
-    private int _slotNo;
-    private ModuleMethodExecutable _moduleFunction;
+    private final int _slotNo;
+    private final ModuleMethodExecutable _moduleFunction;
 
     public ModuleFunctionAdapter(int slotNo, ModuleMethodExecutable moduleFunction) {
         _slotNo = slotNo;
@@ -58,14 +45,16 @@ public class ModuleFunctionAdapter implements FunctionExecutable {
 
         int minimumExecutionTime;
         try {
-            minimumExecutionTime = _moduleFunction.getMinimumExecutionTime(line, getComputerCallback(executionContext), getVariableMap(executionContext));
+            minimumExecutionTime = _moduleFunction.getMinimumExecutionTime(line,
+                    getComputerCallback(executionContext), getVariableMap(executionContext));
         } catch (ExecutionException e) {
             minimumExecutionTime = 0;
         }
         return new DelayedExecution(_moduleFunction.getCpuCycleDuration(), minimumExecutionTime, execution) {
             @Override
             protected void onExecutionStart(ExecutionContext executionContext) throws ExecutionException {
-                Object result = _moduleFunction.onFunctionStart(line, getComputerCallback(executionContext), getVariableMap(executionContext));
+                Object result = _moduleFunction.onFunctionStart(line, getComputerCallback(executionContext),
+                        getVariableMap(executionContext));
                 execution.setParameter(result);
             }
         };
@@ -88,12 +77,13 @@ public class ModuleFunctionAdapter implements FunctionExecutable {
     }
 
     private ComputerCallback getComputerCallback(ExecutionContext context) {
-        final TerasologyComputerExecutionContext terasologyExecutionContext = (TerasologyComputerExecutionContext) context;
+        final TerasologyComputerExecutionContext terasologyExecutionContext =
+                (TerasologyComputerExecutionContext) context;
         return terasologyExecutionContext.getComputerCallback();
     }
 
     private class SimpleParameterExecution extends SimpleExecution {
-        private int line;
+        private final int line;
         private Object parameter;
 
         private SimpleParameterExecution(int line) {
@@ -110,7 +100,8 @@ public class ModuleFunctionAdapter implements FunctionExecutable {
 
             Map<String, Variable> parameters = getVariableMap(context);
 
-            context.setReturnValue(new Variable(_moduleFunction.onFunctionEnd(line, computerCallback, parameters, parameter)));
+            context.setReturnValue(new Variable(_moduleFunction.onFunctionEnd(line, computerCallback, parameters,
+                    parameter)));
             return new ExecutionProgress(configuration.getSetReturnValue());
         }
 

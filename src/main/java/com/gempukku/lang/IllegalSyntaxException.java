@@ -1,3 +1,6 @@
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang;
 
 import com.gempukku.lang.parser.LastPeekingIterator;
@@ -5,12 +8,23 @@ import com.gempukku.lang.parser.Term;
 import com.gempukku.lang.parser.TermBlock;
 
 public class IllegalSyntaxException extends Exception {
-    private int _line;
-    private int _column;
-    private String _error;
+    private final int _line;
+    private final int _column;
+    private final String _error;
 
     public IllegalSyntaxException(LastPeekingIterator<TermBlock> termIterator, String error) {
         this(getLine(termIterator), getColumn(termIterator), error);
+    }
+
+    public IllegalSyntaxException(Term term, String message) {
+        this(term.getLine(), term.getColumn(), message);
+    }
+
+    public IllegalSyntaxException(int line, int column, String error) {
+        super("line: " + line + ", column: " + column + ", " + error);
+        _line = line;
+        _column = column;
+        _error = error;
     }
 
     private static int getLine(LastPeekingIterator<TermBlock> termIterator) {
@@ -51,17 +65,6 @@ public class IllegalSyntaxException extends Exception {
                 return lastTermBlock.getBlockEndColumn();
             }
         }
-    }
-
-    public IllegalSyntaxException(Term term, String message) {
-        this(term.getLine(), term.getColumn(), message);
-    }
-
-    public IllegalSyntaxException(int line, int column, String error) {
-        super("line: " + line + ", column: " + column + ", " + error);
-        _line = line;
-        _column = column;
-        _error = error;
     }
 
     public int getColumn() {

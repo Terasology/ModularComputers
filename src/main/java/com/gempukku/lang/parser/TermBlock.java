@@ -1,3 +1,6 @@
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.parser;
 
 import java.util.ArrayList;
@@ -17,13 +20,13 @@ public class TermBlock {
         _termBlocks = new ArrayList<TermBlock>();
     }
 
+    private TermBlock(Term term) {
+        _term = term;
+    }
+
     public void terminateTermBlock(int blockEndLine, int blockEndColumn) {
         _blockEndLine = blockEndLine;
         _blockEndColumn = blockEndColumn;
-    }
-
-    private TermBlock(Term term) {
-        _term = term;
     }
 
     public int getBlockEndColumn() {

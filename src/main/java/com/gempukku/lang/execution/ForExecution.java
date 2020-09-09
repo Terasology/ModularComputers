@@ -1,3 +1,6 @@
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.execution;
 
 import com.gempukku.lang.ExecutableStatement;
@@ -9,11 +12,11 @@ import com.gempukku.lang.ExecutionProgress;
 import com.gempukku.lang.Variable;
 
 public class ForExecution implements Execution {
-    private int _line;
-    private ExecutableStatement _initializationStatement;
-    private ExecutableStatement _terminationCondition;
-    private ExecutableStatement _executedAfterEachLoop;
-    private ExecutableStatement _statementInLoop;
+    private final int _line;
+    private final ExecutableStatement _initializationStatement;
+    private final ExecutableStatement _terminationCondition;
+    private final ExecutableStatement _executedAfterEachLoop;
+    private final ExecutableStatement _statementInLoop;
 
     private boolean _terminated;
 
@@ -23,7 +26,9 @@ public class ForExecution implements Execution {
 
     private boolean _statementStacked;
 
-    public ForExecution(int line, ExecutableStatement initializationStatement, ExecutableStatement terminationCondition, ExecutableStatement executedAfterEachLoop, ExecutableStatement statementInLoop) {
+    public ForExecution(int line, ExecutableStatement initializationStatement,
+                        ExecutableStatement terminationCondition, ExecutableStatement executedAfterEachLoop,
+                        ExecutableStatement statementInLoop) {
         _line = line;
         _initializationStatement = initializationStatement;
         _terminationCondition = terminationCondition;
@@ -33,14 +38,12 @@ public class ForExecution implements Execution {
 
     @Override
     public boolean hasNextExecution(ExecutionContext executionContext) {
-        if (_terminated)
-            return false;
-
-        return true;
+        return !_terminated;
     }
 
     @Override
-    public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration) throws ExecutionException {
+    public ExecutionProgress executeNextStatement(ExecutionContext executionContext,
+                                                  ExecutionCostConfiguration configuration) throws ExecutionException {
         if (!_initialized) {
             _initialized = true;
             if (_initializationStatement != null) {

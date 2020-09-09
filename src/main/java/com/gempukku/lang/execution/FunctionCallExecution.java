@@ -1,3 +1,6 @@
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.execution;
 
 import com.gempukku.lang.CallContext;
@@ -15,9 +18,9 @@ import java.util.Collection;
 import java.util.List;
 
 public class FunctionCallExecution implements Execution {
-    private int _line;
-    private ExecutableStatement _function;
-    private List<ExecutableStatement> _parameters;
+    private final int _line;
+    private final ExecutableStatement _function;
+    private final List<ExecutableStatement> _parameters;
 
     private boolean _functionStacked;
     private boolean _functionResolved;
@@ -27,7 +30,7 @@ public class FunctionCallExecution implements Execution {
     private boolean _returnResultRead;
 
     private Variable _functionVar;
-    private List<Variable> _parameterValues = new ArrayList<Variable>();
+    private final List<Variable> _parameterValues = new ArrayList<Variable>();
 
     public FunctionCallExecution(int line, ExecutableStatement function, List<ExecutableStatement> parameters) {
         _line = line;
@@ -47,13 +50,12 @@ public class FunctionCallExecution implements Execution {
             return true;
         if (!_functionCalled)
             return true;
-        if (!_returnResultRead)
-            return true;
-        return false;
+        return !_returnResultRead;
     }
 
     @Override
-    public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration) throws ExecutionException {
+    public ExecutionProgress executeNextStatement(ExecutionContext executionContext,
+                                                  ExecutionCostConfiguration configuration) throws ExecutionException {
         if (!_functionStacked) {
             executionContext.stackExecution(_function.createExecution());
             _functionStacked = true;
@@ -91,7 +93,8 @@ public class FunctionCallExecution implements Execution {
                     executionContext.setVariableValue(var, _parameterValues.get(i).getValue());
                 i++;
             }
-            executionContext.stackExecutionGroup(functionContext, function.createExecution(_line, executionContext, functionContext));
+            executionContext.stackExecutionGroup(functionContext, function.createExecution(_line, executionContext,
+                    functionContext));
             _functionCalled = true;
             return new ExecutionProgress(configuration.getStackGroupExecution() + configuration.getSetVariable() * _parameterValues.size());
         }

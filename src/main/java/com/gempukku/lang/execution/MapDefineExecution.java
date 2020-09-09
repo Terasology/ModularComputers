@@ -1,3 +1,6 @@
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.execution;
 
 import com.gempukku.lang.ExecutableStatement;
@@ -13,12 +16,12 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class MapDefineExecution implements Execution {
-    private Iterator<Map.Entry<String, ExecutableStatement>> _propertiesIterator;
+    private final Iterator<Map.Entry<String, ExecutableStatement>> _propertiesIterator;
     private String _lastKey;
     private boolean _hasToAssign;
 
     private boolean _finished;
-    private Map<String, Variable> _result = new HashMap<String, Variable>();
+    private final Map<String, Variable> _result = new HashMap<String, Variable>();
 
     public MapDefineExecution(Map<String, ExecutableStatement> properties) {
         _propertiesIterator = properties.entrySet().iterator();
@@ -26,14 +29,12 @@ public class MapDefineExecution implements Execution {
 
     @Override
     public boolean hasNextExecution(ExecutionContext executionContext) {
-        if (_finished)
-            return false;
-
-        return true;
+        return !_finished;
     }
 
     @Override
-    public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration) throws ExecutionException {
+    public ExecutionProgress executeNextStatement(ExecutionContext executionContext,
+                                                  ExecutionCostConfiguration configuration) throws ExecutionException {
         if (_hasToAssign) {
             _result.put(_lastKey, new Variable(executionContext.getContextValue().getValue()));
             _hasToAssign = false;
