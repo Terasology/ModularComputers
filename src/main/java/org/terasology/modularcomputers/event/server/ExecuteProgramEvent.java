@@ -1,0 +1,34 @@
+// Copyright 2020 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+package org.terasology.modularcomputers.event.server;
+
+import org.terasology.engine.entitySystem.event.Event;
+import org.terasology.engine.network.ServerEvent;
+
+@ServerEvent
+public class ExecuteProgramEvent implements Event {
+    private int computerId;
+    private String programName;
+    private String[] params;
+
+    public ExecuteProgramEvent() {
+    }
+
+    public ExecuteProgramEvent(int computerId, String programName, String[] params) {
+        this.computerId = computerId;
+        this.programName = programName;
+        this.params = params;
+    }
+
+    public int getComputerId() {
+        return computerId;
+    }
+
+    public String getProgramName() {
+        return programName;
+    }
+
+    public String[] getParams() {
+        return params;
+    }
+}
