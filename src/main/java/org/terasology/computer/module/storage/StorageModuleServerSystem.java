@@ -15,6 +15,7 @@
  */
 package org.terasology.computer.module.storage;
 
+import org.joml.Vector3f;
 import org.terasology.computer.component.ComputerComponent;
 import org.terasology.computer.component.ComputerModuleComponent;
 import org.terasology.computer.system.common.ComputerModuleRegistry;
@@ -119,7 +120,7 @@ public class StorageModuleServerSystem extends BaseComponentSystem {
             for (EntityRef itemSlot : inventoryComponent.itemSlots) {
                 if (itemSlot.exists()) {
                     itemSlot.send(new DropItemEvent(blockLocation.toVector3f()));
-                    itemSlot.send(new ImpulseEvent(random.nextVector3f(30.0f)));
+                    itemSlot.send(new ImpulseEvent(random.nextVector3f(30.0f, new Vector3f())));
                 }
             }
         }
