@@ -209,7 +209,7 @@ public class ComputerTerminalWidget extends CoreWidget {
         if (isFocused()) {
             int keyboardCharId = event.getKey().getId();
             if (event.isDown()) {
-                char character = event.getKeyCharacter();
+                char character = 'x'; // event.getKeyCharacter(); TODO: Fix - onCharEvent from UIWidget has char, but not id, this uses both ..
                 if (mode == TerminalMode.PLAYER_CONSOLE) {
                     if (editingProgram) {
                         KeyboardDevice keyboard = event.getKeyboard();
