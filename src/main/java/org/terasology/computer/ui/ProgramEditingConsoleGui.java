@@ -4,9 +4,9 @@ package org.terasology.computer.ui;
 
 import com.gempukku.lang.IllegalSyntaxException;
 import com.gempukku.lang.parser.ScriptParsingCallback;
-import org.lwjgl.input.Keyboard;
 import org.terasology.computer.context.ComputerConsole;
 import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
+import org.terasology.input.Keyboard;
 import org.terasology.logic.clipboard.ClipboardManager;
 import org.terasology.nui.Canvas;
 import org.terasology.nui.Color;
@@ -182,20 +182,20 @@ public class ProgramEditingConsoleGui {
 
     public void keyTypedInEditingProgram(char character, int keyboardCharId, boolean controlDown) {
         if (waitingForExitConfirmation) {
-            if (keyboardCharId == Keyboard.KEY_N) {
+            if (keyboardCharId == Keyboard.KeyId.N) {
                 waitingForExitConfirmation = false;
-            } else if (keyboardCharId == Keyboard.KEY_Y) {
+            } else if (keyboardCharId == Keyboard.KeyId.Y) {
                 waitingForExitConfirmation = false;
                 computerTerminalWidget.exitProgramming();
             }
         } else if (waitingForGotoLineEntered) {
             if (character >= 32 && character < 127 && Character.isDigit(character) && gotoLineNumber.length() < 5) {
                 gotoLineNumber.append(character);
-            } else if (keyboardCharId == Keyboard.KEY_ESCAPE) {
+            } else if (keyboardCharId == Keyboard.KeyId.ESCAPE) {
                 waitingForGotoLineEntered = false;
-            } else if (keyboardCharId == Keyboard.KEY_BACK && gotoLineNumber.length() > 1) {
+            } else if (keyboardCharId == Keyboard.KeyId.BACKSPACE && gotoLineNumber.length() > 1) {
                 gotoLineNumber.delete(gotoLineNumber.length() - 1, gotoLineNumber.length());
-            } else if (keyboardCharId == Keyboard.KEY_RETURN) {
+            } else if (keyboardCharId == Keyboard.KeyId.ENTER) {
                 if (gotoLineNumber.length() > 0) {
                     editedProgramCursorX = 0;
                     editedProgramCursorY = Math.min(Integer.parseInt(gotoLineNumber.toString()), editedProgramLines.size() - 1);
@@ -208,37 +208,37 @@ public class ProgramEditingConsoleGui {
                 editedLine.insert(editedProgramCursorX, character);
                 editedProgramCursorX++;
                 programModified();
-            } else if (keyboardCharId == Keyboard.KEY_BACK) {
+            } else if (keyboardCharId == Keyboard.KeyId.BACKSPACE) {
                 handleBackspace(editedLine);
-            } else if (keyboardCharId == Keyboard.KEY_DELETE) {
+            } else if (keyboardCharId == Keyboard.KeyId.DELETE) {
                 handleDelete(editedLine);
-            } else if (keyboardCharId == Keyboard.KEY_LEFT) {
+            } else if (keyboardCharId == Keyboard.KeyId.LEFT) {
                 handleLeft();
-            } else if (keyboardCharId == Keyboard.KEY_RIGHT) {
+            } else if (keyboardCharId == Keyboard.KeyId.RIGHT) {
                 handleRight(editedLine);
-            } else if (keyboardCharId == Keyboard.KEY_UP && controlDown) {
+            } else if (keyboardCharId == Keyboard.KeyId.UP && controlDown) {
                 handleScaleUp();
-            } else if (keyboardCharId == Keyboard.KEY_DOWN && controlDown) {
+            } else if (keyboardCharId == Keyboard.KeyId.DOWN && controlDown) {
                 handleScaleDown();
-            } else if (keyboardCharId == Keyboard.KEY_UP && editedProgramCursorY > 0) {
+            } else if (keyboardCharId == Keyboard.KeyId.UP && editedProgramCursorY > 0) {
                 handleUp();
-            } else if (keyboardCharId == Keyboard.KEY_DOWN && editedProgramCursorY < editedProgramLines.size() - 1) {
+            } else if (keyboardCharId == Keyboard.KeyId.DOWN && editedProgramCursorY < editedProgramLines.size() - 1) {
                 handleDown();
-            } else if (keyboardCharId == Keyboard.KEY_HOME) {
+            } else if (keyboardCharId == Keyboard.KeyId.HOME) {
                 handleHome();
-            } else if (keyboardCharId == Keyboard.KEY_END) {
+            } else if (keyboardCharId == Keyboard.KeyId.END) {
                 handleEnd(editedLine);
-            } else if (keyboardCharId == Keyboard.KEY_RETURN) {
+            } else if (keyboardCharId == Keyboard.KeyId.ENTER) {
                 handleEnter(editedLine);
-            } else if (keyboardCharId == Keyboard.KEY_S && controlDown) {
+            } else if (keyboardCharId == Keyboard.KeyId.S && controlDown) {
                 handleSave();
-            } else if (keyboardCharId == Keyboard.KEY_X && controlDown) {
+            } else if (keyboardCharId == Keyboard.KeyId.X && controlDown) {
                 handleExit();
-            } else if (keyboardCharId == Keyboard.KEY_E && controlDown) {
+            } else if (keyboardCharId == Keyboard.KeyId.E && controlDown) {
                 handleDisplayError();
-            } else if (keyboardCharId == Keyboard.KEY_G && controlDown) {
+            } else if (keyboardCharId == Keyboard.KeyId.G && controlDown) {
                 handleGotoLine();
-            } else if (keyboardCharId == Keyboard.KEY_V && controlDown) {
+            } else if (keyboardCharId == Keyboard.KeyId.V && controlDown) {
                 handlePaste();
             }
         }
