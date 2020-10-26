@@ -3,9 +3,9 @@
 package org.terasology.computer.ui;
 
 import org.terasology.computer.context.ComputerConsole;
+import org.terasology.input.Keyboard;
 import org.terasology.nui.Canvas;
 import org.terasology.nui.Color;
-import org.terasology.input.Keyboard;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -56,18 +56,26 @@ public class PlayerCommandConsoleGui {
             if (focused) {
                 blinkDrawTick = ((++blinkDrawTick) % BLINK_LENGTH);
                 if (blinkDrawTick * 2 > BLINK_LENGTH) {
-                    computerTerminalWidget.drawVerticalLine(canvas, x + cursorPositionInDisplayedCommandLine * characterWidth - 1, 1 + lastLineY, lastLineY + fontHeight, PLAYER_CONSOLE_CURSOR_COLOR);
+                    computerTerminalWidget.drawVerticalLine(canvas,
+                            x + cursorPositionInDisplayedCommandLine * characterWidth - 1, 1 + lastLineY,
+                            lastLineY + fontHeight, PLAYER_CONSOLE_CURSOR_COLOR);
                 }
             }
         }
     }
 
-    public void keyTypedInPlayerConsole(char character, int keyboardCharId) {
+    public void charTypedInPlayerConsole(char character) {
         if (!readOnly) {
             if (character >= 32 && character < 127) {
                 currentCommand.insert(cursorPositionInPlayerCommand, character);
                 cursorPositionInPlayerCommand++;
-            } else if (keyboardCharId == Keyboard.KeyId.BACKSPACE && cursorPositionInPlayerCommand > 0) {
+            }
+        }
+    }
+
+    public void keyTypedInPlayerConsole(int keyboardCharId) {
+        if (!readOnly) {
+            if (keyboardCharId == Keyboard.KeyId.BACKSPACE && cursorPositionInPlayerCommand > 0) {
                 currentCommand.delete(cursorPositionInPlayerCommand - 1, cursorPositionInPlayerCommand);
                 cursorPositionInPlayerCommand--;
             } else if (keyboardCharId == Keyboard.KeyId.DELETE && cursorPositionInPlayerCommand < currentCommand.length()) {

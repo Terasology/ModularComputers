@@ -3,8 +3,7 @@
 package org.terasology.computer.ui;
 
 import org.joml.Rectanglei;
-import org.terasology.math.JomlUtil;
-import org.terasology.utilities.Assets;
+import org.joml.Vector2i;
 import org.terasology.computer.context.ComputerConsole;
 import org.terasology.computer.event.server.ConsoleListeningRegistrationEvent;
 import org.terasology.computer.event.server.CopyProgramEvent;
@@ -22,16 +21,18 @@ import org.terasology.input.device.KeyboardDevice;
 import org.terasology.logic.characters.CharacterComponent;
 import org.terasology.logic.clipboard.ClipboardManager;
 import org.terasology.logic.common.DisplayNameComponent;
-import org.joml.Vector2i;
+import org.terasology.math.JomlUtil;
 import org.terasology.network.ClientComponent;
-import org.terasology.rendering.assets.font.Font;
 import org.terasology.nui.Canvas;
 import org.terasology.nui.Color;
 import org.terasology.nui.CoreWidget;
 import org.terasology.nui.HorizontalAlign;
 import org.terasology.nui.LayoutConfig;
 import org.terasology.nui.VerticalAlign;
+import org.terasology.nui.events.NUICharEvent;
 import org.terasology.nui.events.NUIKeyEvent;
+import org.terasology.rendering.assets.font.Font;
+import org.terasology.utilities.Assets;
 
 import java.util.Collection;
 
@@ -206,22 +207,33 @@ public class ComputerTerminalWidget extends CoreWidget {
 
     @Override
     public boolean onKeyEvent(NUIKeyEvent event) {
-        if (isFocused()) {
-            int keyboardCharId = event.getKey().getId();
-            if (event.isDown()) {
-                char character = 'x'; // event.getKeyCharacter(); TODO: Fix - onCharEvent from UIWidget has char, but not id, this uses both ..
-                if (mode == TerminalMode.PLAYER_CONSOLE) {
-                    if (editingProgram) {
-                        KeyboardDevice keyboard = event.getKeyboard();
-                        programEditingConsoleGui.keyTypedInEditingProgram(character, keyboardCharId,
-                                keyboard.isKeyDown(Keyboard.KeyId.LEFT_CTRL) || keyboard.isKeyDown(Keyboard.KeyId.RIGHT_CTRL));
-                    } else {
-                        playerCommandConsoleGui.keyTypedInPlayerConsole(character, keyboardCharId);
-                    }
-                }
+        int keyboardCharId = event.getKey().getId();
+        if (mode == TerminalMode.PLAYER_CONSOLE) {
+            if (editingProgram) {
+                KeyboardDevice keyboard = event.getKeyboard();
+                programEditingConsoleGui.keyTypedInEditingProgram(keyboardCharId,
+                        keyboard.isKeyDown(Keyboard.KeyId.LEFT_CTRL) || keyboard.isKeyDown(Keyboard.KeyId.RIGHT_CTRL));
+            } else {
+                playerCommandConsoleGui.keyTypedInPlayerConsole(keyboardCharId);
             }
-            if (keyboardCharId != Keyboard.KeyId.ESCAPE) {
-                return true;
+        }
+        if (event.getKey().getId() != Keyboard.KeyId.ESCAPE) {
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean onCharEvent(NUICharEvent event) {
+        char character = event.getCharacter();
+        if (mode == TerminalMode.PLAYER_CONSOLE) {
+            if (editingProgram) {
+                KeyboardDevice keyboard = event.getKeyboard();
+                programEditingConsoleGui.charTypedInEditinProgram(character,
+                        keyboard.isKeyDown(Keyboard.KeyId.LEFT_CTRL) || keyboard.isKeyDown(Keyboard.KeyId.RIGHT_CTRL));
+            } else {
+                playerCommandConsoleGui.charTypedInPlayerConsole(character);
             }
         }
         return false;

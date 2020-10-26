@@ -176,39 +176,31 @@ public class ProgramEditingConsoleGui {
 
         if (errorLine >= 0 && errorLine < getCharactersInColumn() - 1
                 && errorColumn >= 0 && errorColumn < getCharactersInRow()) {
-            computerTerminalWidget.drawHorizontalLine(canvas, x + errorColumn * characterWidth, y + (errorLine + 1) * fontHeight, x + (errorColumn + 1) * characterWidth, PROGRAM_ERROR_UNDERLINE_COLOR);
+            computerTerminalWidget.drawHorizontalLine(canvas, x + errorColumn * characterWidth,
+                    y + (errorLine + 1) * fontHeight, x + (errorColumn + 1) * characterWidth,
+                    PROGRAM_ERROR_UNDERLINE_COLOR);
         }
     }
 
-    public void keyTypedInEditingProgram(char character, int keyboardCharId, boolean controlDown) {
-        if (waitingForExitConfirmation) {
-            if (keyboardCharId == Keyboard.KeyId.N) {
-                waitingForExitConfirmation = false;
-            } else if (keyboardCharId == Keyboard.KeyId.Y) {
-                waitingForExitConfirmation = false;
-                computerTerminalWidget.exitProgramming();
-            }
-        } else if (waitingForGotoLineEntered) {
-            if (character >= 32 && character < 127 && Character.isDigit(character) && gotoLineNumber.length() < 5) {
-                gotoLineNumber.append(character);
-            } else if (keyboardCharId == Keyboard.KeyId.ESCAPE) {
-                waitingForGotoLineEntered = false;
-            } else if (keyboardCharId == Keyboard.KeyId.BACKSPACE && gotoLineNumber.length() > 1) {
-                gotoLineNumber.delete(gotoLineNumber.length() - 1, gotoLineNumber.length());
-            } else if (keyboardCharId == Keyboard.KeyId.ENTER) {
-                if (gotoLineNumber.length() > 0) {
-                    editedProgramCursorX = 0;
-                    editedProgramCursorY = Math.min(Integer.parseInt(gotoLineNumber.toString()), editedProgramLines.size() - 1);
-                }
-                waitingForGotoLineEntered = false;
-            }
-        } else {
-            StringBuilder editedLine = editedProgramLines.get(editedProgramCursorY);
+    public void charTypedInEditinProgram(int character, boolean controlDown) {
+        if (!waitingForExitConfirmation && !waitingForGotoLineEntered && !controlDown) {
             if (character >= 32 && character < 127) {
+                StringBuilder editedLine = editedProgramLines.get(editedProgramCursorY);
                 editedLine.insert(editedProgramCursorX, character);
                 editedProgramCursorX++;
                 programModified();
-            } else if (keyboardCharId == Keyboard.KeyId.BACKSPACE) {
+            }
+        }
+    }
+
+    public void keyTypedInEditingProgram(int keyboardCharId, boolean controlDown) {
+        if (waitingForExitConfirmation) {
+            handleExitMode(keyboardCharId);
+        } else if (waitingForGotoLineEntered) {
+            handleGotoMode(keyboardCharId);
+        } else {
+            StringBuilder editedLine = editedProgramLines.get(editedProgramCursorY);
+            if (keyboardCharId == Keyboard.KeyId.BACKSPACE) {
                 handleBackspace(editedLine);
             } else if (keyboardCharId == Keyboard.KeyId.DELETE) {
                 handleDelete(editedLine);
@@ -269,6 +261,33 @@ public class ProgramEditingConsoleGui {
         if (programCompileDirty) {
             onTheFlyCompiler.submitCompileRequest(getProgramText());
             programCompileDirty = false;
+        }
+    }
+
+    private void handleGotoMode(int keyboardCharId) {
+        if (keyboardCharId >= Keyboard.KeyId.KEY_1 && keyboardCharId <= Keyboard.KeyId.KEY_0 && gotoLineNumber.length() < 5) {
+            int digit = (keyboardCharId - (Keyboard.KeyId.KEY_1 - 1)) % 10; // Key_1 = 2, Key_2 = 3,  Key_0 = 11
+            gotoLineNumber.append(digit);
+        } else if (keyboardCharId == Keyboard.KeyId.ESCAPE) {
+            waitingForGotoLineEntered = false;
+        } else if (keyboardCharId == Keyboard.KeyId.BACKSPACE && gotoLineNumber.length() > 1) {
+            gotoLineNumber.delete(gotoLineNumber.length() - 1, gotoLineNumber.length());
+        } else if (keyboardCharId == Keyboard.KeyId.ENTER) {
+            if (gotoLineNumber.length() > 0) {
+                editedProgramCursorX = 0;
+                editedProgramCursorY = Math.min(Integer.parseInt(gotoLineNumber.toString()),
+                        editedProgramLines.size() - 1);
+            }
+            waitingForGotoLineEntered = false;
+        }
+    }
+
+    private void handleExitMode(int keyboardCharId) {
+        if (keyboardCharId == Keyboard.KeyId.N) {
+            waitingForExitConfirmation = false;
+        } else if (keyboardCharId == Keyboard.KeyId.Y) {
+            waitingForExitConfirmation = false;
+            computerTerminalWidget.exitProgramming();
         }
     }
 
