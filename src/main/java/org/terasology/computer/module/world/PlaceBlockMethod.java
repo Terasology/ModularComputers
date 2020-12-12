@@ -26,6 +26,7 @@ import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.logic.inventory.InventoryManager;
 import org.terasology.logic.inventory.InventoryUtils;
 import org.terasology.math.Direction;
+import org.terasology.math.JomlUtil;
 import org.terasology.math.Side;
 import org.terasology.math.geom.Vector3f;
 import org.terasology.math.geom.Vector3i;
@@ -106,7 +107,7 @@ public class PlaceBlockMethod extends AbstractModuleMethodExecutable<Object> {
 
                     Block block = type.getBlockForPlacement(placementPos, surfaceSide, null);
 
-                    PlaceBlocks placeBlocks = new PlaceBlocks(placementPos, block, computer.getComputerEntity());
+                    PlaceBlocks placeBlocks = new PlaceBlocks(JomlUtil.from(placementPos), block, computer.getComputerEntity());
                     worldProvider.getWorldEntity().send(placeBlocks);
                     if (!placeBlocks.isConsumed()) {
                         removedItem.send(new OnBlockItemPlaced(placementPos, blockEntityRegistry.getBlockEntityAt(placementPos)));
