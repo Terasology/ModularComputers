@@ -1,13 +1,19 @@
 {
-    "id": "ModularComputers",
-    "version": "1.0.0",
-    "author": "Marcin Sciesinski <marcins78@gmail.com>",
-    "displayName": "Modular Computers",
-    "description": "Computers in Terasology! Automate all the things with just a bit of programming.",
-    "dependencies": [
-        { "id": "Inventory", "minVersion": "1.1.0" },
-        { "id": "MobileBlocks", "minVersion": "1.0.0" }
-    ],
-    "isServerSideOnly": false,
-    "isLibrary": true
+  "id": "ModularComputers",
+  "version": "1.1.0-SNAPSHOT",
+  "author": "Marcin Sciesinski <marcins78@gmail.com>",
+  "displayName": "Modular Computers",
+  "description": "Computers in Terasology! Automate all the things with just a bit of programming.",
+  "dependencies": [
+    {
+      "id": "Inventory",
+      "minVersion": "1.1.0"
+    },
+    {
+      "id": "MobileBlocks",
+      "minVersion": "1.0.0"
+    }
+  ],
+  "isServerSideOnly": false,
+  "isLibrary": true
 }
