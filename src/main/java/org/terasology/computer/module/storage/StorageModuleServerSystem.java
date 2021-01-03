@@ -16,6 +16,7 @@
 package org.terasology.computer.module.storage;
 
 import org.joml.Vector3f;
+import org.joml.Vector3i;
 import org.terasology.computer.component.ComputerComponent;
 import org.terasology.computer.component.ComputerModuleComponent;
 import org.terasology.computer.system.common.ComputerModuleRegistry;
@@ -31,7 +32,6 @@ import org.terasology.logic.inventory.InventoryManager;
 import org.terasology.logic.inventory.InventoryUtils;
 import org.terasology.logic.inventory.events.DropItemEvent;
 import org.terasology.logic.inventory.events.InventorySlotChangedEvent;
-import org.terasology.math.geom.Vector3i;
 import org.terasology.mobileBlocks.server.AfterBlockMovedEvent;
 import org.terasology.mobileBlocks.server.BeforeBlockMovesEvent;
 import org.terasology.mobileBlocks.server.BlockTransitionDuringMoveEvent;
@@ -112,14 +112,14 @@ public class StorageModuleServerSystem extends BaseComponentSystem {
 
     private void dropItemsFromComputerInternalStorage(EntityRef computerEntity, EntityRef inventoryEntity) {
         if (computerEntity.hasComponent(BlockComponent.class)) {
-            Vector3i blockLocation = computerEntity.getComponent(BlockComponent.class).getPosition();
+            Vector3i blockLocation = computerEntity.getComponent(BlockComponent.class).getPosition(new Vector3i());
 
             InventoryComponent inventoryComponent = inventoryEntity.getComponent(InventoryComponent.class);
 
             FastRandom random = new FastRandom();
             for (EntityRef itemSlot : inventoryComponent.itemSlots) {
                 if (itemSlot.exists()) {
-                    itemSlot.send(new DropItemEvent(blockLocation.toVector3f()));
+                    itemSlot.send(new DropItemEvent(new Vector3f(blockLocation)));
                     itemSlot.send(new ImpulseEvent(random.nextVector3f(30.0f, new Vector3f())));
                 }
             }

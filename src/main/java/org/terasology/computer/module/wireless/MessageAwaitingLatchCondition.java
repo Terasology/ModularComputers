@@ -16,8 +16,8 @@
 package org.terasology.computer.module.wireless;
 
 import com.gempukku.lang.Variable;
+import org.joml.Vector3i;
 import org.terasology.computer.system.server.lang.os.condition.LatchCondition;
-import org.terasology.math.geom.Vector3i;
 
 import java.util.Map;
 

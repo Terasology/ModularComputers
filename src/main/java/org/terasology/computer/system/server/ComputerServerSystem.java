@@ -17,6 +17,7 @@ package org.terasology.computer.system.server;
 
 import com.gempukku.lang.ExecutionCostConfiguration;
 import com.gempukku.lang.IllegalSyntaxException;
+import org.joml.Vector3f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terasology.computer.component.ComputerComponent;
@@ -55,7 +56,6 @@ import org.terasology.logic.inventory.InventoryManager;
 import org.terasology.logic.inventory.InventoryUtils;
 import org.terasology.logic.inventory.events.BeforeItemPutInInventory;
 import org.terasology.logic.location.LocationComponent;
-import org.terasology.math.geom.Vector3f;
 import org.terasology.mobileBlocks.server.AfterBlockMovedEvent;
 import org.terasology.mobileBlocks.server.BeforeBlockMovesEvent;
 import org.terasology.mobileBlocks.server.BlockTransitionDuringMoveEvent;
@@ -166,7 +166,7 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
         if (location == null) {
             return null;
         }
-        return location.getWorldPosition();
+        return location.getWorldPosition(new Vector3f());
     }
 
     @ReceiveEvent

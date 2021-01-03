@@ -17,14 +17,16 @@ package org.terasology.computer.module.inventory;
 
 import com.gempukku.lang.CustomObject;
 import com.gempukku.lang.ExecutionException;
+import org.joml.RoundingMode;
+import org.joml.Vector3f;
+import org.joml.Vector3i;
+import org.joml.Vector3ic;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.logic.inventory.InventoryAccessComponent;
 import org.terasology.logic.inventory.InventoryComponent;
 import org.terasology.math.Direction;
 import org.terasology.math.IntegerRange;
-import org.terasology.math.geom.Vector3f;
-import org.terasology.math.geom.Vector3i;
 import org.terasology.world.BlockEntityRegistry;
 
 import java.util.Collection;
@@ -63,16 +65,17 @@ public class RelativeInventoryBindingCustomObject implements CustomObject, Inven
     @Override
     public InventoryWithSlots getInventoryEntity(int line, ComputerCallback computerCallback) throws ExecutionException {
         Vector3f computerLocation = computerCallback.getComputerLocation();
-        Vector3i directionVector = inventoryDirection.getVector3i();
-        Vector3i inventoryLocation = new Vector3i(
-                computerLocation.x + directionVector.x,
-                computerLocation.y + directionVector.y,
-                computerLocation.z + directionVector.z);
+        Vector3ic directionVector = inventoryDirection.asVector3i();
+        Vector3i inventoryLocation = new Vector3i(new Vector3f(
+                computerLocation.x + directionVector.x(),
+                computerLocation.y + directionVector.y(),
+                computerLocation.z + directionVector.z()), RoundingMode.FLOOR);
 
         EntityRef blockEntityAt = blockEntityRegistry.getBlockEntityAt(inventoryLocation);
         if (!blockEntityAt.hasComponent(InventoryComponent.class)
-                || !blockEntityAt.hasComponent(InventoryAccessComponent.class))
+                || !blockEntityAt.hasComponent(InventoryAccessComponent.class)) {
             throw new ExecutionException(line, "Unable to locate accessible inventory with this binding");
+        }
 
         List<Integer> slots = getAccessibleSlots(blockEntityAt);
 

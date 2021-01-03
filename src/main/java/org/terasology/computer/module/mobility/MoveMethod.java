@@ -17,12 +17,13 @@ package org.terasology.computer.module.mobility;
 
 import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.Variable;
+import org.joml.RoundingMode;
+import org.joml.Vector3f;
+import org.joml.Vector3i;
 import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.AbstractModuleMethodExecutable;
 import org.terasology.math.Direction;
-import org.terasology.math.geom.Vector3f;
-import org.terasology.math.geom.Vector3i;
 import org.terasology.mobileBlocks.server.BlockMoveManager;
 
 import java.util.Map;
@@ -63,7 +64,7 @@ public class MoveMethod extends AbstractModuleMethodExecutable<Boolean> {
 
         Vector3f computerLocation = computer.getComputerLocation();
 
-        return blockMoveManager.moveBlock(new Vector3i(computerLocation), direction, MOVE_TIME);
+        return blockMoveManager.moveBlock(new Vector3i(computerLocation, RoundingMode.FLOOR), direction, MOVE_TIME);
     }
 
     @Override
