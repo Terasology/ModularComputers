@@ -18,12 +18,11 @@ package org.terasology.computer.module.wireless;
 import com.gempukku.lang.CustomObject;
 import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.Variable;
+import org.joml.RoundingMode;
+import org.joml.Vector3i;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.os.condition.AbstractConditionCustomObject;
-import org.terasology.computer.system.server.lang.os.condition.LatchCondition;
-import org.terasology.computer.system.server.lang.os.condition.ResultAwaitingCondition;
 import org.terasology.entitySystem.entity.EntityRef;
-import org.terasology.math.geom.Vector3i;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -42,17 +41,17 @@ public class PrivateCommunicationChannelCustomObject implements CustomObject, Co
 
     @Override
     public void sendMessage(String message, ComputerCallback computer, long expireOn) {
-        communicationChannels.addPrivateMessage(channelName, computer.getExecutedBy(), new Vector3i(computer.getComputerLocation()), range, message, expireOn);
+        communicationChannels.addPrivateMessage(channelName, computer.getExecutedBy(), new Vector3i(computer.getComputerLocation(), RoundingMode.FLOOR), range, message, expireOn);
     }
 
     @Override
     public Map<String, Variable> consumeMessage(long currentTime, ComputerCallback computer) {
-        return communicationChannels.consumeNextPrivateMessage(currentTime, channelName, computer.getExecutedBy(), new Vector3i(computer.getComputerLocation()), range);
+        return communicationChannels.consumeNextPrivateMessage(currentTime, channelName, computer.getExecutedBy(), new Vector3i(computer.getComputerLocation(), RoundingMode.FLOOR), range);
     }
 
     @Override
     public AbstractConditionCustomObject consumeMessageCondition(long currentTime, ComputerCallback computer) {
-        return new MessageAwaitingLatchCondition(new Vector3i(computer.getComputerLocation()), range) {
+        return new MessageAwaitingLatchCondition(new Vector3i(computer.getComputerLocation(), RoundingMode.FLOOR), range) {
             @Override
             protected Runnable registerAwaitingCondition() throws ExecutionException {
                 Map<String, Variable> message = consumeMessage(currentTime, computer);

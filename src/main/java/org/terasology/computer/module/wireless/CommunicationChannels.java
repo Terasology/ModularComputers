@@ -19,7 +19,7 @@ import com.gempukku.lang.Variable;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import org.terasology.math.geom.Vector3i;
+import org.joml.Vector3i;
 
 import java.util.HashMap;
 import java.util.Iterator;

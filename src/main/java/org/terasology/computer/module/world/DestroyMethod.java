@@ -17,6 +17,10 @@ package org.terasology.computer.module.world;
 
 import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.Variable;
+import org.joml.RoundingMode;
+import org.joml.Vector3f;
+import org.joml.Vector3i;
+import org.joml.Vector3ic;
 import org.terasology.utilities.Assets;
 import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
@@ -24,8 +28,6 @@ import org.terasology.computer.system.server.lang.AbstractModuleMethodExecutable
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.logic.health.DestroyEvent;
 import org.terasology.math.Direction;
-import org.terasology.math.geom.Vector3f;
-import org.terasology.math.geom.Vector3i;
 import org.terasology.world.BlockEntityRegistry;
 import org.terasology.world.WorldProvider;
 import org.terasology.world.block.Block;
@@ -41,7 +43,7 @@ public class DestroyMethod extends AbstractModuleMethodExecutable<Object> {
     public DestroyMethod(String methodName, WorldProvider worldProvider, BlockEntityRegistry blockEntityRegistry,
                          Block replaceBlock) {
         super("Destroys the block in the specified direction. The resulting items from destroying the " +
-                "block are scattered on the ground.", "Boolean", "Whether destroying the specified block was successful.");
+            "block are scattered on the ground.", "Boolean", "Whether destroying the specified block was successful.");
         this.worldProvider = worldProvider;
         this.blockEntityRegistry = blockEntityRegistry;
         this.methodName = methodName;
@@ -50,10 +52,10 @@ public class DestroyMethod extends AbstractModuleMethodExecutable<Object> {
         addParameter("direction", "Direction", "Direction in which to destroy the block.");
 
         addExample(
-                "This example destroys the block below the computer. Please make sure " +
-                        "this computer has a module of World Interaction type in any of its slots.",
-                "var worldMod = computer.bindModuleOfType(\"" + WorldModuleCommonSystem.WORLD_MODULE_TYPE + "\");\n" +
-                        "var worldMod.destroyBlock(\"down\");");
+            "This example destroys the block below the computer. Please make sure " +
+                "this computer has a module of World Interaction type in any of its slots.",
+            "var worldMod = computer.bindModuleOfType(\"" + WorldModuleCommonSystem.WORLD_MODULE_TYPE + "\");\n" +
+                "var worldMod.destroyBlock(\"down\");");
     }
 
     @Override
@@ -71,11 +73,11 @@ public class DestroyMethod extends AbstractModuleMethodExecutable<Object> {
         Direction direction = FunctionParamValidationUtil.validateDirectionParameter(line, parameters, "direction", methodName);
 
         Vector3f computerLocation = computer.getComputerLocation();
-        Vector3i directionVector = direction.getVector3i();
-        Vector3i harvestLocation = new Vector3i(
-                computerLocation.x + directionVector.x,
-                computerLocation.y + directionVector.y,
-                computerLocation.z + directionVector.z);
+        Vector3ic directionVector = direction.asVector3i();
+        Vector3i harvestLocation = new Vector3i(new Vector3f(
+            computerLocation.x + directionVector.x(),
+            computerLocation.y + directionVector.y(),
+            computerLocation.z + directionVector.z()), RoundingMode.FLOOR);
 
         Block blockBeforeDestroy = worldProvider.getBlock(harvestLocation);
         if (blockBeforeDestroy != replaceBlock) {
