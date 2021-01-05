@@ -15,7 +15,8 @@
  */
 package org.terasology.computer.module.wireless;
 
-import org.terasology.math.geom.Vector3i;
+
+import org.joml.Vector3i;
 
 public abstract class SecureMessageAwaitingLatchCondition extends MessageAwaitingLatchCondition {
     private String password;

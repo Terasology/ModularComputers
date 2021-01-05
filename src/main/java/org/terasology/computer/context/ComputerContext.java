@@ -28,6 +28,8 @@ import com.gempukku.lang.ScriptExecutable;
 import com.gempukku.lang.StringPropertyProducer;
 import com.gempukku.lang.Variable;
 import com.gempukku.lang.parser.ScriptParser;
+import org.joml.Vector3f;
+import org.joml.Vector3i;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terasology.rendering.nui.widgets.browser.data.ParagraphData;
@@ -42,7 +44,6 @@ import org.terasology.computer.system.server.lang.os.condition.ResultAwaitingCon
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.logic.inventory.InventoryComponent;
 import org.terasology.logic.location.LocationComponent;
-import org.terasology.math.geom.Vector3f;
 import org.terasology.world.block.BlockComponent;
 
 import java.io.IOException;
@@ -243,9 +244,9 @@ public class ComputerContext {
             public Vector3f getComputerLocation() {
                 BlockComponent block = entity.getComponent(BlockComponent.class);
                 if (block != null) {
-                    return block.getPosition().toVector3f();
+                    return new Vector3f(block.getPosition(new Vector3i()));
                 }
-                return entity.getComponent(LocationComponent.class).getWorldPosition();
+                return entity.getComponent(LocationComponent.class).getWorldPosition(new Vector3f());
             }
 
             @Override

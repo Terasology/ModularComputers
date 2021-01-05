@@ -18,10 +18,11 @@ package org.terasology.computer.module.wireless;
 import com.gempukku.lang.CustomObject;
 import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.Variable;
+import org.joml.RoundingMode;
+import org.joml.Vector3i;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.os.condition.AbstractConditionCustomObject;
 import org.terasology.entitySystem.entity.EntityRef;
-import org.terasology.math.geom.Vector3i;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -42,17 +43,17 @@ public class SecureCommunicationChannelCustomObject implements CustomObject, Com
 
     @Override
     public void sendMessage(String message, ComputerCallback computer, long expireOn) {
-        communicationChannels.addSecureMessage(channelName, password, new Vector3i(computer.getComputerLocation()), range, message, expireOn);
+        communicationChannels.addSecureMessage(channelName, password, new Vector3i(computer.getComputerLocation(), RoundingMode.FLOOR), range, message, expireOn);
     }
 
     @Override
     public Map<String, Variable> consumeMessage(long currentTime, ComputerCallback computer) {
-        return communicationChannels.consumeNextSecureMessage(currentTime, channelName, password, new Vector3i(computer.getComputerLocation()), range);
+        return communicationChannels.consumeNextSecureMessage(currentTime, channelName, password, new Vector3i(computer.getComputerLocation(), RoundingMode.FLOOR), range);
     }
 
     @Override
     public AbstractConditionCustomObject consumeMessageCondition(long currentTime, ComputerCallback computer) {
-        return new SecureMessageAwaitingLatchCondition(new Vector3i(computer.getComputerLocation()), range, password) {
+        return new SecureMessageAwaitingLatchCondition(new Vector3i(computer.getComputerLocation(), RoundingMode.FLOOR), range, password) {
             @Override
             protected Runnable registerAwaitingCondition() throws ExecutionException {
                 Map<String, Variable> message = consumeMessage(currentTime, computer);

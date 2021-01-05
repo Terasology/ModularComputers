@@ -17,6 +17,10 @@ package org.terasology.computer.module.world;
 
 import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.Variable;
+import org.joml.RoundingMode;
+import org.joml.Vector3f;
+import org.joml.Vector3i;
+import org.joml.Vector3ic;
 import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.module.inventory.InventoryBinding;
@@ -28,13 +32,12 @@ import org.terasology.logic.inventory.InventoryUtils;
 import org.terasology.math.Direction;
 import org.terasology.math.JomlUtil;
 import org.terasology.math.Side;
-import org.terasology.math.geom.Vector3f;
-import org.terasology.math.geom.Vector3i;
 import org.terasology.world.BlockEntityRegistry;
 import org.terasology.world.WorldProvider;
 import org.terasology.world.block.Block;
 import org.terasology.world.block.entity.placement.PlaceBlocks;
 import org.terasology.world.block.family.BlockFamily;
+import org.terasology.world.block.family.BlockPlacementData;
 import org.terasology.world.block.items.BlockItemComponent;
 import org.terasology.world.block.items.OnBlockItemPlaced;
 
@@ -87,11 +90,11 @@ public class PlaceBlockMethod extends AbstractModuleMethodExecutable<Object> {
         int slotNo = FunctionParamValidationUtil.validateSlotNo(line, parameters, inventory, "slot", methodName);
 
         Vector3f computerLocation = computer.getComputerLocation();
-        Vector3i directionVector = direction.getVector3i();
-        Vector3i placementPos = new Vector3i(
-                computerLocation.x + directionVector.x,
-                computerLocation.y + directionVector.y,
-                computerLocation.z + directionVector.z);
+        Vector3ic directionVector = direction.asVector3i();
+        Vector3i placementPos = new Vector3i(new Vector3f(
+                computerLocation.x + directionVector.x(),
+                computerLocation.y + directionVector.y(),
+                computerLocation.z + directionVector.z()), RoundingMode.FLOOR);
 
         Block blockBeforeDestroy = worldProvider.getBlock(placementPos);
         if (blockBeforeDestroy.isReplacementAllowed()) {
@@ -103,14 +106,14 @@ public class PlaceBlockMethod extends AbstractModuleMethodExecutable<Object> {
 
                 EntityRef removedItem = inventoryManager.removeItem(inventory.inventory, computer.getComputerEntity(), realSlotNo, false, 1);
                 if (removedItem != null) {
-                    Side surfaceSide = Side.inDirection(direction.reverse().getVector3f());
+                    Side surfaceSide = Side.inDirection(direction.reverse().asVector3f());
 
-                    Block block = type.getBlockForPlacement(placementPos, surfaceSide, null);
+                    Block block = type.getBlockForPlacement(new BlockPlacementData(placementPos, surfaceSide, new Vector3f()));
 
-                    PlaceBlocks placeBlocks = new PlaceBlocks(JomlUtil.from(placementPos), block, computer.getComputerEntity());
+                    PlaceBlocks placeBlocks = new PlaceBlocks(placementPos, block, computer.getComputerEntity());
                     worldProvider.getWorldEntity().send(placeBlocks);
                     if (!placeBlocks.isConsumed()) {
-                        removedItem.send(new OnBlockItemPlaced(placementPos, blockEntityRegistry.getBlockEntityAt(placementPos)));
+                        removedItem.send(new OnBlockItemPlaced(placementPos, blockEntityRegistry.getBlockEntityAt(placementPos), EntityRef.NULL));
                         removedItem.destroy();
                         return true;
                     } else {
