@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.terasology.computer.ui;
 
-import org.joml.Rectanglei;
+import org.terasology.joml.geom.Rectanglei;
 import org.terasology.math.JomlUtil;
 import org.terasology.utilities.Assets;
 import org.terasology.computer.context.ComputerConsole;
