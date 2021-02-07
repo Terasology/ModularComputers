@@ -3,7 +3,6 @@
 package org.terasology.computer.ui;
 
 import org.terasology.joml.geom.Rectanglei;
-import org.terasology.math.JomlUtil;
 import org.terasology.utilities.Assets;
 import org.terasology.computer.context.ComputerConsole;
 import org.terasology.computer.event.server.ConsoleListeningRegistrationEvent;
@@ -120,11 +119,11 @@ public class ComputerTerminalWidget extends CoreWidget {
     public void onDraw(Canvas canvas) {
         Rectanglei region = canvas.getRegion();
 
-        int screenWidth = region.lengthX();
-        int screenHeight = region.lengthY();
+        int screenWidth = region.getSizeX();
+        int screenHeight = region.getSizeY();
 
         // Fill background with solid dark-grey
-        canvas.drawFilledRectangle(JomlUtil.rectangleiFromMinAndSize(0, 0, screenWidth, screenHeight), BACKGROUND_COLOR);
+        canvas.drawFilledRectangle(new Rectanglei(0, 0, screenWidth, screenHeight), BACKGROUND_COLOR);
 
         // Draw white rectangle around the screen
         drawHorizontalLine(canvas, 0, 0, screenWidth, FRAME_COLOR);
@@ -201,7 +200,7 @@ public class ComputerTerminalWidget extends CoreWidget {
     }
 
     private void renderCharAt(Canvas canvas, char ch, int x, int y, Color color) {
-        canvas.drawTextRaw(String.valueOf(ch), getFont(canvas), color, JomlUtil.rectangleiFromMinAndSize(x, y, characterWidth, fontHeight), HorizontalAlign.CENTER, VerticalAlign.TOP);
+        canvas.drawTextRaw(String.valueOf(ch), getFont(canvas), color, new Rectanglei(x, y).setSize(characterWidth, fontHeight), HorizontalAlign.CENTER, VerticalAlign.TOP);
     }
 
     @Override

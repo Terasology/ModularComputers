@@ -30,7 +30,6 @@ import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.logic.inventory.InventoryManager;
 import org.terasology.logic.inventory.InventoryUtils;
 import org.terasology.math.Direction;
-import org.terasology.math.JomlUtil;
 import org.terasology.math.Side;
 import org.terasology.world.BlockEntityRegistry;
 import org.terasology.world.WorldProvider;
