@@ -6,8 +6,8 @@ import com.gempukku.lang.IllegalSyntaxException;
 import com.gempukku.lang.parser.ScriptParsingCallback;
 import org.terasology.computer.context.ComputerConsole;
 import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
+import org.terasology.engine.logic.clipboard.ClipboardManager;
 import org.terasology.input.Keyboard;
-import org.terasology.logic.clipboard.ClipboardManager;
 import org.terasology.nui.Canvas;
 import org.terasology.nui.Color;
 

@@ -4,19 +4,19 @@ package org.terasology.computer.ui.documentation;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.terasology.utilities.Assets;
-import org.terasology.rendering.nui.widgets.browser.data.ParagraphData;
-import org.terasology.rendering.nui.widgets.browser.data.basic.HTMLLikeParser;
-import org.terasology.rendering.nui.widgets.browser.ui.style.ContainerInteger;
-import org.terasology.rendering.nui.widgets.browser.ui.style.FixedContainerInteger;
-import org.terasology.rendering.nui.widgets.browser.ui.style.ParagraphRenderStyle;
 import org.terasology.computer.system.common.ComputerLanguageContext;
 import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
 import org.terasology.computer.system.common.DocumentedFunctionExecutable;
 import org.terasology.computer.system.common.DocumentedObjectDefinition;
 import org.terasology.computer.system.server.lang.ComputerModule;
 import org.terasology.computer.system.server.lang.ModuleMethodExecutable;
-import org.terasology.rendering.assets.font.Font;
+import org.terasology.engine.rendering.assets.font.Font;
+import org.terasology.engine.rendering.nui.widgets.browser.data.ParagraphData;
+import org.terasology.engine.rendering.nui.widgets.browser.data.basic.HTMLLikeParser;
+import org.terasology.engine.rendering.nui.widgets.browser.ui.style.ContainerInteger;
+import org.terasology.engine.rendering.nui.widgets.browser.ui.style.FixedContainerInteger;
+import org.terasology.engine.rendering.nui.widgets.browser.ui.style.ParagraphRenderStyle;
+import org.terasology.engine.utilities.Assets;
 import org.terasology.nui.Color;
 
 import java.util.Collection;

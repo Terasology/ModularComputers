@@ -23,7 +23,7 @@ import org.joml.Vector3i;
 import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.AbstractModuleMethodExecutable;
-import org.terasology.math.Direction;
+import org.terasology.engine.math.Direction;
 import org.terasology.mobileBlocks.server.BlockMoveManager;
 
 import java.util.Map;

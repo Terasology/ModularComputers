@@ -15,14 +15,8 @@
  */
 package org.terasology.computer.module.inventory;
 
-import com.gempukku.lang.ExecutionException;
-import org.terasology.computer.system.server.lang.os.condition.AbstractConditionCustomObject;
 import org.terasology.computer.system.server.lang.os.condition.InventoryCondition;
-import org.terasology.computer.system.server.lang.os.condition.LatchCondition;
-import org.terasology.entitySystem.entity.EntityRef;
-
-import java.util.function.Function;
-import java.util.function.Predicate;
+import org.terasology.engine.entitySystem.entity.EntityRef;
 
 public interface InventoryModuleConditionsRegister {
     void addInventoryChangeListener(EntityRef entity, InventoryCondition latchCondition);

@@ -18,7 +18,7 @@ package org.terasology.computer.context;
 import org.joml.Vector3f;
 import org.terasology.computer.system.server.lang.ComputerModule;
 import org.terasology.computer.system.server.lang.os.condition.ResultAwaitingCondition;
-import org.terasology.entitySystem.entity.EntityRef;
+import org.terasology.engine.entitySystem.entity.EntityRef;
 
 public interface ComputerCallback {
     ComputerConsole getConsole();

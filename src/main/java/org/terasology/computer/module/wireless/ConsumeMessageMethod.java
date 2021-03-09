@@ -20,7 +20,7 @@ import com.gempukku.lang.Variable;
 import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.AbstractModuleMethodExecutable;
-import org.terasology.engine.Time;
+import org.terasology.engine.core.Time;
 
 import java.util.Map;
 

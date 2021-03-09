@@ -18,15 +18,15 @@ package org.terasology.computer.module.wireless;
 import org.terasology.computer.system.common.ComputerLanguageRegistry;
 import org.terasology.computer.system.common.ComputerModuleRegistry;
 import org.terasology.computer.ui.documentation.DocumentationBuilder;
-import org.terasology.engine.Time;
-import org.terasology.entitySystem.entity.EntityRef;
-import org.terasology.entitySystem.systems.BaseComponentSystem;
-import org.terasology.entitySystem.systems.RegisterMode;
-import org.terasology.entitySystem.systems.RegisterSystem;
-import org.terasology.entitySystem.systems.UpdateSubscriberSystem;
-import org.terasology.logic.config.ModuleConfigManager;
-import org.terasology.registry.In;
-import org.terasology.rendering.nui.widgets.browser.data.basic.HTMLLikeParser;
+import org.terasology.engine.core.Time;
+import org.terasology.engine.entitySystem.entity.EntityRef;
+import org.terasology.engine.entitySystem.systems.BaseComponentSystem;
+import org.terasology.engine.entitySystem.systems.RegisterMode;
+import org.terasology.engine.entitySystem.systems.RegisterSystem;
+import org.terasology.engine.entitySystem.systems.UpdateSubscriberSystem;
+import org.terasology.engine.logic.config.ModuleConfigManager;
+import org.terasology.engine.registry.In;
+import org.terasology.engine.rendering.nui.widgets.browser.data.basic.HTMLLikeParser;
 
 import java.util.Collections;
 

@@ -15,7 +15,7 @@
  */
 package org.terasology.computer.module;
 
-import org.terasology.math.Direction;
+import org.terasology.engine.math.Direction;
 
 public class ComputerDirection {
     private ComputerDirection() {

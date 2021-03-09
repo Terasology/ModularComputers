@@ -17,7 +17,7 @@ package org.terasology.computer.module.inventory;
 
 import com.gempukku.lang.ExecutionException;
 import org.terasology.computer.context.ComputerCallback;
-import org.terasology.entitySystem.entity.EntityRef;
+import org.terasology.engine.entitySystem.entity.EntityRef;
 
 import java.util.List;
 

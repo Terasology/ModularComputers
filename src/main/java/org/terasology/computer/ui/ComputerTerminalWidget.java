@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.terasology.computer.ui;
 
-import org.terasology.joml.geom.Rectanglei;
-import org.terasology.utilities.Assets;
+import org.joml.Vector2i;
 import org.terasology.computer.context.ComputerConsole;
 import org.terasology.computer.event.server.ConsoleListeningRegistrationEvent;
 import org.terasology.computer.event.server.CopyProgramEvent;
@@ -15,15 +14,16 @@ import org.terasology.computer.event.server.RenameProgramEvent;
 import org.terasology.computer.event.server.SaveProgramEvent;
 import org.terasology.computer.event.server.StopProgramEvent;
 import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
-import org.terasology.entitySystem.entity.EntityRef;
+import org.terasology.engine.entitySystem.entity.EntityRef;
+import org.terasology.engine.logic.characters.CharacterComponent;
+import org.terasology.engine.logic.clipboard.ClipboardManager;
+import org.terasology.engine.logic.common.DisplayNameComponent;
+import org.terasology.engine.network.ClientComponent;
+import org.terasology.engine.rendering.assets.font.Font;
+import org.terasology.engine.utilities.Assets;
 import org.terasology.input.Keyboard;
 import org.terasology.input.device.KeyboardDevice;
-import org.terasology.logic.characters.CharacterComponent;
-import org.terasology.logic.clipboard.ClipboardManager;
-import org.terasology.logic.common.DisplayNameComponent;
-import org.joml.Vector2i;
-import org.terasology.network.ClientComponent;
-import org.terasology.rendering.assets.font.Font;
+import org.terasology.joml.geom.Rectanglei;
 import org.terasology.nui.Canvas;
 import org.terasology.nui.Color;
 import org.terasology.nui.CoreWidget;

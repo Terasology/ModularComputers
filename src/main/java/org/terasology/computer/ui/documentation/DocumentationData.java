@@ -15,7 +15,7 @@
  */
 package org.terasology.computer.ui.documentation;
 
-import org.terasology.rendering.nui.widgets.browser.data.DocumentData;
+import org.terasology.engine.rendering.nui.widgets.browser.data.DocumentData;
 
 public interface DocumentationData {
     DocumentData getDocument(String pageId);

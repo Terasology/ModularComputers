@@ -16,15 +16,15 @@
 package org.terasology.computer.module.world;
 
 import org.terasology.computer.system.common.ComputerModuleRegistry;
-import org.terasology.entitySystem.systems.BaseComponentSystem;
-import org.terasology.entitySystem.systems.RegisterMode;
-import org.terasology.entitySystem.systems.RegisterSystem;
-import org.terasology.logic.config.ModuleConfigManager;
-import org.terasology.logic.inventory.InventoryManager;
-import org.terasology.registry.In;
-import org.terasology.world.BlockEntityRegistry;
-import org.terasology.world.WorldProvider;
-import org.terasology.world.block.BlockManager;
+import org.terasology.engine.entitySystem.systems.BaseComponentSystem;
+import org.terasology.engine.entitySystem.systems.RegisterMode;
+import org.terasology.engine.entitySystem.systems.RegisterSystem;
+import org.terasology.engine.logic.config.ModuleConfigManager;
+import org.terasology.engine.logic.inventory.InventoryManager;
+import org.terasology.engine.registry.In;
+import org.terasology.engine.world.BlockEntityRegistry;
+import org.terasology.engine.world.WorldProvider;
+import org.terasology.engine.world.block.BlockManager;
 
 @RegisterSystem(RegisterMode.ALWAYS)
 public class WorldModuleCommonSystem extends BaseComponentSystem {

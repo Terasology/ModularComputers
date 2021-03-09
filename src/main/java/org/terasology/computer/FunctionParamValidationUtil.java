@@ -22,7 +22,7 @@ import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.module.ComputerDirection;
 import org.terasology.computer.module.inventory.InventoryBinding;
 import org.terasology.computer.module.wireless.CommunicationChannel;
-import org.terasology.math.Direction;
+import org.terasology.engine.math.Direction;
 
 import java.util.Map;
 

@@ -21,9 +21,8 @@ import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.AbstractModuleMethodExecutable;
 import org.terasology.computer.system.server.lang.os.condition.InventoryCondition;
-import org.terasology.computer.system.server.lang.os.condition.LatchCondition;
-import org.terasology.entitySystem.entity.EntityRef;
-import org.terasology.logic.inventory.InventoryUtils;
+import org.terasology.engine.entitySystem.entity.EntityRef;
+import org.terasology.engine.logic.inventory.InventoryUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;

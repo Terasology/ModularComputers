@@ -15,9 +15,9 @@
  */
 package org.terasology.computer.module.inventory;
 
-import org.terasology.entitySystem.entity.EntityRef;
-import org.terasology.logic.common.DisplayNameComponent;
-import org.terasology.logic.inventory.ItemComponent;
+import org.terasology.engine.entitySystem.entity.EntityRef;
+import org.terasology.engine.logic.common.DisplayNameComponent;
+import org.terasology.engine.logic.inventory.ItemComponent;
 
 public class InventoryModuleUtils {
     private InventoryModuleUtils() {

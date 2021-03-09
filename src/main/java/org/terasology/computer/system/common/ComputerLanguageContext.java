@@ -15,8 +15,8 @@
  */
 package org.terasology.computer.system.common;
 
-import org.terasology.rendering.nui.widgets.browser.data.ParagraphData;
 import org.terasology.computer.system.server.lang.ComputerModule;
+import org.terasology.engine.rendering.nui.widgets.browser.data.ParagraphData;
 
 import java.util.Collection;
 

@@ -16,11 +16,11 @@
 package org.terasology.computer.module.world;
 
 import org.terasology.computer.module.DefaultComputerModule;
-import org.terasology.logic.inventory.InventoryManager;
-import org.terasology.world.BlockEntityRegistry;
-import org.terasology.world.WorldProvider;
-import org.terasology.world.block.Block;
-import org.terasology.world.block.BlockManager;
+import org.terasology.engine.logic.inventory.InventoryManager;
+import org.terasology.engine.world.BlockEntityRegistry;
+import org.terasology.engine.world.WorldProvider;
+import org.terasology.engine.world.block.Block;
+import org.terasology.engine.world.block.BlockManager;
 
 public class WorldComputerModule extends DefaultComputerModule {
     public WorldComputerModule(WorldProvider worldProvider, BlockEntityRegistry blockEntityRegistry, InventoryManager inventoryManager,

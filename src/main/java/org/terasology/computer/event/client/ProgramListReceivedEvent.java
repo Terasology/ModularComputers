@@ -15,8 +15,8 @@
  */
 package org.terasology.computer.event.client;
 
-import org.terasology.entitySystem.event.Event;
-import org.terasology.network.OwnerEvent;
+import org.terasology.engine.entitySystem.event.Event;
+import org.terasology.engine.network.OwnerEvent;
 
 import java.util.Collection;
 

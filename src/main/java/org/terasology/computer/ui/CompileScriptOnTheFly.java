@@ -18,11 +18,11 @@ package org.terasology.computer.ui;
 import com.gempukku.lang.IllegalSyntaxException;
 import com.gempukku.lang.parser.ScriptParser;
 import com.gempukku.lang.parser.ScriptParsingCallback;
-import org.terasology.rendering.nui.widgets.browser.data.ParagraphData;
 import org.terasology.computer.system.common.ComputerLanguageContext;
 import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
 import org.terasology.computer.system.common.DocumentedObjectDefinition;
 import org.terasology.computer.system.server.lang.ComputerModule;
+import org.terasology.engine.rendering.nui.widgets.browser.data.ParagraphData;
 
 import java.io.IOException;
 import java.io.StringReader;

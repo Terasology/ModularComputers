@@ -18,7 +18,7 @@ package org.terasology.computer.ui.documentation;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.TreeMultimap;
-import org.terasology.rendering.nui.widgets.browser.data.DocumentData;
+import org.terasology.engine.rendering.nui.widgets.browser.data.DocumentData;
 
 import java.util.Collection;
 import java.util.Collections;

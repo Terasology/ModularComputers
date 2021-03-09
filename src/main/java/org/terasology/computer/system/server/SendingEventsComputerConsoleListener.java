@@ -20,7 +20,7 @@ import org.terasology.computer.event.client.console.AppendConsoleLinesEvent;
 import org.terasology.computer.event.client.console.ClearConsoleScreenEvent;
 import org.terasology.computer.event.client.console.SetConsoleCharactersAtEvent;
 import org.terasology.computer.event.client.console.SetConsoleScreenEvent;
-import org.terasology.entitySystem.entity.EntityRef;
+import org.terasology.engine.entitySystem.entity.EntityRef;
 
 public class SendingEventsComputerConsoleListener implements ComputerConsoleListener {
     private int computerId;

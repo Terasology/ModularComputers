@@ -21,18 +21,18 @@ import org.joml.RoundingMode;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 import org.joml.Vector3ic;
-import org.terasology.utilities.Assets;
 import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.module.inventory.InventoryBinding;
 import org.terasology.computer.module.inventory.InventoryModuleCommonSystem;
 import org.terasology.computer.system.server.lang.AbstractModuleMethodExecutable;
-import org.terasology.entitySystem.entity.EntityRef;
-import org.terasology.logic.health.DestroyEvent;
-import org.terasology.math.Direction;
-import org.terasology.world.BlockEntityRegistry;
-import org.terasology.world.WorldProvider;
-import org.terasology.world.block.Block;
+import org.terasology.engine.entitySystem.entity.EntityRef;
+import org.terasology.engine.logic.health.DestroyEvent;
+import org.terasology.engine.math.Direction;
+import org.terasology.engine.utilities.Assets;
+import org.terasology.engine.world.BlockEntityRegistry;
+import org.terasology.engine.world.WorldProvider;
+import org.terasology.engine.world.block.Block;
 
 import java.util.Map;
 

@@ -15,8 +15,6 @@
  */
 package org.terasology.computer.system.common;
 
-import org.terasology.rendering.nui.widgets.browser.data.ParagraphData;
-import org.terasology.rendering.nui.widgets.browser.data.basic.HTMLLikeParser;
 import org.terasology.computer.system.server.lang.ComputerModule;
 import org.terasology.computer.system.server.lang.computer.BindFirstModuleOfTypeFunction;
 import org.terasology.computer.system.server.lang.computer.BindModuleFunction;
@@ -35,10 +33,12 @@ import org.terasology.computer.system.server.lang.os.ParseIntFunction;
 import org.terasology.computer.system.server.lang.os.TypeOfFunction;
 import org.terasology.computer.system.server.lang.os.WaitForFunction;
 import org.terasology.computer.ui.documentation.DocumentationBuilder;
-import org.terasology.entitySystem.systems.BaseComponentSystem;
-import org.terasology.entitySystem.systems.RegisterMode;
-import org.terasology.entitySystem.systems.RegisterSystem;
-import org.terasology.registry.Share;
+import org.terasology.engine.entitySystem.systems.BaseComponentSystem;
+import org.terasology.engine.entitySystem.systems.RegisterMode;
+import org.terasology.engine.entitySystem.systems.RegisterSystem;
+import org.terasology.engine.registry.Share;
+import org.terasology.engine.rendering.nui.widgets.browser.data.ParagraphData;
+import org.terasology.engine.rendering.nui.widgets.browser.data.basic.HTMLLikeParser;
 
 import java.util.Collection;
 import java.util.Collections;

@@ -15,8 +15,8 @@
  */
 package org.terasology.computer.event.client.console;
 
-import org.terasology.entitySystem.event.Event;
-import org.terasology.network.OwnerEvent;
+import org.terasology.engine.entitySystem.event.Event;
+import org.terasology.engine.network.OwnerEvent;
 
 @OwnerEvent
 public class SetConsoleScreenEvent implements Event {

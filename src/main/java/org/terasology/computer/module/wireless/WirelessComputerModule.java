@@ -16,8 +16,8 @@
 package org.terasology.computer.module.wireless;
 
 import org.terasology.computer.module.DefaultComputerModule;
-import org.terasology.engine.Time;
-import org.terasology.entitySystem.entity.EntityRef;
+import org.terasology.engine.core.Time;
+import org.terasology.engine.entitySystem.entity.EntityRef;
 
 public class WirelessComputerModule extends DefaultComputerModule {
     public WirelessComputerModule(CommunicationChannels<EntityRef> communicationChannels, Time time,

@@ -24,13 +24,13 @@ import com.gempukku.lang.ExecutionException;
 import com.gempukku.lang.ExecutionProgress;
 import com.gempukku.lang.Variable;
 import com.gempukku.lang.execution.SimpleExecution;
-import org.terasology.rendering.nui.widgets.browser.data.ParagraphData;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.context.TerasologyComputerExecutionContext;
 import org.terasology.computer.system.common.DocumentedFunctionExecutable;
 import org.terasology.computer.ui.documentation.DefaultMethodDocumentation;
 import org.terasology.computer.ui.documentation.DocumentationBuilder;
 import org.terasology.computer.ui.documentation.MethodDocumentation;
+import org.terasology.engine.rendering.nui.widgets.browser.data.ParagraphData;
 
 import java.util.Collection;
 import java.util.Collections;

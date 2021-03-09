@@ -18,11 +18,11 @@ package org.terasology.computer.module.storage;
 import org.terasology.computer.module.inventory.InventoryModuleCommonSystem;
 import org.terasology.computer.system.common.ComputerModuleRegistry;
 import org.terasology.computer.ui.documentation.DocumentationBuilder;
-import org.terasology.entitySystem.systems.BaseComponentSystem;
-import org.terasology.entitySystem.systems.RegisterMode;
-import org.terasology.entitySystem.systems.RegisterSystem;
-import org.terasology.logic.config.ModuleConfigManager;
-import org.terasology.registry.In;
+import org.terasology.engine.entitySystem.systems.BaseComponentSystem;
+import org.terasology.engine.entitySystem.systems.RegisterMode;
+import org.terasology.engine.entitySystem.systems.RegisterSystem;
+import org.terasology.engine.logic.config.ModuleConfigManager;
+import org.terasology.engine.registry.In;
 
 @RegisterSystem(RegisterMode.ALWAYS)
 public class StorageModuleCommonSystem extends BaseComponentSystem {

@@ -22,7 +22,7 @@ import org.joml.RoundingMode;
 import org.joml.Vector3i;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.os.condition.AbstractConditionCustomObject;
-import org.terasology.entitySystem.entity.EntityRef;
+import org.terasology.engine.entitySystem.entity.EntityRef;
 
 import java.util.Collection;
 import java.util.Collections;
