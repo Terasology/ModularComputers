@@ -27,7 +27,7 @@ import org.terasology.computer.module.inventory.InventoryBinding;
 import org.terasology.computer.module.inventory.InventoryModuleCommonSystem;
 import org.terasology.computer.system.server.lang.AbstractModuleMethodExecutable;
 import org.terasology.engine.entitySystem.entity.EntityRef;
-import org.terasology.engine.logic.health.DestroyEvent;
+import org.terasology.logic.health.DestroyEvent;
 import org.terasology.engine.math.Direction;
 import org.terasology.engine.utilities.Assets;
 import org.terasology.engine.world.BlockEntityRegistry;
