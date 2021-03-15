@@ -20,7 +20,7 @@ import com.gempukku.lang.ExecutionException;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.module.inventory.InventoryBinding;
 import org.terasology.engine.entitySystem.entity.EntityRef;
-import org.terasology.engine.logic.inventory.InventoryComponent;
+import org.terasology.logic.inventory.InventoryComponent;
 
 import java.util.Collection;
 import java.util.Collections;

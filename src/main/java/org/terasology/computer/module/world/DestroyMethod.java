@@ -25,7 +25,7 @@ import org.terasology.computer.FunctionParamValidationUtil;
 import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.AbstractModuleMethodExecutable;
 import org.terasology.engine.entitySystem.entity.EntityRef;
-import org.terasology.logic.health.DestroyEvent;
+import org.terasology.engine.logic.health.DestroyEvent;
 import org.terasology.engine.math.Direction;
 import org.terasology.engine.utilities.Assets;
 import org.terasology.engine.world.BlockEntityRegistry;

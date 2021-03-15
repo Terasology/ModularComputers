@@ -24,9 +24,9 @@ import org.terasology.engine.entitySystem.event.ReceiveEvent;
 import org.terasology.engine.entitySystem.systems.BaseComponentSystem;
 import org.terasology.engine.entitySystem.systems.RegisterMode;
 import org.terasology.engine.entitySystem.systems.RegisterSystem;
-import org.terasology.engine.logic.inventory.InventoryComponent;
-import org.terasology.engine.logic.inventory.events.InventorySlotChangedEvent;
-import org.terasology.engine.logic.inventory.events.InventorySlotStackSizeChangedEvent;
+import org.terasology.logic.inventory.InventoryComponent;
+import org.terasology.logic.inventory.events.InventorySlotChangedEvent;
+import org.terasology.logic.inventory.events.InventorySlotStackSizeChangedEvent;
 import org.terasology.engine.registry.Share;
 
 import java.util.Iterator;

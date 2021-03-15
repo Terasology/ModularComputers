@@ -41,7 +41,7 @@ import org.terasology.computer.system.common.DocumentedObjectDefinition;
 import org.terasology.computer.system.server.lang.ComputerModule;
 import org.terasology.computer.system.server.lang.os.condition.ResultAwaitingCondition;
 import org.terasology.engine.entitySystem.entity.EntityRef;
-import org.terasology.engine.logic.inventory.InventoryComponent;
+import org.terasology.logic.inventory.InventoryComponent;
 import org.terasology.engine.logic.location.LocationComponent;
 import org.terasology.engine.rendering.nui.widgets.browser.data.ParagraphData;
 import org.terasology.engine.world.block.BlockComponent;
