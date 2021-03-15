@@ -16,7 +16,7 @@
 package org.terasology.computer.module.world;
 
 import org.terasology.computer.module.DefaultComputerModule;
-import org.terasology.logic.inventory.InventoryManager;
+import org.terasology.module.inventory.systems.InventoryManager;
 import org.terasology.engine.world.BlockEntityRegistry;
 import org.terasology.engine.world.WorldProvider;
 import org.terasology.engine.world.block.Block;

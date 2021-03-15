@@ -24,7 +24,7 @@ import org.terasology.engine.registry.In;
 import org.terasology.engine.world.BlockEntityRegistry;
 import org.terasology.engine.world.WorldProvider;
 import org.terasology.engine.world.block.BlockManager;
-import org.terasology.logic.inventory.InventoryManager;
+import org.terasology.module.inventory.systems.InventoryManager;
 
 @RegisterSystem(RegisterMode.ALWAYS)
 public class WorldModuleCommonSystem extends BaseComponentSystem {
