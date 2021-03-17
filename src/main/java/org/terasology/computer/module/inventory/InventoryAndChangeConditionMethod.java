@@ -22,7 +22,7 @@ import org.terasology.computer.context.ComputerCallback;
 import org.terasology.computer.system.server.lang.AbstractModuleMethodExecutable;
 import org.terasology.computer.system.server.lang.os.condition.InventoryCondition;
 import org.terasology.engine.entitySystem.entity.EntityRef;
-import org.terasology.engine.logic.inventory.InventoryUtils;
+import org.terasology.module.inventory.systems.InventoryUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
