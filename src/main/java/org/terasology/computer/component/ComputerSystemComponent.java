@@ -8,7 +8,7 @@ public class ComputerSystemComponent implements Component<ComputerSystemComponen
     public int maxId;
 
     @Override
-    public void copy(ComputerSystemComponent other) {
+    public void copyFrom(ComputerSystemComponent other) {
         this.maxId = other.maxId;
     }
 }

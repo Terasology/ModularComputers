@@ -8,7 +8,7 @@ public class ComputerModuleComponent implements Component<ComputerModuleComponen
     public String moduleType;
 
     @Override
-    public void copy(ComputerModuleComponent other) {
+    public void copyFrom(ComputerModuleComponent other) {
         this.moduleType = other.moduleType;
     }
 }

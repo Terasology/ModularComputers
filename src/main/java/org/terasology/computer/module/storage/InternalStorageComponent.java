@@ -11,7 +11,7 @@ public class InternalStorageComponent implements Component<InternalStorageCompon
     public EntityRef inventoryEntity;
 
     @Override
-    public void copy(InternalStorageComponent other) {
+    public void copyFrom(InternalStorageComponent other) {
         this.inventoryEntity = other.inventoryEntity;
     }
 }

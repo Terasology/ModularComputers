@@ -24,7 +24,7 @@ public class ComputerComponent implements Component<ComputerComponent> {
     public int computerId = -1;
 
     @Override
-    public void copy(ComputerComponent other) {
+    public void copyFrom(ComputerComponent other) {
         this.programs = Maps.newHashMap(other.programs);
         this.moduleSlotStart = other.moduleSlotStart;
         this.moduleSlotCount = other.moduleSlotCount;
