@@ -24,10 +24,10 @@ import org.terasology.engine.entitySystem.event.ReceiveEvent;
 import org.terasology.engine.entitySystem.systems.BaseComponentSystem;
 import org.terasology.engine.entitySystem.systems.RegisterMode;
 import org.terasology.engine.entitySystem.systems.RegisterSystem;
+import org.terasology.engine.registry.Share;
 import org.terasology.module.inventory.components.InventoryComponent;
 import org.terasology.module.inventory.events.InventorySlotChangedEvent;
 import org.terasology.module.inventory.events.InventorySlotStackSizeChangedEvent;
-import org.terasology.engine.registry.Share;
 
 import java.util.Iterator;
 

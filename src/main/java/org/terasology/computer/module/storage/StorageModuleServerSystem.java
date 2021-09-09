@@ -23,15 +23,12 @@ import org.terasology.computer.system.common.ComputerModuleRegistry;
 import org.terasology.engine.entitySystem.entity.EntityManager;
 import org.terasology.engine.entitySystem.entity.EntityRef;
 import org.terasology.engine.entitySystem.event.EventPriority;
+import org.terasology.engine.entitySystem.event.Priority;
 import org.terasology.engine.entitySystem.event.ReceiveEvent;
 import org.terasology.engine.entitySystem.systems.BaseComponentSystem;
 import org.terasology.engine.entitySystem.systems.RegisterMode;
 import org.terasology.engine.entitySystem.systems.RegisterSystem;
-import org.terasology.module.inventory.components.InventoryComponent;
-import org.terasology.module.inventory.systems.InventoryManager;
-import org.terasology.module.inventory.systems.InventoryUtils;
 import org.terasology.engine.logic.inventory.events.DropItemEvent;
-import org.terasology.module.inventory.events.InventorySlotChangedEvent;
 import org.terasology.engine.physics.events.ImpulseEvent;
 import org.terasology.engine.registry.In;
 import org.terasology.engine.utilities.random.FastRandom;
@@ -41,6 +38,10 @@ import org.terasology.engine.world.block.items.OnBlockToItem;
 import org.terasology.mobileBlocks.server.AfterBlockMovedEvent;
 import org.terasology.mobileBlocks.server.BeforeBlockMovesEvent;
 import org.terasology.mobileBlocks.server.BlockTransitionDuringMoveEvent;
+import org.terasology.module.inventory.components.InventoryComponent;
+import org.terasology.module.inventory.events.InventorySlotChangedEvent;
+import org.terasology.module.inventory.systems.InventoryManager;
+import org.terasology.module.inventory.systems.InventoryUtils;
 
 @RegisterSystem(RegisterMode.AUTHORITY)
 public class StorageModuleServerSystem extends BaseComponentSystem {
@@ -97,7 +98,8 @@ public class StorageModuleServerSystem extends BaseComponentSystem {
         computerIsMoving = false;
     }
 
-    @ReceiveEvent(priority = EventPriority.PRIORITY_TRIVIAL)
+    @Priority(EventPriority.PRIORITY_TRIVIAL)
+    @ReceiveEvent
     public void computerMovedCopyInternalStorage(BlockTransitionDuringMoveEvent event, EntityRef entity, InternalStorageComponent storage) {
         EntityRef inventoryEntity = storage.inventoryEntity;
         EntityRef newInventoryEntity = event.getIntoEntity().getComponent(InternalStorageComponent.class).inventoryEntity;
@@ -126,7 +128,8 @@ public class StorageModuleServerSystem extends BaseComponentSystem {
         }
     }
 
-    @ReceiveEvent(priority = EventPriority.PRIORITY_TRIVIAL)
+    @Priority(EventPriority.PRIORITY_TRIVIAL)
+    @ReceiveEvent
     public void computerDestroyed(OnBlockToItem event, EntityRef computerEntity, ComputerComponent computer) {
         InventoryComponent component = computerEntity.getComponent(InventoryComponent.class);
         for (EntityRef module : component.itemSlots) {
