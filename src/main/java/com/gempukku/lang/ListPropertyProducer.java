@@ -43,12 +43,14 @@ public class ListPropertyProducer implements PropertyProducer {
         @Override
         protected Object executeFunction(int line, Map<String, Variable> parameters) throws ExecutionException {
             final Variable indexVar = parameters.get("index");
-            if (indexVar.getType() != Variable.Type.NUMBER)
+            if (indexVar.getType() != Variable.Type.NUMBER) {
                 throw new ExecutionException(line, "Expected NUMBER index in remove()");
+            }
 
             int index = ((Number) indexVar.getValue()).intValue();
-            if (index < 0 || index >= list.size())
+            if (index < 0 || index >= list.size()) {
                 throw new ExecutionException(line, "Index out of bounds in remove()");
+            }
 
             return list.remove(index).getValue();
         }

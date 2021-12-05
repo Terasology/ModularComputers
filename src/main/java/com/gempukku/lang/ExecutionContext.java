@@ -55,7 +55,7 @@ public class ExecutionContext {
             return 4 + getVariablesSize(counted, map.values());
         } else if (value instanceof List) {
             List<Variable> list = (List<Variable>) value;
-            return 4+ getVariablesSize(counted, list);
+            return 4 + getVariablesSize(counted, list);
         } else if (value instanceof Boolean) {
             return 1;
         } else if (value instanceof FunctionExecutable) {
@@ -65,8 +65,9 @@ public class ExecutionContext {
             return 4;
         } else if (value instanceof CustomObject) {
             return ((CustomObject) value).sizeOf();
-        } else
+        } else {
             throw new UnsupportedOperationException("Unknown type of variable value: " + value.getClass().getSimpleName());
+        }
     }
 
     private int getVariablesSize(Set<Object> counted, Collection<Variable> variables) {

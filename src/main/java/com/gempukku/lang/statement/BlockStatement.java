@@ -35,7 +35,8 @@ public class BlockStatement implements ExecutableStatement {
             }
 
             @Override
-            public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration) throws ExecutionException {
+            public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration)
+                    throws ExecutionException {
                 CallContext blockContext = new CallContext(executionContext.peekCallContext(), consumesBreak, consumesReturn);
                 executionContext.stackExecutionGroup(blockContext, new MultiStatementExecution(statements));
                 stacked = true;
