@@ -16,7 +16,6 @@ import org.terasology.computer.system.common.ComputerLanguageContextInitializer;
 import org.terasology.computer.ui.ComputerTerminalWidget;
 import org.terasology.computer.ui.ComputerTerminalWindow;
 import org.terasology.engine.entitySystem.entity.EntityRef;
-import org.terasology.engine.entitySystem.event.ReceiveEvent;
 import org.terasology.engine.entitySystem.systems.BaseComponentSystem;
 import org.terasology.engine.entitySystem.systems.RegisterMode;
 import org.terasology.engine.entitySystem.systems.RegisterSystem;
@@ -24,6 +23,7 @@ import org.terasology.engine.logic.clipboard.ClipboardManager;
 import org.terasology.engine.logic.common.ActivateEvent;
 import org.terasology.engine.registry.In;
 import org.terasology.engine.rendering.nui.NUIManager;
+import org.terasology.gestalt.entitysystem.event.ReceiveEvent;
 
 @RegisterSystem(RegisterMode.CLIENT)
 public class ComputerClientSystem extends BaseComponentSystem {

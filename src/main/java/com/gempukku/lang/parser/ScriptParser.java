@@ -281,8 +281,8 @@ public class ScriptParser {
         return statement;
     }
 
-    private ExecutableStatement produceConditionInBrackets(LastPeekingIterator<TermBlock> termIterator, DefinedVariables definedVariables
-            , ScriptParsingCallback scriptParsingCallback) throws IllegalSyntaxException {
+    private ExecutableStatement produceConditionInBrackets(LastPeekingIterator<TermBlock> termIterator, DefinedVariables definedVariables,
+                                                           ScriptParsingCallback scriptParsingCallback) throws IllegalSyntaxException {
         validateNextTermStartingWith(termIterator, "(");
         consumeCharactersFromTerm(termIterator, 1);
 
@@ -867,8 +867,8 @@ public class ScriptParser {
             validateNextTermStartingWith(iterator, ":");
             consumeCharactersFromTerm(iterator, 1);
 
-            mapStatement.addProperty(propertyLine, propertyColumn, propertyName, produceExpressionFromIterator(iterator, definedVariables
-                    , true, scriptParsingCallback));
+            mapStatement.addProperty(propertyLine, propertyColumn, propertyName, produceExpressionFromIterator(iterator, definedVariables,
+                    true, scriptParsingCallback));
 
             first = false;
         }
@@ -936,7 +936,9 @@ public class ScriptParser {
     }
 
     private void validateNextTermStartingWith(LastPeekingIterator<TermBlock> termIterator, String text) throws IllegalSyntaxException {
-        if (!isNextTermStartingWith(termIterator, text)) throw new IllegalSyntaxException(termIterator, text + " expected");
+        if (!isNextTermStartingWith(termIterator, text)) {
+            throw new IllegalSyntaxException(termIterator, text + " expected");
+        }
     }
 
     private boolean isNextTermStartingWith(LastPeekingIterator<TermBlock> termIterator, String text) {
