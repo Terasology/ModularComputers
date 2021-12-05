@@ -67,17 +67,17 @@ public class ComputerTerminalWidget extends CoreWidget {
     private ProgramEditingConsoleGui programEditingConsoleGui;
 
     public void setup(ComputerLanguageContextInitializer computerLanguageContextInitializer, ClipboardManager clipboardManager,
-                      Runnable closeRunnable, EntityRef clientEntity, int computerId) {
+                      Runnable runnable, EntityRef client, int id) {
         editingProgram = false;
         computerConsole = new ComputerConsole();
 
-        this.closeRunnable = closeRunnable;
-        this.clientEntity = clientEntity;
-        this.computerId = computerId;
+        this.closeRunnable = runnable;
+        this.clientEntity = client;
+        this.computerId = id;
 
         playerCommandConsoleGui = new PlayerCommandConsoleGui(this);
         playerCommandConsoleGui.appendToConsole("AutomationOS v. 0.0");
-        String userName = clientEntity.getComponent(CharacterComponent.class).controller.getComponent(ClientComponent.class)
+        String userName = client.getComponent(CharacterComponent.class).controller.getComponent(ClientComponent.class)
                 .clientInfo.getComponent(DisplayNameComponent.class).name;
         playerCommandConsoleGui.appendToConsole("You're logged in as " + userName +
                 ", use \"exit\" command to exit the console, use \"help\" to list commands.");

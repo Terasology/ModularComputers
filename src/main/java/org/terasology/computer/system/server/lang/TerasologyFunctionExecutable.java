@@ -67,7 +67,8 @@ public abstract class TerasologyFunctionExecutable implements DocumentedFunction
         return new DelayedExecution(getDuration(), 0,
                 new SimpleExecution() {
                     @Override
-                    protected ExecutionProgress execute(ExecutionContext context, ExecutionCostConfiguration configuration) throws ExecutionException {
+                    protected ExecutionProgress execute(ExecutionContext context, ExecutionCostConfiguration configuration)
+                            throws ExecutionException {
                         final TerasologyComputerExecutionContext terasologyExecutionContext = (TerasologyComputerExecutionContext) context;
                         ComputerCallback computer = terasologyExecutionContext.getComputerCallback();
 

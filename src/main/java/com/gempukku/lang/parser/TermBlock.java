@@ -24,9 +24,9 @@ public class TermBlock {
         this.term = term;
     }
 
-    public void terminateTermBlock(int blockEndLine, int blockEndColumn) {
-        this.blockEndLine = blockEndLine;
-        this.blockEndColumn = blockEndColumn;
+    public void terminateTermBlock(int endLine, int endColumn) {
+        this.blockEndLine = endLine;
+        this.blockEndColumn = endColumn;
     }
 
     public int getBlockEndColumn() {
@@ -49,8 +49,8 @@ public class TermBlock {
         termBlocks.add(termBlock);
     }
 
-    public void addTermBlock(Term term) {
-        termBlocks.add(new TermBlock(term));
+    public void addTermBlock(Term termBlock) {
+        termBlocks.add(new TermBlock(termBlock));
     }
 
     public boolean isTerm() {

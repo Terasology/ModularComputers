@@ -85,9 +85,9 @@ public class FunctionCallExecution implements Execution {
             if (functionVar.getType() != Variable.Type.FUNCTION) {
                 throw new ExecutionException(line, "Expected function");
             }
-            FunctionExecutable function = (FunctionExecutable) functionVar.getValue();
-            final CallContext functionContextParent = function.getCallContext();
-            final Collection<String> parameterNames = function.getParameterNames();
+            FunctionExecutable func = (FunctionExecutable) functionVar.getValue();
+            final CallContext functionContextParent = func.getCallContext();
+            final Collection<String> parameterNames = func.getParameterNames();
             if (parameterValues.size() > parameterNames.size()) {
                 throw new ExecutionException(line, "Function does not accept as many parameters");
             }
@@ -101,7 +101,7 @@ public class FunctionCallExecution implements Execution {
                 }
                 i++;
             }
-            executionContext.stackExecutionGroup(functionContext, function.createExecution(line, executionContext, functionContext));
+            executionContext.stackExecutionGroup(functionContext, func.createExecution(line, executionContext, functionContext));
             functionCalled = true;
             return new ExecutionProgress(configuration.getStackGroupExecution() + configuration.getSetVariable() * parameterValues.size());
         }

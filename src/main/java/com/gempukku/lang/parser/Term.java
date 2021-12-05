@@ -28,8 +28,8 @@ public class Term {
         return value;
     }
 
-    public void setValue(String value, int columnIncr) {
-        this.value = value;
+    public void setValue(String val, int columnIncr) {
+        this.value = val;
         column += columnIncr;
     }
 
