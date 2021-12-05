@@ -1,3 +1,6 @@
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.execution;
 
 import com.gempukku.lang.ExecutableStatement;
@@ -9,46 +12,47 @@ import com.gempukku.lang.ExecutionProgress;
 import com.gempukku.lang.Variable;
 
 public class DefineAndAssignExecution implements Execution {
-    private String _name;
-    private ExecutableStatement _value;
+    private String name;
+    private ExecutableStatement value;
 
-    private boolean _defined;
-    private boolean _stackedValue;
-    private boolean _assignedValue;
+    private boolean defined;
+    private boolean stackedValue;
+    private boolean assignedValue;
 
-    private Variable _variable;
+    private Variable variable;
 
     public DefineAndAssignExecution(String name, ExecutableStatement value) {
-        _name = name;
-        _value = value;
+        this.name = name;
+        this.value = value;
     }
 
     @Override
     public boolean hasNextExecution(ExecutionContext executionContext) {
-        if (!_defined)
+        if (!defined) {
             return true;
-        if (!_stackedValue)
+        }
+        if (!stackedValue) {
             return true;
-        if (!_assignedValue)
-            return true;
-        return false;
+        }
+        return !assignedValue;
     }
 
     @Override
-    public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration) throws ExecutionException {
-        if (!_defined) {
-            _variable = executionContext.peekCallContext().defineVariable(_name);
-            _defined = true;
+    public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration)
+            throws ExecutionException {
+        if (!defined) {
+            variable = executionContext.peekCallContext().defineVariable(name);
+            defined = true;
             return new ExecutionProgress(configuration.getDefineVariable());
         }
-        if (!_stackedValue) {
-            executionContext.stackExecution(_value.createExecution());
-            _stackedValue = true;
+        if (!stackedValue) {
+            executionContext.stackExecution(value.createExecution());
+            stackedValue = true;
             return new ExecutionProgress(configuration.getStackExecution());
         }
-        if (!_assignedValue) {
-            executionContext.setVariableValue(_variable, executionContext.getContextValue().getValue());
-            _assignedValue = true;
+        if (!assignedValue) {
+            executionContext.setVariableValue(variable, executionContext.getContextValue().getValue());
+            assignedValue = true;
             return new ExecutionProgress(configuration.getGetContextValue() + configuration.getSetVariable());
         }
         return null;

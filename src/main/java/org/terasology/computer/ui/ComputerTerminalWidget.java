@@ -1,4 +1,4 @@
-// Copyright 2020 The Terasology Foundation
+// Copyright 2021 The Terasology Foundation
 // SPDX-License-Identifier: Apache-2.0
 package org.terasology.computer.ui;
 
@@ -77,8 +77,10 @@ public class ComputerTerminalWidget extends CoreWidget {
 
         playerCommandConsoleGui = new PlayerCommandConsoleGui(this);
         playerCommandConsoleGui.appendToConsole("AutomationOS v. 0.0");
-        String userName = clientEntity.getComponent(CharacterComponent.class).controller.getComponent(ClientComponent.class).clientInfo.getComponent(DisplayNameComponent.class).name;
-        playerCommandConsoleGui.appendToConsole("You're logged in as " + userName + ", use \"exit\" command to exit the console, use \"help\" to list commands.");
+        String userName = clientEntity.getComponent(CharacterComponent.class).controller.getComponent(ClientComponent.class)
+                .clientInfo.getComponent(DisplayNameComponent.class).name;
+        playerCommandConsoleGui.appendToConsole("You're logged in as " + userName +
+                ", use \"exit\" command to exit the console, use \"help\" to list commands.");
         programEditingConsoleGui = new ProgramEditingConsoleGui(this, computerLanguageContextInitializer, clipboardManager);
 
         this.clientEntity.send(new ConsoleListeningRegistrationEvent(this.computerId, true));
@@ -180,10 +182,6 @@ public class ComputerTerminalWidget extends CoreWidget {
         canvas.drawLine(x1, y, x2, y, color);
     }
 
-    public interface Coloring {
-        public Color getColor(int column);
-    }
-
     protected void drawMonospacedText(Canvas canvas, String text, int x, int y, Coloring coloring) {
         char[] chars = text.toCharArray();
         for (int i = 0; i < chars.length; i++) {
@@ -200,7 +198,8 @@ public class ComputerTerminalWidget extends CoreWidget {
     }
 
     private void renderCharAt(Canvas canvas, char ch, int x, int y, Color color) {
-        canvas.drawTextRaw(String.valueOf(ch), getFont(canvas), color, new Rectanglei(x, y).setSize(characterWidth, fontHeight), HorizontalAlign.CENTER, VerticalAlign.TOP);
+        canvas.drawTextRaw(String.valueOf(ch), getFont(canvas), color, new Rectanglei(x, y).setSize(characterWidth, fontHeight),
+                HorizontalAlign.CENTER, VerticalAlign.TOP);
     }
 
     @Override
@@ -208,7 +207,8 @@ public class ComputerTerminalWidget extends CoreWidget {
         if (isFocused()) {
             int keyboardCharId = event.getKey().getId();
             if (event.isDown()) {
-                char character = 'x'; // event.getKeyCharacter(); TODO: Fix - onCharEvent from UIWidget has char, but not id, this uses both ..
+                // TODO: Fix - onCharEvent from UIWidget has char, but not id, this uses both ..
+                char character = 'x'; // event.getKeyCharacter();
                 if (mode == TerminalMode.PLAYER_CONSOLE) {
                     if (editingProgram) {
                         KeyboardDevice keyboard = event.getKeyboard();
@@ -219,9 +219,7 @@ public class ComputerTerminalWidget extends CoreWidget {
                     }
                 }
             }
-            if (keyboardCharId != Keyboard.KeyId.ESCAPE) {
-                return true;
-            }
+            return keyboardCharId != Keyboard.KeyId.ESCAPE;
         }
         return false;
     }
@@ -240,9 +238,11 @@ public class ComputerTerminalWidget extends CoreWidget {
             } else if (commandParts[0].equals("edit")) {
                 if (commandParts.length != 2) {
                     playerCommandConsoleGui.appendToConsole("Usage:");
-                    playerCommandConsoleGui.appendToConsole("edit [programName] - edits or creates a new program with the specified name");
+                    playerCommandConsoleGui.appendToConsole("edit [programName] " +
+                            "- edits or creates a new program with the specified name");
                 } else if (!isValidProgramName(commandParts[1])) {
-                    playerCommandConsoleGui.appendToConsole("Invalid program name - only letters and digits allowed and a maximum length of 10");
+                    playerCommandConsoleGui.appendToConsole("Invalid program name " +
+                            "- only letters and digits allowed and a maximum length of 10");
                 } else {
                     String programName = commandParts[1];
 
@@ -254,9 +254,11 @@ public class ComputerTerminalWidget extends CoreWidget {
             } else if (commandParts[0].equals("execute")) {
                 if (commandParts.length < 2) {
                     playerCommandConsoleGui.appendToConsole("Usage:");
-                    playerCommandConsoleGui.appendToConsole("execute [programName] [argument] ... [argument]- executes specified program with specified arguments (if any)");
+                    playerCommandConsoleGui.appendToConsole("execute [programName] [argument] ... [argument] " +
+                            "- executes specified program with specified arguments (if any)");
                 } else if (!isValidProgramName(commandParts[1])) {
-                    playerCommandConsoleGui.appendToConsole("Invalid program name - only letters and digits allowed and a maximum length of 10");
+                    playerCommandConsoleGui.appendToConsole("Invalid program name " +
+                            "- only letters and digits allowed and a maximum length of 10");
                 } else {
                     String[] arguments = new String[commandParts.length - 2];
                     for (int i = 0; i < commandParts.length - 2; i++) {
@@ -279,25 +281,30 @@ public class ComputerTerminalWidget extends CoreWidget {
                     playerCommandConsoleGui.appendToConsole("Usage:");
                     playerCommandConsoleGui.appendToConsole("delete [programName] - deletes specified program");
                 } else if (!isValidProgramName(commandParts[1])) {
-                    playerCommandConsoleGui.appendToConsole("Invalid program name - only letters and digits allowed and a maximum length of 10");
+                    playerCommandConsoleGui.appendToConsole("Invalid program name " +
+                            "- only letters and digits allowed and a maximum length of 10");
                 } else {
                     clientEntity.send(new DeleteProgramEvent(computerId, commandParts[1]));
                 }
             } else if (commandParts[0].equals("copy")) {
                 if (commandParts.length != 3) {
                     playerCommandConsoleGui.appendToConsole("Usage:");
-                    playerCommandConsoleGui.appendToConsole("copy [programNameSource] [programNameDestination] - copies a program from source to destination");
+                    playerCommandConsoleGui.appendToConsole("copy [programNameSource] [programNameDestination] " +
+                            "- copies a program from source to destination");
                 } else if (!isValidProgramName(commandParts[1]) || !isValidProgramName(commandParts[2])) {
-                    playerCommandConsoleGui.appendToConsole("Invalid program name - only letters and digits allowed and a maximum length of 10");
+                    playerCommandConsoleGui.appendToConsole("Invalid program name " +
+                            "- only letters and digits allowed and a maximum length of 10");
                 } else {
                     clientEntity.send(new CopyProgramEvent(computerId, commandParts[1], commandParts[2]));
                 }
             } else if (commandParts[0].equals("rename")) {
                 if (commandParts.length != 3) {
                     playerCommandConsoleGui.appendToConsole("Usage:");
-                    playerCommandConsoleGui.appendToConsole("rename [programNameOld] [programNameNew] - renames a program from old to new name");
+                    playerCommandConsoleGui.appendToConsole("rename [programNameOld] [programNameNew] " +
+                            "- renames a program from old to new name");
                 } else if (!isValidProgramName(commandParts[1]) || !isValidProgramName(commandParts[2])) {
-                    playerCommandConsoleGui.appendToConsole("Invalid program name - only letters and digits allowed and a maximum length of 10");
+                    playerCommandConsoleGui.appendToConsole("Invalid program name " +
+                            "- only letters and digits allowed and a maximum length of 10");
                 } else {
                     clientEntity.send(new RenameProgramEvent(computerId, commandParts[1], commandParts[2]));
                 }
@@ -330,7 +337,8 @@ public class ComputerTerminalWidget extends CoreWidget {
 
     private void printHelp() {
         playerCommandConsoleGui.appendToConsole("help - prints this text");
-        playerCommandConsoleGui.appendToConsole("copy [programNameSource] [programNameDestination] - copies a program from source to destination");
+        playerCommandConsoleGui.appendToConsole("copy [programNameSource] [programNameDestination] " +
+                "- copies a program from source to destination");
         playerCommandConsoleGui.appendToConsole("delete [programName] - deletes a program");
         playerCommandConsoleGui.appendToConsole("edit [programName] - edits a program in an editor");
         playerCommandConsoleGui.appendToConsole("execute [programName] - executes a program");
@@ -372,6 +380,10 @@ public class ComputerTerminalWidget extends CoreWidget {
 
     public enum TerminalMode {
         PLAYER_CONSOLE, COMPUTER_CONSOLE
+    }
+
+    public interface Coloring {
+        Color getColor(int column);
     }
 }
 

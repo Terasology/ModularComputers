@@ -1,3 +1,6 @@
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang;
 
 import java.util.ArrayList;
@@ -9,16 +12,17 @@ public class StringPropertyProducer implements PropertyProducer {
     @Override
     public Variable exposePropertyFor(ExecutionContext context, Variable object, String property) throws ExecutionException {
         String text = (String) object.getValue();
-        if (property.equals("split"))
+        if (property.equals("split")) {
             return new Variable(new SplitFunctionExecutable(text));
+        }
         return new Variable(null);
     }
 
-    private static class SplitFunctionExecutable extends AbstractFunctionExecutable {
-        private String _text;
+    private static final class SplitFunctionExecutable extends AbstractFunctionExecutable {
+        private String text;
 
         private SplitFunctionExecutable(String text) {
-            _text = text;
+            this.text = text;
         }
 
         @Override
@@ -42,18 +46,21 @@ public class StringPropertyProducer implements PropertyProducer {
             } else {
                 throw new ExecutionException(line, "Expected NUMBER or NULL in split()");
             }
-            if (limit < 0)
+            if (limit < 0) {
                 limit = 0;
+            }
 
             final Variable separatorVar = parameters.get("separator");
-            if (separatorVar.getType() != Variable.Type.STRING)
+            if (separatorVar.getType() != Variable.Type.STRING) {
                 throw new ExecutionException(line, "Expected STRING in split()");
+            }
 
             String separator = (String) separatorVar.getValue();
-            final String[] splitResult = _text.split(separator, limit);
+            final String[] splitResult = text.split(separator, limit);
             List<Variable> result = new ArrayList<Variable>();
-            for (String split : splitResult)
+            for (String split : splitResult) {
                 result.add(new Variable(split));
+            }
 
             return result;
         }

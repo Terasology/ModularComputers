@@ -1,38 +1,43 @@
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.parser;
 
 public class Term {
-    public enum Type {PROGRAM, STRING, COMMENT}
+    public enum Type {
+        PROGRAM, STRING, COMMENT
+    }
 
-    private Type _type;
-    private String _value;
-    private int _line;
-    private int _column;
+    private Type type;
+    private String value;
+    private int line;
+    private int column;
 
     public Term(Type type, String value, int line, int column) {
-        _type = type;
-        _value = value;
-        _line = line;
-        _column = column;
+        this.type = type;
+        this.value = value;
+        this.line = line;
+        this.column = column;
     }
 
     public Type getType() {
-        return _type;
+        return type;
     }
 
     public String getValue() {
-        return _value;
+        return value;
     }
 
     public void setValue(String value, int columnIncr) {
-        _value = value;
-        _column += columnIncr;
+        this.value = value;
+        column += columnIncr;
     }
 
     public int getLine() {
-        return _line;
+        return line;
     }
 
     public int getColumn() {
-        return _column;
+        return column;
     }
 }

@@ -1,29 +1,32 @@
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang;
 
 public interface ExecutionCostConfiguration {
-    public int getGetContextValue();
+    int getGetContextValue();
 
-    public int getSetContextValue();
+    int getSetContextValue();
 
-    public int getGetReturnValue();
+    int getGetReturnValue();
 
-    public int getSetReturnValue();
+    int getSetReturnValue();
 
-    public int getBreakBlock();
+    int getBreakBlock();
 
-    public int getDefineVariable();
+    int getDefineVariable();
 
-    public int getSetVariable();
+    int getSetVariable();
 
-    public int getStackExecution();
+    int getStackExecution();
 
-    public int getStackGroupExecution();
+    int getStackGroupExecution();
 
-    public int getSumValues();
+    int getSumValues();
 
-    public int getOtherMathOperation();
+    int getOtherMathOperation();
 
-    public int getCompareValues();
+    int getCompareValues();
 
-    public int getResolveMember();
+    int getResolveMember();
 }

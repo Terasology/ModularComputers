@@ -1,34 +1,38 @@
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang;
 
 public class DelayedExecution implements Execution {
-    private boolean _delayed;
-    private boolean _startExecuted;
-    private int _delay;
-    private int _minExecutionTicks;
-    private Execution _execution;
+    private boolean delayed;
+    private boolean startExecuted;
+    private int delay;
+    private int minExecutionTicks;
+    private Execution execution;
 
     public DelayedExecution(int delay, int minExecutionTicks, Execution execution) {
-        _delay = delay;
-        _minExecutionTicks = minExecutionTicks;
-        _execution = execution;
+        this.delay = delay;
+        this.minExecutionTicks = minExecutionTicks;
+        this.execution = execution;
     }
 
     @Override
     public boolean hasNextExecution(ExecutionContext executionContext) {
-        return !_delayed || _execution.hasNextExecution(executionContext);
+        return !delayed || execution.hasNextExecution(executionContext);
     }
 
     @Override
-    public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration) throws ExecutionException {
-        if (!_startExecuted) {
-            _startExecuted = true;
+    public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration)
+            throws ExecutionException {
+        if (!startExecuted) {
+            startExecuted = true;
             onExecutionStart(executionContext);
         }
-        if (!_delayed) {
-            _delayed = true;
-            return new ExecutionProgress(_delay, _minExecutionTicks);
+        if (!delayed) {
+            delayed = true;
+            return new ExecutionProgress(delay, minExecutionTicks);
         }
-        return _execution.executeNextStatement(executionContext, configuration);
+        return execution.executeNextStatement(executionContext, configuration);
     }
 
     protected void onExecutionStart(ExecutionContext executionContext) throws ExecutionException { }

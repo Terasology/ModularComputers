@@ -1,3 +1,6 @@
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.execution;
 
 import com.gempukku.lang.ExecutableStatement;
@@ -9,54 +12,56 @@ import com.gempukku.lang.ExecutionProgress;
 import com.gempukku.lang.Variable;
 
 public class AssignExecution implements Execution {
-    private ExecutableStatement _variable;
-    private ExecutableStatement _value;
+    private ExecutableStatement variable;
+    private ExecutableStatement value;
 
-    private boolean _stackedVariable;
-    private boolean _extractedVariable;
-    private boolean _stackedValue;
-    private boolean _assignedValue;
+    private boolean stackedVariable;
+    private boolean extractedVariable;
+    private boolean stackedValue;
+    private boolean assignedValue;
 
-    private Variable _variablePointer;
+    private Variable variablePointer;
 
     public AssignExecution(ExecutableStatement variable, ExecutableStatement value) {
-        _variable = variable;
-        _value = value;
+        this.variable = variable;
+        this.value = value;
     }
 
     @Override
     public boolean hasNextExecution(ExecutionContext executionContext) {
-        if (!_stackedVariable)
+        if (!stackedVariable) {
             return true;
-        if (!_extractedVariable)
+        }
+        if (!extractedVariable) {
             return true;
-        if (!_stackedValue)
+        }
+        if (!stackedValue) {
             return true;
-        if (!_assignedValue)
-            return true;
-        return false;
+        }
+        return !assignedValue;
     }
 
     @Override
-    public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration) throws ExecutionException {
-        if (!_stackedVariable) {
-            executionContext.stackExecution(_variable.createExecution());
-            _stackedVariable = true;
+    public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration)
+            throws ExecutionException {
+        if (!stackedVariable) {
+            executionContext.stackExecution(variable.createExecution());
+            stackedVariable = true;
             return new ExecutionProgress(configuration.getStackExecution());
         }
-        if (!_extractedVariable) {
-            _variablePointer = executionContext.getContextValue();
-            _extractedVariable = true;
+        if (!extractedVariable) {
+            variablePointer = executionContext.getContextValue();
+            extractedVariable = true;
             return new ExecutionProgress(configuration.getGetContextValue());
         }
-        if (!_stackedValue) {
-            executionContext.stackExecution(_value.createExecution());
-            _stackedValue = true;
+        if (!stackedValue) {
+            executionContext.stackExecution(value.createExecution());
+            stackedValue = true;
             return new ExecutionProgress(configuration.getStackExecution());
         }
-        if (!_assignedValue) {
-            executionContext.setVariableValue(_variablePointer, executionContext.getContextValue().getValue());
-            _assignedValue = true;
+        if (!assignedValue) {
+            executionContext.setVariableValue(variablePointer, executionContext.getContextValue().getValue());
+            assignedValue = true;
             return new ExecutionProgress(configuration.getGetContextValue() + configuration.getSetVariable());
         }
         return null;

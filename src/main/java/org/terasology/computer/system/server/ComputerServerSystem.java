@@ -1,18 +1,5 @@
-/*
- * Copyright 2015 MovingBlocks
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
 package org.terasology.computer.system.server;
 
 import com.gempukku.lang.ExecutionCostConfiguration;
@@ -50,6 +37,11 @@ import org.terasology.engine.entitySystem.systems.RegisterSystem;
 import org.terasology.engine.entitySystem.systems.UpdateSubscriberSystem;
 import org.terasology.engine.logic.characters.CharacterComponent;
 import org.terasology.engine.logic.config.ModuleConfigManager;
+import org.terasology.gestalt.entitysystem.event.ReceiveEvent;
+import org.terasology.module.inventory.components.InventoryComponent;
+import org.terasology.module.inventory.systems.InventoryManager;
+import org.terasology.module.inventory.systems.InventoryUtils;
+import org.terasology.module.inventory.events.BeforeItemPutInInventory;
 import org.terasology.engine.logic.location.LocationComponent;
 import org.terasology.engine.network.ClientComponent;
 import org.terasology.engine.network.events.DisconnectedEvent;
@@ -170,7 +162,8 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
     }
 
     @ReceiveEvent
-    public void computerLoadedInWorld(OnActivatedComponent event, EntityRef computerEntity, BlockComponent block, ComputerComponent computer) {
+    public void computerLoadedInWorld(OnActivatedComponent event, EntityRef computerEntity,
+                                      BlockComponent block, ComputerComponent computer) {
         if (!computerInTransitionState) {
             if (computer.computerId == -1) {
                 computer.computerId = assignNextId();
@@ -184,7 +177,8 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
     }
 
     @ReceiveEvent
-    public void computerUnloadedFromWorld(BeforeDeactivateComponent event, EntityRef computerEntity, BlockComponent block, ComputerComponent computer) {
+    public void computerUnloadedFromWorld(BeforeDeactivateComponent event, EntityRef computerEntity,
+                                          BlockComponent block, ComputerComponent computer) {
         if (!computerInTransitionState) {
             logger.debug("Destroying computer context for computer: " + computer.computerId);
             computerContextMap.remove(computer.computerId);
@@ -251,19 +245,24 @@ public class ComputerServerSystem extends BaseComponentSystem implements UpdateS
             EntityRef clientInfo = client.getComponent(CharacterComponent.class).controller.getComponent(ClientComponent.class).clientInfo;
             ComputerComponent computer = computerContext.getEntity().getComponent(ComputerComponent.class);
             if (computerContext.isRunningProgram()) {
-                client.send(new ProgramExecutionResultEvent(computer.computerId, "There is a program already running on the computer"));
+                client.send(new ProgramExecutionResultEvent(computer.computerId,
+                        "There is a program already running on the computer"));
             } else {
                 String programName = event.getProgramName();
                 String programText = computer.programs.get(programName);
                 if (programText != null) {
                     try {
-                        computerContext.startProgram(programName, clientInfo, programText, event.getParams(), computerLanguageContextInitializer, executionCostConfiguration);
-                        client.send(new ProgramExecutionResultEvent(computer.computerId, "Program started"));
+                        computerContext.startProgram(programName, clientInfo, programText, event.getParams(),
+                                computerLanguageContextInitializer, executionCostConfiguration);
+                        client.send(new ProgramExecutionResultEvent(computer.computerId,
+                                "Program started"));
                     } catch (IllegalSyntaxException exp) {
-                        client.send(new ProgramExecutionResultEvent(computer.computerId, exp.getMessage()));
+                        client.send(new ProgramExecutionResultEvent(computer.computerId,
+                                exp.getMessage()));
                     }
                 } else {
-                    client.send(new ProgramExecutionResultEvent(computer.computerId, "Program not found"));
+                    client.send(new ProgramExecutionResultEvent(computer.computerId,
+                            "Program not found"));
                 }
             }
         }

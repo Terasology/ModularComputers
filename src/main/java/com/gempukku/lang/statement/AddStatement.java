@@ -1,3 +1,6 @@
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.statement;
 
 import com.gempukku.lang.ExecutableStatement;
@@ -5,21 +8,21 @@ import com.gempukku.lang.Execution;
 import com.gempukku.lang.execution.AddExecution;
 
 public class AddStatement implements ExecutableStatement {
-    private int _line;
-    private ExecutableStatement _left;
-    private ExecutableStatement _right;
-    private boolean _assignToLeft;
+    private int line;
+    private ExecutableStatement left;
+    private ExecutableStatement right;
+    private boolean assignToLeft;
 
     public AddStatement(int line, ExecutableStatement left, ExecutableStatement right, boolean assignToLeft) {
-        _line = line;
-        _left = left;
-        _right = right;
-        _assignToLeft = assignToLeft;
+        this.line = line;
+        this.left = left;
+        this.right = right;
+        this.assignToLeft = assignToLeft;
     }
 
     @Override
     public Execution createExecution() {
-        return new AddExecution(_line, _left, _right, _assignToLeft);
+        return new AddExecution(line, left, right, assignToLeft);
     }
 
     @Override

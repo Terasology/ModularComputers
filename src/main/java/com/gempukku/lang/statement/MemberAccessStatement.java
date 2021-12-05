@@ -1,3 +1,6 @@
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.statement;
 
 import com.gempukku.lang.ExecutableStatement;
@@ -6,19 +9,19 @@ import com.gempukku.lang.IllegalSyntaxException;
 import com.gempukku.lang.execution.MemberAccessExecution;
 
 public class MemberAccessStatement implements ExecutableStatement {
-    private int _line;
-    private ExecutableStatement _object;
-    private String _propertyName;
+    private int line;
+    private ExecutableStatement object;
+    private String propertyName;
 
     public MemberAccessStatement(int line, ExecutableStatement object, String propertyName) throws IllegalSyntaxException {
-        _line = line;
-        _object = object;
-        _propertyName = propertyName;
+        this.line = line;
+        this.object = object;
+        this.propertyName = propertyName;
     }
 
     @Override
     public Execution createExecution() {
-        return new MemberAccessExecution(_line, _object, _propertyName);
+        return new MemberAccessExecution(line, object, propertyName);
     }
 
     @Override

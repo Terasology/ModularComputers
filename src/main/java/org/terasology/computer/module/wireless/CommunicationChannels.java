@@ -1,18 +1,5 @@
-/*
- * Copyright 2015 MovingBlocks
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
 package org.terasology.computer.module.wireless;
 
 import com.gempukku.lang.Variable;
@@ -71,7 +58,8 @@ public class CommunicationChannels<T> {
                 caughtByWaitingCondition = true;
 
                 latchIterator.remove();
-                messageAwaitingLatchCondition.release(constructMessageReturnObject(messageObject, messageAwaitingLatchCondition.getLocationTo()));
+                messageAwaitingLatchCondition.release(constructMessageReturnObject(
+                        messageObject, messageAwaitingLatchCondition.getLocationTo()));
 
                 // We only dispatch the message to first waiting program
                 break;
@@ -108,7 +96,8 @@ public class CommunicationChannels<T> {
                     caughtByWaitingCondition = true;
 
                     latchIterator.remove();
-                    messageAwaitingLatchCondition.release(constructMessageReturnObject(messageObject, messageAwaitingLatchCondition.getLocationTo()));
+                    messageAwaitingLatchCondition.release(constructMessageReturnObject(
+                            messageObject, messageAwaitingLatchCondition.getLocationTo()));
                     // We only dispatch the message to first waiting program
                     break;
                 }
@@ -124,7 +113,8 @@ public class CommunicationChannels<T> {
         }
     }
 
-    public Map<String, Variable> consumeNextPrivateMessage(long currentTime, String channelName, T identity, Vector3i locationTo, float range) {
+    public Map<String, Variable> consumeNextPrivateMessage(long currentTime, String channelName, T identity,
+                                                           Vector3i locationTo, float range) {
         Multimap<String, Message> identityMap = privateMessages.get(identity);
         if (identityMap != null) {
             Message message = consumeMessageFromMultimap(currentTime, channelName, locationTo, range, identityMap);
@@ -156,11 +146,13 @@ public class CommunicationChannels<T> {
         while (latchIterator.hasNext()) {
             SecureMessageAwaitingLatchCondition secureMessageAwaitingLatchCondition = latchIterator.next();
             if (secureMessageAwaitingLatchCondition.getPassword().equals(password)
-                    && isInRange(messageObject, secureMessageAwaitingLatchCondition.getLocationTo(), secureMessageAwaitingLatchCondition.getRangeTo())) {
+                    && isInRange(messageObject, secureMessageAwaitingLatchCondition.getLocationTo(),
+                    secureMessageAwaitingLatchCondition.getRangeTo())) {
                 caughtByWaitingCondition = true;
 
                 latchIterator.remove();
-                secureMessageAwaitingLatchCondition.release(constructMessageReturnObject(messageObject, secureMessageAwaitingLatchCondition.getLocationTo()));
+                secureMessageAwaitingLatchCondition.release(constructMessageReturnObject(messageObject,
+                        secureMessageAwaitingLatchCondition.getLocationTo()));
                 // We only dispatch the message to first waiting program
                 break;
             }
@@ -171,7 +163,8 @@ public class CommunicationChannels<T> {
         }
     }
 
-    public Map<String, Variable> consumeNextSecureMessage(long currentTime, String channelName, String password, Vector3i locationTo, float range) {
+    public Map<String, Variable> consumeNextSecureMessage(long currentTime, String channelName, String password,
+                                                          Vector3i locationTo, float range) {
         Iterator<SecureMessage> messageIterator = secureMessages.get(channelName).iterator();
         while (messageIterator.hasNext()) {
             SecureMessage message = messageIterator.next();
@@ -197,7 +190,8 @@ public class CommunicationChannels<T> {
         secureConditions.remove(channelName, secureMessageAwaitingLatchCondition);
     }
 
-    private Message consumeMessageFromMultimap(long currentTime, String channelName, Vector3i locationTo, float range, Multimap<String, Message> messageMultimap) {
+    private Message consumeMessageFromMultimap(long currentTime, String channelName, Vector3i locationTo, float range,
+                                               Multimap<String, Message> messageMultimap) {
         Iterator<Message> messageIterator = messageMultimap.get(channelName).iterator();
         while (messageIterator.hasNext()) {
             Message message = messageIterator.next();

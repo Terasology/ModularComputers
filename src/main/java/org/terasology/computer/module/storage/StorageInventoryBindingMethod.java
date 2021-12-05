@@ -1,18 +1,5 @@
-/*
- * Copyright 2015 MovingBlocks
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
 package org.terasology.computer.module.storage;
 
 import com.gempukku.lang.ExecutionException;
@@ -27,9 +14,11 @@ public class StorageInventoryBindingMethod extends AbstractModuleMethodExecutabl
     private boolean input;
 
     public StorageInventoryBindingMethod(boolean input) {
-        super(input ? "Creates the input inventory binding for the Internal storage." : "Creates the output inventory binding for the Internal storage.",
+        super(input ? "Creates the input inventory binding for the Internal storage."
+                        : "Creates the output inventory binding for the Internal storage.",
                 "InventoryBinding",
-                input ? "Returns inventory binding allowing to put items into this Internal storage." : "Returns inventory binding allowing to extract items from this Internal storage.");
+                input ? "Returns inventory binding allowing to put items into this Internal storage."
+                        : "Returns inventory binding allowing to extract items from this Internal storage.");
         this.input = input;
 
         addExample(
@@ -39,8 +28,10 @@ public class StorageInventoryBindingMethod extends AbstractModuleMethodExecutabl
                         "and dumps the items back into the inventory above. Please make sure " +
                         "this computer has a module of Inventory Manipulator type in any of its slots, as well " +
                         "as Internal Storage module.",
-                "var storageMod = computer.bindModuleOfType(\"" + StorageModuleCommonSystem.COMPUTER_STORAGE_MODULE_TYPE + "\");\n" +
-                        "var inventoryMod = computer.bindModuleOfType(\"" + InventoryModuleCommonSystem.COMPUTER_INVENTORY_MODULE_TYPE + "\");\n" +
+                "var storageMod = computer.bindModuleOfType(\""
+                        + StorageModuleCommonSystem.COMPUTER_STORAGE_MODULE_TYPE + "\");\n" +
+                        "var inventoryMod = computer.bindModuleOfType(\""
+                        + InventoryModuleCommonSystem.COMPUTER_INVENTORY_MODULE_TYPE + "\");\n" +
                         "var inputInternal = storageMod.getInputInventoryBinding();\n" +
                         "var outputInternal = storageMod.getOutputInventoryBinding();\n" +
                         "var inputUp = inventoryMod.getInputInventoryBinding(\"up\");\n" +
@@ -57,7 +48,8 @@ public class StorageInventoryBindingMethod extends AbstractModuleMethodExecutabl
     }
 
     @Override
-    public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters, Object onFunctionStartResult) throws ExecutionException {
+    public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters, Object onFunctionStartResult)
+            throws ExecutionException {
         return new InternalInventoryBindingCustomObject(input);
     }
 }

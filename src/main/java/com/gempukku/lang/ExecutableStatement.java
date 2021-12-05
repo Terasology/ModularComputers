@@ -1,7 +1,10 @@
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang;
 
 public interface ExecutableStatement {
-    public Execution createExecution();
+    Execution createExecution();
 
-    public boolean requiresSemicolon();
+    boolean requiresSemicolon();
 }

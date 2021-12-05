@@ -1,18 +1,5 @@
-/*
- * Copyright 2015 MovingBlocks
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
 package org.terasology.computer.module.storage;
 
 import org.joml.Vector3f;
@@ -27,6 +14,10 @@ import org.terasology.engine.entitySystem.event.Priority;
 import org.terasology.engine.entitySystem.systems.BaseComponentSystem;
 import org.terasology.engine.entitySystem.systems.RegisterMode;
 import org.terasology.engine.entitySystem.systems.RegisterSystem;
+import org.terasology.gestalt.entitysystem.event.ReceiveEvent;
+import org.terasology.module.inventory.components.InventoryComponent;
+import org.terasology.module.inventory.systems.InventoryManager;
+import org.terasology.module.inventory.systems.InventoryUtils;
 import org.terasology.engine.logic.inventory.events.DropItemEvent;
 import org.terasology.engine.physics.events.ImpulseEvent;
 import org.terasology.engine.registry.In;
@@ -74,7 +65,8 @@ public class StorageModuleServerSystem extends BaseComponentSystem {
 
         ComputerModuleComponent newModule = event.getNewItem().getComponent(ComputerModuleComponent.class);
         if (newModule != null && newModule.moduleType.equals(StorageModuleCommonSystem.COMPUTER_STORAGE_MODULE_TYPE)) {
-            StorageComputerModule computerModuleByType = (StorageComputerModule) computerModuleRegistry.getComputerModuleByType(newModule.moduleType);
+            StorageComputerModule computerModuleByType = (StorageComputerModule) computerModuleRegistry
+                    .getComputerModuleByType(newModule.moduleType);
 
             EntityRef storageEntity = entityManager.create();
 
@@ -133,7 +125,8 @@ public class StorageModuleServerSystem extends BaseComponentSystem {
     public void computerDestroyed(OnBlockToItem event, EntityRef computerEntity, ComputerComponent computer) {
         InventoryComponent component = computerEntity.getComponent(InventoryComponent.class);
         for (EntityRef module : component.itemSlots) {
-            if (module.exists() && module.getComponent(ComputerModuleComponent.class).moduleType.equals(StorageModuleCommonSystem.COMPUTER_STORAGE_MODULE_TYPE)) {
+            if (module.exists() && module.getComponent(ComputerModuleComponent.class).moduleType
+                    .equals(StorageModuleCommonSystem.COMPUTER_STORAGE_MODULE_TYPE)) {
                 EntityRef inventoryEntity = computerEntity.getComponent(InternalStorageComponent.class).inventoryEntity;
                 dropItemsFromComputerInternalStorage(computerEntity, inventoryEntity);
                 inventoryEntity.destroy();

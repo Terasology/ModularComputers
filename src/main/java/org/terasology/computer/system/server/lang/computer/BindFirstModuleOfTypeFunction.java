@@ -1,18 +1,5 @@
-/*
- * Copyright 2015 MovingBlocks
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
 package org.terasology.computer.system.server.lang.computer;
 
 import com.gempukku.lang.ExecutionException;
@@ -27,7 +14,9 @@ import java.util.Map;
 
 public class BindFirstModuleOfTypeFunction extends TerasologyFunctionExecutable {
     public BindFirstModuleOfTypeFunction() {
-        super("Binds first module of the specified type in any of the slots.", "Object", "Binding to the module. This object exposes all the methods, as described in documentation for the module. " +
+        super("Binds first module of the specified type in any of the slots.", "Object",
+                "Binding to the module. " +
+                        "This object exposes all the methods, as described in documentation for the module. " +
                 "If the module is not found in this computer, this function returns null.");
 
         addParameter("type", "String", "Type of the module to bind.");

@@ -1,3 +1,6 @@
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang;
 
 public class Operator {
@@ -38,99 +41,101 @@ public class Operator {
     public static final Operator DIVIDE_ASSIGN = Operator.createBinaryRightAssociative(2, 14);
     public static final Operator MOD_ASSIGN = Operator.createBinaryRightAssociative(2, 14);
 
-    private int _priority;
-    private int _consumeLength;
-    private boolean _leftAssociative;
-    private boolean _binary;
-    private boolean _hasParameters;
-    private boolean _exactlyOneParameter;
-    private String _parametersClosing;
-    private boolean _namedOnRight;
-    private boolean _pre;
+    private int priority;
+    private int consumeLength;
+    private boolean leftAssociative;
+    private boolean binary;
+    private boolean hasParameters;
+    private boolean exactlyOneParameter;
+    private String parametersClosing;
+    private boolean namedOnRight;
+    private boolean pre;
+
+    public Operator() {
+    }
+
+    private Operator(int consumeLength, int priority, boolean leftAssociative, boolean binary,
+                     boolean hasParameters, boolean namedOnRight) {
+        this.consumeLength = consumeLength;
+        this.priority = priority;
+        this.leftAssociative = leftAssociative;
+        this.binary = binary;
+        this.hasParameters = hasParameters;
+        this.namedOnRight = namedOnRight;
+    }
 
     private static Operator createUnary(int consumeLength, int priority, boolean leftAssociative, boolean pre) {
         Operator operator = new Operator();
-        operator._consumeLength = consumeLength;
-        operator._priority = priority;
-        operator._leftAssociative = leftAssociative;
-        operator._pre = pre;
+        operator.consumeLength = consumeLength;
+        operator.priority = priority;
+        operator.leftAssociative = leftAssociative;
+        operator.pre = pre;
         return operator;
     }
 
-    private static Operator createParameterUnary(int consumeLength, int priority, boolean leftAssociative, boolean exactlyOneParameter, String parametersClosing) {
+    private static Operator createParameterUnary(int consumeLength, int priority, boolean leftAssociative, boolean exactlyOneParameter,
+                                                 String parametersClosing) {
         Operator operator = new Operator();
-        operator._consumeLength = consumeLength;
-        operator._priority = priority;
-        operator._leftAssociative = leftAssociative;
-        operator._exactlyOneParameter = exactlyOneParameter;
-        operator._hasParameters = true;
-        operator._parametersClosing = parametersClosing;
+        operator.consumeLength = consumeLength;
+        operator.priority = priority;
+        operator.leftAssociative = leftAssociative;
+        operator.exactlyOneParameter = exactlyOneParameter;
+        operator.hasParameters = true;
+        operator.parametersClosing = parametersClosing;
         return operator;
     }
 
     private static Operator createBinaryLeftAssociative(int consumeLength, int priority) {
         Operator operator = new Operator();
-        operator._consumeLength = consumeLength;
-        operator._priority = priority;
-        operator._leftAssociative = true;
-        operator._binary = true;
+        operator.consumeLength = consumeLength;
+        operator.priority = priority;
+        operator.leftAssociative = true;
+        operator.binary = true;
         return operator;
     }
 
     private static Operator createBinaryRightAssociative(int consumeLength, int priority) {
         Operator operator = new Operator();
-        operator._consumeLength = consumeLength;
-        operator._priority = priority;
-        operator._leftAssociative = false;
-        operator._binary = true;
+        operator.consumeLength = consumeLength;
+        operator.priority = priority;
+        operator.leftAssociative = false;
+        operator.binary = true;
         return operator;
     }
 
-    public Operator() {
-    }
-
-    private Operator(int consumeLength, int priority, boolean leftAssociative, boolean binary, boolean hasParameters, boolean namedOnRight) {
-        _consumeLength = consumeLength;
-        _priority = priority;
-        _leftAssociative = leftAssociative;
-        _binary = binary;
-        _hasParameters = hasParameters;
-        _namedOnRight = namedOnRight;
-    }
-
     public boolean isPre() {
-        return _pre;
+        return pre;
     }
 
     public boolean isNamedOnRight() {
-        return _namedOnRight;
+        return namedOnRight;
     }
 
     public int getConsumeLength() {
-        return _consumeLength;
+        return consumeLength;
     }
 
     public boolean isLeftAssociative() {
-        return _leftAssociative;
+        return leftAssociative;
     }
 
     public int getPriority() {
-        return _priority;
+        return priority;
     }
 
     public boolean isBinary() {
-        return _binary;
+        return binary;
     }
 
     public boolean isHasParameters() {
-        return _hasParameters;
+        return hasParameters;
     }
 
     public boolean exactlyOneParameter() {
-        return _exactlyOneParameter;
+        return exactlyOneParameter;
     }
 
     public String getParametersClosing() {
-        return _parametersClosing;
+        return parametersClosing;
     }
 }

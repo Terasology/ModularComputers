@@ -1,18 +1,5 @@
-/*
- * Copyright 2015 MovingBlocks
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
 package org.terasology.computer.module.inventory;
 
 import com.gempukku.lang.ExecutionException;
@@ -32,7 +19,8 @@ public class InventoryBindingMethod extends AbstractModuleMethodExecutable<Objec
 
     public InventoryBindingMethod(String methodName, BlockEntityRegistry blockEntityRegistry, boolean input) {
         super(input ? "Creates the input inventory binding for the storage specified in the direction. " +
-                        "This binding allows to insert items into the inventory only." : "Creates the output inventory binding for the storage specified in the direction. " +
+                        "This binding allows to insert items into the inventory only." : "Creates the output inventory binding for the " +
+                        "storage specified in the direction. " +
                         "This binding allows to remove items from the inventory only.", "InventoryBinding",
                 input ? "Input binding for the direction specified." : "Output binding for the direction specified.");
         this.blockEntityRegistry = blockEntityRegistry;
@@ -42,18 +30,22 @@ public class InventoryBindingMethod extends AbstractModuleMethodExecutable<Objec
         addParameter("direction", "Direction", "Direction in which the inventory manipulator is bound to.");
 
         if (input) {
-            addExample("This example creates input inventory binding to an inventory above it and prints out the slot count for it. Please make sure " +
+            addExample("This example creates input inventory binding to an inventory above it and prints out the slot count for it. " +
+                            "Please make sure " +
                             "this computer has a module of Inventory Manipulator type in any of its slots.",
                     "var invBind = computer.bindModuleOfType(\"" + InventoryModuleCommonSystem.COMPUTER_INVENTORY_MODULE_TYPE + "\");\n" +
                             "var topInv = invBind.getInputInventoryBinding(\"up\");\n" +
-                            "console.append(\"Inventory above has \" + invBind.getInventorySlotCount(topInv) + \" number of slots available for input.\");"
+                            "console.append(\"Inventory above has \" + invBind.getInventorySlotCount(topInv) + \" number of slots " +
+                            "available for input.\");"
             );
         } else {
-            addExample("This example creates output inventory binding to an inventory above it and prints out the slot count for it. Please make sure " +
+            addExample("This example creates output inventory binding to an inventory above it and prints out the slot count for it. " +
+                            "Please make sure " +
                             "this computer has a module of Inventory Manipulator type in any of its slots.",
                     "var invBind = computer.bindModuleOfType(\"" + InventoryModuleCommonSystem.COMPUTER_INVENTORY_MODULE_TYPE + "\");\n" +
                             "var topInv = invBind.getOutputInventoryBinding(\"up\");\n" +
-                            "console.append(\"Inventory above has \" + invBind.getInventorySlotCount(topInv) + \" number of slots available for output.\");"
+                            "console.append(\"Inventory above has \" + invBind.getInventorySlotCount(topInv) + \" number of slots " +
+                            "available for output.\");"
             );
         }
     }
@@ -64,7 +56,8 @@ public class InventoryBindingMethod extends AbstractModuleMethodExecutable<Objec
     }
 
     @Override
-    public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters, Object onFunctionStartResult) throws ExecutionException {
+    public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters, Object onFunctionStartResult)
+            throws ExecutionException {
         Direction direction = FunctionParamValidationUtil.validateDirectionParameter(line, parameters,
                 "direction", methodName);
 

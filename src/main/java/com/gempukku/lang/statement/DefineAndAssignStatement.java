@@ -1,3 +1,6 @@
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.statement;
 
 import com.gempukku.lang.DefiningExecutableStatement;
@@ -7,22 +10,22 @@ import com.gempukku.lang.IllegalSyntaxException;
 import com.gempukku.lang.execution.DefineAndAssignExecution;
 
 public class DefineAndAssignStatement implements DefiningExecutableStatement {
-    private String _name;
-    private ExecutableStatement _value;
+    private String name;
+    private ExecutableStatement value;
 
     public DefineAndAssignStatement(String name, ExecutableStatement value) throws IllegalSyntaxException {
-        _name = name;
-        _value = value;
+        this.name = name;
+        this.value = value;
     }
 
     @Override
     public String getDefinedVariableName() {
-        return _name;
+        return name;
     }
 
     @Override
     public Execution createExecution() {
-        return new DefineAndAssignExecution(_name, _value);
+        return new DefineAndAssignExecution(name, value);
     }
 
     @Override

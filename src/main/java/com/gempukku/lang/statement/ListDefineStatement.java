@@ -1,3 +1,6 @@
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.statement;
 
 import com.gempukku.lang.ExecutableStatement;
@@ -7,10 +10,10 @@ import com.gempukku.lang.execution.ListDefineExecution;
 import java.util.List;
 
 public class ListDefineStatement implements ExecutableStatement {
-    private List<ExecutableStatement> _values;
+    private List<ExecutableStatement> values;
 
     public ListDefineStatement(List<ExecutableStatement> values) {
-        _values = values;
+        this.values = values;
     }
 
     @Override
@@ -20,6 +23,6 @@ public class ListDefineStatement implements ExecutableStatement {
 
     @Override
     public Execution createExecution() {
-        return new ListDefineExecution(_values);
+        return new ListDefineExecution(values);
     }
 }
