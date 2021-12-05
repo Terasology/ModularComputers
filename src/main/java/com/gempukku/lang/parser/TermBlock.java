@@ -1,64 +1,67 @@
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.parser;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TermBlock {
-    private Term _term;
-    private List<TermBlock> _termBlocks;
-    private int _blockStartLine;
-    private int _blockStartColumn;
-    private int _blockEndLine;
-    private int _blockEndColumn;
+    private Term term;
+    private List<TermBlock> termBlocks;
+    private int blockStartLine;
+    private int blockStartColumn;
+    private int blockEndLine;
+    private int blockEndColumn;
 
     public TermBlock(int blockStartLine, int blockStartColumn) {
-        _blockStartLine = blockStartLine;
-        _blockStartColumn = blockStartColumn;
-        _termBlocks = new ArrayList<TermBlock>();
-    }
-
-    public void terminateTermBlock(int blockEndLine, int blockEndColumn) {
-        _blockEndLine = blockEndLine;
-        _blockEndColumn = blockEndColumn;
+        this.blockStartLine = blockStartLine;
+        this.blockStartColumn = blockStartColumn;
+        termBlocks = new ArrayList<TermBlock>();
     }
 
     private TermBlock(Term term) {
-        _term = term;
+        this.term = term;
+    }
+
+    public void terminateTermBlock(int blockEndLine, int blockEndColumn) {
+        this.blockEndLine = blockEndLine;
+        this.blockEndColumn = blockEndColumn;
     }
 
     public int getBlockEndColumn() {
-        return _blockEndColumn;
+        return blockEndColumn;
     }
 
     public int getBlockEndLine() {
-        return _blockEndLine;
+        return blockEndLine;
     }
 
     public int getBlockStartColumn() {
-        return _blockStartColumn;
+        return blockStartColumn;
     }
 
     public int getBlockStartLine() {
-        return _blockStartLine;
+        return blockStartLine;
     }
 
     public void addTermBlock(TermBlock termBlock) {
-        _termBlocks.add(termBlock);
+        termBlocks.add(termBlock);
     }
 
     public void addTermBlock(Term term) {
-        _termBlocks.add(new TermBlock(term));
+        termBlocks.add(new TermBlock(term));
     }
 
     public boolean isTerm() {
-        return _term != null;
+        return term != null;
     }
 
     public Term getTerm() {
-        return _term;
+        return term;
     }
 
     public List<TermBlock> getTermBlocks() {
-        return _termBlocks;
+        return termBlocks;
     }
 }

@@ -1,3 +1,6 @@
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.statement;
 
 import com.gempukku.lang.ExecutableStatement;
@@ -10,24 +13,25 @@ import com.gempukku.lang.IllegalSyntaxException;
 import com.gempukku.lang.execution.SimpleExecution;
 
 public class VariableStatement implements ExecutableStatement {
-    private String _name;
+    private String name;
 
     public VariableStatement(String name) throws IllegalSyntaxException {
-        _name = name;
+        this.name = name;
     }
 
     public Execution createExecution() {
         return new SimpleExecution() {
             @Override
-            protected ExecutionProgress execute(ExecutionContext context, ExecutionCostConfiguration configuration) throws ExecutionException {
-                context.setContextValue(context.peekCallContext().getVariableValue(_name));
+            protected ExecutionProgress execute(ExecutionContext context, ExecutionCostConfiguration configuration)
+                    throws ExecutionException {
+                context.setContextValue(context.peekCallContext().getVariableValue(name));
                 return new ExecutionProgress(configuration.getSetContextValue());
             }
         };
     }
 
     public String getName() {
-        return _name;
+        return name;
     }
 
     @Override

@@ -1,18 +1,5 @@
-/*
- * Copyright 2015 MovingBlocks
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
 package org.terasology.computer.module.inventory;
 
 import com.gempukku.lang.ExecutionException;
@@ -40,8 +27,9 @@ public class ItemMoveMethod extends AbstractModuleMethodExecutable<Object> {
         addParameter("slot", "Number", "Slot number of the \"from\" inventory it should extract item from.");
 
         addExample(
-                "This example moves item from the first slot of an inventory above the computer to inventory to the east of the computer. Please make sure " +
-                        "this computer has a module of Inventory Manipulator type in any of its slots.",
+                "This example moves item from the first slot of an inventory above the computer " +
+                        "to inventory to the east of the computer. " +
+                        "Please make sure this computer has a module of Inventory Manipulator type in any of its slots.",
                 "var invBind = computer.bindModuleOfType(\"" + InventoryModuleCommonSystem.COMPUTER_INVENTORY_MODULE_TYPE + "\");\n" +
                         "var topInv = invBind.getOutputInventoryBinding(\"up\");\n" +
                         "var eastInv = invBind.getInputInventoryBinding(\"east\");\n" +
@@ -55,7 +43,8 @@ public class ItemMoveMethod extends AbstractModuleMethodExecutable<Object> {
     }
 
     @Override
-    public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters, Object onFunctionStartResult) throws ExecutionException {
+    public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters, Object onFunctionStartResult)
+            throws ExecutionException {
         InventoryBinding.InventoryWithSlots inventoryFrom = FunctionParamValidationUtil.validateInventoryBinding(line, computer,
                 parameters, "inventoryBindingFrom", methodName, false);
         InventoryBinding.InventoryWithSlots inventoryTo = FunctionParamValidationUtil.validateInventoryBinding(line, computer,
@@ -63,11 +52,14 @@ public class ItemMoveMethod extends AbstractModuleMethodExecutable<Object> {
 
         int slotNo = FunctionParamValidationUtil.validateSlotNo(line, parameters, inventoryFrom, "slot", methodName);
 
-        int itemCountBefore = InventoryModuleUtils.getItemCount(InventoryUtils.getItemAt(inventoryFrom.inventory, inventoryFrom.slots.get(slotNo)));
+        int itemCountBefore = InventoryModuleUtils.getItemCount(InventoryUtils.getItemAt(
+                inventoryFrom.inventory, inventoryFrom.slots.get(slotNo)));
 
-        inventoryManager.moveItemToSlots(computer.getComputerEntity(), inventoryFrom.inventory, slotNo, inventoryTo.inventory, inventoryTo.slots);
+        inventoryManager.moveItemToSlots(computer.getComputerEntity(), inventoryFrom.inventory, slotNo,
+                inventoryTo.inventory, inventoryTo.slots);
 
-        int itemCountAfter = InventoryModuleUtils.getItemCount(InventoryUtils.getItemAt(inventoryFrom.inventory, inventoryFrom.slots.get(slotNo)));
+        int itemCountAfter = InventoryModuleUtils.getItemCount(InventoryUtils.getItemAt(
+                inventoryFrom.inventory, inventoryFrom.slots.get(slotNo)));
 
         return itemCountBefore - itemCountAfter;
     }

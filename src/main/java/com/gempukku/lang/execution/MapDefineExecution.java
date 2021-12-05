@@ -1,3 +1,6 @@
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.execution;
 
 import com.gempukku.lang.ExecutableStatement;
@@ -13,42 +16,40 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class MapDefineExecution implements Execution {
-    private Iterator<Map.Entry<String, ExecutableStatement>> _propertiesIterator;
-    private String _lastKey;
-    private boolean _hasToAssign;
+    private Iterator<Map.Entry<String, ExecutableStatement>> propertiesIterator;
+    private String lastKey;
+    private boolean hasToAssign;
 
-    private boolean _finished;
-    private Map<String, Variable> _result = new HashMap<String, Variable>();
+    private boolean finished;
+    private Map<String, Variable> result = new HashMap<String, Variable>();
 
     public MapDefineExecution(Map<String, ExecutableStatement> properties) {
-        _propertiesIterator = properties.entrySet().iterator();
+        propertiesIterator = properties.entrySet().iterator();
     }
 
     @Override
     public boolean hasNextExecution(ExecutionContext executionContext) {
-        if (_finished)
-            return false;
-
-        return true;
+        return !finished;
     }
 
     @Override
-    public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration) throws ExecutionException {
-        if (_hasToAssign) {
-            _result.put(_lastKey, new Variable(executionContext.getContextValue().getValue()));
-            _hasToAssign = false;
+    public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration)
+            throws ExecutionException {
+        if (hasToAssign) {
+            result.put(lastKey, new Variable(executionContext.getContextValue().getValue()));
+            hasToAssign = false;
             return new ExecutionProgress(configuration.getGetContextValue());
         }
-        if (_propertiesIterator.hasNext()) {
-            final Map.Entry<String, ExecutableStatement> property = _propertiesIterator.next();
-            _lastKey = property.getKey();
-            _hasToAssign = true;
+        if (propertiesIterator.hasNext()) {
+            final Map.Entry<String, ExecutableStatement> property = propertiesIterator.next();
+            lastKey = property.getKey();
+            hasToAssign = true;
             executionContext.stackExecution(property.getValue().createExecution());
             return new ExecutionProgress(configuration.getStackExecution());
         }
-        if (!_finished) {
-            _finished = true;
-            executionContext.setContextValue(new Variable(_result));
+        if (!finished) {
+            finished = true;
+            executionContext.setContextValue(new Variable(result));
             return new ExecutionProgress(configuration.getSetContextValue());
         }
         return null;

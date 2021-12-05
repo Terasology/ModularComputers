@@ -1,3 +1,6 @@
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang;
 
 import java.util.Collection;
@@ -9,33 +12,34 @@ import java.util.Map;
 import java.util.Set;
 
 public class ExecutionContext {
-    private LinkedList<LinkedList<Execution>> _executionGroups = new LinkedList<LinkedList<Execution>>();
-    private Variable _contextValue;
-    private Variable _returnValue;
+    private LinkedList<LinkedList<Execution>> executionGroups = new LinkedList<LinkedList<Execution>>();
+    private Variable contextValue;
+    private Variable returnValue;
 
-    private boolean _returnFromFunction;
-    private boolean _breakFromBlock;
+    private boolean returnFromFunction;
+    private boolean breakFromBlock;
 
-    private LinkedList<CallContext> _groupCallContexts = new LinkedList<CallContext>();
-    private Map<Variable.Type, PropertyProducer> _perTypeProperties = new HashMap<Variable.Type, PropertyProducer>();
+    private LinkedList<CallContext> groupCallContexts = new LinkedList<CallContext>();
+    private Map<Variable.Type, PropertyProducer> perTypeProperties = new HashMap<Variable.Type, PropertyProducer>();
 
-    private int _stackTraceSize = 0;
-    private boolean _suspended;
-    private ExecutionCostConfiguration _configuration;
+    private int stackTraceSize = 0;
+    private boolean suspended;
+    private ExecutionCostConfiguration configuration;
 
     public ExecutionContext(ExecutionCostConfiguration configuration) {
-        _configuration = configuration;
+        this.configuration = configuration;
     }
 
     public int getStackTraceSize() {
-        return _stackTraceSize;
+        return stackTraceSize;
     }
 
     public int getMemoryUsage() {
         Set<Object> counted = new HashSet<Object>();
         int result = 0;
-        for (CallContext groupCallContext : _groupCallContexts)
+        for (CallContext groupCallContext : groupCallContexts) {
             result += getVariablesSize(counted, groupCallContext.getVariablesInContext());
+        }
         return result;
     }
 
@@ -78,84 +82,89 @@ public class ExecutionContext {
     }
 
     public void stackExecution(Execution execution) {
-        _executionGroups.getLast().add(execution);
+        executionGroups.getLast().add(execution);
     }
 
     public ExecutionProgress executeNext() throws ExecutionException {
-        while (!_executionGroups.isEmpty()) {
-            final LinkedList<Execution> inBlockExecutionStack = _executionGroups.getLast();
+        while (!executionGroups.isEmpty()) {
+            final LinkedList<Execution> inBlockExecutionStack = executionGroups.getLast();
             while (!inBlockExecutionStack.isEmpty()) {
                 final Execution execution = inBlockExecutionStack.getLast();
                 if (execution.hasNextExecution(this)) {
-                    final ExecutionProgress executionProgress = execution.executeNextStatement(this, _configuration);
-                    if (_breakFromBlock)
+                    final ExecutionProgress executionProgress = execution.executeNextStatement(this, configuration);
+                    if (breakFromBlock) {
                         doTheBreak();
-                    if (_returnFromFunction)
+                    }
+                    if (returnFromFunction) {
                         doTheReturn();
+                    }
                     return executionProgress;
-                } else
+                } else {
                     inBlockExecutionStack.removeLast();
+                }
             }
-            _executionGroups.removeLast();
+            executionGroups.removeLast();
             removeLastCallContext();
         }
         return new ExecutionProgress(0);
     }
 
     private CallContext removeLastCallContext() {
-        final CallContext removedCallContext = _groupCallContexts.removeLast();
-        if (removedCallContext.isConsumesReturn())
-            _stackTraceSize--;
+        final CallContext removedCallContext = groupCallContexts.removeLast();
+        if (removedCallContext.isConsumesReturn()) {
+            stackTraceSize--;
+        }
         return removedCallContext;
     }
 
     private void doTheBreak() throws ExecutionException {
         CallContext callContext;
         do {
-            if (_groupCallContexts.isEmpty())
+            if (groupCallContexts.isEmpty()) {
                 throw new ExecutionException(-1, "Break invoked without a containing block");
+            }
             callContext = removeLastCallContext();
-            _executionGroups.removeLast();
+            executionGroups.removeLast();
         } while (!callContext.isConsumesBreak());
-        _breakFromBlock = false;
+        breakFromBlock = false;
     }
 
     private void doTheReturn() {
         CallContext callContext;
         do {
             callContext = removeLastCallContext();
-            _executionGroups.removeLast();
+            executionGroups.removeLast();
         } while (!callContext.isConsumesReturn());
     }
 
     public Variable getContextValue() {
-        return _contextValue;
+        return contextValue;
     }
 
     public void setContextValue(Variable contextValue) {
-        _contextValue = contextValue;
+        this.contextValue = contextValue;
     }
 
     public Variable getReturnValue() {
-        return _returnValue;
+        return returnValue;
     }
 
     public void setReturnValue(Variable returnValue) {
-        _returnValue = returnValue;
-        _returnFromFunction = true;
+        this.returnValue = returnValue;
+        returnFromFunction = true;
     }
 
     public void breakBlock() {
-        _breakFromBlock = true;
+        breakFromBlock = true;
     }
 
     public void resetReturnValue() {
-        _returnValue = null;
-        _returnFromFunction = false;
+        returnValue = null;
+        returnFromFunction = false;
     }
 
     public CallContext peekCallContext() {
-        return _groupCallContexts.getLast();
+        return groupCallContexts.getLast();
     }
 
     public void setVariableValue(Variable variable, Object value) throws ExecutionException {
@@ -163,34 +172,36 @@ public class ExecutionContext {
     }
 
     public void stackExecutionGroup(CallContext callContext, Execution execution) {
-        _groupCallContexts.add(callContext);
+        groupCallContexts.add(callContext);
         LinkedList<Execution> functionExecutionStack = new LinkedList<Execution>();
         functionExecutionStack.add(execution);
-        _executionGroups.add(functionExecutionStack);
-        if (callContext.isConsumesReturn())
-            _stackTraceSize++;
+        executionGroups.add(functionExecutionStack);
+        if (callContext.isConsumesReturn()) {
+            stackTraceSize++;
+        }
     }
 
     public boolean isFinished() {
-        return _executionGroups.isEmpty();
+        return executionGroups.isEmpty();
     }
 
     public void setSuspended(boolean suspended) {
-        _suspended = suspended;
+        this.suspended = suspended;
     }
 
     public boolean isSuspended() {
-        return _suspended;
+        return suspended;
     }
 
     public void addPropertyProducer(Variable.Type type, PropertyProducer producer) {
-        _perTypeProperties.put(type, producer);
+        perTypeProperties.put(type, producer);
     }
 
     public Variable resolveMember(Variable object, String property) throws ExecutionException {
-        if (!_perTypeProperties.containsKey(object.getType()))
+        if (!perTypeProperties.containsKey(object.getType())) {
             return new Variable(null);
+        }
 
-        return _perTypeProperties.get(object.getType()).exposePropertyFor(this, object, property);
+        return perTypeProperties.get(object.getType()).exposePropertyFor(this, object, property);
     }
 }

@@ -1,3 +1,6 @@
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.statement;
 
 import com.gempukku.lang.ExecutableStatement;
@@ -8,18 +11,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IfStatement implements ExecutableStatement {
-    private List<ConditionStatement> _conditionStatements = new ArrayList<ConditionStatement>();
-    private ExecutableStatement _elseStatement;
-    private int _line;
+    private List<ConditionStatement> conditionStatements = new ArrayList<ConditionStatement>();
+    private ExecutableStatement elseStatement;
+    private int line;
 
     public IfStatement(int line, ExecutableStatement condition, ExecutableStatement statement) {
-        _line = line;
-        _conditionStatements.add(new ConditionStatement(condition, statement));
+        this.line = line;
+        conditionStatements.add(new ConditionStatement(condition, statement));
     }
 
     @Override
     public Execution createExecution() {
-        return new IfExecution(_line, _conditionStatements, _elseStatement);
+        return new IfExecution(line, conditionStatements, elseStatement);
     }
 
     @Override
@@ -28,28 +31,28 @@ public class IfStatement implements ExecutableStatement {
     }
 
     public void addElseIf(ExecutableStatement condition, ExecutableStatement statement) {
-        _conditionStatements.add(new ConditionStatement(condition, statement));
+        conditionStatements.add(new ConditionStatement(condition, statement));
     }
 
     public void addElse(ExecutableStatement statement) {
-        _elseStatement = statement;
+        elseStatement = statement;
     }
 
-    public static class ConditionStatement {
-        private ExecutableStatement _condition;
-        private ExecutableStatement _statement;
+    public static final class ConditionStatement {
+        private ExecutableStatement condition;
+        private ExecutableStatement statement;
 
         private ConditionStatement(ExecutableStatement condition, ExecutableStatement statement) {
-            _condition = condition;
-            _statement = statement;
+            this.condition = condition;
+            this.statement = statement;
         }
 
         public ExecutableStatement getCondition() {
-            return _condition;
+            return condition;
         }
 
         public ExecutableStatement getStatement() {
-            return _statement;
+            return statement;
         }
     }
 }

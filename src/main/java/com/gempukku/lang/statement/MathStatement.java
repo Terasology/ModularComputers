@@ -1,3 +1,6 @@
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.statement;
 
 import com.gempukku.lang.ExecutableStatement;
@@ -6,23 +9,23 @@ import com.gempukku.lang.Operator;
 import com.gempukku.lang.execution.MathExecution;
 
 public class MathStatement implements ExecutableStatement {
-    private int _line;
-    private ExecutableStatement _left;
-    private Operator _operator;
-    private ExecutableStatement _right;
-    private boolean _assignToLeft;
+    private int line;
+    private ExecutableStatement left;
+    private Operator operator;
+    private ExecutableStatement right;
+    private boolean assignToLeft;
 
     public MathStatement(int line, ExecutableStatement left, Operator operator, ExecutableStatement right, boolean assignToLeft) {
-        _line = line;
-        _left = left;
-        _operator = operator;
-        _right = right;
-        _assignToLeft = assignToLeft;
+        this.line = line;
+        this.left = left;
+        this.operator = operator;
+        this.right = right;
+        this.assignToLeft = assignToLeft;
     }
 
     @Override
     public Execution createExecution() {
-        return new MathExecution(_line, _left, _operator, _right, _assignToLeft);
+        return new MathExecution(line, left, operator, right, assignToLeft);
     }
 
     @Override

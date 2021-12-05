@@ -1,33 +1,36 @@
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang;
 
 import java.util.Collection;
 
 public class DefaultFunctionExecutable implements FunctionExecutable {
-    private CallContext _callContext;
-    private ExecutableStatement _statement;
-    private Collection<String> _parameterNames;
+    private CallContext callContext;
+    private ExecutableStatement statement;
+    private Collection<String> parameterNames;
 
     public DefaultFunctionExecutable(CallContext callContext, Collection<String> parameterNames) {
-        _callContext = callContext;
-        _parameterNames = parameterNames;
+        this.callContext = callContext;
+        this.parameterNames = parameterNames;
     }
 
     public void setStatement(ExecutableStatement statement) {
-        _statement = statement;
+        this.statement = statement;
     }
 
     @Override
     public Collection<String> getParameterNames() {
-        return _parameterNames;
+        return parameterNames;
     }
 
     @Override
     public CallContext getCallContext() {
-        return _callContext;
+        return callContext;
     }
 
     @Override
     public Execution createExecution(int line, ExecutionContext executionContext, CallContext context) {
-        return _statement.createExecution();
+        return statement.createExecution();
     }
 }

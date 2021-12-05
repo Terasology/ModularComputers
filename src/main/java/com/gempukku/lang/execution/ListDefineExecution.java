@@ -1,3 +1,6 @@
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.execution;
 
 import com.gempukku.lang.ExecutableStatement;
@@ -12,38 +15,39 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ListDefineExecution implements Execution {
-    private List<ExecutableStatement> _executableStatements;
-    private int _nextStackIndex;
-    private int _nextRetrieveIndex;
+    private List<ExecutableStatement> executableStatements;
+    private int nextStackIndex;
+    private int nextRetrieveIndex;
 
-    private boolean _assignedResult;
+    private boolean assignedResult;
 
-    private List<Variable> _result = new ArrayList<Variable>();
+    private List<Variable> result = new ArrayList<Variable>();
 
     public ListDefineExecution(List<ExecutableStatement> executableStatements) {
-        _executableStatements = executableStatements;
+        this.executableStatements = executableStatements;
     }
 
     @Override
     public boolean hasNextExecution(ExecutionContext executionContext) {
-        return !_assignedResult;
+        return !assignedResult;
     }
 
     @Override
-    public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration) throws ExecutionException {
-        if (_nextRetrieveIndex < _nextStackIndex) {
-            _result.add(new Variable(executionContext.getContextValue().getValue()));
-            _nextRetrieveIndex++;
+    public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration)
+            throws ExecutionException {
+        if (nextRetrieveIndex < nextStackIndex) {
+            result.add(new Variable(executionContext.getContextValue().getValue()));
+            nextRetrieveIndex++;
             return new ExecutionProgress(configuration.getGetContextValue());
         }
-        if (_nextStackIndex < _executableStatements.size()) {
-            executionContext.stackExecution(_executableStatements.get(_nextStackIndex).createExecution());
-            _nextStackIndex++;
+        if (nextStackIndex < executableStatements.size()) {
+            executionContext.stackExecution(executableStatements.get(nextStackIndex).createExecution());
+            nextStackIndex++;
             return new ExecutionProgress(configuration.getStackExecution());
         }
-        if (!_assignedResult) {
-            executionContext.setContextValue(new Variable(_result));
-            _assignedResult = true;
+        if (!assignedResult) {
+            executionContext.setContextValue(new Variable(result));
+            assignedResult = true;
             return new ExecutionProgress(configuration.getSetContextValue());
         }
         return null;

@@ -1,3 +1,6 @@
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.execution;
 
 import com.gempukku.lang.ExecutableStatement;
@@ -9,71 +12,73 @@ import com.gempukku.lang.ExecutionProgress;
 import com.gempukku.lang.Variable;
 
 public class ForExecution implements Execution {
-    private int _line;
-    private ExecutableStatement _initializationStatement;
-    private ExecutableStatement _terminationCondition;
-    private ExecutableStatement _executedAfterEachLoop;
-    private ExecutableStatement _statementInLoop;
+    private int line;
+    private ExecutableStatement initializationStatement;
+    private ExecutableStatement terminationCondition;
+    private ExecutableStatement executedAfterEachLoop;
+    private ExecutableStatement statementInLoop;
 
-    private boolean _terminated;
+    private boolean terminated;
 
-    private boolean _initialized;
-    private boolean _conditionStacked;
-    private boolean _conditionChecked;
+    private boolean initialized;
+    private boolean conditionStacked;
+    private boolean conditionChecked;
 
-    private boolean _statementStacked;
+    private boolean statementStacked;
 
-    public ForExecution(int line, ExecutableStatement initializationStatement, ExecutableStatement terminationCondition, ExecutableStatement executedAfterEachLoop, ExecutableStatement statementInLoop) {
-        _line = line;
-        _initializationStatement = initializationStatement;
-        _terminationCondition = terminationCondition;
-        _executedAfterEachLoop = executedAfterEachLoop;
-        _statementInLoop = statementInLoop;
+    public ForExecution(int line, ExecutableStatement initializationStatement, ExecutableStatement terminationCondition,
+                        ExecutableStatement executedAfterEachLoop, ExecutableStatement statementInLoop) {
+        this.line = line;
+        this.initializationStatement = initializationStatement;
+        this.terminationCondition = terminationCondition;
+        this.executedAfterEachLoop = executedAfterEachLoop;
+        this.statementInLoop = statementInLoop;
     }
 
     @Override
     public boolean hasNextExecution(ExecutionContext executionContext) {
-        if (_terminated)
-            return false;
-
-        return true;
+        return !terminated;
     }
 
     @Override
-    public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration) throws ExecutionException {
-        if (!_initialized) {
-            _initialized = true;
-            if (_initializationStatement != null) {
-                executionContext.stackExecution(_initializationStatement.createExecution());
+    public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration)
+            throws ExecutionException {
+        if (!initialized) {
+            initialized = true;
+            if (initializationStatement != null) {
+                executionContext.stackExecution(initializationStatement.createExecution());
                 return new ExecutionProgress(configuration.getStackExecution());
             }
         }
-        if (!_conditionStacked) {
-            executionContext.stackExecution(_terminationCondition.createExecution());
-            _conditionStacked = true;
+        if (!conditionStacked) {
+            executionContext.stackExecution(terminationCondition.createExecution());
+            conditionStacked = true;
             return new ExecutionProgress(configuration.getStackExecution());
         }
-        if (!_conditionChecked) {
+        if (!conditionChecked) {
             final Variable value = executionContext.getContextValue();
-            if (value.getType() != Variable.Type.BOOLEAN)
-                throw new ExecutionException(_line, "Condition not of type BOOLEAN");
-            if (!(Boolean) value.getValue())
-                _terminated = true;
-            _conditionChecked = true;
+            if (value.getType() != Variable.Type.BOOLEAN) {
+                throw new ExecutionException(line, "Condition not of type BOOLEAN");
+            }
+            if (!(Boolean) value.getValue()) {
+                terminated = true;
+            }
+            conditionChecked = true;
             return new ExecutionProgress(configuration.getGetContextValue() + configuration.getCompareValues());
         }
-        if (!_statementStacked) {
-            _statementStacked = true;
-            if (_statementInLoop != null) {
-                executionContext.stackExecution(_statementInLoop.createExecution());
+        if (!statementStacked) {
+            statementStacked = true;
+            if (statementInLoop != null) {
+                executionContext.stackExecution(statementInLoop.createExecution());
                 return new ExecutionProgress(configuration.getStackExecution());
             }
         }
-        if (_executedAfterEachLoop != null)
-            executionContext.stackExecution(_executedAfterEachLoop.createExecution());
-        _conditionStacked = false;
-        _conditionChecked = false;
-        _statementStacked = false;
+        if (executedAfterEachLoop != null) {
+            executionContext.stackExecution(executedAfterEachLoop.createExecution());
+        }
+        conditionStacked = false;
+        conditionChecked = false;
+        statementStacked = false;
         return new ExecutionProgress(configuration.getStackExecution());
     }
 }

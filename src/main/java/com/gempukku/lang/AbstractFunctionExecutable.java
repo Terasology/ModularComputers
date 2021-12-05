@@ -1,3 +1,6 @@
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang;
 
 
@@ -12,7 +15,8 @@ public abstract class AbstractFunctionExecutable implements FunctionExecutable {
         return new DelayedExecution(getDuration(), 0,
                 new SimpleExecution() {
                     @Override
-                    protected ExecutionProgress execute(ExecutionContext context, ExecutionCostConfiguration configuration) throws ExecutionException {
+                    protected ExecutionProgress execute(ExecutionContext context, ExecutionCostConfiguration configuration)
+                            throws ExecutionException {
                         final Iterable<String> parameterNames = getParameterNames();
                         Map<String, Variable> parameters = new HashMap<>();
                         final CallContext callContext = context.peekCallContext();

@@ -1,3 +1,6 @@
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.execution;
 
 import com.gempukku.lang.ExecutableStatement;
@@ -10,90 +13,97 @@ import com.gempukku.lang.Operator;
 import com.gempukku.lang.Variable;
 
 public class MathExecution implements Execution {
-    private int _line;
-    private ExecutableStatement _left;
-    private Operator _operator;
-    private ExecutableStatement _right;
-    private boolean _assignToLeft;
+    private int line;
+    private ExecutableStatement left;
+    private Operator operator;
+    private ExecutableStatement right;
+    private boolean assignToLeft;
 
-    private boolean _stackedLeft;
-    private boolean _resolvedLeft;
-    private boolean _stackedRight;
-    private boolean _resolvedAndAssignedSum;
+    private boolean stackedLeft;
+    private boolean resolvedLeft;
+    private boolean stackedRight;
+    private boolean resolvedAndAssignedSum;
 
-    private Variable _leftValue;
+    private Variable leftValue;
 
     public MathExecution(int line, ExecutableStatement left, Operator operator, ExecutableStatement right, boolean assignToLeft) {
-        _line = line;
-        _left = left;
-        _operator = operator;
-        _right = right;
-        _assignToLeft = assignToLeft;
+        this.line = line;
+        this.left = left;
+        this.operator = operator;
+        this.right = right;
+        this.assignToLeft = assignToLeft;
     }
 
     @Override
     public boolean hasNextExecution(ExecutionContext executionContext) {
-        if (!_stackedLeft)
+        if (!stackedLeft) {
             return true;
-        if (!_resolvedLeft)
+        }
+        if (!resolvedLeft) {
             return true;
-        if (!_stackedRight)
+        }
+        if (!stackedRight) {
             return true;
-        if (!_resolvedAndAssignedSum)
-            return true;
-        return false;
+        }
+        return !resolvedAndAssignedSum;
     }
 
     @Override
-    public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration) throws ExecutionException {
-        if (!_stackedLeft) {
-            executionContext.stackExecution(_left.createExecution());
-            _stackedLeft = true;
+    public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration)
+            throws ExecutionException {
+        if (!stackedLeft) {
+            executionContext.stackExecution(left.createExecution());
+            stackedLeft = true;
             return new ExecutionProgress(configuration.getStackExecution());
         }
-        if (!_resolvedLeft) {
-            _leftValue = executionContext.getContextValue();
-            _resolvedLeft = true;
+        if (!resolvedLeft) {
+            leftValue = executionContext.getContextValue();
+            resolvedLeft = true;
             return new ExecutionProgress(configuration.getGetContextValue());
         }
-        if (!_stackedRight) {
-            executionContext.stackExecution(_right.createExecution());
-            _stackedRight = true;
+        if (!stackedRight) {
+            executionContext.stackExecution(right.createExecution());
+            stackedRight = true;
             return new ExecutionProgress(configuration.getStackExecution());
         }
-        if (!_resolvedAndAssignedSum) {
+        if (!resolvedAndAssignedSum) {
             Variable rightValue = executionContext.getContextValue();
-            if (rightValue.getType() == Variable.Type.NUMBER && _leftValue.getType() == Variable.Type.NUMBER) {
-                final float valueLeft = ((Number) _leftValue.getValue()).floatValue();
+            if (rightValue.getType() == Variable.Type.NUMBER && leftValue.getType() == Variable.Type.NUMBER) {
+                final float valueLeft = ((Number) leftValue.getValue()).floatValue();
                 final float valueRight = ((Number) rightValue.getValue()).floatValue();
                 Object result;
-                if (_operator == Operator.SUBTRACT || _operator == Operator.SUBTRACT_ASSIGN)
+                if (operator == Operator.SUBTRACT || operator == Operator.SUBTRACT_ASSIGN) {
                     result = valueLeft - valueRight;
-                else if (_operator == Operator.DIVIDE || _operator == Operator.DIVIDE_ASSIGN)
+                } else if (operator == Operator.DIVIDE || operator == Operator.DIVIDE_ASSIGN) {
                     result = valueLeft / valueRight;
-                else if (_operator == Operator.MULTIPLY || _operator == Operator.MULTIPLY_ASSIGN)
+                } else if (operator == Operator.MULTIPLY || operator == Operator.MULTIPLY_ASSIGN) {
                     result = valueLeft * valueRight;
-                else if (_operator == Operator.MOD || _operator == Operator.MOD_ASSIGN)
+                } else if (operator == Operator.MOD || operator == Operator.MOD_ASSIGN) {
                     result = valueLeft % valueRight;
-                else if (_operator == Operator.GREATER_OR_EQUAL)
+                } else if (operator == Operator.GREATER_OR_EQUAL) {
                     result = valueLeft >= valueRight;
-                else if (_operator == Operator.GREATER)
+                } else if (operator == Operator.GREATER) {
                     result = valueLeft > valueRight;
-                else if (_operator == Operator.LESS_OR_EQUAL)
+                } else if (operator == Operator.LESS_OR_EQUAL) {
                     result = valueLeft <= valueRight;
-                else if (_operator == Operator.LESS)
+                } else if (operator == Operator.LESS) {
                     result = valueLeft < valueRight;
-                else
-                    throw new ExecutionException(_line, "Unknown operator " + _operator);
+                } else {
+                    throw new ExecutionException(line, "Unknown operator " + operator);
+                }
 
-                if (_assignToLeft)
-                    _leftValue.setValue(result);
+                if (assignToLeft) {
+                    leftValue.setValue(result);
+                }
                 executionContext.setContextValue(new Variable(result));
             } else {
-                throw new ExecutionException(_line, "Unable to perform mathematical operation on two non-number values " + _leftValue.getType() + " and " + rightValue.getType());
+                throw new ExecutionException(line, "Unable to perform mathematical operation on two non-number values "
+                        + leftValue.getType() + " and " + rightValue.getType());
             }
-            _resolvedAndAssignedSum = true;
-            return new ExecutionProgress(configuration.getGetContextValue() + configuration.getOtherMathOperation() + configuration.getSetContextValue());
+            resolvedAndAssignedSum = true;
+            return new ExecutionProgress(configuration.getGetContextValue()
+                    + configuration.getOtherMathOperation()
+                    + configuration.getSetContextValue());
         }
         return null;
     }

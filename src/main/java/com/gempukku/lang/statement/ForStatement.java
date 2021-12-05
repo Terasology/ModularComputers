@@ -1,3 +1,6 @@
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.statement;
 
 import com.gempukku.lang.CallContext;
@@ -11,28 +14,30 @@ import com.gempukku.lang.execution.ForExecution;
 import com.gempukku.lang.execution.SimpleExecution;
 
 public class ForStatement implements ExecutableStatement {
-    private int _line;
-    private ExecutableStatement _initializationStatement;
-    private ExecutableStatement _terminationCondition;
-    private ExecutableStatement _executedAfterEachLoop;
-    private ExecutableStatement _statementInLoop;
+    private int line;
+    private ExecutableStatement initializationStatement;
+    private ExecutableStatement terminationCondition;
+    private ExecutableStatement executedAfterEachLoop;
+    private ExecutableStatement statementInLoop;
 
-    public ForStatement(int line, ExecutableStatement initializationStatement, ExecutableStatement terminationCondition, ExecutableStatement executedAfterEachLoop, ExecutableStatement statementInLoop) {
-        _line = line;
-        _initializationStatement = initializationStatement;
-        _terminationCondition = terminationCondition;
-        _executedAfterEachLoop = executedAfterEachLoop;
-        _statementInLoop = statementInLoop;
+    public ForStatement(int line, ExecutableStatement initializationStatement, ExecutableStatement terminationCondition,
+                        ExecutableStatement executedAfterEachLoop, ExecutableStatement statementInLoop) {
+        this.line = line;
+        this.initializationStatement = initializationStatement;
+        this.terminationCondition = terminationCondition;
+        this.executedAfterEachLoop = executedAfterEachLoop;
+        this.statementInLoop = statementInLoop;
     }
 
     @Override
     public Execution createExecution() {
         return new SimpleExecution() {
             @Override
-            protected ExecutionProgress execute(ExecutionContext context, ExecutionCostConfiguration configuration) throws ExecutionException {
+            protected ExecutionProgress execute(ExecutionContext context, ExecutionCostConfiguration configuration)
+                    throws ExecutionException {
                 CallContext forContext = new CallContext(context.peekCallContext(), true, false);
                 context.stackExecutionGroup(forContext,
-                        new ForExecution(_line, _initializationStatement, _terminationCondition, _executedAfterEachLoop, _statementInLoop));
+                        new ForExecution(line, initializationStatement, terminationCondition, executedAfterEachLoop, statementInLoop));
                 return new ExecutionProgress(configuration.getStackGroupExecution());
             }
         };

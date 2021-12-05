@@ -1,3 +1,6 @@
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.execution;
 
 import com.gempukku.lang.ExecutableStatement;
@@ -9,52 +12,54 @@ import com.gempukku.lang.ExecutionProgress;
 import com.gempukku.lang.Variable;
 
 public class MemberAccessExecution implements Execution {
-    private int _line;
-    private ExecutableStatement _object;
-    private String _propertyName;
+    private int line;
+    private ExecutableStatement object;
+    private String propertyName;
 
-    private boolean _objectStacked;
-    private boolean _objectResolved;
+    private boolean objectStacked;
+    private boolean objectResolved;
 
-    private boolean _memberAccessStored;
+    private boolean memberAccessStored;
 
-    private Variable _objectValue;
+    private Variable objectValue;
 
     public MemberAccessExecution(int line, ExecutableStatement object, String propertyName) {
-        _line = line;
-        _object = object;
-        _propertyName = propertyName;
+        this.line = line;
+        this.object = object;
+        this.propertyName = propertyName;
     }
 
     @Override
     public boolean hasNextExecution(ExecutionContext executionContext) {
-        if (!_objectStacked)
+        if (!objectStacked) {
             return true;
-        if (!_objectResolved)
+        }
+        if (!objectResolved) {
             return true;
-        if (!_memberAccessStored)
-            return true;
-        return false;
+        }
+        return !memberAccessStored;
     }
 
     @Override
-    public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration) throws ExecutionException {
-        if (!_objectStacked) {
-            executionContext.stackExecution(_object.createExecution());
-            _objectStacked = true;
+    public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration)
+            throws ExecutionException {
+        if (!objectStacked) {
+            executionContext.stackExecution(object.createExecution());
+            objectStacked = true;
             return new ExecutionProgress(configuration.getStackExecution());
         }
-        if (!_objectResolved) {
-            _objectValue = executionContext.getContextValue();
-            _objectResolved = true;
+        if (!objectResolved) {
+            objectValue = executionContext.getContextValue();
+            objectResolved = true;
             return new ExecutionProgress(configuration.getGetContextValue());
         }
-        if (!_memberAccessStored) {
-            final Variable member = executionContext.resolveMember(_objectValue, _propertyName);
-            if (member == null)
-                throw new ExecutionException(_line, "Property " + _propertyName + " not found");
+        if (!memberAccessStored) {
+            final Variable member = executionContext.resolveMember(objectValue, propertyName);
+            if (member == null) {
+                throw new ExecutionException(line, "Property " + propertyName + " not found");
+            }
             executionContext.setContextValue(member);
-            _memberAccessStored = true;
+            memberAccessStored = true;
             return new ExecutionProgress(configuration.getSetContextValue() + configuration.getResolveMember());
         }
         return null;

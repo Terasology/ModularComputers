@@ -1,3 +1,6 @@
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.statement;
 
 import com.gempukku.lang.ExecutableStatement;
@@ -5,19 +8,19 @@ import com.gempukku.lang.Execution;
 import com.gempukku.lang.execution.MapAccessExecution;
 
 public class MapAccessStatement implements ExecutableStatement {
-    private int _line;
-    private ExecutableStatement _mapStatement;
-    private ExecutableStatement _propertyStatement;
+    private int line;
+    private ExecutableStatement mapStatement;
+    private ExecutableStatement propertyStatement;
 
     public MapAccessStatement(int line, ExecutableStatement mapStatement, ExecutableStatement propertyStatement) {
-        _line = line;
-        _mapStatement = mapStatement;
-        _propertyStatement = propertyStatement;
+        this.line = line;
+        this.mapStatement = mapStatement;
+        this.propertyStatement = propertyStatement;
     }
 
     @Override
     public Execution createExecution() {
-        return new MapAccessExecution(_line, _mapStatement, _propertyStatement);
+        return new MapAccessExecution(line, mapStatement, propertyStatement);
     }
 
     @Override

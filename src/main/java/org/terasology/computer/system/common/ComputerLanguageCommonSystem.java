@@ -1,18 +1,5 @@
-/*
- * Copyright 2015 MovingBlocks
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
 package org.terasology.computer.system.common;
 
 import org.terasology.computer.system.server.lang.ComputerModule;
@@ -64,31 +51,38 @@ public class ComputerLanguageCommonSystem extends BaseComponentSystem implements
 
     @Override
     public void initialise() {
-        registerObjectType("Array", Collections.singleton(HTMLLikeParser.parseHTMLLikeParagraph(null, "A list of objects. Objects in the array may be of any type, unless a method " +
+        registerObjectType("Array", Collections.singleton(HTMLLikeParser.parseHTMLLikeParagraph(null,
+                "A list of objects. Objects in the array may be of any type, unless a method " +
                 "requires to pass array of objects of a specific type. To create an array you can use the following syntax:<l>" +
                 "var array = [1, \"a\", true, null];<l>" +
-                "To access elements of a returned array, you have to use [n] notation, so to extract second (0-based) element from an array do the following:<l>" +
-                "var result = array[1];<l><l>" +
+                "To access elements of a returned array, you have to use [n] notation, so to extract second (0-based) " +
+                "element from an array do the following:<l> var result = array[1];<l><l>" +
                 "Array has three built in methods:<l>" +
                 "* add(any) - adds the specified object to the end of the array,<l>" +
                 "* remove(Number) - removes an object at the specified index from an array,<l>" +
                 "* size() - returns the size (length) of the array, so number of elements it has.")));
-        registerObjectType("Map", Collections.singleton(HTMLLikeParser.parseHTMLLikeParagraph(null, "An association map of Strings to objects of any type. To create an array, use the following syntax:<l>" +
+        registerObjectType("Map", Collections.singleton(HTMLLikeParser.parseHTMLLikeParagraph(null,
+                "An association map of Strings to objects of any type. To create an array, use the following syntax:<l>" +
                 "var map = {\"property1\": 1, \"property2\": \"a\", \"property3\": true };<l>" +
-                "To access elements of a map, use the [\"propertyName\"] notation, so for example to get value in a map for property \"p\" do the following:<l>" +
-                "var result = map[\"p\"];<l>" +
+                "To access elements of a map, use the [\"propertyName\"] notation, so for example to get value in a map " +
+                "for property \"p\" do the following:<l> var result = map[\"p\"];<l>" +
                 "Map has one built in method:<l>" +
                 "* size() - returns the size of the map, so number of properties it has defined.")));
 
-        registerObjectType("String", Collections.singleton(HTMLLikeParser.parseHTMLLikeParagraph(null, "Object representing a piece of text.")));
-        registerObjectType("Number", Collections.singleton(HTMLLikeParser.parseHTMLLikeParagraph(null, "Object representing a number, either fixed point or floating point. " +
-                "All variables of this type are always treated as if they were floating point, however if for some reason a whole number is " +
-                "needed, the value is rounded down.")));
-        registerObjectType("Boolean", Collections.singleton(HTMLLikeParser.parseHTMLLikeParagraph(null, "Object representing a boolean value, it may have two possible value - true and false.")));
-        registerObjectType("Object", Collections.singleton(HTMLLikeParser.parseHTMLLikeParagraph(null, "Object is a special type of object, methods it has are defined in the documentation of the method " +
+        registerObjectType("String", Collections.singleton(HTMLLikeParser.parseHTMLLikeParagraph(null,
+                "Object representing a piece of text.")));
+        registerObjectType("Number", Collections.singleton(HTMLLikeParser.parseHTMLLikeParagraph(null,
+                "Object representing a number, either fixed point or floating point. " +
+                "All variables of this type are always treated as if they were floating point, " +
+                "however if for some reason a whole number is needed, the value is rounded down.")));
+        registerObjectType("Boolean", Collections.singleton(HTMLLikeParser.parseHTMLLikeParagraph(null,
+                "Object representing a boolean value, it may have two possible value - true and false.")));
+        registerObjectType("Object", Collections.singleton(HTMLLikeParser.parseHTMLLikeParagraph(null,
+                "Object is a special type of object, methods it has are defined in the documentation of the method " +
                 "that has returned it.")));
 
-        registerObjectType("Direction", Collections.singleton(HTMLLikeParser.parseHTMLLikeParagraph(null, "Direction is a special type of <h navigate:" +
+        registerObjectType("Direction", Collections.singleton(HTMLLikeParser.parseHTMLLikeParagraph(null,
+                "Direction is a special type of <h navigate:" +
                 DocumentationBuilder.getObjectTypePageId("String") + ">String</h> " +
                 "that specifies a direction, usually in relation to computer. It can have 6 possible values:<l>" +
                 "* up - above the computer,<l>" +
@@ -97,19 +91,22 @@ public class ComputerLanguageCommonSystem extends BaseComponentSystem implements
                 "* west - towards positive x,<l>" +
                 "* north - towards negative z,<l>" +
                 "* south - towards positive z.")));
-        registerObjectType("Condition", Collections.singleton(HTMLLikeParser.parseHTMLLikeParagraph(null, "Condition defined within the game that might become true due to some effect, " +
+        registerObjectType("Condition", Collections.singleton(HTMLLikeParser.parseHTMLLikeParagraph(null,
+                "Condition defined within the game that might become true due to some effect, " +
                 "usually used in conjunction with " +
                 "<h navigate:" + DocumentationBuilder.getBuiltInObjectMethodPageId("os", "waitFor") + ">waitFor</h>, " +
                 "<h navigate:" + DocumentationBuilder.getBuiltInObjectMethodPageId("os", "all") + ">all</h>, or " +
                 "<h navigate:" + DocumentationBuilder.getBuiltInObjectMethodPageId("os", "any") + ">any</h> - methods of built in " +
                 "<h navigate:" + DocumentationBuilder.getBuiltInObjectPageId("os") + ">os</h> variable. ")));
 
-        registerComputerDefinedVariable("console", "Contains functions that allow to manipulate Computer console.", null);
+        registerComputerDefinedVariable("console", "Contains functions that allow to manipulate Computer console.",
+                null);
         registerComputerDefinedVariableFunction("console", "append", new AppendToConsoleFunction());
         registerComputerDefinedVariableFunction("console", "clear", new ClearConsoleFunction());
         registerComputerDefinedVariableFunction("console", "write", new WriteToConsoleFunction());
 
-        registerComputerDefinedVariable("os", "Contains various functions that allow to do some common operations.", null);
+        registerComputerDefinedVariable("os", "Contains various functions that allow to do some common operations.",
+                null);
         registerComputerDefinedVariableFunction("os", "parseFloat", new ParseFloatFunction());
         registerComputerDefinedVariableFunction("os", "parseInt", new ParseIntFunction());
         registerComputerDefinedVariableFunction("os", "typeOf", new TypeOfFunction());
@@ -129,7 +126,8 @@ public class ComputerLanguageCommonSystem extends BaseComponentSystem implements
     }
 
     @Override
-    public void registerComputerModule(String type, ComputerModule computerModule, String description, Collection<ParagraphData> additionalParagraphs) {
+    public void registerComputerModule(String type, ComputerModule computerModule, String description,
+                                       Collection<ParagraphData> additionalParagraphs) {
         computerModuleRegistry.put(type, computerModule);
         String moduleName = computerModule.getModuleName();
         computerModulesByName.put(moduleName, computerModule);

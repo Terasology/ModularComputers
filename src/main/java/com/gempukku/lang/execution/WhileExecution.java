@@ -1,3 +1,6 @@
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.execution;
 
 import com.gempukku.lang.ExecutableStatement;
@@ -9,48 +12,48 @@ import com.gempukku.lang.ExecutionProgress;
 import com.gempukku.lang.Variable;
 
 public class WhileExecution implements Execution {
-    private int _line;
-    private ExecutableStatement _condition;
-    private ExecutableStatement _statement;
+    private int line;
+    private ExecutableStatement condition;
+    private ExecutableStatement statement;
 
-    private boolean _terminated;
+    private boolean terminated;
 
-    private boolean _conditionStacked;
+    private boolean conditionStacked;
 
     public WhileExecution(int line, ExecutableStatement condition, ExecutableStatement statement) {
-        _line = line;
-        _condition = condition;
-        _statement = statement;
+        this.line = line;
+        this.condition = condition;
+        this.statement = statement;
     }
 
     @Override
     public boolean hasNextExecution(ExecutionContext executionContext) {
-        if (_terminated)
-            return false;
-
-        return true;
+        return !terminated;
     }
 
     @Override
-    public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration) throws ExecutionException {
-        if (!_conditionStacked) {
-            _conditionStacked = true;
-            executionContext.stackExecution(_condition.createExecution());
+    public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration)
+            throws ExecutionException {
+        if (!conditionStacked) {
+            conditionStacked = true;
+            executionContext.stackExecution(condition.createExecution());
             return new ExecutionProgress(configuration.getStackExecution());
         }
         final Variable value = executionContext.getContextValue();
-        if (value.getType() != Variable.Type.BOOLEAN)
-            throw new ExecutionException(_line, "Condition not of type BOOLEAN");
-        final Boolean result = (Boolean) value.getValue();
-        if (!result)
-            _terminated = true;
-        else {
-            executionContext.stackExecution(_statement.createExecution());
-            _conditionStacked = false;
+        if (value.getType() != Variable.Type.BOOLEAN) {
+            throw new ExecutionException(line, "Condition not of type BOOLEAN");
         }
-        if (_terminated)
+        final Boolean result = (Boolean) value.getValue();
+        if (!result) {
+            terminated = true;
+        } else {
+            executionContext.stackExecution(statement.createExecution());
+            conditionStacked = false;
+        }
+        if (terminated) {
             return new ExecutionProgress(configuration.getCompareValues() + configuration.getStackExecution());
-        else
+        } else {
             return new ExecutionProgress(configuration.getStackExecution());
+        }
     }
 }

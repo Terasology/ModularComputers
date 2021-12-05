@@ -1,14 +1,17 @@
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang;
 
 public class ExecutionException extends Exception {
-    private int _line;
+    private final int line;
 
     public ExecutionException(int line, String message) {
         super(message);
-        _line = line;
+        this.line = line;
     }
 
     public int getLine() {
-        return _line;
+        return line;
     }
 }

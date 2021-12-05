@@ -1,4 +1,4 @@
-// Copyright 2020 The Terasology Foundation
+// Copyright 2021 The Terasology Foundation
 // SPDX-License-Identifier: Apache-2.0
 package org.terasology.computer.ui;
 
@@ -47,7 +47,8 @@ public class PlayerCommandConsoleGui {
 
         if (!readOnly) {
             String wholeCommandLine = ">" + currentCommand.toString();
-            String commandLine = wholeCommandLine.substring(currentCommandDisplayStartIndex, Math.min(currentCommandDisplayStartIndex + ComputerConsole.CONSOLE_WIDTH, wholeCommandLine.length()));
+            String commandLine = wholeCommandLine.substring(currentCommandDisplayStartIndex, Math.min(currentCommandDisplayStartIndex +
+                    ComputerConsole.CONSOLE_WIDTH, wholeCommandLine.length()));
             int cursorPositionInDisplayedCommandLine = 1 + cursorPositionInPlayerCommand - currentCommandDisplayStartIndex;
 
             final int lastLineY = y + fontHeight * (ComputerConsole.CONSOLE_HEIGHT - 1);
@@ -56,7 +57,8 @@ public class PlayerCommandConsoleGui {
             if (focused) {
                 blinkDrawTick = ((++blinkDrawTick) % BLINK_LENGTH);
                 if (blinkDrawTick * 2 > BLINK_LENGTH) {
-                    computerTerminalWidget.drawVerticalLine(canvas, x + cursorPositionInDisplayedCommandLine * characterWidth - 1, 1 + lastLineY, lastLineY + fontHeight, PLAYER_CONSOLE_CURSOR_COLOR);
+                    computerTerminalWidget.drawVerticalLine(canvas, x + cursorPositionInDisplayedCommandLine * characterWidth - 1,
+                            1 + lastLineY, lastLineY + fontHeight, PLAYER_CONSOLE_CURSOR_COLOR);
                 }
             }
         }

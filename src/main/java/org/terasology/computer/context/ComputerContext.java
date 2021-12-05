@@ -1,18 +1,5 @@
-/*
- * Copyright 2015 MovingBlocks
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
 package org.terasology.computer.context;
 
 import com.gempukku.lang.CallContext;
@@ -105,7 +92,8 @@ public class ComputerContext {
     public void executeContext() {
         if (executionContext != null) {
             long executionTime = System.currentTimeMillis();
-            logger.debug("Executing program - minTicksRemaining: " + minimumTimeRemaining + ", remainingWaitingCpuCycles: " + remainingWaitingCpuCycles);
+            logger.debug("Executing program - minTicksRemaining: " + minimumTimeRemaining
+                    + ", remainingWaitingCpuCycles: " + remainingWaitingCpuCycles);
             if (minimumTimeRemaining > 0) {
                 // Decrement by the time between calls
                 minimumTimeRemaining -= (executionTime - lastExecutionTime);
@@ -131,7 +119,8 @@ public class ComputerContext {
         awaitingCondition = null;
     }
 
-    public void startProgram(String name, EntityRef executeIdentity, String programText, String[] params, ComputerLanguageContextInitializer computerLanguageContextInitializer,
+    public void startProgram(String name, EntityRef executeIdentity, String programText, String[] params,
+                             ComputerLanguageContextInitializer computerLanguageContextInitializer,
                              ExecutionCostConfiguration configuration) throws IllegalSyntaxException {
         try {
             logger.debug("starting program: " + name);
@@ -159,7 +148,8 @@ public class ComputerContext {
                         }
 
                         @Override
-                        public void addComputerModule(ComputerModule computerModule, String description, Collection<ParagraphData> additionalParagraphs) {
+                        public void addComputerModule(ComputerModule computerModule, String description,
+                                                      Collection<ParagraphData> additionalParagraphs) {
                             // Ignore
                         }
                     });

@@ -1,11 +1,14 @@
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang;
 
 import java.util.Collection;
 
 public interface FunctionExecutable {
-    public Collection<String> getParameterNames();
+    Collection<String> getParameterNames();
 
-    public CallContext getCallContext();
+    CallContext getCallContext();
 
-    public Execution createExecution(int line, ExecutionContext executionContext, CallContext callContext);
+    Execution createExecution(int line, ExecutionContext executionContext, CallContext callContext);
 }

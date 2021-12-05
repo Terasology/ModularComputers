@@ -1,18 +1,5 @@
-/*
- * Copyright 2015 MovingBlocks
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
 package org.terasology.computer.module.world;
 
 import com.gempukku.lang.ExecutionException;
@@ -48,7 +35,8 @@ public class PlaceBlockMethod extends AbstractModuleMethodExecutable<Object> {
     private BlockEntityRegistry blockEntityRegistry;
     private InventoryManager inventoryManager;
 
-    public PlaceBlockMethod(String methodName, WorldProvider worldProvider, BlockEntityRegistry blockEntityRegistry, InventoryManager inventoryManager) {
+    public PlaceBlockMethod(String methodName, WorldProvider worldProvider, BlockEntityRegistry blockEntityRegistry,
+                            InventoryManager inventoryManager) {
         super("Places block from inventory in the specified direction.", "Boolean", "Whether placement of the block was successful.");
         this.worldProvider = worldProvider;
         this.blockEntityRegistry = blockEntityRegistry;
@@ -63,8 +51,10 @@ public class PlaceBlockMethod extends AbstractModuleMethodExecutable<Object> {
         addExample(
                 "This example places a block below it, the block is coming from first slot of inventory above it. Please make sure " +
                         "this computer has a modules of World Interaction type and Inventory Manipulator in any of its slots.",
-                "var worldMod = computer.bindModuleOfType(\"" + WorldModuleCommonSystem.WORLD_MODULE_TYPE + "\");\n" +
-                        "var inventoryMod = computer.bindModuleOfType(\"" + InventoryModuleCommonSystem.COMPUTER_INVENTORY_MODULE_TYPE + "\");\n" +
+                "var worldMod = computer.bindModuleOfType(\"" +
+                        WorldModuleCommonSystem.WORLD_MODULE_TYPE + "\");\n" +
+                        "var inventoryMod = computer.bindModuleOfType(\"" +
+                        InventoryModuleCommonSystem.COMPUTER_INVENTORY_MODULE_TYPE + "\");\n" +
                         "var upBinding = inventoryMod.getOutputInventoryBinding(\"up\");\n" +
                         "worldMod.placeBlock(\"down\", upBinding, 0);");
     }
@@ -80,7 +70,8 @@ public class PlaceBlockMethod extends AbstractModuleMethodExecutable<Object> {
     }
 
     @Override
-    public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters, Object onFunctionStartResult) throws ExecutionException {
+    public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters, Object onFunctionStartResult)
+            throws ExecutionException {
         Direction direction = FunctionParamValidationUtil.validateDirectionParameter(line, parameters, "direction", methodName);
 
         InventoryBinding.InventoryWithSlots inventory = FunctionParamValidationUtil.validateInventoryBinding(line, computer, parameters,
@@ -103,7 +94,8 @@ public class PlaceBlockMethod extends AbstractModuleMethodExecutable<Object> {
             if (blockItem != null) {
                 BlockFamily type = blockItem.blockFamily;
 
-                EntityRef removedItem = inventoryManager.removeItem(inventory.inventory, computer.getComputerEntity(), realSlotNo, false, 1);
+                EntityRef removedItem = inventoryManager.removeItem(inventory.inventory, computer.getComputerEntity(),
+                        realSlotNo, false, 1);
                 if (removedItem != null) {
                     Side surfaceSide = Side.inDirection(direction.reverse().asVector3f());
 
@@ -112,7 +104,8 @@ public class PlaceBlockMethod extends AbstractModuleMethodExecutable<Object> {
                     PlaceBlocks placeBlocks = new PlaceBlocks(placementPos, block, computer.getComputerEntity());
                     worldProvider.getWorldEntity().send(placeBlocks);
                     if (!placeBlocks.isConsumed()) {
-                        removedItem.send(new OnBlockItemPlaced(placementPos, blockEntityRegistry.getBlockEntityAt(placementPos), EntityRef.NULL));
+                        removedItem.send(new OnBlockItemPlaced(placementPos, blockEntityRegistry.getBlockEntityAt(placementPos),
+                                EntityRef.NULL));
                         removedItem.destroy();
                         return true;
                     } else {

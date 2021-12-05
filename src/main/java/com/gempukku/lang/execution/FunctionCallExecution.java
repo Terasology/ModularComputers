@@ -1,3 +1,6 @@
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.execution;
 
 import com.gempukku.lang.CallContext;
@@ -15,91 +18,98 @@ import java.util.Collection;
 import java.util.List;
 
 public class FunctionCallExecution implements Execution {
-    private int _line;
-    private ExecutableStatement _function;
-    private List<ExecutableStatement> _parameters;
+    private int line;
+    private ExecutableStatement function;
+    private List<ExecutableStatement> parameters;
 
-    private boolean _functionStacked;
-    private boolean _functionResolved;
-    private int _nextParameterIndexStacked;
-    private int _nextParameterValueStored;
-    private boolean _functionCalled;
-    private boolean _returnResultRead;
+    private boolean functionStacked;
+    private boolean functionResolved;
+    private int nextParameterIndexStacked;
+    private int nextParameterValueStored;
+    private boolean functionCalled;
+    private boolean returnResultRead;
 
-    private Variable _functionVar;
-    private List<Variable> _parameterValues = new ArrayList<Variable>();
+    private Variable functionVar;
+    private List<Variable> parameterValues = new ArrayList<Variable>();
 
     public FunctionCallExecution(int line, ExecutableStatement function, List<ExecutableStatement> parameters) {
-        _line = line;
-        _function = function;
-        _parameters = parameters;
+        this.line = line;
+        this.function = function;
+        this.parameters = parameters;
     }
 
     @Override
     public boolean hasNextExecution(ExecutionContext executionContext) {
-        if (!_functionStacked)
+        if (!functionStacked) {
             return true;
-        if (!_functionResolved)
+        }
+        if (!functionResolved) {
             return true;
-        if (_nextParameterValueStored < _nextParameterIndexStacked)
+        }
+        if (nextParameterValueStored < nextParameterIndexStacked) {
             return true;
-        if (_nextParameterIndexStacked < _parameters.size())
+        }
+        if (nextParameterIndexStacked < parameters.size()) {
             return true;
-        if (!_functionCalled)
+        }
+        if (!functionCalled) {
             return true;
-        if (!_returnResultRead)
-            return true;
-        return false;
+        }
+        return !returnResultRead;
     }
 
     @Override
-    public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration) throws ExecutionException {
-        if (!_functionStacked) {
-            executionContext.stackExecution(_function.createExecution());
-            _functionStacked = true;
+    public ExecutionProgress executeNextStatement(ExecutionContext executionContext, ExecutionCostConfiguration configuration)
+            throws ExecutionException {
+        if (!functionStacked) {
+            executionContext.stackExecution(function.createExecution());
+            functionStacked = true;
             return new ExecutionProgress(configuration.getStackExecution());
         }
-        if (!_functionResolved) {
-            _functionVar = executionContext.getContextValue();
-            _functionResolved = true;
+        if (!functionResolved) {
+            functionVar = executionContext.getContextValue();
+            functionResolved = true;
             return new ExecutionProgress(configuration.getGetContextValue());
         }
-        if (_nextParameterValueStored < _nextParameterIndexStacked) {
-            _parameterValues.add(executionContext.getContextValue());
-            _nextParameterValueStored++;
+        if (nextParameterValueStored < nextParameterIndexStacked) {
+            parameterValues.add(executionContext.getContextValue());
+            nextParameterValueStored++;
             return new ExecutionProgress(configuration.getGetContextValue());
         }
-        if (_nextParameterIndexStacked < _parameters.size()) {
-            executionContext.stackExecution(_parameters.get(_nextParameterIndexStacked).createExecution());
-            _nextParameterIndexStacked++;
+        if (nextParameterIndexStacked < parameters.size()) {
+            executionContext.stackExecution(parameters.get(nextParameterIndexStacked).createExecution());
+            nextParameterIndexStacked++;
             return new ExecutionProgress(configuration.getStackExecution());
         }
-        if (!_functionCalled) {
-            if (_functionVar.getType() != Variable.Type.FUNCTION)
-                throw new ExecutionException(_line, "Expected function");
-            FunctionExecutable function = (FunctionExecutable) _functionVar.getValue();
+        if (!functionCalled) {
+            if (functionVar.getType() != Variable.Type.FUNCTION) {
+                throw new ExecutionException(line, "Expected function");
+            }
+            FunctionExecutable function = (FunctionExecutable) functionVar.getValue();
             final CallContext functionContextParent = function.getCallContext();
             final Collection<String> parameterNames = function.getParameterNames();
-            if (_parameterValues.size() > parameterNames.size())
-                throw new ExecutionException(_line, "Function does not accept as many parameters");
+            if (parameterValues.size() > parameterNames.size()) {
+                throw new ExecutionException(line, "Function does not accept as many parameters");
+            }
 
             CallContext functionContext = new CallContext(functionContextParent, false, true);
             int i = 0;
             for (String parameterName : parameterNames) {
                 Variable var = functionContext.defineVariable(parameterName);
-                if (i < _parameterValues.size())
-                    executionContext.setVariableValue(var, _parameterValues.get(i).getValue());
+                if (i < parameterValues.size()) {
+                    executionContext.setVariableValue(var, parameterValues.get(i).getValue());
+                }
                 i++;
             }
-            executionContext.stackExecutionGroup(functionContext, function.createExecution(_line, executionContext, functionContext));
-            _functionCalled = true;
-            return new ExecutionProgress(configuration.getStackGroupExecution() + configuration.getSetVariable() * _parameterValues.size());
+            executionContext.stackExecutionGroup(functionContext, function.createExecution(line, executionContext, functionContext));
+            functionCalled = true;
+            return new ExecutionProgress(configuration.getStackGroupExecution() + configuration.getSetVariable() * parameterValues.size());
         }
-        if (!_returnResultRead) {
+        if (!returnResultRead) {
             final Variable returnValue = executionContext.getReturnValue();
             executionContext.setContextValue(returnValue);
             executionContext.resetReturnValue();
-            _returnResultRead = true;
+            returnResultRead = true;
             return new ExecutionProgress(configuration.getGetReturnValue() + configuration.getSetContextValue());
         }
         return null;

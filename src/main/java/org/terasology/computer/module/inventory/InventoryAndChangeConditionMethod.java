@@ -1,18 +1,5 @@
-/*
- * Copyright 2015 MovingBlocks
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
 package org.terasology.computer.module.inventory;
 
 import com.gempukku.lang.ExecutionException;
@@ -39,7 +26,8 @@ public class InventoryAndChangeConditionMethod extends AbstractModuleMethodExecu
                 "Map containing to entries:<l>" +
                         "- \"inventory\" - containing a List of Maps, with each entry in the list corresponding to one slot " +
                         "in the inventory, and each entry Map containing two keys - \"name\" with String value of name of items, " +
-                        "as specified in the getItemName() method, and \"count\" with Number value, specifying number of items in that slot<l>" +
+                        "as specified in the getItemName() method, and \"count\" with Number value, " +
+                        "specifying number of items in that slot<l>" +
                         "- \"condition\" - containing condition you could wait on to listen on a change of the inventory from " +
                         "the state described in the \"inventory\" key. Please note, that the condition might be fulfilled even though " +
                         "the inventory state has not changed.");
@@ -49,7 +37,8 @@ public class InventoryAndChangeConditionMethod extends AbstractModuleMethodExecu
         addParameter("inventoryBinding", "InventoryBinding", "Inventory it should get contents and change condition for.");
 
         addExample(
-                "This example prints out the contents of the output inventory above the computer to the console on each change of the inventory contents. Please make sure " +
+                "This example prints out the contents of the output inventory above the computer to the console on each change of the " +
+                        "inventory contents. Please make sure " +
                         "this computer has a module of Inventory Manipulator type in any of its slots.",
                 "var invBind = computer.bindModuleOfType(\"" + InventoryModuleCommonSystem.COMPUTER_INVENTORY_MODULE_TYPE + "\");\n" +
                         "var topInv = invBind.getOutputInventoryBinding(\"up\");\n" +
@@ -75,7 +64,8 @@ public class InventoryAndChangeConditionMethod extends AbstractModuleMethodExecu
     }
 
     @Override
-    public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters, Object onFunctionStartResult) throws ExecutionException {
+    public Object onFunctionEnd(int line, ComputerCallback computer, Map<String, Variable> parameters, Object onFunctionStartResult)
+            throws ExecutionException {
         InventoryBinding.InventoryWithSlots inventory = FunctionParamValidationUtil.validateInventoryBinding(line, computer,
                 parameters, "inventoryBinding", methodName, null);
 
@@ -91,7 +81,8 @@ public class InventoryAndChangeConditionMethod extends AbstractModuleMethodExecu
                     @Override
                     public boolean checkRelease() {
                         try {
-                            InventoryBinding.InventoryWithSlots inventory = FunctionParamValidationUtil.validateInventoryBinding(line, computer,
+                            InventoryBinding.InventoryWithSlots inventory = FunctionParamValidationUtil.validateInventoryBinding(line,
+                                    computer,
                                     parameters, "inventoryBinding", methodName, null);
                             List<Variable> currentInventory = getInventory(inventory);
                             if (!currentInventory.equals(inventoryCopyResult)) {

@@ -1,3 +1,6 @@
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang;
 
 import java.util.Arrays;
@@ -10,20 +13,21 @@ public class ListPropertyProducer implements PropertyProducer {
     @Override
     public Variable exposePropertyFor(ExecutionContext context, Variable object, String property) throws ExecutionException {
         List<Variable> list = (List<Variable>) object.getValue();
-        if (property.equals("size"))
+        if (property.equals("size")) {
             return new Variable(new SizeFunction(list));
-        else if (property.equals("add"))
+        } else if (property.equals("add")) {
             return new Variable(new AddElementFunction(list));
-        else if (property.equals("remove"))
+        } else if (property.equals("remove")) {
             return new Variable(new RemoveElementFunction(list));
+        }
         return new Variable(null);
     }
 
-    private static class RemoveElementFunction extends AbstractFunctionExecutable {
-        private List<Variable> _list;
+    private static final class RemoveElementFunction extends AbstractFunctionExecutable {
+        private List<Variable> list;
 
         private RemoveElementFunction(List<Variable> list) {
-            _list = list;
+            this.list = list;
         }
 
         @Override
@@ -43,18 +47,18 @@ public class ListPropertyProducer implements PropertyProducer {
                 throw new ExecutionException(line, "Expected NUMBER index in remove()");
 
             int index = ((Number) indexVar.getValue()).intValue();
-            if (index < 0 || index >= _list.size())
+            if (index < 0 || index >= list.size())
                 throw new ExecutionException(line, "Index out of bounds in remove()");
 
-            return _list.remove(index).getValue();
+            return list.remove(index).getValue();
         }
     }
 
-    private static class AddElementFunction extends AbstractFunctionExecutable {
-        private List<Variable> _list;
+    private static final class AddElementFunction extends AbstractFunctionExecutable {
+        private List<Variable> list;
 
         private AddElementFunction(List<Variable> list) {
-            _list = list;
+            this.list = list;
         }
 
         @Override
@@ -70,16 +74,16 @@ public class ListPropertyProducer implements PropertyProducer {
         @Override
         protected Object executeFunction(int line, Map<String, Variable> parameters) throws ExecutionException {
             final Object value = parameters.get("element").getValue();
-            _list.add(new Variable(value));
+            list.add(new Variable(value));
             return null;
         }
     }
 
-    private static class SizeFunction extends AbstractFunctionExecutable {
-        private List<Variable> _list;
+    private static final class SizeFunction extends AbstractFunctionExecutable {
+        private List<Variable> list;
 
         private SizeFunction(List<Variable> list) {
-            _list = list;
+            this.list = list;
         }
 
         @Override
@@ -94,7 +98,7 @@ public class ListPropertyProducer implements PropertyProducer {
 
         @Override
         protected Object executeFunction(int line, Map<String, Variable> parameters) throws ExecutionException {
-            return _list.size();
+            return list.size();
         }
     }
 }

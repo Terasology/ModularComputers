@@ -1,3 +1,6 @@
+// Copyright 2021 The Terasology Foundation
+// SPDX-License-Identifier: Apache-2.0
+
 package com.gempukku.lang.statement;
 
 import com.gempukku.lang.DefaultFunctionExecutable;
@@ -13,23 +16,24 @@ import com.gempukku.lang.execution.SimpleExecution;
 import java.util.List;
 
 public class FunctionStatement implements ExecutableStatement {
-    private List<String> _parameterNames;
-    private List<ExecutableStatement> _statements;
+    private List<String> parameterNames;
+    private List<ExecutableStatement> statements;
 
     public FunctionStatement(List<String> parameterNames, List<ExecutableStatement> statements) {
-        _parameterNames = parameterNames;
-        _statements = statements;
+        this.parameterNames = parameterNames;
+        this.statements = statements;
     }
 
     @Override
     public Execution createExecution() {
         return new SimpleExecution() {
             @Override
-            protected ExecutionProgress execute(ExecutionContext context, ExecutionCostConfiguration configuration) throws ExecutionException {
+            protected ExecutionProgress execute(ExecutionContext context, ExecutionCostConfiguration configuration)
+                    throws ExecutionException {
                 final DefaultFunctionExecutable functionExecutable = new DefaultFunctionExecutable(context.peekCallContext(),
-                        _parameterNames);
+                        parameterNames);
                 functionExecutable.setStatement(
-                        new BlockStatement(_statements, false, true));
+                        new BlockStatement(statements, false, true));
                 context.setContextValue(new Variable(functionExecutable));
                 return new ExecutionProgress(configuration.getSetVariable());
             }
