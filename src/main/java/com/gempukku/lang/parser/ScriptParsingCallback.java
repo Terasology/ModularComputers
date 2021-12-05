@@ -3,6 +3,8 @@
 package com.gempukku.lang.parser;
 
 public interface ScriptParsingCallback {
-    public enum Type {LITERAL, CONSTANT, KEYWORD, COMMENT, VARIABLE}
-    public void parsed(int line, int column, int length, Type type);
+    enum Type {
+        LITERAL, CONSTANT, KEYWORD, COMMENT, VARIABLE
+    }
+    void parsed(int line, int column, int length, Type type);
 }

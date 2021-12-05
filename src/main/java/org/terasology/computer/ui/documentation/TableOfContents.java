@@ -6,5 +6,6 @@ import java.util.Collection;
 
 public interface TableOfContents {
     DocumentationPageInfo getPageInfo(String pageId);
-    Collection<DocumentationPageInfo> getContents(String parentPageId);
+    Collection<DocumentationPageInfo> getContents(
+            String parentPageId);
 }
